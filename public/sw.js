@@ -1,6 +1,5 @@
 // Service Worker for LukenFit PWA
-const CACHE_NAME = 'lukenfit-v1';
-const OFFLINE_URL = '/offline.html';
+const CACHE_NAME = 'lukenfit-v2';
 
 // Assets to cache immediately on install
 const PRECACHE_ASSETS = [
@@ -44,26 +43,35 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - network first, fallback to cache
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+  
   // Skip non-GET requests
   if (event.request.method !== 'GET') return;
 
+  // Skip non-http(s) requests (chrome-extension, etc.)
+  if (!url.protocol.startsWith('http')) return;
+
   // Skip Supabase API requests (let them fail naturally for offline detection)
-  if (event.request.url.includes('supabase.co')) return;
+  if (url.hostname.includes('supabase.co')) return;
+
+  // Skip cross-origin requests except for fonts
+  if (url.origin !== self.location.origin && !url.hostname.includes('fonts')) return;
 
   event.respondWith(
     // Try network first
     fetch(event.request)
       .then((response) => {
-        // Clone the response before caching
-        const responseClone = response.clone();
-
-        // Cache successful responses
-        if (response.status === 200) {
+        // Only cache successful same-origin responses
+        if (response.status === 200 && url.origin === self.location.origin) {
+          const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone);
+            try {
+              cache.put(event.request, responseClone);
+            } catch (e) {
+              console.log('[SW] Cache put failed:', e);
+            }
           });
         }
-
         return response;
       })
       .catch(() => {
@@ -99,6 +107,5 @@ self.addEventListener('message', (event) => {
 self.addEventListener('sync', (event) => {
   if (event.tag === 'sync-data') {
     console.log('[SW] Background sync triggered');
-    // Future: sync offline changes to Supabase
   }
 });

@@ -16,6 +16,16 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
   // Combined loading state - loading during form submission OR external loading (from logout)
   const loading = internalLoading;
 
+  // Timeout wrapper for auth operations
+  const withTimeout = (promise, timeoutMs = 15000) => {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('timeout')), timeoutMs)
+      )
+    ]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -34,10 +44,10 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
           setInternalLoading(false);
           return;
         }
-        const result = await onAuth.signUp(email, password);
-        if (result.error) {
+        const result = await withTimeout(onAuth.signUp(email, password));
+        if (result?.error) {
           // Translate common Supabase errors to Spanish
-          let errorMsg = result.error.message;
+          let errorMsg = result.error.message || 'Error desconocido';
           if (errorMsg.includes('already registered')) {
             errorMsg = 'Este email ya está registrado. Intenta iniciar sesión.';
           } else if (errorMsg.includes('valid email')) {
@@ -45,32 +55,32 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
           } else if (errorMsg.includes('Password')) {
             errorMsg = 'La contraseña debe tener al menos 6 caracteres.';
           } else if (errorMsg.includes('Database error')) {
-            // This happens when there's a trigger issue in Supabase
-            errorMsg = 'Error de configuración del servidor. Por favor, contacta al administrador para que ejecute el script de corrección en Supabase.';
+            errorMsg = 'Error de configuración del servidor. Por favor, contacta al administrador.';
           }
           setError(errorMsg);
-        } else if (result.needsConfirmation) {
-          // Email confirmation is enabled
+        } else if (result?.needsConfirmation) {
           setMessage('¡Cuenta creada! Revisa tu email para confirmar y luego inicia sesión.');
           setMode('login');
           setPassword('');
           setConfirmPassword('');
         } else {
-          // Auto-confirmed (user is logged in)
           setMessage('¡Cuenta creada! Redirigiendo...');
         }
       } else if (mode === 'reset') {
-        const result = await onAuth.resetPassword(email);
-        if (result.error) {
-          setError(result.error.message);
+        const result = await withTimeout(onAuth.resetPassword(email));
+        if (result?.error) {
+          setError(result.error.message || 'Error al enviar email');
         } else {
           setMessage('Email de recuperación enviado. Revisa tu bandeja.');
         }
       } else {
-        const result = await onAuth.signIn(email, password);
-        if (result.error) {
-          // Translate common errors
-          let errorMsg = result.error.message;
+        // LOGIN
+        console.log('[Auth] Attempting signIn...');
+        const result = await withTimeout(onAuth.signIn(email, password));
+        console.log('[Auth] signIn result:', result);
+        
+        if (result?.error) {
+          let errorMsg = result.error.message || 'Error desconocido';
           if (errorMsg.includes('Invalid login')) {
             errorMsg = 'Email o contraseña incorrectos.';
           } else if (errorMsg.includes('Email not confirmed')) {
@@ -78,12 +88,19 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
           }
           setError(errorMsg);
         }
+        // If no error, the parent component should handle showing the main app
       }
     } catch (err) {
-      setError('Error inesperado. Intenta de nuevo.');
+      console.error('[Auth] Error:', err);
+      if (err.message === 'timeout') {
+        setError('La conexión tardó demasiado. Verifica tu internet e intenta de nuevo.');
+      } else {
+        setError('Error inesperado. Intenta de nuevo.');
+      }
+    } finally {
+      // ALWAYS reset loading state
+      setInternalLoading(false);
     }
-
-    setInternalLoading(false);
   };
 
   const handleContinueOffline = () => {

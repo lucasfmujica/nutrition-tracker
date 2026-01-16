@@ -1,31 +1,31 @@
 {
-  "name": "LukenFit",
-  "short_name": "LukenFit",
-  "description": "Tu tracker personal de nutrición, entrenos y bienestar",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#0F172A",
-  "theme_color": "#3B82F6",
-  "orientation": "portrait-primary",
-  "icons": [
-    {
-      "src": "/icons/icon-192x192.svg",
-      "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "/icons/icon-512x512.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ],
-  "categories": ["health", "fitness", "lifestyle"]
+    "name": "LukenFit",
+    "short_name": "LukenFit",
+    "description": "Tu tracker personal de nutrición, entrenos y bienestar",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0F172A",
+    "theme_color": "#3B82F6",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/icons/icon-192x192.svg",
+            "sizes": "192x192",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-512x512.svg",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        },
+        {
+            "src": "/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["health", "fitness", "lifestyle"]
 }

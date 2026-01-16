@@ -2152,20 +2152,33 @@ const NutritionTracker = () => {
   if (showAuth && !offlineMode) {
     // Wrap signIn to update showAuth immediately on success
     const handleSignIn = async (email, password) => {
-      const result = await supabase.signIn(email, password);
-      if (!result.error) {
-        setShowAuth(false);
+      try {
+        console.log('[NutritionTracker] handleSignIn called');
+        const result = await supabase.signIn(email, password);
+        console.log('[NutritionTracker] signIn result:', result);
+        if (result && !result.error) {
+          console.log('[NutritionTracker] Setting showAuth to false');
+          setShowAuth(false);
+        }
+        return result || { error: { message: 'No response from server' } };
+      } catch (err) {
+        console.error('[NutritionTracker] signIn error:', err);
+        return { error: { message: err.message || 'Error de conexión' } };
       }
-      return result;
     };
 
     // Wrap signUp to update showAuth on auto-confirm success
     const handleSignUp = async (email, password) => {
-      const result = await supabase.signUp(email, password);
-      if (!result.error && !result.needsConfirmation) {
-        setShowAuth(false);
+      try {
+        const result = await supabase.signUp(email, password);
+        if (result && !result.error && !result.needsConfirmation) {
+          setShowAuth(false);
+        }
+        return result || { error: { message: 'No response from server' } };
+      } catch (err) {
+        console.error('[NutritionTracker] signUp error:', err);
+        return { error: { message: err.message || 'Error de conexión' } };
       }
-      return result;
     };
 
     return (
