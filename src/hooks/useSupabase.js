@@ -1,26 +1,29 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { mappers } from '../lib/database.types';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 /**
  * Custom hook for Supabase authentication and data operations
- * Falls back to localStorage when not authenticated or Supabase is unavailable
  * 
- * Prompt 3 Features:
- * - Loading states and sync indicators
- * - Error handling and offline detection
- * - localStorage to Supabase migration
+ * Features:
+ * - Prompt 2: Auth + CRUD operations
+ * - Prompt 3: Loading states, error handling, offline detection, migration
+ * - Prompt 4: Real-time sync, optimistic updates
  */
 export function useSupabase() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
-  
+
   // Prompt 3: Enhanced state
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [syncStatus, setSyncStatus] = useState('idle'); // 'idle' | 'syncing' | 'success' | 'error'
+  const [syncStatus, setSyncStatus] = useState('idle');
   const [syncError, setSyncError] = useState(null);
   const [lastSyncTime, setLastSyncTime] = useState(null);
+
+  // Prompt 4: Real-time subscriptions
+  const subscriptionsRef = useRef([]);
+  const [realtimeCallbacks, setRealtimeCallbacks] = useState({});
 
   // Check if we can use Supabase
   const canUseSupabase = isSupabaseConfigured() && user && isOnline;
@@ -63,9 +66,9 @@ export function useSupabase() {
       async (_event, session) => {
         const newUser = session?.user ?? null;
         setUser(newUser);
-        
+
         // If user just logged in, ensure profile exists
-        if (newUser && _event === 'SIGNED_IN') {
+        if (newUser && (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED')) {
           await ensureProfileExists(newUser.id);
         }
       }
@@ -75,10 +78,59 @@ export function useSupabase() {
   }, []);
 
   // =====================================================
-  // HELPER: Ensure profile exists (fixes trigger issue)
+  // Prompt 4: Real-time subscriptions setup
+  // =====================================================
+  useEffect(() => {
+    if (!canUseSupabase) {
+      // Cleanup subscriptions when user logs out
+      subscriptionsRef.current.forEach(sub => sub.unsubscribe());
+      subscriptionsRef.current = [];
+      return;
+    }
+
+    // Setup real-time subscriptions for all tables
+    const tables = ['profiles', 'weight_history', 'food_log', 'workouts', 'steps_log', 'oura_log'];
+    
+    tables.forEach(table => {
+      const channel = supabase
+        .channel(`${table}_changes_${user.id}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: table,
+            filter: `user_id=eq.${user.id}`
+          },
+          (payload) => {
+            console.log(`Real-time update on ${table}:`, payload.eventType);
+            // Call registered callback if exists
+            if (realtimeCallbacks[table]) {
+              realtimeCallbacks[table](payload);
+            }
+          }
+        )
+        .subscribe();
+
+      subscriptionsRef.current.push(channel);
+    });
+
+    return () => {
+      subscriptionsRef.current.forEach(sub => supabase.removeChannel(sub));
+      subscriptionsRef.current = [];
+    };
+  }, [canUseSupabase, user?.id]);
+
+  // Register callback for real-time updates
+  const onRealtimeUpdate = useCallback((table, callback) => {
+    setRealtimeCallbacks(prev => ({ ...prev, [table]: callback }));
+  }, []);
+
+  // =====================================================
+  // HELPER: Ensure profile exists (app-side, no trigger)
   // =====================================================
   const ensureProfileExists = async (userId) => {
-    if (!isSupabaseConfigured()) return;
+    if (!isSupabaseConfigured()) return { success: false };
 
     try {
       // Check if profile exists
@@ -86,9 +138,9 @@ export function useSupabase() {
         .from('profiles')
         .select('id')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code === 'PGRST116') {
+      if (!data && !error) {
         // Profile doesn't exist, create it
         console.log('Creating profile for user:', userId);
         const { error: insertError } = await supabase
@@ -97,10 +149,20 @@ export function useSupabase() {
 
         if (insertError) {
           console.error('Error creating profile:', insertError);
+          return { success: false, error: insertError };
         }
+        return { success: true, created: true };
       }
+      
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error checking profile:', error);
+        return { success: false, error };
+      }
+
+      return { success: true, exists: true };
     } catch (err) {
-      console.error('Error checking profile:', err);
+      console.error('Error in ensureProfileExists:', err);
+      return { success: false, error: err };
     }
   };
 
@@ -123,31 +185,32 @@ export function useSupabase() {
     setLoading(true);
 
     try {
+      // Sign up without trying to create profile - that happens on SIGNED_IN
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          // This helps with the confirmation flow
+          emailRedirectTo: window.location.origin,
+        }
       });
+
+      setLoading(false);
 
       if (error) {
         setAuthError(error.message);
-        setLoading(false);
         return { data, error };
       }
 
-      // If signup successful and user confirmed (or auto-confirm enabled)
-      if (data.user && !data.user.email_confirmed_at) {
-        // User needs to confirm email
-        setLoading(false);
+      // Check if email confirmation is required
+      if (data.user && !data.session) {
+        // No session = needs email confirmation
         return { data, error: null, needsConfirmation: true };
       }
 
-      // Create profile manually if trigger didn't work
-      if (data.user) {
-        await ensureProfileExists(data.user.id);
-      }
-
-      setLoading(false);
-      return { data, error };
+      // If we have a session, user is logged in (auto-confirm enabled)
+      // Profile will be created by the onAuthStateChange handler
+      return { data, error: null };
     } catch (err) {
       setAuthError(err.message);
       setLoading(false);
@@ -175,15 +238,15 @@ export function useSupabase() {
         password,
       });
 
+      setLoading(false);
+
       if (error) {
         setAuthError(error.message);
-      } else if (data.user) {
-        // Ensure profile exists
-        await ensureProfileExists(data.user.id);
+        return { data, error };
       }
 
-      setLoading(false);
-      return { data, error };
+      // Profile will be created/checked by onAuthStateChange handler
+      return { data, error: null };
     } catch (err) {
       setAuthError(err.message);
       setLoading(false);
@@ -221,7 +284,7 @@ export function useSupabase() {
   };
 
   // =====================================================
-  // PROMPT 3: Sync wrapper with error handling
+  // Prompt 3 & 4: Sync wrapper with optimistic updates
   // =====================================================
   const withSync = async (operation, errorMessage = 'Error de sincronización') => {
     if (!canUseSupabase) {
@@ -235,10 +298,7 @@ export function useSupabase() {
       const result = await operation();
       setSyncStatus('success');
       setLastSyncTime(new Date());
-      
-      // Reset to idle after showing success
       setTimeout(() => setSyncStatus('idle'), 2000);
-      
       return result;
     } catch (err) {
       console.error(errorMessage, err);
@@ -259,19 +319,19 @@ export function useSupabase() {
       .from('profiles')
       .select('*')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
-    if (error) {
-      // If profile doesn't exist, create it
-      if (error.code === 'PGRST116') {
-        await ensureProfileExists(user.id);
+    if (!data) {
+      // Profile doesn't exist, create it
+      const result = await ensureProfileExists(user.id);
+      if (result.success) {
         // Retry fetch
         const { data: retryData } = await supabase
           .from('profiles')
           .select('*')
           .eq('user_id', user.id)
           .single();
-        
+
         if (retryData) {
           return {
             profile: mappers.profileFromDb(retryData),
@@ -279,6 +339,10 @@ export function useSupabase() {
           };
         }
       }
+      return null;
+    }
+
+    if (error) {
       console.error('Error fetching profile:', error);
       return null;
     }
@@ -380,7 +444,6 @@ export function useSupabase() {
 
   const saveFood = useCallback(async (entry) => {
     return withSync(async () => {
-      // Check if entry has a UUID (update) or local ID (insert)
       const isUpdate = entry.id && !entry.id.startsWith('f-');
 
       if (isUpdate) {
@@ -595,7 +658,7 @@ export function useSupabase() {
   }, [canUseSupabase, fetchProfile, fetchWeightHistory, fetchFoodLog, fetchWorkouts, fetchStepsLog, fetchOuraLog]);
 
   // =====================================================
-  // PROMPT 3: Migrate localStorage data to Supabase
+  // Prompt 3: Migrate localStorage data to Supabase
   // =====================================================
   const migrateLocalStorageToSupabase = useCallback(async (localData) => {
     if (!canUseSupabase) {
@@ -638,7 +701,6 @@ export function useSupabase() {
               .from('food_log')
               .insert(mappers.foodToDb(entry, user.id));
           } catch (e) {
-            // Might be duplicate, try upsert by date+time+meal
             errors.push(`food-${entry.id}`);
           }
         }
@@ -705,7 +767,7 @@ export function useSupabase() {
   }, [canUseSupabase, user?.id, saveProfile]);
 
   // =====================================================
-  // PROMPT 3: Check if localStorage has data to migrate
+  // Check if localStorage has data to migrate
   // =====================================================
   const checkLocalStorageForMigration = useCallback(() => {
     const keys = [
@@ -727,7 +789,6 @@ export function useSupabase() {
         hasData = true;
         try {
           const parsed = JSON.parse(value);
-          // Map keys to our structure
           if (key.includes('profile')) localData.profile = parsed;
           if (key.includes('targets')) localData.targets = parsed;
           if (key.includes('weight')) localData.weightHistory = parsed;
@@ -744,9 +805,7 @@ export function useSupabase() {
     return { hasData, localData };
   }, []);
 
-  // =====================================================
-  // PROMPT 3: Clear localStorage after successful migration
-  // =====================================================
+  // Clear localStorage after successful migration
   const clearMigratedLocalStorage = useCallback(() => {
     const keys = [
       'lucas-profile-v5',
@@ -817,5 +876,8 @@ export function useSupabase() {
     migrateLocalStorageToSupabase,
     checkLocalStorageForMigration,
     clearMigratedLocalStorage,
+
+    // Prompt 4: Real-time
+    onRealtimeUpdate,
   };
 }

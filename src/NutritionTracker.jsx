@@ -7,7 +7,7 @@ const NutritionTracker = () => {
   const supabase = useSupabase();
   const [showAuth, setShowAuth] = useState(true);
   const [offlineMode, setOfflineMode] = useState(false);
-  
+
   // Prompt 3: Migration modal state
   const [showMigrationModal, setShowMigrationModal] = useState(false);
   const [migrationData, setMigrationData] = useState(null);
@@ -409,7 +409,7 @@ const NutritionTracker = () => {
     // If authenticated, hide auth screen
     if (supabase.isAuthenticated) {
       setShowAuth(false);
-      
+
       // Prompt 3: Check for localStorage data to migrate
       const { hasData, localData } = supabase.checkLocalStorageForMigration();
       if (hasData && supabase.isOnline) {
@@ -1772,7 +1772,7 @@ const NutritionTracker = () => {
                 Tienes datos guardados en este dispositivo. ¿Quieres sincronizarlos con tu cuenta?
               </p>
             </div>
-            
+
             {/* Summary of data to migrate */}
             <div className="bg-gray-700/50 rounded-lg p-4 mb-6 text-sm">
               <div className="grid grid-cols-2 gap-2 text-gray-300">
@@ -1796,7 +1796,7 @@ const NutritionTracker = () => {
                 )}
               </div>
             </div>
-            
+
             <div className="space-y-3">
               <button
                 onClick={async () => {
@@ -1834,7 +1834,7 @@ const NutritionTracker = () => {
                   'Sí, sincronizar todo'
                 )}
               </button>
-              
+
               <button
                 onClick={() => {
                   setShowMigrationModal(false);
@@ -1845,7 +1845,7 @@ const NutritionTracker = () => {
               >
                 No, empezar de cero
               </button>
-              
+
               <p className="text-xs text-gray-500 text-center">
                 Si eliges "empezar de cero", los datos locales se mantendrán pero no se sincronizarán.
               </p>
@@ -2033,7 +2033,7 @@ const NutritionTracker = () => {
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             {saveStatus && <span className="text-sm text-emerald-400">{saveStatus}</span>}
-            
+
             {/* Prompt 3: Enhanced sync status indicator */}
             {supabase.isAuthenticated ? (
               <div className="flex items-center gap-2">
@@ -2043,7 +2043,7 @@ const NutritionTracker = () => {
                     📴 Offline
                   </span>
                 )}
-                
+
                 {/* Sync status */}
                 {supabase.isOnline && (
                   <span className={`text-xs px-2 py-1 rounded flex items-center gap-1 ${
@@ -2066,7 +2066,7 @@ const NutritionTracker = () => {
                     {supabase.syncStatus === 'idle' && '☁️'}
                   </span>
                 )}
-                
+
                 <button
                   onClick={async () => {
                     await supabase.signOut();

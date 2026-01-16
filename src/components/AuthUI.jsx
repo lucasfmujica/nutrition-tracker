@@ -33,10 +33,25 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured }) {
         }
         const result = await onAuth.signUp(email, password);
         if (result.error) {
-          setError(result.error.message);
-        } else {
-          setMessage('¡Cuenta creada! Revisa tu email para confirmar.');
+          // Translate common Supabase errors to Spanish
+          let errorMsg = result.error.message;
+          if (errorMsg.includes('already registered')) {
+            errorMsg = 'Este email ya está registrado. Intenta iniciar sesión.';
+          } else if (errorMsg.includes('valid email')) {
+            errorMsg = 'Por favor ingresa un email válido.';
+          } else if (errorMsg.includes('Password')) {
+            errorMsg = 'La contraseña debe tener al menos 6 caracteres.';
+          }
+          setError(errorMsg);
+        } else if (result.needsConfirmation) {
+          // Email confirmation is enabled
+          setMessage('¡Cuenta creada! Revisa tu email para confirmar y luego inicia sesión.');
           setMode('login');
+          setPassword('');
+          setConfirmPassword('');
+        } else {
+          // Auto-confirmed (user is logged in)
+          setMessage('¡Cuenta creada! Redirigiendo...');
         }
       } else if (mode === 'reset') {
         const result = await onAuth.resetPassword(email);
@@ -48,7 +63,14 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured }) {
       } else {
         const result = await onAuth.signIn(email, password);
         if (result.error) {
-          setError(result.error.message);
+          // Translate common errors
+          let errorMsg = result.error.message;
+          if (errorMsg.includes('Invalid login')) {
+            errorMsg = 'Email o contraseña incorrectos.';
+          } else if (errorMsg.includes('Email not confirmed')) {
+            errorMsg = 'Debes confirmar tu email antes de iniciar sesión. Revisa tu bandeja.';
+          }
+          setError(errorMsg);
         }
       }
     } catch (err) {
