@@ -680,21 +680,7 @@ const NutritionTracker = () => {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        if (useCloud) {
-          // Load from Supabase
-          const data = await supabase.fetchAllData();
-          if (data) {
-            if (data.profile) setProfile(data.profile);
-            if (data.targets) setCustomTargets(data.targets);
-            if (data.weightHistory?.length) setWeightHistory(data.weightHistory);
-            if (data.foodLog?.length) setFoodLog(data.foodLog);
-            if (data.workouts?.length) setWorkoutLog(data.workouts);
-            if (data.stepsLog?.length) setStepsLog(data.stepsLog);
-            if (data.ouraLog?.length) setOuraLog(data.ouraLog);
-            if (data.waterLog?.length) setWaterLog(data.waterLog);
-          }
-        } else {
-          // Load from localStorage
+        // Always load localStorage first as backup
         const [profileData, weightData, foodData, workoutData, stepsData, targetsData, ouraData, waterData] = await Promise.all([
           storage.get('lucas-profile-v5').catch(() => null),
           storage.get('lucas-weight-history-v5').catch(() => null),
@@ -706,14 +692,55 @@ const NutritionTracker = () => {
           storage.get('lucas-water-log-v5').catch(() => null)
         ]);
 
-        if (profileData?.value) setProfile(JSON.parse(profileData.value));
-        if (weightData?.value) setWeightHistory(JSON.parse(weightData.value));
-        if (foodData?.value) setFoodLog(JSON.parse(foodData.value));
-        if (workoutData?.value) setWorkoutLog(JSON.parse(workoutData.value));
-        if (stepsData?.value) setStepsLog(JSON.parse(stepsData.value));
-        if (targetsData?.value) setCustomTargets(JSON.parse(targetsData.value));
-        if (ouraData?.value) setOuraLog(JSON.parse(ouraData.value));
-        if (waterData?.value) setWaterLog(JSON.parse(waterData.value));
+        // Parse localStorage data
+        const localProfile = profileData?.value ? JSON.parse(profileData.value) : null;
+        const localWeight = weightData?.value ? JSON.parse(weightData.value) : [];
+        const localFood = foodData?.value ? JSON.parse(foodData.value) : [];
+        const localWorkout = workoutData?.value ? JSON.parse(workoutData.value) : [];
+        const localSteps = stepsData?.value ? JSON.parse(stepsData.value) : [];
+        const localTargets = targetsData?.value ? JSON.parse(targetsData.value) : null;
+        const localOura = ouraData?.value ? JSON.parse(ouraData.value) : [];
+        const localWater = waterData?.value ? JSON.parse(waterData.value) : [];
+
+        if (useCloud) {
+          // Load from Supabase
+          const data = await supabase.fetchAllData();
+          if (data) {
+            // Use Supabase data if available, otherwise fall back to localStorage
+            if (data.profile) setProfile(data.profile);
+            else if (localProfile) setProfile(localProfile);
+
+            if (data.targets) setCustomTargets(data.targets);
+            else if (localTargets) setCustomTargets(localTargets);
+
+            // For arrays: use Supabase if it has data, otherwise localStorage
+            setWeightHistory(data.weightHistory?.length ? data.weightHistory : localWeight);
+            setFoodLog(data.foodLog?.length ? data.foodLog : localFood);
+            setWorkoutLog(data.workouts?.length ? data.workouts : localWorkout);
+            setStepsLog(data.stepsLog?.length ? data.stepsLog : localSteps);
+            setOuraLog(data.ouraLog?.length ? data.ouraLog : localOura);
+            setWaterLog(data.waterLog?.length ? data.waterLog : localWater);
+          } else {
+            // Supabase returned nothing, use localStorage
+            if (localProfile) setProfile(localProfile);
+            if (localTargets) setCustomTargets(localTargets);
+            setWeightHistory(localWeight);
+            setFoodLog(localFood);
+            setWorkoutLog(localWorkout);
+            setStepsLog(localSteps);
+            setOuraLog(localOura);
+            setWaterLog(localWater);
+          }
+        } else {
+          // Offline mode - use localStorage only
+          if (localProfile) setProfile(localProfile);
+          if (localTargets) setCustomTargets(localTargets);
+          setWeightHistory(localWeight);
+          setFoodLog(localFood);
+          setWorkoutLog(localWorkout);
+          setStepsLog(localSteps);
+          setOuraLog(localOura);
+          setWaterLog(localWater);
         }
       } catch (err) {
         console.log('Loading fresh state:', err);
@@ -3709,7 +3736,7 @@ const NutritionTracker = () => {
           weightHistory={weightHistory}
           stepsLog={stepsLog}
           targets={{
-            calories: todayTargets.calories,
+            calories: config.targetCalories,
             protein: config.targetProtein,
             carbs: config.targetCarbs,
             fat: config.targetFat

@@ -11,9 +11,17 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('[Supabase] Credentials not found. Running in offline/localStorage mode.');
 }
 
-// Simple client configuration
+// Client with auth persistence enabled
 export const supabase = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        storageKey: 'lukenfit-auth',
+        storage: window.localStorage,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    })
   : null;
 
 export const isSupabaseConfigured = () => !!supabase;

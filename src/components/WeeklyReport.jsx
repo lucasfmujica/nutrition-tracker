@@ -4,13 +4,13 @@ import { useEffect, useRef, useState } from 'react';
  * Weekly Report Component
  * Shows comprehensive weekly stats with charts and export functionality
  */
-export function WeeklyReport({ 
-  foodLog, 
-  workoutLog, 
-  weightHistory, 
+export function WeeklyReport({
+  foodLog,
+  workoutLog,
+  weightHistory,
   stepsLog,
   targets,
-  onClose 
+  onClose
 }) {
   const reportRef = useRef(null);
   const [isExporting, setIsExporting] = useState(false);
@@ -21,20 +21,20 @@ export function WeeklyReport({
     const today = new Date();
     const dayOfWeek = today.getDay();
     const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-    
+
     const monday = new Date(today);
     monday.setDate(today.getDate() + mondayOffset - (weeksAgo * 7));
-    
+
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
-    
+
     const dates = [];
     for (let i = 0; i < 7; i++) {
       const d = new Date(monday);
       d.setDate(monday.getDate() + i);
       dates.push(d.toISOString().split('T')[0]);
     }
-    
+
     return {
       monday: monday.toISOString().split('T')[0],
       sunday: sunday.toISOString().split('T')[0],
@@ -80,7 +80,7 @@ export function WeeklyReport({
     const totalWorkouts = weekWorkouts.length;
     const totalWorkoutMins = dailyStats.reduce((sum, d) => sum + d.workoutMinutes, 0);
     const totalSteps = dailyStats.reduce((sum, d) => sum + d.steps, 0);
-    
+
     // Averages
     const avgCalories = daysWithFood > 0 ? Math.round(totalCalories / daysWithFood) : 0;
     const avgProtein = daysWithFood > 0 ? Math.round(totalProtein / daysWithFood) : 0;
@@ -117,7 +117,7 @@ export function WeeklyReport({
   const lastWeekStats = getWeekStats(previousWeek.dates);
 
   // Calculate change
-  const calChange = lastWeekStats.summary.avgCalories > 0 
+  const calChange = lastWeekStats.summary.avgCalories > 0
     ? ((thisWeekStats.summary.avgCalories - lastWeekStats.summary.avgCalories) / lastWeekStats.summary.avgCalories * 100).toFixed(1)
     : 0;
   const protChange = lastWeekStats.summary.avgProtein > 0
@@ -136,7 +136,7 @@ export function WeeklyReport({
         scale: 2,
         useCORS: true
       });
-      
+
       const link = document.createElement('a');
       link.download = `lukenfit-report-${currentWeek.monday}.png`;
       link.href = canvas.toDataURL('image/png');
@@ -266,7 +266,7 @@ export function WeeklyReport({
                         style={{ height: `${height}%` }}
                       />
                       {/* Goal line */}
-                      <div 
+                      <div
                         className="absolute w-full border-t border-dashed border-gray-500"
                         style={{ bottom: `${getBarHeight(targets.calories, targets.calories * 1.3)}%` }}
                       />
@@ -297,7 +297,7 @@ export function WeeklyReport({
                         }`}
                         style={{ height: `${height}%` }}
                       />
-                      <div 
+                      <div
                         className="absolute w-full border-t border-dashed border-gray-500"
                         style={{ bottom: `${getBarHeight(targets.protein, targets.protein * 1.3)}%` }}
                       />
@@ -321,7 +321,7 @@ export function WeeklyReport({
                 <span className="text-gray-400">/7 días</span>
               </div>
               <div className="mt-2 h-2 bg-gray-700 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="h-full bg-green-500 rounded-full transition-all"
                   style={{ width: `${(thisWeekStats.summary.calOkDays / 7) * 100}%` }}
                 />
@@ -337,7 +337,7 @@ export function WeeklyReport({
                 <span className="text-gray-400">/7 días</span>
               </div>
               <div className="mt-2 h-2 bg-gray-700 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="h-full bg-cyan-500 rounded-full transition-all"
                   style={{ width: `${(thisWeekStats.summary.protOkDays / 7) * 100}%` }}
                 />
