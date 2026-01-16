@@ -6,22 +6,14 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 // Debug: log configuration status
 console.log('[Supabase] URL configured:', !!supabaseUrl);
 console.log('[Supabase] Key configured:', !!supabaseAnonKey);
-if (supabaseUrl) {
-  console.log('[Supabase] URL:', supabaseUrl.substring(0, 30) + '...');
-}
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('[Supabase] Credentials not found. Running in offline/localStorage mode.');
 }
 
+// Simple client configuration
 export const supabase = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true
-      }
-    })
+  ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
 
 export const isSupabaseConfigured = () => !!supabase;

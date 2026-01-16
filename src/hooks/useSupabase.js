@@ -219,16 +219,12 @@ export function useSupabase() {
   };
 
   const signIn = async (email, password) => {
-    console.log('[useSupabase] signIn called with email:', email);
-    
     if (!isSupabaseConfigured()) {
-      console.log('[useSupabase] Supabase not configured');
       setAuthError('Supabase not configured');
       return { error: { message: 'Supabase not configured' } };
     }
 
     if (!isOnline) {
-      console.log('[useSupabase] Offline');
       setAuthError('No hay conexión a internet');
       return { error: { message: 'No hay conexión a internet' } };
     }
@@ -237,21 +233,10 @@ export function useSupabase() {
     setLoading(true);
 
     try {
-      console.log('[useSupabase] Calling supabase.auth.signInWithPassword...');
-      
-      // Add timeout to prevent hanging
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Supabase auth timeout')), 10000)
-      );
-      
-      const authPromise = supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      
-      const { data, error } = await Promise.race([authPromise, timeoutPromise]);
-      
-      console.log('[useSupabase] signInWithPassword returned:', { data: !!data, error: error?.message });
 
       setLoading(false);
 
@@ -260,7 +245,6 @@ export function useSupabase() {
         return { data, error };
       }
 
-      // Profile will be created/checked by onAuthStateChange handler
       return { data, error: null };
     } catch (err) {
       console.error('[useSupabase] signIn error:', err);

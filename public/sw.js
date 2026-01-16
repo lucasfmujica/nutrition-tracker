@@ -1,5 +1,5 @@
 // Service Worker for LukenFit PWA
-const CACHE_NAME = 'lukenfit-v2';
+const CACHE_NAME = 'lukenfit-v3';
 
 // Assets to cache immediately on install
 const PRECACHE_ASSETS = [
