@@ -1,6 +1,6 @@
 -- =====================================================
 -- NUCLEAR FIX - Completely removes all triggers from auth.users
--- 
+--
 -- The error "Database error saving new user" happens because
 -- Supabase has a trigger on auth.users that fails.
 --
@@ -12,9 +12,9 @@ DO $$
 DECLARE
     trigger_record RECORD;
 BEGIN
-    FOR trigger_record IN 
+    FOR trigger_record IN
         SELECT tgname, tgrelid::regclass as table_name
-        FROM pg_trigger 
+        FROM pg_trigger
         WHERE tgrelid = 'auth.users'::regclass
         AND NOT tgisinternal
     LOOP

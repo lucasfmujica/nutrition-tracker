@@ -257,6 +257,10 @@ const NutritionTracker = () => {
     wakeTime: ''
   });
 
+  // Water tracking state
+  const [waterLog, setWaterLog] = useState([]);
+  const WATER_GOAL_GLASSES = 8; // 8 glasses = 2L daily goal
+
   // UI state - SEPARATE dates for food and workout tabs
   const [activeTab, setActiveTab] = useState('dashboard');
   const [newWeight, setNewWeight] = useState('');
@@ -432,17 +436,19 @@ const NutritionTracker = () => {
             if (data.workouts?.length) setWorkoutLog(data.workouts);
             if (data.stepsLog?.length) setStepsLog(data.stepsLog);
             if (data.ouraLog?.length) setOuraLog(data.ouraLog);
+            if (data.waterLog?.length) setWaterLog(data.waterLog);
           }
         } else {
           // Load from localStorage
-        const [profileData, weightData, foodData, workoutData, stepsData, targetsData, ouraData] = await Promise.all([
+        const [profileData, weightData, foodData, workoutData, stepsData, targetsData, ouraData, waterData] = await Promise.all([
           storage.get('lucas-profile-v5').catch(() => null),
           storage.get('lucas-weight-history-v5').catch(() => null),
           storage.get('lucas-food-log-v5').catch(() => null),
           storage.get('lucas-workout-log-v5').catch(() => null),
           storage.get('lucas-steps-log-v5').catch(() => null),
           storage.get('lucas-targets-v5').catch(() => null),
-          storage.get('lucas-oura-log-v5').catch(() => null)
+          storage.get('lucas-oura-log-v5').catch(() => null),
+          storage.get('lucas-water-log-v5').catch(() => null)
         ]);
 
         if (profileData?.value) setProfile(JSON.parse(profileData.value));
@@ -452,6 +458,7 @@ const NutritionTracker = () => {
         if (stepsData?.value) setStepsLog(JSON.parse(stepsData.value));
         if (targetsData?.value) setCustomTargets(JSON.parse(targetsData.value));
         if (ouraData?.value) setOuraLog(JSON.parse(ouraData.value));
+        if (waterData?.value) setWaterLog(JSON.parse(waterData.value));
         }
       } catch (err) {
         console.log('Loading fresh state:', err);
@@ -603,6 +610,64 @@ const NutritionTracker = () => {
     if (useCloud) {
       await supabase.saveSteps(entry);
     }
+  };
+
+  const saveWaterLog = async (newLog) => {
+    setWaterLog(newLog);
+    try {
+      await storage.set('lucas-water-log-v5', JSON.stringify(newLog));
+    } catch (err) {
+      console.error('Error saving water log:', err);
+    }
+  };
+
+  // Save single water entry to Supabase
+  const saveWaterEntry = async (entry) => {
+    if (useCloud) {
+      await supabase.saveWater(entry);
+    }
+  };
+
+  // Get today's water intake
+  const getTodayWater = () => {
+    const today = getArgentinaDateString();
+    return waterLog.find(e => e.date === today) || { date: today, glasses: 0, ml: 0 };
+  };
+
+  // Add a glass of water
+  const addWaterGlass = async () => {
+    const today = getArgentinaDateString();
+    const existingEntry = waterLog.find(e => e.date === today);
+    
+    const newEntry = existingEntry 
+      ? { ...existingEntry, glasses: existingEntry.glasses + 1, ml: (existingEntry.glasses + 1) * 250 }
+      : { date: today, glasses: 1, ml: 250 };
+    
+    const newLog = existingEntry
+      ? waterLog.map(e => e.date === today ? newEntry : e)
+      : [...waterLog, newEntry];
+    
+    saveWaterLog(newLog);
+    saveWaterEntry(newEntry);
+    setSaveStatus('💧 +1 vaso');
+    setTimeout(() => setSaveStatus(''), 1500);
+  };
+
+  // Remove a glass of water
+  const removeWaterGlass = async () => {
+    const today = getArgentinaDateString();
+    const existingEntry = waterLog.find(e => e.date === today);
+    
+    if (!existingEntry || existingEntry.glasses <= 0) return;
+    
+    const newEntry = { ...existingEntry, glasses: existingEntry.glasses - 1, ml: (existingEntry.glasses - 1) * 250 };
+    
+    const newLog = waterLog.map(e => e.date === today ? newEntry : e);
+    
+    saveWaterLog(newLog);
+    saveWaterEntry(newEntry);
+    setSaveStatus('💧 -1 vaso');
+    setTimeout(() => setSaveStatus(''), 1500);
   };
 
   // Update config with debounce
@@ -2209,13 +2274,60 @@ const NutritionTracker = () => {
               </div>
             )}
 
-            {/* Steps */}
-            <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-              <div className="flex justify-between items-center">
-                <h3 className="text-xs font-bold text-emerald-400">👟 PASOS</h3>
-                <span className="text-lg font-bold text-white">{getStepsForDate(dashboardDate).toLocaleString()}</span>
+            {/* Steps & Water Row */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* Steps */}
+              <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-xs font-bold text-emerald-400">👟 PASOS</h3>
+                  <span className="text-lg font-bold text-white">{getStepsForDate(dashboardDate).toLocaleString()}</span>
+                </div>
+                <MiniBar current={getStepsForDate(dashboardDate)} target={8000} color="bg-cyan-500" />
               </div>
-              <MiniBar current={getStepsForDate(dashboardDate)} target={8000} color="bg-cyan-500" />
+
+              {/* Water Tracking Widget */}
+              <div className="bg-gray-800 rounded-lg p-3 border border-cyan-500/30">
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="text-xs font-bold text-cyan-400">💧 AGUA</h3>
+                  <span className="text-lg font-bold text-white">{getTodayWater().glasses}/{WATER_GOAL_GLASSES}</span>
+                </div>
+                
+                {/* Water glasses visual */}
+                <div className="flex justify-center gap-0.5 mb-2">
+                  {Array.from({ length: WATER_GOAL_GLASSES }).map((_, i) => (
+                    <div
+                      key={i}
+                      className={`w-4 h-6 rounded-sm transition-all ${
+                        i < getTodayWater().glasses 
+                          ? 'bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.4)]' 
+                          : 'bg-gray-700'
+                      }`}
+                    />
+                  ))}
+                </div>
+                
+                {/* Add/Remove buttons */}
+                <div className="flex justify-center gap-2">
+                  <button 
+                    onClick={removeWaterGlass}
+                    disabled={getTodayWater().glasses <= 0}
+                    className="w-8 h-8 rounded-full bg-gray-700 hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-lg transition-colors"
+                  >
+                    −
+                  </button>
+                  <button 
+                    onClick={addWaterGlass}
+                    className="w-8 h-8 rounded-full bg-cyan-500 hover:bg-cyan-400 flex items-center justify-center text-lg font-bold text-gray-900 transition-colors shadow-[0_0_12px_rgba(34,211,238,0.4)]"
+                  >
+                    +
+                  </button>
+                </div>
+                
+                {/* ML counter */}
+                <div className="text-center mt-1">
+                  <span className="text-[10px] text-gray-500">{getTodayWater().ml || 0} ml / {WATER_GOAL_GLASSES * 250} ml</span>
+                </div>
+              </div>
             </div>
 
             {/* Charts */}

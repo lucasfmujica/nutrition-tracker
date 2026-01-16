@@ -267,4 +267,19 @@ export const mappers = {
     deepSleepMins: dbEntry.deep_sleep_mins,
     remSleepMins: dbEntry.rem_sleep_mins,
   }),
+
+  // Water: localStorage -> Supabase
+  waterToDb: (entry, userId) => ({
+    user_id: userId,
+    date: entry.date,
+    glasses: entry.glasses || 0,
+    ml: entry.ml || (entry.glasses || 0) * 250,
+  }),
+
+  // Water: Supabase -> localStorage format
+  waterFromDb: (dbEntry) => ({
+    date: dbEntry.date,
+    glasses: dbEntry.glasses,
+    ml: dbEntry.ml,
+  }),
 };

@@ -1,6 +1,6 @@
 -- =====================================================
 -- COMPLETE FIX FOR "Database error saving new user"
--- 
+--
 -- Run this ENTIRE script in Supabase SQL Editor
 -- Dashboard > SQL Editor > New Query > Paste > Run
 -- =====================================================
@@ -19,7 +19,7 @@ DROP POLICY IF EXISTS "Service role can insert profiles" ON profiles;
 -- Recreate with proper permissions
 -- Policy for authenticated users
 CREATE POLICY "Users can insert own profile" ON profiles
-  FOR INSERT 
+  FOR INSERT
   TO authenticated
   WITH CHECK (auth.uid() = user_id);
 
@@ -66,7 +66,7 @@ ALTER TABLE oura_log ENABLE ROW LEVEL SECURITY;
 
 -- =====================================================
 -- DONE! Now do this in Supabase Dashboard:
--- 
+--
 -- 1. Go to Authentication > Providers > Email
 -- 2. DISABLE "Confirm email" (uncheck the box)
 -- 3. Save

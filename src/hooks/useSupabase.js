@@ -618,6 +618,42 @@ export function useSupabase() {
   }, [canUseSupabase, user?.id]);
 
   // =====================================================
+  // WATER LOG OPERATIONS
+  // =====================================================
+
+  const fetchWaterLog = useCallback(async () => {
+    if (!canUseSupabase) return [];
+
+    const { data, error } = await supabase
+      .from('water_log')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('date', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching water log:', error);
+      return [];
+    }
+
+    return data.map(mappers.waterFromDb);
+  }, [canUseSupabase, user?.id]);
+
+  const saveWater = useCallback(async (entry) => {
+    return withSync(async () => {
+      const { data, error } = await supabase
+        .from('water_log')
+        .upsert(mappers.waterToDb(entry, user.id), {
+          onConflict: 'user_id,date',
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return { data: data ? mappers.waterFromDb(data) : null, error: null };
+    }, 'Error guardando agua');
+  }, [canUseSupabase, user?.id]);
+
+  // =====================================================
   // FETCH ALL DATA (for initial load)
   // =====================================================
 
@@ -627,13 +663,14 @@ export function useSupabase() {
     setSyncStatus('syncing');
 
     try {
-      const [profileData, weightHistory, foodLog, workouts, stepsLog, ouraLog] = await Promise.all([
+      const [profileData, weightHistory, foodLog, workouts, stepsLog, ouraLog, waterLog] = await Promise.all([
         fetchProfile(),
         fetchWeightHistory(),
         fetchFoodLog(),
         fetchWorkouts(),
         fetchStepsLog(),
         fetchOuraLog(),
+        fetchWaterLog(),
       ]);
 
       setSyncStatus('success');
@@ -648,6 +685,7 @@ export function useSupabase() {
         workouts,
         stepsLog,
         ouraLog,
+        waterLog,
       };
     } catch (err) {
       console.error('Error fetching all data:', err);
@@ -655,7 +693,7 @@ export function useSupabase() {
       setSyncError(err.message);
       return null;
     }
-  }, [canUseSupabase, fetchProfile, fetchWeightHistory, fetchFoodLog, fetchWorkouts, fetchStepsLog, fetchOuraLog]);
+  }, [canUseSupabase, fetchProfile, fetchWeightHistory, fetchFoodLog, fetchWorkouts, fetchStepsLog, fetchOuraLog, fetchWaterLog]);
 
   // =====================================================
   // Prompt 3: Migrate localStorage data to Supabase
@@ -868,6 +906,10 @@ export function useSupabase() {
     // Oura
     fetchOuraLog,
     saveOura,
+
+    // Water
+    fetchWaterLog,
+    saveWater,
 
     // Bulk operations
     fetchAllData,
