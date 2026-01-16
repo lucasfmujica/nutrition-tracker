@@ -1061,45 +1061,76 @@ const NutritionTracker = () => {
 
   // Add manual food entry with IA schema
   const addManualFood = async () => {
-    if (!newFood.name || !newFood.calories) return;
-    const sourceId = `manual-${newFood.date}-${Date.now()}`;
-    const entry = {
-      id: `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      date: newFood.date,
-      time: newFood.time || '',
-      meal: newFood.meal,
-      name: newFood.name,
-      description: newFood.description || '',
-      calories: parseInt(newFood.calories) || 0,
-      protein: parseInt(newFood.protein) || 0,
-      carbs: parseInt(newFood.carbs) || 0,
-      fat: parseInt(newFood.fat) || 0,
-      fiber: parseInt(newFood.fiber) || 0,
-      // IA schema - manual entries are always reviewed
-      source: 'manual',
-      reviewed: true,
-      confidence: 1,
-      sourceId
-    };
+    // Validate required fields
+    if (!newFood.name?.trim()) {
+      setSaveStatus('⚠️ Falta el nombre');
+      setTimeout(() => setSaveStatus(''), 2000);
+      return;
+    }
+    if (!newFood.calories || parseInt(newFood.calories) <= 0) {
+      setSaveStatus('⚠️ Faltan calorías');
+      setTimeout(() => setSaveStatus(''), 2000);
+      return;
+    }
 
-    // Save to Supabase first to get the real ID
-    const savedEntry = await saveFoodEntry(entry);
-    const finalEntry = savedEntry?.id ? savedEntry : entry;
+    try {
+      const sourceId = `manual-${newFood.date}-${Date.now()}`;
+      const entry = {
+        id: `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        date: newFood.date || getArgentinaDateString(),
+        time: newFood.time || '',
+        meal: newFood.meal || 'Snack',
+        name: newFood.name.trim(),
+        description: newFood.description?.trim() || '',
+        calories: parseInt(newFood.calories) || 0,
+        protein: parseInt(newFood.protein) || 0,
+        carbs: parseInt(newFood.carbs) || 0,
+        fat: parseInt(newFood.fat) || 0,
+        fiber: parseInt(newFood.fiber) || 0,
+        source: 'manual',
+        reviewed: true,
+        confidence: 1,
+        sourceId
+      };
 
-    saveFoodLog([...foodLog, finalEntry]);
-    setNewFood({
-      date: getArgentinaDateString(),
-      time: '12:00',
-      meal: 'Almuerzo',
-      name: '',
-      description: '',
-      calories: '',
-      protein: '',
-      carbs: '',
-      fat: '',
-      fiber: ''
-    });
-    setShowFoodForm(false);
+      // Close form immediately for better UX
+      setShowFoodForm(false);
+      
+      // Save to Supabase
+      let finalEntry = entry;
+      try {
+        const savedEntry = await saveFoodEntry(entry);
+        if (savedEntry?.id) {
+          finalEntry = savedEntry;
+        }
+      } catch (saveErr) {
+        console.error('Error saving to Supabase:', saveErr);
+        // Continue with local entry
+      }
+
+      // Add to local state
+      saveFoodLog([...foodLog, finalEntry]);
+      setSaveStatus('✓ Comida agregada');
+      setTimeout(() => setSaveStatus(''), 2000);
+
+      // Reset form
+      setNewFood({
+        date: getArgentinaDateString(),
+        time: '12:00',
+        meal: 'Almuerzo',
+        name: '',
+        description: '',
+        calories: '',
+        protein: '',
+        carbs: '',
+        fat: '',
+        fiber: ''
+      });
+    } catch (err) {
+      console.error('Error adding food:', err);
+      setSaveStatus('❌ Error al guardar');
+      setTimeout(() => setSaveStatus(''), 3000);
+    }
   };
 
   // =====================================================
@@ -1760,16 +1791,16 @@ const NutritionTracker = () => {
         <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
           <svg className="transform -rotate-90 drop-shadow-lg" width={size} height={size}>
             <circle cx={size / 2} cy={size / 2} r={radius} stroke="#1f2937" strokeWidth={strokeWidth} fill="none" />
-            <circle 
-              cx={size / 2} 
-              cy={size / 2} 
-              r={radius} 
-              stroke={isOver ? '#f87171' : color} 
-              strokeWidth={strokeWidth} 
-              fill="none" 
-              strokeLinecap="round" 
-              strokeDasharray={circumference} 
-              strokeDashoffset={offset} 
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
+              stroke={isOver ? '#f87171' : color}
+              strokeWidth={strokeWidth}
+              fill="none"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={offset}
               className="transition-all duration-700 ease-out"
               style={{ filter: `drop-shadow(0 0 ${size / 10}px ${isOver ? '#f87171' : color}40)` }}
             />
@@ -1795,12 +1826,12 @@ const NutritionTracker = () => {
           <span className={`text-xs lg:text-sm font-bold ${isOver ? 'text-red-400' : 'text-gray-200'}`}>{current}/{target}{unit}</span>
         </div>
         <div className="w-full bg-gray-700/50 rounded-full h-2 lg:h-2.5 overflow-hidden">
-          <div 
-            className={`h-full rounded-full transition-all duration-700 ease-out ${isOver ? 'bg-red-500' : color}`} 
-            style={{ 
+          <div
+            className={`h-full rounded-full transition-all duration-700 ease-out ${isOver ? 'bg-red-500' : color}`}
+            style={{
               width: `${percentage}%`,
               boxShadow: percentage > 0 ? `0 0 10px ${isOver ? '#f87171' : 'currentColor'}50` : 'none'
-            }} 
+            }}
           />
         </div>
       </div>
@@ -2625,8 +2656,8 @@ const NutritionTracker = () => {
             <div className="space-y-4 lg:space-y-6">
               {/* Date Navigator - Premium Design */}
               <div className="flex items-center justify-center gap-4 lg:gap-6">
-                <button 
-                  onClick={() => setDashboardDate(changeDate(dashboardDate, -1))} 
+                <button
+                  onClick={() => setDashboardDate(changeDate(dashboardDate, -1))}
                   className="group w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gray-800/80 backdrop-blur border border-gray-700 hover:border-blue-500/50 hover:bg-gray-700/80 transition-all duration-200 flex items-center justify-center"
                 >
                   <svg className="w-5 h-5 lg:w-6 lg:h-6 text-gray-400 group-hover:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -2641,8 +2672,8 @@ const NutritionTracker = () => {
                   </div>
                   <p className="text-xs lg:text-sm text-gray-500 mt-1">{dashboardDate}</p>
                 </div>
-                <button 
-                  onClick={() => setDashboardDate(changeDate(dashboardDate, 1))} 
+                <button
+                  onClick={() => setDashboardDate(changeDate(dashboardDate, 1))}
                   disabled={dashboardDate >= getArgentinaDateString()}
                   className={`group w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gray-800/80 backdrop-blur border border-gray-700 transition-all duration-200 flex items-center justify-center ${dashboardDate >= getArgentinaDateString() ? 'opacity-30 cursor-not-allowed' : 'hover:border-blue-500/50 hover:bg-gray-700/80'}`}
                 >

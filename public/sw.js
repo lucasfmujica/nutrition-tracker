@@ -1,111 +1,103 @@
 // Service Worker for LukenFit PWA
-const CACHE_NAME = 'lukenfit-v3';
+// Version bumped automatically with each deploy
+const CACHE_NAME = 'lukenfit-v4';
 
-// Assets to cache immediately on install
-const PRECACHE_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/favicon.svg'
+// Only cache essential static assets
+const STATIC_ASSETS = [
+  '/favicon.svg',
+  '/icons/icon-192x192.svg',
+  '/icons/icon-512x512.svg'
 ];
 
-// Install event - precache essential assets
+// Install - cache only static assets
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing service worker...');
+  console.log('[SW] Installing...');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Precaching app shell');
-      return cache.addAll(PRECACHE_ASSETS);
+      return cache.addAll(STATIC_ASSETS);
     })
   );
-  // Activate immediately
+  // Activate immediately without waiting
   self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// Activate - clean ALL old caches immediately
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating service worker...');
+  console.log('[SW] Activating...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames
-          .filter((name) => name !== CACHE_NAME)
-          .map((name) => {
-            console.log('[SW] Deleting old cache:', name);
-            return caches.delete(name);
-          })
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('[SW] Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
       );
     })
   );
-  // Take control of all pages immediately
+  // Take control immediately
   self.clients.claim();
 });
 
-// Fetch event - network first, fallback to cache
+// Fetch - NETWORK FIRST for everything except static assets
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
   // Skip non-GET requests
   if (event.request.method !== 'GET') return;
 
-  // Skip non-http(s) requests (chrome-extension, etc.)
+  // Skip non-http(s) requests
   if (!url.protocol.startsWith('http')) return;
 
-  // Skip Supabase API requests (let them fail naturally for offline detection)
+  // Skip Supabase requests entirely
   if (url.hostname.includes('supabase.co')) return;
 
-  // Skip cross-origin requests except for fonts
-  if (url.origin !== self.location.origin && !url.hostname.includes('fonts')) return;
+  // Skip cross-origin requests
+  if (url.origin !== self.location.origin) return;
 
-  event.respondWith(
-    // Try network first
-    fetch(event.request)
-      .then((response) => {
-        // Only cache successful same-origin responses
-        if (response.status === 200 && url.origin === self.location.origin) {
-          const responseClone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            try {
-              cache.put(event.request, responseClone);
-            } catch (e) {
-              console.log('[SW] Cache put failed:', e);
-            }
-          });
-        }
-        return response;
-      })
-      .catch(() => {
-        // Network failed, try cache
-        return caches.match(event.request).then((cachedResponse) => {
-          if (cachedResponse) {
-            return cachedResponse;
-          }
+  // For HTML/JS/CSS - ALWAYS go to network first
+  const isAppResource = url.pathname === '/' || 
+    url.pathname.endsWith('.html') || 
+    url.pathname.endsWith('.js') || 
+    url.pathname.endsWith('.css') ||
+    url.pathname.startsWith('/src/') ||
+    url.pathname.startsWith('/assets/');
 
-          // For navigation requests, return the cached index.html
+  if (isAppResource) {
+    // Network first, no caching of app code
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        // Only use cache as last resort for offline
+        return caches.match(event.request).then((cached) => {
+          if (cached) return cached;
           if (event.request.mode === 'navigate') {
-            return caches.match('/index.html');
+            return caches.match('/');
           }
-
-          // Return a simple offline response for other requests
-          return new Response('Offline', {
-            status: 503,
-            statusText: 'Service Unavailable'
-          });
+          return new Response('Offline', { status: 503 });
         });
       })
-  );
+    );
+    return;
+  }
+
+  // For static assets (icons, etc) - cache first
+  if (STATIC_ASSETS.some(asset => url.pathname.endsWith(asset.replace('/', '')))) {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        return cached || fetch(event.request);
+      })
+    );
+    return;
+  }
+
+  // Everything else - network only
+  event.respondWith(fetch(event.request));
 });
 
-// Handle messages from the app
+// Handle messages
 self.addEventListener('message', (event) => {
   if (event.data === 'skipWaiting') {
     self.skipWaiting();
-  }
-});
-
-// Background sync for offline data (future enhancement)
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-data') {
-    console.log('[SW] Background sync triggered');
   }
 });
