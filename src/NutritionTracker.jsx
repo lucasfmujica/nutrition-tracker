@@ -7,6 +7,12 @@ const NutritionTracker = () => {
   const supabase = useSupabase();
   const [showAuth, setShowAuth] = useState(true);
   const [offlineMode, setOfflineMode] = useState(false);
+  
+  // Prompt 3: Migration modal state
+  const [showMigrationModal, setShowMigrationModal] = useState(false);
+  const [migrationData, setMigrationData] = useState(null);
+  const [isMigrating, setIsMigrating] = useState(false);
+
   // Argentina timezone constant
   const ARGENTINA_TZ = 'America/Argentina/Buenos_Aires';
 
@@ -393,16 +399,23 @@ const NutritionTracker = () => {
   };
 
   // Check if using Supabase (authenticated) or localStorage (offline)
-  const useCloud = supabase.isAuthenticated && !offlineMode;
+  const useCloud = supabase.isAuthenticated && !offlineMode && supabase.isOnline;
 
   // Load data from Supabase or localStorage
   useEffect(() => {
     // Wait for auth to initialize
     if (supabase.loading) return;
-    
+
     // If authenticated, hide auth screen
     if (supabase.isAuthenticated) {
       setShowAuth(false);
+      
+      // Prompt 3: Check for localStorage data to migrate
+      const { hasData, localData } = supabase.checkLocalStorageForMigration();
+      if (hasData && supabase.isOnline) {
+        setMigrationData(localData);
+        setShowMigrationModal(true);
+      }
     }
 
     const loadData = async () => {
@@ -422,35 +435,35 @@ const NutritionTracker = () => {
           }
         } else {
           // Load from localStorage
-          const [profileData, weightData, foodData, workoutData, stepsData, targetsData, ouraData] = await Promise.all([
-            storage.get('lucas-profile-v5').catch(() => null),
-            storage.get('lucas-weight-history-v5').catch(() => null),
-            storage.get('lucas-food-log-v5').catch(() => null),
-            storage.get('lucas-workout-log-v5').catch(() => null),
-            storage.get('lucas-steps-log-v5').catch(() => null),
-            storage.get('lucas-targets-v5').catch(() => null),
-            storage.get('lucas-oura-log-v5').catch(() => null)
-          ]);
+        const [profileData, weightData, foodData, workoutData, stepsData, targetsData, ouraData] = await Promise.all([
+          storage.get('lucas-profile-v5').catch(() => null),
+          storage.get('lucas-weight-history-v5').catch(() => null),
+          storage.get('lucas-food-log-v5').catch(() => null),
+          storage.get('lucas-workout-log-v5').catch(() => null),
+          storage.get('lucas-steps-log-v5').catch(() => null),
+          storage.get('lucas-targets-v5').catch(() => null),
+          storage.get('lucas-oura-log-v5').catch(() => null)
+        ]);
 
-          if (profileData?.value) setProfile(JSON.parse(profileData.value));
-          if (weightData?.value) setWeightHistory(JSON.parse(weightData.value));
-          if (foodData?.value) setFoodLog(JSON.parse(foodData.value));
-          if (workoutData?.value) setWorkoutLog(JSON.parse(workoutData.value));
-          if (stepsData?.value) setStepsLog(JSON.parse(stepsData.value));
-          if (targetsData?.value) setCustomTargets(JSON.parse(targetsData.value));
-          if (ouraData?.value) setOuraLog(JSON.parse(ouraData.value));
+        if (profileData?.value) setProfile(JSON.parse(profileData.value));
+        if (weightData?.value) setWeightHistory(JSON.parse(weightData.value));
+        if (foodData?.value) setFoodLog(JSON.parse(foodData.value));
+        if (workoutData?.value) setWorkoutLog(JSON.parse(workoutData.value));
+        if (stepsData?.value) setStepsLog(JSON.parse(stepsData.value));
+        if (targetsData?.value) setCustomTargets(JSON.parse(targetsData.value));
+        if (ouraData?.value) setOuraLog(JSON.parse(ouraData.value));
         }
       } catch (err) {
         console.log('Loading fresh state:', err);
       }
       setIsLoading(false);
     };
-    
+
     // Only load data if not showing auth screen or in offline mode
     if (!showAuth || offlineMode) {
-      loadData();
+    loadData();
     }
-  }, [supabase.loading, supabase.isAuthenticated, useCloud, showAuth, offlineMode]);
+  }, [supabase.loading, supabase.isAuthenticated, useCloud, showAuth, offlineMode, supabase.isOnline]);
 
   // Debounced config save
   useEffect(() => {
@@ -476,12 +489,12 @@ const NutritionTracker = () => {
     try {
       // Always save to localStorage as backup
       await storage.set('lucas-profile-v5', JSON.stringify(newProfile));
-      
+
       // Save to Supabase if authenticated
       if (useCloud) {
         await supabase.saveProfile(newProfile, customTargets);
       }
-      
+
       setSaveStatus('✓');
       setTimeout(() => setSaveStatus(''), 2000);
     } catch (err) {
@@ -494,7 +507,7 @@ const NutritionTracker = () => {
     setCustomTargets(newTargets);
     try {
       await storage.set('lucas-targets-v5', JSON.stringify(newTargets));
-      
+
       if (useCloud) {
         await supabase.saveProfile(profile, newTargets);
       }
@@ -508,7 +521,7 @@ const NutritionTracker = () => {
     setWeightHistory(sorted);
     try {
       await storage.set('lucas-weight-history-v5', JSON.stringify(sorted));
-      
+
       // Update current weight to most recent
       const mostRecent = getMostRecentWeight(sorted);
       if (mostRecent) {
@@ -735,11 +748,11 @@ const NutritionTracker = () => {
       confidence: 1,
       sourceId
     };
-    
+
     // Save to Supabase first to get the real ID
     const savedEntry = await saveFoodEntry(entry);
     const finalEntry = savedEntry?.id ? savedEntry : entry;
-    
+
     saveFoodLog([...foodLog, finalEntry]);
     setNewFood({
       date: getArgentinaDateString(),
@@ -776,11 +789,11 @@ const NutritionTracker = () => {
       confidence: 1,
       sourceId
     };
-    
+
     // Save to Supabase first to get the real ID
     const savedEntry = await saveWorkoutEntry(entry);
     const finalEntry = savedEntry?.id ? savedEntry : entry;
-    
+
     saveWorkoutLog([...workoutLog, finalEntry]);
     setNewWorkout({
       date: getArgentinaDateString(),
@@ -1748,6 +1761,99 @@ const NutritionTracker = () => {
         </div>
       )}
 
+      {/* Prompt 3: Migration Modal */}
+      {showMigrationModal && migrationData && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-xl p-6 max-w-md w-full border border-emerald-500/30 shadow-2xl">
+            <div className="text-center mb-6">
+              <div className="text-4xl mb-3">☁️</div>
+              <h3 className="text-xl font-bold text-white mb-2">Datos locales encontrados</h3>
+              <p className="text-gray-400 text-sm">
+                Tienes datos guardados en este dispositivo. ¿Quieres sincronizarlos con tu cuenta?
+              </p>
+            </div>
+            
+            {/* Summary of data to migrate */}
+            <div className="bg-gray-700/50 rounded-lg p-4 mb-6 text-sm">
+              <div className="grid grid-cols-2 gap-2 text-gray-300">
+                {migrationData.weightHistory?.length > 0 && (
+                  <div>📊 {migrationData.weightHistory.length} registros de peso</div>
+                )}
+                {migrationData.foodLog?.length > 0 && (
+                  <div>🍽️ {migrationData.foodLog.length} comidas</div>
+                )}
+                {migrationData.workouts?.length > 0 && (
+                  <div>🏋️ {migrationData.workouts.length} entrenos</div>
+                )}
+                {migrationData.stepsLog?.length > 0 && (
+                  <div>👟 {migrationData.stepsLog.length} días de pasos</div>
+                )}
+                {migrationData.ouraLog?.length > 0 && (
+                  <div>💍 {migrationData.ouraLog.length} registros Oura</div>
+                )}
+                {migrationData.profile && (
+                  <div>👤 Perfil y objetivos</div>
+                )}
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <button
+                onClick={async () => {
+                  setIsMigrating(true);
+                  const result = await supabase.migrateLocalStorageToSupabase(migrationData);
+                  if (result.success) {
+                    supabase.clearMigratedLocalStorage();
+                    // Reload data from Supabase
+                    const data = await supabase.fetchAllData();
+                    if (data) {
+                      if (data.profile) setProfile(data.profile);
+                      if (data.targets) setCustomTargets(data.targets);
+                      if (data.weightHistory?.length) setWeightHistory(data.weightHistory);
+                      if (data.foodLog?.length) setFoodLog(data.foodLog);
+                      if (data.workouts?.length) setWorkoutLog(data.workouts);
+                      if (data.stepsLog?.length) setStepsLog(data.stepsLog);
+                      if (data.ouraLog?.length) setOuraLog(data.ouraLog);
+                    }
+                  }
+                  setIsMigrating(false);
+                  setShowMigrationModal(false);
+                }}
+                disabled={isMigrating}
+                className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all disabled:opacity-50"
+              >
+                {isMigrating ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Migrando datos...
+                  </span>
+                ) : (
+                  'Sí, sincronizar todo'
+                )}
+              </button>
+              
+              <button
+                onClick={() => {
+                  setShowMigrationModal(false);
+                  setMigrationData(null);
+                }}
+                disabled={isMigrating}
+                className="w-full py-3 bg-gray-700 text-gray-300 font-medium rounded-xl hover:bg-gray-600 transition-all disabled:opacity-50"
+              >
+                No, empezar de cero
+              </button>
+              
+              <p className="text-xs text-gray-500 text-center">
+                Si eliges "empezar de cero", los datos locales se mantendrán pero no se sincronizarán.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Manual Food Entry Modal */}
       {showFoodForm && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
@@ -1925,12 +2031,42 @@ const NutritionTracker = () => {
               {isTrainingDay(dashboardDate) && <span className="ml-2 text-amber-400">🏋️ Training Day</span>}
             </p>
           </div>
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center gap-2 flex-shrink-0">
             {saveStatus && <span className="text-sm text-emerald-400">{saveStatus}</span>}
-            {/* Sync status indicator */}
+            
+            {/* Prompt 3: Enhanced sync status indicator */}
             {supabase.isAuthenticated ? (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-emerald-400 hidden sm:inline">☁️ Sync</span>
+                {/* Online/Offline indicator */}
+                {!supabase.isOnline && (
+                  <span className="text-xs bg-amber-500/20 text-amber-400 px-2 py-1 rounded flex items-center gap-1">
+                    📴 Offline
+                  </span>
+                )}
+                
+                {/* Sync status */}
+                {supabase.isOnline && (
+                  <span className={`text-xs px-2 py-1 rounded flex items-center gap-1 ${
+                    supabase.syncStatus === 'syncing' ? 'bg-blue-500/20 text-blue-400' :
+                    supabase.syncStatus === 'success' ? 'bg-emerald-500/20 text-emerald-400' :
+                    supabase.syncStatus === 'error' ? 'bg-red-500/20 text-red-400' :
+                    'bg-gray-700 text-gray-400'
+                  }`}>
+                    {supabase.syncStatus === 'syncing' && (
+                      <>
+                        <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                        Sync...
+                      </>
+                    )}
+                    {supabase.syncStatus === 'success' && '✓ Sync'}
+                    {supabase.syncStatus === 'error' && '⚠️ Error'}
+                    {supabase.syncStatus === 'idle' && '☁️'}
+                  </span>
+                )}
+                
                 <button
                   onClick={async () => {
                     await supabase.signOut();

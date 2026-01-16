@@ -71,7 +71,7 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured }) {
             <h1 className="text-2xl font-bold text-white mb-2">Nutrition Tracker</h1>
             <p className="text-slate-400">Modo local activo</p>
           </div>
-          
+
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-6">
             <p className="text-amber-200 text-sm">
               ⚠️ Supabase no está configurado. Los datos se guardarán localmente en este dispositivo.
