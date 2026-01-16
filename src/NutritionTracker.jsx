@@ -99,7 +99,7 @@ const BottomNav = ({ activeTab, setActiveTab, onFabClick }) => {
             }`}
           >
             <span className="text-xl">{tab.icon}</span>
-            <span className="text-[10px] mt-0.5">{tab.label}</span>
+            <span className="text-xs mt-0.5">{tab.label}</span>
           </button>
         ))}
       </div>
@@ -1095,7 +1095,7 @@ const NutritionTracker = () => {
 
       // Close form immediately for better UX
       setShowFoodForm(false);
-      
+
       // Save to Supabase
       let finalEntry = entry;
       try {
@@ -1783,8 +1783,8 @@ const NutritionTracker = () => {
     const offset = circumference - (percentage / 100) * circumference;
     // Better font sizes for readability - scale with size
     const fontSize = size < 60 ? 'text-xs' : size < 80 ? 'text-sm' : 'text-base';
-    const subFontSize = size < 60 ? 'text-[9px]' : size < 80 ? 'text-[10px]' : 'text-xs';
-    const labelSize = size < 60 ? 'text-[10px]' : size < 80 ? 'text-xs' : 'text-sm';
+    const subFontSize = size < 60 ? 'text-xs' : size < 80 ? 'text-xs' : 'text-xs';
+    const labelSize = size < 60 ? 'text-xs' : size < 80 ? 'text-xs' : 'text-sm';
 
     return (
       <div className="flex flex-col items-center min-w-0">
@@ -1886,7 +1886,7 @@ const NutritionTracker = () => {
       <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-sm font-bold text-blue-400">📈 PESO</h3>
-          <div className="flex gap-3 text-[10px]">
+          <div className="flex gap-3 text-xs">
             <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-blue-400 inline-block"></span> Peso</span>
             <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-amber-400 inline-block"></span> Media 7d</span>
             <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-gray-500 inline-block border-dashed"></span> Objetivo</span>
@@ -1913,14 +1913,14 @@ const NutritionTracker = () => {
           </svg>
 
           {/* Y-axis labels */}
-          <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-[9px] text-gray-500 -ml-1">
+          <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-500 -ml-1">
             <span>{maxWeight.toFixed(1)}</span>
             <span>{minWeight.toFixed(1)}</span>
           </div>
         </div>
 
         {/* X-axis labels */}
-        <div className="flex justify-between mt-1 text-[9px] text-gray-500">
+        <div className="flex justify-between mt-1 text-xs text-gray-500">
           {data.length > 0 && <span>{data[0].dayLabel}</span>}
           {data.length > 1 && <span>{data[data.length - 1].dayLabel}</span>}
         </div>
@@ -1929,15 +1929,15 @@ const NutritionTracker = () => {
         <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-gray-700">
           <div className="text-center">
             <div className="text-lg font-bold text-white">{data[data.length - 1]?.weight || '-'}</div>
-            <div className="text-[9px] text-gray-400">Último</div>
+            <div className="text-xs text-gray-400">Último</div>
           </div>
           <div className="text-center">
             <div className="text-lg font-bold text-amber-400">{data[data.length - 1]?.avg7d || '-'}</div>
-            <div className="text-[9px] text-gray-400">Media 7d</div>
+            <div className="text-xs text-gray-400">Media 7d</div>
           </div>
           <div className="text-center">
             <div className="text-lg font-bold text-blue-400">{profile.targetWeight}</div>
-            <div className="text-[9px] text-gray-400">Objetivo</div>
+            <div className="text-xs text-gray-400">Objetivo</div>
           </div>
         </div>
       </div>
@@ -1958,7 +1958,7 @@ const NutritionTracker = () => {
           <h4 className="text-xs font-bold text-gray-400">{label}</h4>
           <span className={`text-lg font-bold ${getScoreColor(data.score)}`}>{data.score}/10</span>
         </div>
-        <div className="grid grid-cols-3 gap-2 text-center text-[10px]">
+        <div className="grid grid-cols-3 gap-2 text-center text-xs">
           <div>
             <div className="text-blue-400 font-bold">{data.calOkDays}/{data.daysTracked}</div>
             <div className="text-gray-500">Cal OK</div>
@@ -2175,7 +2175,7 @@ const NutritionTracker = () => {
       <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
         <div className="flex justify-between items-center mb-2">
           <span className="text-xs font-medium text-gray-300">{label}</span>
-          <span className="text-[10px] text-gray-500">Meta: {target}</span>
+          <span className="text-xs text-gray-500">Meta: {target}</span>
         </div>
         <div className="flex items-end justify-between h-16 gap-0.5">
           {data.map((d, i) => (
@@ -2183,9 +2183,9 @@ const NutritionTracker = () => {
               <div className="w-full bg-gray-700 rounded-t relative" style={{ height: '48px' }}>
                 <div className={`absolute bottom-0 w-full rounded-t transition-all ${color} ${d[dataKey] > target ? 'opacity-60' : ''}`} style={{ height: `${Math.min((d[dataKey] / maxVal) * 100, 100)}%` }} />
                 <div className="absolute w-full border-t border-dashed border-gray-500" style={{ bottom: `${(target / maxVal) * 100}%` }} />
-                {d.completed && <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 text-[8px]">✓</div>}
+                {d.completed && <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 text-xs">✓</div>}
               </div>
-              <span className="text-[9px] text-gray-500 mt-0.5">{d.day}</span>
+              <span className="text-xs text-gray-500 mt-0.5">{d.day}</span>
             </div>
           ))}
         </div>
@@ -2379,7 +2379,7 @@ const NutritionTracker = () => {
               {/* Row 1: Meal type + Time */}
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Comida</label>
+                  <label className="block text-xs text-gray-400 mb-1">Comida</label>
                   <select value={newFood.meal} onChange={(e) => setNewFood({ ...newFood, meal: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm">
                     <option>Desayuno</option>
                     <option>Almuerzo</option>
@@ -2389,42 +2389,42 @@ const NutritionTracker = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Hora</label>
+                  <label className="block text-xs text-gray-400 mb-1">Hora</label>
                   <input type="time" value={newFood.time} onChange={(e) => setNewFood({ ...newFood, time: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
                 </div>
               </div>
               {/* Row 2: Name */}
               <div>
-                <label className="block text-[10px] text-gray-400 mb-1">Nombre *</label>
+                <label className="block text-xs text-gray-400 mb-1">Nombre *</label>
                 <input type="text" value={newFood.name} onChange={(e) => setNewFood({ ...newFood, name: e.target.value })} placeholder="Pollo con arroz" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
               </div>
               {/* Row 3: Description */}
               <div>
-                <label className="block text-[10px] text-gray-400 mb-1">Descripción</label>
+                <label className="block text-xs text-gray-400 mb-1">Descripción</label>
                 <input type="text" value={newFood.description} onChange={(e) => setNewFood({ ...newFood, description: e.target.value })} placeholder="200g pechuga, 150g arroz" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
               </div>
               {/* Row 4: Macros - 3+2 grid for mobile */}
               <div className="grid grid-cols-3 gap-1.5">
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Cal *</label>
+                  <label className="block text-xs text-gray-400 mb-1">Cal *</label>
                   <input type="number" value={newFood.calories} onChange={(e) => setNewFood({ ...newFood, calories: e.target.value })} placeholder="500" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Prot</label>
+                  <label className="block text-xs text-gray-400 mb-1">Prot</label>
                   <input type="number" value={newFood.protein} onChange={(e) => setNewFood({ ...newFood, protein: e.target.value })} placeholder="40" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Carbs</label>
+                  <label className="block text-xs text-gray-400 mb-1">Carbs</label>
                   <input type="number" value={newFood.carbs} onChange={(e) => setNewFood({ ...newFood, carbs: e.target.value })} placeholder="50" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-1.5">
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Fat</label>
+                  <label className="block text-xs text-gray-400 mb-1">Fat</label>
                   <input type="number" value={newFood.fat} onChange={(e) => setNewFood({ ...newFood, fat: e.target.value })} placeholder="15" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Fibra</label>
+                  <label className="block text-xs text-gray-400 mb-1">Fibra</label>
                   <input type="number" value={newFood.fiber} onChange={(e) => setNewFood({ ...newFood, fiber: e.target.value })} placeholder="5" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
                 </div>
               </div>
@@ -2447,7 +2447,7 @@ const NutritionTracker = () => {
             <div className="space-y-2">
               {/* Row 1: Type */}
               <div>
-                <label className="block text-[10px] text-gray-400 mb-1">Tipo</label>
+                <label className="block text-xs text-gray-400 mb-1">Tipo</label>
                 <select value={newWorkout.type} onChange={(e) => setNewWorkout({ ...newWorkout, type: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm">
                   <option value="gym">Gym</option>
                   <option value="tennis">Tenis</option>
@@ -2457,27 +2457,27 @@ const NutritionTracker = () => {
               </div>
               {/* Row 2: Name */}
               <div>
-                <label className="block text-[10px] text-gray-400 mb-1">Nombre *</label>
+                <label className="block text-xs text-gray-400 mb-1">Nombre *</label>
                 <input type="text" value={newWorkout.name} onChange={(e) => setNewWorkout({ ...newWorkout, name: e.target.value })} placeholder="Push Day, Clase de Tenis" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
               </div>
               {/* Row 3: Stats */}
               <div className="grid grid-cols-3 gap-1.5">
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Min</label>
+                  <label className="block text-xs text-gray-400 mb-1">Min</label>
                   <input type="number" value={newWorkout.duration} onChange={(e) => setNewWorkout({ ...newWorkout, duration: e.target.value })} placeholder="60" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Kcal</label>
+                  <label className="block text-xs text-gray-400 mb-1">Kcal</label>
                   <input type="number" value={newWorkout.calories} onChange={(e) => setNewWorkout({ ...newWorkout, calories: e.target.value })} placeholder="300" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Vol (kg)</label>
+                  <label className="block text-xs text-gray-400 mb-1">Vol (kg)</label>
                   <input type="number" value={newWorkout.volume} onChange={(e) => setNewWorkout({ ...newWorkout, volume: e.target.value })} placeholder="2500" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
                 </div>
               </div>
               {/* Row 4: Notes */}
               <div>
-                <label className="block text-[10px] text-gray-400 mb-1">Notas</label>
+                <label className="block text-xs text-gray-400 mb-1">Notas</label>
                 <input type="text" value={newWorkout.notes} onChange={(e) => setNewWorkout({ ...newWorkout, notes: e.target.value })} placeholder="Subí peso en press banca" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
               </div>
             </div>
@@ -2557,7 +2557,7 @@ const NutritionTracker = () => {
             </svg>
             <div className="min-w-0">
               <h1 className="text-lg font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent truncate">LUKENFIT</h1>
-              <p className="text-[10px] text-gray-500 truncate">
+              <p className="text-xs text-gray-500 truncate">
                 {profile.currentWeight}kg → {profile.targetWeight}kg
                 {isTrainingDay(dashboardDate) && <span className="ml-1 text-amber-400">🏋️</span>}
               </p>
@@ -2566,7 +2566,7 @@ const NutritionTracker = () => {
           <div className="flex items-center gap-1.5 flex-shrink-0">
             {/* Save status - small badge */}
             {saveStatus && (
-              <span className="text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded animate-pulse">{saveStatus}</span>
+              <span className="text-xs text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded animate-pulse">{saveStatus}</span>
             )}
 
             {/* Sync status - compact */}
@@ -2574,12 +2574,12 @@ const NutritionTracker = () => {
               <div className="flex items-center gap-1">
                 {/* Offline indicator */}
                 {!supabase.isOnline && (
-                  <span className="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">📴</span>
+                  <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">📴</span>
                 )}
 
                 {/* Sync status - icon only on mobile */}
                 {supabase.isOnline && (
-                  <span className={`text-[10px] w-6 h-6 rounded flex items-center justify-center ${
+                  <span className={`text-xs w-6 h-6 rounded flex items-center justify-center ${
                     supabase.syncStatus === 'syncing' ? 'bg-blue-500/20 text-blue-400' :
                     supabase.syncStatus === 'success' ? 'bg-blue-500/20 text-blue-400' :
                     supabase.syncStatus === 'error' ? 'bg-red-500/20 text-red-400' :
@@ -2600,7 +2600,7 @@ const NutritionTracker = () => {
                     setShowAuth(true);
                     setOfflineMode(false);
                   }}
-                  className="text-[10px] text-gray-400 active:text-red-400 px-1.5 py-1 rounded active:bg-gray-700"
+                  className="text-xs text-gray-400 active:text-red-400 px-1.5 py-1 rounded active:bg-gray-700"
                   title="Cerrar sesión"
                 >
                   ×
@@ -2612,7 +2612,7 @@ const NutritionTracker = () => {
                   setShowAuth(true);
                   setOfflineMode(false);
                 }}
-                className="text-[10px] text-blue-400 active:text-cyan-300 px-2 py-1 rounded active:bg-gray-700"
+                className="text-xs text-blue-400 active:text-cyan-300 px-2 py-1 rounded active:bg-gray-700"
               >
                 Login
               </button>
@@ -2650,7 +2650,7 @@ const NutritionTracker = () => {
 
       {/* Main Content with Pull to Refresh */}
       <PullToRefresh onRefresh={handleRefresh} isRefreshing={isRefreshing}>
-        <main className="p-4 lg:p-6 xl:p-8 pb-safe w-full max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto">
+        <main className="p-4 lg:p-6 xl:p-8 pb-24 md:pb-28 w-full max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto">
           {/* Dashboard Tab */}
           {activeTab === 'dashboard' && (
             <div className="space-y-4 lg:space-y-6">
@@ -2734,7 +2734,7 @@ const NutritionTracker = () => {
                       ].map((item, i) => (
                         <div key={i} className="text-center p-2 lg:p-3 bg-gray-700/40 rounded-xl hover:bg-gray-700/60 transition-colors">
                           <div className="text-base lg:text-xl font-bold" style={{ color: item.val < 0 ? '#f87171' : item.color }}>{item.val}{item.suffix || ''}</div>
-                          <div className="text-[10px] lg:text-xs text-gray-400 mt-0.5">{item.label}</div>
+                          <div className="text-xs lg:text-xs text-gray-400 mt-0.5">{item.label}</div>
                         </div>
                       ))}
                     </div>
@@ -2809,7 +2809,7 @@ const NutritionTracker = () => {
                         {getFoodsForDate(dashboardDate).map(food => (
                           <div key={food.id} className="flex justify-between items-center p-2 lg:p-3 bg-gray-700/30 rounded-xl hover:bg-gray-700/50 transition-colors">
                             <div className="min-w-0 flex-1">
-                              <span className="text-[10px] lg:text-xs text-blue-400 uppercase font-medium">{food.meal}</span>
+                              <span className="text-xs lg:text-xs text-blue-400 uppercase font-medium">{food.meal}</span>
                               <p className="text-sm lg:text-base text-gray-200 truncate">{food.name}</p>
                             </div>
                             <div className="flex gap-2 text-xs lg:text-sm flex-shrink-0 ml-3">
@@ -2871,13 +2871,13 @@ const NutritionTracker = () => {
                 <div className="grid grid-cols-2 gap-3 mb-2">
                   <div className="text-center p-2 bg-gray-700/50 rounded">
                     <div className="text-lg font-bold text-white">{weightProjection.weeklyRate > 0 ? '-' : '+'}{Math.abs(weightProjection.weeklyRate)} kg/sem</div>
-                    <div className="text-[9px] text-gray-400">Ritmo actual</div>
+                    <div className="text-xs text-gray-400">Ritmo actual</div>
                   </div>
                   <div className="text-center p-2 bg-gray-700/50 rounded">
                     <div className="text-lg font-bold text-blue-400">
                       {weightProjection.weeksToGoal ? `~${weightProjection.weeksToGoal} sem` : '-'}
                     </div>
-                    <div className="text-[9px] text-gray-400">Para objetivo</div>
+                    <div className="text-xs text-gray-400">Para objetivo</div>
                   </div>
                 </div>
                 {weightProjection.goalDate && (
@@ -2891,7 +2891,7 @@ const NutritionTracker = () => {
                     💡 {weightProjection.recommendation.text}
                   </div>
                 )}
-                <p className="text-[9px] text-gray-500 mt-2 text-center">Basado en {weightProjection.dataPoints} registros ({weightProjection.daysCovered} días)</p>
+                <p className="text-xs text-gray-500 mt-2 text-center">Basado en {weightProjection.dataPoints} registros ({weightProjection.daysCovered} días)</p>
               </div>
             )}
           </div>
@@ -2912,7 +2912,7 @@ const NutritionTracker = () => {
 
             {/* Swipe hint */}
             {getFoodsForDate(selectedFoodDate).length > 0 && (
-              <p className="text-[10px] text-gray-500 text-center">← Desliza para eliminar</p>
+              <p className="text-xs text-gray-500 text-center">← Desliza para eliminar</p>
             )}
 
             {getFoodsForDate(selectedFoodDate).length === 0 ? (
@@ -2936,7 +2936,7 @@ const NutritionTracker = () => {
                               <span className="text-xs text-blue-400 uppercase font-medium">{entry.meal}</span>
                               {entry.time && <span className="text-xs text-gray-500">{entry.time}</span>}
                               {needsReview && (
-                                <span className="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">⚠️</span>
+                                <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">⚠️</span>
                               )}
                             </div>
                             <h3 className="font-medium text-base truncate">{entry.name}</h3>
@@ -2956,7 +2956,7 @@ const NutritionTracker = () => {
                           </div>
                           <button
                             onClick={() => saveAsTemplate(entry)}
-                            className="text-purple-400 active:text-purple-300 text-[10px] px-1.5 py-0.5 bg-purple-500/20 rounded"
+                            className="text-purple-400 active:text-purple-300 text-xs px-1.5 py-0.5 bg-purple-500/20 rounded"
                             title="Guardar como favorito"
                           >
                             ⭐
@@ -2976,11 +2976,11 @@ const NutritionTracker = () => {
                   const t = getTotalsForDate(selectedFoodDate);
                   return (
                     <div className="grid grid-cols-5 gap-2 text-center">
-                      <div><span className="text-base font-bold text-blue-400">{t.calories}</span><br /><span className="text-[9px] text-gray-400">kcal</span></div>
-                      <div><span className="text-base font-bold text-blue-400">{t.protein}g</span><br /><span className="text-[9px] text-gray-400">prot</span></div>
-                      <div><span className="text-base font-bold text-amber-400">{t.carbs}g</span><br /><span className="text-[9px] text-gray-400">carbs</span></div>
-                      <div><span className="text-base font-bold text-pink-400">{t.fat}g</span><br /><span className="text-[9px] text-gray-400">fat</span></div>
-                      <div><span className="text-base font-bold text-purple-400">{t.fiber}g</span><br /><span className="text-[9px] text-gray-400">fibra</span></div>
+                      <div><span className="text-base font-bold text-blue-400">{t.calories}</span><br /><span className="text-xs text-gray-400">kcal</span></div>
+                      <div><span className="text-base font-bold text-blue-400">{t.protein}g</span><br /><span className="text-xs text-gray-400">prot</span></div>
+                      <div><span className="text-base font-bold text-amber-400">{t.carbs}g</span><br /><span className="text-xs text-gray-400">carbs</span></div>
+                      <div><span className="text-base font-bold text-pink-400">{t.fat}g</span><br /><span className="text-xs text-gray-400">fat</span></div>
+                      <div><span className="text-base font-bold text-purple-400">{t.fiber}g</span><br /><span className="text-xs text-gray-400">fibra</span></div>
                     </div>
                   );
                 })()}
@@ -2996,24 +2996,24 @@ const NutritionTracker = () => {
             <div className="bg-gray-800 rounded-lg p-3 border border-blue-500/30">
               <div className="flex justify-between items-center mb-2">
                 <h2 className="text-xs font-bold text-blue-400">📊 SEMANA</h2>
-                <span className="text-[10px] text-gray-500">desde {workoutAnalysis.weekStart}</span>
+                <span className="text-xs text-gray-500">desde {workoutAnalysis.weekStart}</span>
               </div>
               <div className="grid grid-cols-3 gap-2 mb-2">
                 <div className="text-center p-2 bg-gray-700/50 rounded">
                   <div className="text-lg font-bold text-amber-400">{workoutAnalysis.gymCount}</div>
-                  <div className="text-[9px] text-gray-400">Gym</div>
+                  <div className="text-xs text-gray-400">Gym</div>
                 </div>
                 <div className="text-center p-2 bg-gray-700/50 rounded">
                   <div className="text-lg font-bold text-green-400">{workoutAnalysis.tennisCount}</div>
-                  <div className="text-[9px] text-gray-400">Tenis</div>
+                  <div className="text-xs text-gray-400">Tenis</div>
                 </div>
                 <div className="text-center p-2 bg-gray-700/50 rounded">
                   <div className="text-lg font-bold text-cyan-400">{workoutAnalysis.totalDuration}'</div>
-                  <div className="text-[9px] text-gray-400">Min</div>
+                  <div className="text-xs text-gray-400">Min</div>
                 </div>
               </div>
               <div className="space-y-0.5">
-                {workoutAnalysis.analysis.map((line, i) => <p key={i} className="text-[11px] text-gray-300">{line}</p>)}
+                {workoutAnalysis.analysis.map((line, i) => <p key={i} className="text-xs text-gray-300">{line}</p>)}
               </div>
             </div>
 
@@ -3028,7 +3028,7 @@ const NutritionTracker = () => {
 
             {/* Swipe hint */}
             {getWorkoutsForDate(selectedWorkoutDate).length > 0 && (
-              <p className="text-[10px] text-gray-500 text-center">← Desliza para eliminar</p>
+              <p className="text-xs text-gray-500 text-center">← Desliza para eliminar</p>
             )}
 
             {getWorkoutsForDate(selectedWorkoutDate).length === 0 ? (
@@ -3051,7 +3051,7 @@ const NutritionTracker = () => {
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <span className={`text-xs uppercase font-medium ${workout.type === 'gym' ? 'text-amber-400' : 'text-green-400'}`}>{workout.type}</span>
                               {needsReview && (
-                                <span className="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">⚠️</span>
+                                <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">⚠️</span>
                               )}
                             </div>
                             <h3 className="font-medium text-base truncate">{workout.name}</h3>
@@ -3088,9 +3088,9 @@ const NutritionTracker = () => {
               <h3 className="text-xs font-bold text-gray-400 mb-2">SCHEDULE</h3>
               <div className="grid grid-cols-7 gap-1 text-center">
                 {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((day, i) => (
-                  <div key={day} className={`p-1.5 rounded text-[10px] ${[0, 3, 5].includes(i) ? 'bg-amber-500/20 text-amber-400' : i === 2 ? 'bg-green-500/20 text-green-400' : 'bg-gray-700/50 text-gray-500'}`}>
+                  <div key={day} className={`p-1.5 rounded text-xs ${[0, 3, 5].includes(i) ? 'bg-amber-500/20 text-amber-400' : i === 2 ? 'bg-green-500/20 text-green-400' : 'bg-gray-700/50 text-gray-500'}`}>
                     <div className="font-bold">{day}</div>
-                    <div className="text-[8px]">{[0, 3, 5].includes(i) ? 'GYM' : i === 2 ? 'TEN' : '-'}</div>
+                    <div className="text-xs">{[0, 3, 5].includes(i) ? 'GYM' : i === 2 ? 'TEN' : '-'}</div>
                   </div>
                 ))}
               </div>
@@ -3120,15 +3120,15 @@ const NutritionTracker = () => {
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="p-2 bg-gray-700/50 rounded">
                   <div className="text-xl font-bold text-white">{profile.currentWeight}</div>
-                  <div className="text-[10px] text-gray-400">actual</div>
+                  <div className="text-xs text-gray-400">actual</div>
                 </div>
                 <div className="p-2 bg-gray-700/50 rounded">
                   <div className="text-xl font-bold text-blue-400">{profile.targetWeight}</div>
-                  <div className="text-[10px] text-gray-400">objetivo</div>
+                  <div className="text-xs text-gray-400">objetivo</div>
                 </div>
                 <div className="p-2 bg-gray-700/50 rounded">
                   <div className="text-xl font-bold text-amber-400">{(profile.currentWeight - profile.targetWeight).toFixed(1)}</div>
-                  <div className="text-[10px] text-gray-400">faltan</div>
+                  <div className="text-xs text-gray-400">faltan</div>
                 </div>
               </div>
             </div>
@@ -3178,7 +3178,7 @@ const NutritionTracker = () => {
                   </div>
                 )}
 
-                <p className="text-[10px] text-gray-500 mt-3 text-center">
+                <p className="text-xs text-gray-500 mt-3 text-center">
                   Análisis basado en {weightProjection.dataPoints} registros durante {weightProjection.daysCovered} días
                 </p>
               </div>
@@ -3261,27 +3261,27 @@ const NutritionTracker = () => {
                 {/* Scores - 2 cols on mobile, 3 on larger */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   <div>
-                    <label className="block text-[10px] text-gray-400 mb-0.5">Sleep</label>
+                    <label className="block text-xs text-gray-400 mb-0.5">Sleep</label>
                     <input type="number" value={newOuraEntry.sleepScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, sleepScore: e.target.value })} placeholder="85" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-gray-400 mb-0.5">Ready</label>
+                    <label className="block text-xs text-gray-400 mb-0.5">Ready</label>
                     <input type="number" value={newOuraEntry.readinessScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, readinessScore: e.target.value })} placeholder="80" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-gray-400 mb-0.5">Activity</label>
+                    <label className="block text-xs text-gray-400 mb-0.5">Activity</label>
                     <input type="number" value={newOuraEntry.activityScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, activityScore: e.target.value })} placeholder="75" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-gray-400 mb-0.5">HRV</label>
+                    <label className="block text-xs text-gray-400 mb-0.5">HRV</label>
                     <input type="number" value={newOuraEntry.hrv} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, hrv: e.target.value })} placeholder="45" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-gray-400 mb-0.5">RHR</label>
+                    <label className="block text-xs text-gray-400 mb-0.5">RHR</label>
                     <input type="number" value={newOuraEntry.restingHr} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, restingHr: e.target.value })} placeholder="58" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-gray-400 mb-0.5">Horas</label>
+                    <label className="block text-xs text-gray-400 mb-0.5">Horas</label>
                     <input type="number" step="0.1" value={newOuraEntry.sleepHours} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, sleepHours: e.target.value })} placeholder="7.5" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                 </div>
@@ -3289,19 +3289,19 @@ const NutritionTracker = () => {
                 {/* Sleep details - compact 2x2 grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <div>
-                    <label className="block text-[10px] text-gray-400 mb-0.5">Deep</label>
+                    <label className="block text-xs text-gray-400 mb-0.5">Deep</label>
                     <input type="number" value={newOuraEntry.deepSleepMins} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, deepSleepMins: e.target.value })} placeholder="90" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-gray-400 mb-0.5">REM</label>
+                    <label className="block text-xs text-gray-400 mb-0.5">REM</label>
                     <input type="number" value={newOuraEntry.remSleepMins} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, remSleepMins: e.target.value })} placeholder="100" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-gray-400 mb-0.5">Acostarse</label>
+                    <label className="block text-xs text-gray-400 mb-0.5">Acostarse</label>
                     <input type="time" value={newOuraEntry.bedtime} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, bedtime: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-gray-400 mb-0.5">Despertar</label>
+                    <label className="block text-xs text-gray-400 mb-0.5">Despertar</label>
                     <input type="time" value={newOuraEntry.wakeTime} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, wakeTime: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                 </div>
@@ -3325,7 +3325,7 @@ const NutritionTracker = () => {
                           {entry.activityScore && <span className="text-amber-400">🏃{entry.activityScore}</span>}
                         </div>
                       </div>
-                      <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-gray-400">
+                      <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-xs text-gray-400">
                         {entry.hrv && <span>HRV:{entry.hrv}</span>}
                         {entry.restingHr && <span>RHR:{entry.restingHr}</span>}
                         {entry.sleepHours && <span>{entry.sleepHours}h</span>}
@@ -3340,7 +3340,7 @@ const NutritionTracker = () => {
             {/* Oura Insights - Compact */}
             <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-3">
               <h3 className="text-xs font-bold text-purple-400 mb-1.5">💡 GUÍA RÁPIDA</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 text-[10px] text-gray-300">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 text-xs text-gray-300">
                 <span>😴 Sleep ≥85 = óptimo</span>
                 <span>⚡ Ready &lt;70 = descanso</span>
                 <span>❤️ HRV = recuperación</span>
@@ -3356,19 +3356,19 @@ const NutritionTracker = () => {
               <h2 className="text-sm font-bold text-blue-400 mb-3">👤 PERFIL</h2>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Peso Actual</label>
+                  <label className="block text-xs text-gray-400 mb-1">Peso Actual</label>
                   <input type="number" step="0.1" value={profile.currentWeight} onChange={(e) => updateConfig({ ...profile, currentWeight: parseFloat(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Peso Objetivo</label>
+                  <label className="block text-xs text-gray-400 mb-1">Peso Objetivo</label>
                   <input type="number" step="0.1" value={profile.targetWeight} onChange={(e) => updateConfig({ ...profile, targetWeight: parseFloat(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Altura (cm)</label>
+                  <label className="block text-xs text-gray-400 mb-1">Altura (cm)</label>
                   <input type="number" value={profile.height} onChange={(e) => updateConfig({ ...profile, height: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Edad</label>
+                  <label className="block text-xs text-gray-400 mb-1">Edad</label>
                   <input type="number" value={profile.age} onChange={(e) => updateConfig({ ...profile, age: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
                 </div>
               </div>
@@ -3378,23 +3378,23 @@ const NutritionTracker = () => {
               <h2 className="text-sm font-bold text-blue-400 mb-3">🎯 OBJETIVOS (Rest Day)</h2>
               <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Calorías</label>
+                  <label className="block text-xs text-gray-400 mb-1">Calorías</label>
                   <input type="number" value={customTargets.calories} onChange={(e) => updateConfig(profile, { ...customTargets, calories: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Prot (g)</label>
+                  <label className="block text-xs text-gray-400 mb-1">Prot (g)</label>
                   <input type="number" value={customTargets.protein} onChange={(e) => updateConfig(profile, { ...customTargets, protein: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Carbs (g)</label>
+                  <label className="block text-xs text-gray-400 mb-1">Carbs (g)</label>
                   <input type="number" value={customTargets.carbs} onChange={(e) => updateConfig(profile, { ...customTargets, carbs: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Grasas (g)</label>
+                  <label className="block text-xs text-gray-400 mb-1">Grasas (g)</label>
                   <input type="number" value={customTargets.fat} onChange={(e) => updateConfig(profile, { ...customTargets, fat: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Fibra (g)</label>
+                  <label className="block text-xs text-gray-400 mb-1">Fibra (g)</label>
                   <input type="number" value={customTargets.fiber} onChange={(e) => updateConfig(profile, { ...customTargets, fiber: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
                 </div>
               </div>
@@ -3404,19 +3404,19 @@ const NutritionTracker = () => {
               <h2 className="text-sm font-bold text-amber-400 mb-3">🏋️ TRAINING DAY</h2>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Kcal extra</label>
+                  <label className="block text-xs text-gray-400 mb-1">Kcal extra</label>
                   <input type="number" value={customTargets.trainingDayCaloriesBonus} onChange={(e) => updateConfig(profile, { ...customTargets, trainingDayCaloriesBonus: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Carbs (g)</label>
+                  <label className="block text-xs text-gray-400 mb-1">Carbs (g)</label>
                   <input type="number" value={customTargets.trainingDayCarbs} onChange={(e) => updateConfig(profile, { ...customTargets, trainingDayCarbs: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
                 </div>
               </div>
-              <p className="text-[10px] text-gray-500 mt-2">Training day: {customTargets.calories + customTargets.trainingDayCaloriesBonus} kcal, {customTargets.trainingDayCarbs}g carbs</p>
+              <p className="text-xs text-gray-500 mt-2">Training day: {customTargets.calories + customTargets.trainingDayCaloriesBonus} kcal, {customTargets.trainingDayCarbs}g carbs</p>
             </div>
 
             <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-2.5">
-              <p className="text-[10px] text-blue-400">💾 Auto-save (800ms)</p>
+              <p className="text-xs text-blue-400">💾 Auto-save (800ms)</p>
             </div>
 
             {/* Export buttons - compact grid */}
@@ -3451,23 +3451,23 @@ const NutritionTracker = () => {
               <div className="mt-3 grid grid-cols-4 gap-1 text-center">
                 <div className="p-1.5 bg-gray-700/50 rounded">
                   <div className="text-sm font-bold text-white">{weightHistory.length}</div>
-                  <div className="text-[8px] text-gray-500">Peso</div>
+                  <div className="text-xs text-gray-500">Peso</div>
                 </div>
                 <div className="p-1.5 bg-gray-700/50 rounded">
                   <div className="text-sm font-bold text-white">{foodLog.length}</div>
-                  <div className="text-[8px] text-gray-500">Comidas</div>
+                  <div className="text-xs text-gray-500">Comidas</div>
                 </div>
                 <div className="p-1.5 bg-gray-700/50 rounded">
                   <div className="text-sm font-bold text-white">{workoutLog.length}</div>
-                  <div className="text-[8px] text-gray-500">Entrenos</div>
+                  <div className="text-xs text-gray-500">Entrenos</div>
                 </div>
                 <div className="p-1.5 bg-gray-700/50 rounded">
                   <div className="text-sm font-bold text-white">{stepsLog.length}</div>
-                  <div className="text-[8px] text-gray-500">Pasos</div>
+                  <div className="text-xs text-gray-500">Pasos</div>
                 </div>
               </div>
 
-              <p className="text-[9px] text-gray-500 mt-2 text-center">⚠️ Importar reemplaza TODOS los datos</p>
+              <p className="text-xs text-gray-500 mt-2 text-center">⚠️ Importar reemplaza TODOS los datos</p>
             </div>
           </div>
         )}
@@ -3515,13 +3515,13 @@ const NutritionTracker = () => {
                         className="flex-1 text-left"
                       >
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] text-purple-400 uppercase">{template.meal}</span>
+                          <span className="text-xs text-purple-400 uppercase">{template.meal}</span>
                         </div>
                         <h4 className="font-medium text-sm text-white">{template.name}</h4>
                         {template.description && (
-                          <p className="text-[10px] text-gray-400 truncate">{template.description}</p>
+                          <p className="text-xs text-gray-400 truncate">{template.description}</p>
                         )}
-                        <div className="flex gap-2 mt-1 text-[10px]">
+                        <div className="flex gap-2 mt-1 text-xs">
                           <span className="text-blue-400">{template.calories}kcal</span>
                           <span className="text-blue-400">{template.protein}P</span>
                           <span className="text-amber-400">{template.carbs}C</span>
@@ -3540,7 +3540,7 @@ const NutritionTracker = () => {
               </div>
             )}
 
-            <p className="text-[10px] text-gray-500 mt-3 text-center">
+            <p className="text-xs text-gray-500 mt-3 text-center">
               Toca una comida para agregarla · Desliza a las comidas para guardar nuevas
             </p>
           </div>
@@ -3554,7 +3554,7 @@ const NutritionTracker = () => {
             <h3 className="text-sm font-bold text-purple-400 mb-3">⭐ Guardar como Favorito</h3>
             <div className="space-y-2">
               <div>
-                <label className="block text-[10px] text-gray-400 mb-1">Nombre</label>
+                <label className="block text-xs text-gray-400 mb-1">Nombre</label>
                 <input
                   type="text"
                   value={templateToSave.name}
@@ -3564,7 +3564,7 @@ const NutritionTracker = () => {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Tipo</label>
+                  <label className="block text-xs text-gray-400 mb-1">Tipo</label>
                   <select
                     value={templateToSave.meal}
                     onChange={(e) => setTemplateToSave({ ...templateToSave, meal: e.target.value })}
@@ -3578,7 +3578,7 @@ const NutritionTracker = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-400 mb-1">Calorías</label>
+                  <label className="block text-xs text-gray-400 mb-1">Calorías</label>
                   <input
                     type="number"
                     value={templateToSave.calories}

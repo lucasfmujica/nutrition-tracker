@@ -16,16 +16,6 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
   // Combined loading state - loading during form submission OR external loading (from logout)
   const loading = internalLoading;
 
-  // Timeout wrapper for auth operations
-  const withTimeout = (promise, timeoutMs = 15000) => {
-    return Promise.race([
-      promise,
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('timeout')), timeoutMs)
-      )
-    ]);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -44,9 +34,8 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
           setInternalLoading(false);
           return;
         }
-        const result = await withTimeout(onAuth.signUp(email, password));
+        const result = await onAuth.signUp(email, password);
         if (result?.error) {
-          // Translate common Supabase errors to Spanish
           let errorMsg = result.error.message || 'Error desconocido';
           if (errorMsg.includes('already registered')) {
             errorMsg = 'Este email ya está registrado. Intenta iniciar sesión.';
@@ -55,11 +44,11 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
           } else if (errorMsg.includes('Password')) {
             errorMsg = 'La contraseña debe tener al menos 6 caracteres.';
           } else if (errorMsg.includes('Database error')) {
-            errorMsg = 'Error de configuración del servidor. Por favor, contacta al administrador.';
+            errorMsg = 'Error de configuración del servidor.';
           }
           setError(errorMsg);
         } else if (result?.needsConfirmation) {
-          setMessage('¡Cuenta creada! Revisa tu email para confirmar y luego inicia sesión.');
+          setMessage('¡Cuenta creada! Revisa tu email para confirmar.');
           setMode('login');
           setPassword('');
           setConfirmPassword('');
@@ -67,38 +56,29 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
           setMessage('¡Cuenta creada! Redirigiendo...');
         }
       } else if (mode === 'reset') {
-        const result = await withTimeout(onAuth.resetPassword(email));
+        const result = await onAuth.resetPassword(email);
         if (result?.error) {
           setError(result.error.message || 'Error al enviar email');
         } else {
           setMessage('Email de recuperación enviado. Revisa tu bandeja.');
         }
       } else {
-        // LOGIN
-        console.log('[Auth] Attempting signIn...');
-        const result = await withTimeout(onAuth.signIn(email, password));
-        console.log('[Auth] signIn result:', result);
-
+        // LOGIN - no timeout, let Supabase handle it
+        const result = await onAuth.signIn(email, password);
         if (result?.error) {
           let errorMsg = result.error.message || 'Error desconocido';
           if (errorMsg.includes('Invalid login')) {
             errorMsg = 'Email o contraseña incorrectos.';
           } else if (errorMsg.includes('Email not confirmed')) {
-            errorMsg = 'Debes confirmar tu email antes de iniciar sesión. Revisa tu bandeja.';
+            errorMsg = 'Debes confirmar tu email. Revisa tu bandeja.';
           }
           setError(errorMsg);
         }
-        // If no error, the parent component should handle showing the main app
       }
     } catch (err) {
       console.error('[Auth] Error:', err);
-      if (err.message === 'timeout') {
-        setError('La conexión tardó demasiado. Verifica tu internet e intenta de nuevo.');
-      } else {
-        setError('Error inesperado. Intenta de nuevo.');
-      }
+      setError('Error de conexión. Intenta de nuevo.');
     } finally {
-      // ALWAYS reset loading state
       setInternalLoading(false);
     }
   };

@@ -1,98 +1,46 @@
 // Service Worker for LukenFit PWA
-// Version bumped automatically with each deploy
-const CACHE_NAME = 'lukenfit-v4';
+// Minimal caching - only icons, always network-first for code
+const CACHE_NAME = 'lukenfit-v5';
 
-// Only cache essential static assets
-const STATIC_ASSETS = [
-  '/favicon.svg',
-  '/icons/icon-192x192.svg',
-  '/icons/icon-512x512.svg'
-];
-
-// Install - cache only static assets
+// Install - skip waiting immediately
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing...');
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
-    })
-  );
-  // Activate immediately without waiting
+  console.log('[SW] Installing v5...');
   self.skipWaiting();
 });
 
-// Activate - clean ALL old caches immediately
+// Activate - delete ALL old caches
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating...');
+  console.log('[SW] Activating v5...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('[SW] Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
+          console.log('[SW] Deleting cache:', cacheName);
+          return caches.delete(cacheName);
         })
       );
     })
   );
-  // Take control immediately
   self.clients.claim();
 });
 
-// Fetch - NETWORK FIRST for everything except static assets
+// Fetch - ALWAYS network first, minimal intervention
 self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url);
-
-  // Skip non-GET requests
-  if (event.request.method !== 'GET') return;
-
-  // Skip non-http(s) requests
-  if (!url.protocol.startsWith('http')) return;
-
-  // Skip Supabase requests entirely
-  if (url.hostname.includes('supabase.co')) return;
-
-  // Skip cross-origin requests
-  if (url.origin !== self.location.origin) return;
-
-  // For HTML/JS/CSS - ALWAYS go to network first
-  const isAppResource = url.pathname === '/' || 
-    url.pathname.endsWith('.html') || 
-    url.pathname.endsWith('.js') || 
-    url.pathname.endsWith('.css') ||
-    url.pathname.startsWith('/src/') ||
-    url.pathname.startsWith('/assets/');
-
-  if (isAppResource) {
-    // Network first, no caching of app code
+  // Skip everything - let browser handle normally
+  // Only intercept for offline fallback on navigation
+  if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() => {
-        // Only use cache as last resort for offline
-        return caches.match(event.request).then((cached) => {
-          if (cached) return cached;
-          if (event.request.mode === 'navigate') {
-            return caches.match('/');
-          }
-          return new Response('Offline', { status: 503 });
-        });
+        return new Response(
+          '<!DOCTYPE html><html><head><meta charset="utf-8"><title>LukenFit - Offline</title></head>' +
+          '<body style="font-family:system-ui;display:flex;align-items:center;justify-content:center;height:100vh;background:#0f172a;color:#fff;margin:0">' +
+          '<div style="text-align:center"><h1>📱 Sin conexión</h1><p>Verifica tu internet y recarga</p></div></body></html>',
+          { headers: { 'Content-Type': 'text/html' } }
+        );
       })
     );
-    return;
   }
-
-  // For static assets (icons, etc) - cache first
-  if (STATIC_ASSETS.some(asset => url.pathname.endsWith(asset.replace('/', '')))) {
-    event.respondWith(
-      caches.match(event.request).then((cached) => {
-        return cached || fetch(event.request);
-      })
-    );
-    return;
-  }
-
-  // Everything else - network only
-  event.respondWith(fetch(event.request));
+  // For all other requests, don't intercept - let them go to network normally
 });
 
 // Handle messages
