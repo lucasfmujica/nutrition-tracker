@@ -20,7 +20,7 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
   const withTimeout = (promise, timeoutMs = 15000) => {
     return Promise.race([
       promise,
-      new Promise((_, reject) => 
+      new Promise((_, reject) =>
         setTimeout(() => reject(new Error('timeout')), timeoutMs)
       )
     ]);
@@ -78,7 +78,7 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
         console.log('[Auth] Attempting signIn...');
         const result = await withTimeout(onAuth.signIn(email, password));
         console.log('[Auth] signIn result:', result);
-        
+
         if (result?.error) {
           let errorMsg = result.error.message || 'Error desconocido';
           if (errorMsg.includes('Invalid login')) {
