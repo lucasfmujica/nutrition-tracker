@@ -1135,7 +1135,7 @@ const NutritionTracker = () => {
   const addFromTemplate = async (template) => {
     const now = new Date();
     const time = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: ARGENTINA_TZ });
-    
+
     const entry = {
       id: `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       date: selectedFoodDate,
@@ -1742,16 +1742,18 @@ const NutritionTracker = () => {
     }).format(date);
   };
 
-  // Circular progress component - responsive
+  // Circular progress component - responsive with better fonts
   const CircularProgress = ({ current, target, label, color, size = 80 }) => {
     const percentage = Math.min((current / target) * 100, 100);
     const isOver = current > target;
-    const strokeWidth = size < 60 ? 4 : 6;
+    const strokeWidth = size < 60 ? 5 : 6;
     const radius = (size - strokeWidth) / 2;
     const circumference = radius * 2 * Math.PI;
     const offset = circumference - (percentage / 100) * circumference;
-    const fontSize = size < 60 ? 'text-[11px]' : 'text-sm';
-    const subFontSize = size < 60 ? 'text-[8px]' : 'text-[9px]';
+    // Better font sizes for readability
+    const fontSize = size < 60 ? 'text-xs' : 'text-sm';
+    const subFontSize = size < 60 ? 'text-[9px]' : 'text-[10px]';
+    const labelSize = size < 60 ? 'text-[10px]' : 'text-xs';
 
     return (
       <div className="flex flex-col items-center min-w-0">
@@ -1760,12 +1762,12 @@ const NutritionTracker = () => {
             <circle cx={size / 2} cy={size / 2} r={radius} stroke="#374151" strokeWidth={strokeWidth} fill="none" />
             <circle cx={size / 2} cy={size / 2} r={radius} stroke={isOver ? '#f87171' : color} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={offset} className="transition-all duration-500" />
           </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <div className="absolute inset-0 flex flex-col items-center justify-center leading-tight">
             <span className={`${fontSize} font-bold ${isOver ? 'text-red-400' : 'text-white'}`}>{current}</span>
-            <span className={`${subFontSize} text-gray-500`}>/{target}</span>
+            <span className={`${subFontSize} text-gray-400`}>/{target}</span>
           </div>
         </div>
-        <span className="text-[9px] text-gray-400 mt-0.5 truncate max-w-full">{label}</span>
+        <span className={`${labelSize} font-medium text-gray-300 mt-0.5`}>{label}</span>
       </div>
     );
   };
@@ -2148,11 +2150,29 @@ const NutritionTracker = () => {
   // Show Auth UI if not authenticated and not in offline mode
   // Priority: AuthUI should show even during loading states after logout
   if (showAuth && !offlineMode) {
+    // Wrap signIn to update showAuth immediately on success
+    const handleSignIn = async (email, password) => {
+      const result = await supabase.signIn(email, password);
+      if (!result.error) {
+        setShowAuth(false);
+      }
+      return result;
+    };
+
+    // Wrap signUp to update showAuth on auto-confirm success
+    const handleSignUp = async (email, password) => {
+      const result = await supabase.signUp(email, password);
+      if (!result.error && !result.needsConfirmation) {
+        setShowAuth(false);
+      }
+      return result;
+    };
+
     return (
       <AuthUI
         onAuth={{
-          signIn: supabase.signIn,
-          signUp: supabase.signUp,
+          signIn: handleSignIn,
+          signUp: handleSignUp,
           resetPassword: supabase.resetPassword,
           continueOffline: () => {
             setOfflineMode(true);
@@ -2593,13 +2613,13 @@ const NutritionTracker = () => {
                   </div>
                 </div>
 
-                {/* Responsive circles - smaller on mobile */}
-                <div className="grid grid-cols-5 gap-1 sm:gap-2 mb-3">
-                  <CircularProgress current={dashboardTotals.calories} target={dashboardTargets.calories} label="Cal" color="#10b981" size={56} />
-                  <CircularProgress current={dashboardTotals.protein} target={dashboardTargets.protein} label="Prot" color="#3b82f6" size={56} />
-                  <CircularProgress current={dashboardTotals.carbs} target={dashboardTargets.carbs} label="Carb" color="#f59e0b" size={56} />
-                  <CircularProgress current={dashboardTotals.fat} target={dashboardTargets.fat} label="Gras" color="#ec4899" size={56} />
-                  <CircularProgress current={dashboardTotals.fiber} target={dashboardTargets.fiber} label="Fib" color="#8b5cf6" size={56} />
+                {/* Macro circles - balanced for mobile */}
+                <div className="flex justify-between items-start mb-3 px-1">
+                  <CircularProgress current={dashboardTotals.calories} target={dashboardTargets.calories} label="Cal" color="#10b981" size={58} />
+                  <CircularProgress current={dashboardTotals.protein} target={dashboardTargets.protein} label="Prot" color="#3b82f6" size={58} />
+                  <CircularProgress current={dashboardTotals.carbs} target={dashboardTargets.carbs} label="Carbs" color="#f59e0b" size={58} />
+                  <CircularProgress current={dashboardTotals.fat} target={dashboardTargets.fat} label="Gras" color="#ec4899" size={58} />
+                  <CircularProgress current={dashboardTotals.fiber} target={dashboardTargets.fiber} label="Fib" color="#8b5cf6" size={58} />
                 </div>
 
                 <div className="space-y-1 pt-2 border-t border-gray-700">
@@ -2832,7 +2852,7 @@ const NutritionTracker = () => {
                             <span className="text-pink-400">{entry.fat}F</span>
                             {entry.fiber > 0 && <span className="text-purple-400">{entry.fiber}Fib</span>}
                           </div>
-                          <button 
+                          <button
                             onClick={() => saveAsTemplate(entry)}
                             className="text-purple-400 active:text-purple-300 text-[10px] px-1.5 py-0.5 bg-purple-500/20 rounded"
                             title="Guardar como favorito"
@@ -3130,87 +3150,83 @@ const NutritionTracker = () => {
 
         {/* Oura Tab */}
         {activeTab === 'oura' && (
-          <div className="space-y-4">
-            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h2 className="text-sm font-bold text-purple-400 mb-3">💍 REGISTRAR DATOS OURA</h2>
-              <div className="space-y-3">
-                <input type="date" value={newOuraEntry.date} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, date: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
+          <div className="space-y-3">
+            <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
+              <h2 className="text-sm font-bold text-purple-400 mb-2">💍 REGISTRAR DATOS OURA</h2>
+              <div className="space-y-2">
+                <input type="date" value={newOuraEntry.date} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, date: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
 
-                <div className="grid grid-cols-3 gap-2">
+                {/* Scores - 2 cols on mobile, 3 on larger */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">Sleep Score</label>
-                    <input type="number" value={newOuraEntry.sleepScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, sleepScore: e.target.value })} placeholder="85" className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
+                    <label className="block text-[10px] text-gray-400 mb-0.5">Sleep</label>
+                    <input type="number" value={newOuraEntry.sleepScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, sleepScore: e.target.value })} placeholder="85" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">Readiness</label>
-                    <input type="number" value={newOuraEntry.readinessScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, readinessScore: e.target.value })} placeholder="80" className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
+                    <label className="block text-[10px] text-gray-400 mb-0.5">Ready</label>
+                    <input type="number" value={newOuraEntry.readinessScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, readinessScore: e.target.value })} placeholder="80" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">Activity</label>
-                    <input type="number" value={newOuraEntry.activityScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, activityScore: e.target.value })} placeholder="75" className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
+                    <label className="block text-[10px] text-gray-400 mb-0.5">Activity</label>
+                    <input type="number" value={newOuraEntry.activityScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, activityScore: e.target.value })} placeholder="75" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] text-gray-400 mb-0.5">HRV</label>
+                    <input type="number" value={newOuraEntry.hrv} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, hrv: e.target.value })} placeholder="45" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] text-gray-400 mb-0.5">RHR</label>
+                    <input type="number" value={newOuraEntry.restingHr} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, restingHr: e.target.value })} placeholder="58" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] text-gray-400 mb-0.5">Horas</label>
+                    <input type="number" step="0.1" value={newOuraEntry.sleepHours} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, sleepHours: e.target.value })} placeholder="7.5" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                {/* Sleep details - compact 2x2 grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">HRV (ms)</label>
-                    <input type="number" value={newOuraEntry.hrv} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, hrv: e.target.value })} placeholder="45" className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
+                    <label className="block text-[10px] text-gray-400 mb-0.5">Deep</label>
+                    <input type="number" value={newOuraEntry.deepSleepMins} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, deepSleepMins: e.target.value })} placeholder="90" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">Resting HR</label>
-                    <input type="number" value={newOuraEntry.restingHr} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, restingHr: e.target.value })} placeholder="58" className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2">
-                  <div>
-                    <label className="block text-xs text-gray-400 mb-1">Horas sueño</label>
-                    <input type="number" step="0.1" value={newOuraEntry.sleepHours} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, sleepHours: e.target.value })} placeholder="7.5" className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
+                    <label className="block text-[10px] text-gray-400 mb-0.5">REM</label>
+                    <input type="number" value={newOuraEntry.remSleepMins} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, remSleepMins: e.target.value })} placeholder="100" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">Deep (min)</label>
-                    <input type="number" value={newOuraEntry.deepSleepMins} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, deepSleepMins: e.target.value })} placeholder="90" className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
+                    <label className="block text-[10px] text-gray-400 mb-0.5">Acostarse</label>
+                    <input type="time" value={newOuraEntry.bedtime} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, bedtime: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">REM (min)</label>
-                    <input type="number" value={newOuraEntry.remSleepMins} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, remSleepMins: e.target.value })} placeholder="100" className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
+                    <label className="block text-[10px] text-gray-400 mb-0.5">Despertar</label>
+                    <input type="time" value={newOuraEntry.wakeTime} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, wakeTime: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-xs text-gray-400 mb-1">Hora acostarse</label>
-                    <input type="time" value={newOuraEntry.bedtime} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, bedtime: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-gray-400 mb-1">Hora despertar</label>
-                    <input type="time" value={newOuraEntry.wakeTime} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, wakeTime: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
-                  </div>
-                </div>
-
-                <button onClick={addOuraEntry} className="w-full bg-purple-600 hover:bg-purple-500 py-3 rounded font-bold">Guardar</button>
+                <button onClick={addOuraEntry} className="w-full bg-purple-600 hover:bg-purple-500 py-2.5 rounded font-bold text-sm">Guardar</button>
               </div>
             </div>
 
-            {/* Oura History */}
+            {/* Oura History - Compact */}
             {ouraLog.length > 0 && (
-              <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                <h2 className="text-sm font-bold text-purple-400 mb-3">📊 HISTORIAL</h2>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
+              <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
+                <h2 className="text-sm font-bold text-purple-400 mb-2">📊 HISTORIAL</h2>
+                <div className="space-y-2 max-h-72 overflow-y-auto">
                   {ouraLog.slice(0, 14).map((entry, idx) => (
-                    <div key={idx} className="bg-gray-700/50 rounded p-3">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-gray-300 font-medium">{entry.date}</span>
-                        <div className="flex gap-2">
-                          {entry.sleepScore && <span className="text-purple-400 text-sm">😴 {entry.sleepScore}</span>}
-                          {entry.readinessScore && <span className="text-emerald-400 text-sm">⚡ {entry.readinessScore}</span>}
-                          {entry.activityScore && <span className="text-amber-400 text-sm">🏃 {entry.activityScore}</span>}
+                    <div key={idx} className="bg-gray-700/50 rounded p-2">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-gray-300 text-sm font-medium">{entry.date}</span>
+                        <div className="flex gap-1.5 text-xs">
+                          {entry.sleepScore && <span className="text-purple-400">😴{entry.sleepScore}</span>}
+                          {entry.readinessScore && <span className="text-emerald-400">⚡{entry.readinessScore}</span>}
+                          {entry.activityScore && <span className="text-amber-400">🏃{entry.activityScore}</span>}
                         </div>
                       </div>
-                      <div className="grid grid-cols-4 gap-2 text-xs text-gray-400">
-                        {entry.hrv && <span>HRV: {entry.hrv}ms</span>}
-                        {entry.restingHr && <span>RHR: {entry.restingHr}bpm</span>}
-                        {entry.sleepHours && <span>Sueño: {entry.sleepHours}h</span>}
+                      <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-gray-400">
+                        {entry.hrv && <span>HRV:{entry.hrv}</span>}
+                        {entry.restingHr && <span>RHR:{entry.restingHr}</span>}
+                        {entry.sleepHours && <span>{entry.sleepHours}h</span>}
                         {entry.bedtime && entry.wakeTime && <span>{entry.bedtime}→{entry.wakeTime}</span>}
                       </div>
                     </div>
@@ -3219,16 +3235,14 @@ const NutritionTracker = () => {
               </div>
             )}
 
-            {/* Oura Insights */}
-            <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
-              <h3 className="text-sm font-bold text-purple-400 mb-2">💡 DATOS ÚTILES PARA TU CONTEXTO</h3>
-              <ul className="text-sm text-gray-300 space-y-1">
-                <li>• <strong>Sleep Score:</strong> Meta ≥85 para recovery óptimo</li>
-                <li>• <strong>Readiness:</strong> &lt;70 = día de descanso activo</li>
-                <li>• <strong>HRV:</strong> Tracking de recuperación y estrés</li>
-                <li>• <strong>Bedtime/Wake:</strong> Para registro de nutricionista</li>
-                <li>• <strong>Deep + REM:</strong> Calidad de sueño real</li>
-              </ul>
+            {/* Oura Insights - Compact */}
+            <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-3">
+              <h3 className="text-xs font-bold text-purple-400 mb-1.5">💡 GUÍA RÁPIDA</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 text-[10px] text-gray-300">
+                <span>😴 Sleep ≥85 = óptimo</span>
+                <span>⚡ Ready &lt;70 = descanso</span>
+                <span>❤️ HRV = recuperación</span>
+              </div>
             </div>
           </div>
         )}
@@ -3383,18 +3397,18 @@ const NutritionTracker = () => {
               <h3 className="text-base font-bold text-purple-400">⭐ Favoritos</h3>
               <button onClick={() => setShowTemplatesModal(false)} className="text-gray-400 text-xl">×</button>
             </div>
-            
+
             {mealTemplates.length === 0 ? (
               <p className="text-gray-400 text-sm text-center py-4">No hay plantillas guardadas. Agregá comidas y guardalas como favoritos.</p>
             ) : (
               <div className="space-y-2 max-h-80 overflow-y-auto">
                 {mealTemplates.map(template => (
-                  <div 
-                    key={template.id} 
+                  <div
+                    key={template.id}
                     className="bg-gray-700 rounded-lg p-3 border border-gray-600 active:bg-gray-600"
                   >
                     <div className="flex justify-between items-start">
-                      <button 
+                      <button
                         onClick={() => addFromTemplate(template)}
                         className="flex-1 text-left"
                       >
@@ -3412,7 +3426,7 @@ const NutritionTracker = () => {
                           <span className="text-pink-400">{template.fat}F</span>
                         </div>
                       </button>
-                      <button 
+                      <button
                         onClick={() => deleteTemplate(template.id)}
                         className="text-gray-500 active:text-red-400 p-1"
                       >
@@ -3423,7 +3437,7 @@ const NutritionTracker = () => {
                 ))}
               </div>
             )}
-            
+
             <p className="text-[10px] text-gray-500 mt-3 text-center">
               Toca una comida para agregarla · Desliza a las comidas para guardar nuevas
             </p>
@@ -3439,9 +3453,9 @@ const NutritionTracker = () => {
             <div className="space-y-2">
               <div>
                 <label className="block text-[10px] text-gray-400 mb-1">Nombre</label>
-                <input 
-                  type="text" 
-                  value={templateToSave.name} 
+                <input
+                  type="text"
+                  value={templateToSave.name}
                   onChange={(e) => setTemplateToSave({ ...templateToSave, name: e.target.value })}
                   className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm"
                 />
@@ -3449,8 +3463,8 @@ const NutritionTracker = () => {
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-[10px] text-gray-400 mb-1">Tipo</label>
-                  <select 
-                    value={templateToSave.meal} 
+                  <select
+                    value={templateToSave.meal}
                     onChange={(e) => setTemplateToSave({ ...templateToSave, meal: e.target.value })}
                     className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm"
                   >
@@ -3463,9 +3477,9 @@ const NutritionTracker = () => {
                 </div>
                 <div>
                   <label className="block text-[10px] text-gray-400 mb-1">Calorías</label>
-                  <input 
-                    type="number" 
-                    value={templateToSave.calories} 
+                  <input
+                    type="number"
+                    value={templateToSave.calories}
                     onChange={(e) => setTemplateToSave({ ...templateToSave, calories: parseInt(e.target.value) || 0 })}
                     className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm"
                   />
