@@ -1746,28 +1746,40 @@ const NutritionTracker = () => {
   const CircularProgress = ({ current, target, label, color, size = 80 }) => {
     const percentage = Math.min((current / target) * 100, 100);
     const isOver = current > target;
-    const strokeWidth = size < 60 ? 5 : 6;
+    const strokeWidth = size < 60 ? 5 : size < 80 ? 6 : 8;
     const radius = (size - strokeWidth) / 2;
     const circumference = radius * 2 * Math.PI;
     const offset = circumference - (percentage / 100) * circumference;
-    // Better font sizes for readability
-    const fontSize = size < 60 ? 'text-xs' : 'text-sm';
-    const subFontSize = size < 60 ? 'text-[9px]' : 'text-[10px]';
-    const labelSize = size < 60 ? 'text-[10px]' : 'text-xs';
+    // Better font sizes for readability - scale with size
+    const fontSize = size < 60 ? 'text-xs' : size < 80 ? 'text-sm' : 'text-base';
+    const subFontSize = size < 60 ? 'text-[9px]' : size < 80 ? 'text-[10px]' : 'text-xs';
+    const labelSize = size < 60 ? 'text-[10px]' : size < 80 ? 'text-xs' : 'text-sm';
 
     return (
       <div className="flex flex-col items-center min-w-0">
         <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
-          <svg className="transform -rotate-90" width={size} height={size}>
-            <circle cx={size / 2} cy={size / 2} r={radius} stroke="#374151" strokeWidth={strokeWidth} fill="none" />
-            <circle cx={size / 2} cy={size / 2} r={radius} stroke={isOver ? '#f87171' : color} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={offset} className="transition-all duration-500" />
+          <svg className="transform -rotate-90 drop-shadow-lg" width={size} height={size}>
+            <circle cx={size / 2} cy={size / 2} r={radius} stroke="#1f2937" strokeWidth={strokeWidth} fill="none" />
+            <circle 
+              cx={size / 2} 
+              cy={size / 2} 
+              r={radius} 
+              stroke={isOver ? '#f87171' : color} 
+              strokeWidth={strokeWidth} 
+              fill="none" 
+              strokeLinecap="round" 
+              strokeDasharray={circumference} 
+              strokeDashoffset={offset} 
+              className="transition-all duration-700 ease-out"
+              style={{ filter: `drop-shadow(0 0 ${size / 10}px ${isOver ? '#f87171' : color}40)` }}
+            />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center leading-tight">
             <span className={`${fontSize} font-bold ${isOver ? 'text-red-400' : 'text-white'}`}>{current}</span>
             <span className={`${subFontSize} text-gray-400`}>/{target}</span>
           </div>
         </div>
-        <span className={`${labelSize} font-medium text-gray-300 mt-0.5`}>{label}</span>
+        <span className={`${labelSize} font-medium text-gray-300 mt-1`}>{label}</span>
       </div>
     );
   };
@@ -1777,13 +1789,19 @@ const NutritionTracker = () => {
     const percentage = Math.min((current / target) * 100, 100);
     const isOver = current > target;
     return (
-      <div className="mb-2">
-        <div className="flex justify-between mb-1">
-          <span className="text-xs font-medium text-gray-300">{label}</span>
-          <span className={`text-xs font-bold ${isOver ? 'text-red-400' : 'text-gray-200'}`}>{current}/{target}{unit}</span>
+      <div className="mb-2 lg:mb-3">
+        <div className="flex justify-between mb-1 lg:mb-1.5">
+          <span className="text-xs lg:text-sm font-medium text-gray-300">{label}</span>
+          <span className={`text-xs lg:text-sm font-bold ${isOver ? 'text-red-400' : 'text-gray-200'}`}>{current}/{target}{unit}</span>
         </div>
-        <div className="w-full bg-gray-700 rounded-full h-2">
-          <div className={`h-2 rounded-full transition-all duration-500 ${isOver ? 'bg-red-500' : color}`} style={{ width: `${percentage}%` }} />
+        <div className="w-full bg-gray-700/50 rounded-full h-2 lg:h-2.5 overflow-hidden">
+          <div 
+            className={`h-full rounded-full transition-all duration-700 ease-out ${isOver ? 'bg-red-500' : color}`} 
+            style={{ 
+              width: `${percentage}%`,
+              boxShadow: percentage > 0 ? `0 0 10px ${isOver ? '#f87171' : 'currentColor'}50` : 'none'
+            }} 
+          />
         </div>
       </div>
     );
@@ -2491,8 +2509,8 @@ const NutritionTracker = () => {
       )}
 
       {/* Header - Premium LukenFit branding */}
-      <header className="bg-gradient-to-r from-slate-900 via-gray-800 to-slate-900 border-b border-blue-500/20 px-3 py-2 sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
+      <header className="bg-gradient-to-r from-slate-900 via-gray-800 to-slate-900 border-b border-blue-500/20 px-4 lg:px-8 py-3 lg:py-4 sticky top-0 z-30">
+        <div className="max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto flex items-center justify-between gap-3 lg:gap-4">
           <div className="min-w-0 flex-1 flex items-center gap-2">
             {/* Mini logo */}
             <svg viewBox="0 0 32 32" className="w-7 h-7 flex-shrink-0">
@@ -2601,151 +2619,177 @@ const NutritionTracker = () => {
 
       {/* Main Content with Pull to Refresh */}
       <PullToRefresh onRefresh={handleRefresh} isRefreshing={isRefreshing}>
-        <main className="p-4 pb-safe w-full max-w-6xl mx-auto">
+        <main className="p-4 lg:p-6 xl:p-8 pb-safe w-full max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto">
           {/* Dashboard Tab */}
           {activeTab === 'dashboard' && (
-            <div className="space-y-3">
-              {/* Date Navigator - Compact */}
-              <div className="flex items-center justify-between bg-gray-800 rounded-lg p-2.5 border border-gray-700">
-                <button onClick={() => setDashboardDate(changeDate(dashboardDate, -1))} className="text-gray-400 active:text-white w-10 h-10 flex items-center justify-center text-xl rounded-lg hover:bg-gray-700">‹</button>
-                <div className="text-center min-w-0 flex-1">
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-base font-bold text-blue-400 truncate">{formatDateDisplay(dashboardDate)}</span>
-                    {isDayCompleted(dashboardDate) && <span className="text-blue-400 text-sm flex-shrink-0">✓</span>}
-                    {isTrainingDay(dashboardDate) && <span className="text-amber-400 text-sm flex-shrink-0">🏋️</span>}
-                  </div>
-                </div>
-                <button onClick={() => setDashboardDate(changeDate(dashboardDate, 1))} className={`w-10 h-10 flex items-center justify-center text-xl rounded-lg hover:bg-gray-700 ${dashboardDate >= getArgentinaDateString() ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 active:text-white'}`} disabled={dashboardDate >= getArgentinaDateString()}>›</button>
-              </div>
-
-              {/* Quick Access Row - Pasos & Oura */}
-              <div className="grid grid-cols-2 gap-2">
-                <button onClick={() => setActiveTab('pasos')} className="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-2.5 flex items-center justify-center gap-2">
-                  <span className="text-lg">👟</span>
-                  <span className="text-cyan-400 text-sm font-medium">{getStepsForDate(dashboardDate).toLocaleString()} pasos</span>
+            <div className="space-y-4 lg:space-y-6">
+              {/* Date Navigator - Premium Design */}
+              <div className="flex items-center justify-center gap-4 lg:gap-6">
+                <button 
+                  onClick={() => setDashboardDate(changeDate(dashboardDate, -1))} 
+                  className="group w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gray-800/80 backdrop-blur border border-gray-700 hover:border-blue-500/50 hover:bg-gray-700/80 transition-all duration-200 flex items-center justify-center"
+                >
+                  <svg className="w-5 h-5 lg:w-6 lg:h-6 text-gray-400 group-hover:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
                 </button>
-                <button onClick={() => setActiveTab('oura')} className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-2.5 flex items-center justify-center gap-2">
-                  <span className="text-lg">💍</span>
-                  <span className="text-purple-400 text-sm font-medium">Oura</span>
+                <div className="text-center px-6 py-3 lg:px-10 lg:py-4 bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-gray-700/50">
+                  <div className="flex items-center justify-center gap-3">
+                    <span className="text-lg lg:text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">{formatDateDisplay(dashboardDate)}</span>
+                    {isDayCompleted(dashboardDate) && <span className="text-blue-400 text-base lg:text-lg">✓</span>}
+                    {isTrainingDay(dashboardDate) && <span className="text-amber-400 text-base lg:text-lg">🏋️</span>}
+                  </div>
+                  <p className="text-xs lg:text-sm text-gray-500 mt-1">{dashboardDate}</p>
+                </div>
+                <button 
+                  onClick={() => setDashboardDate(changeDate(dashboardDate, 1))} 
+                  disabled={dashboardDate >= getArgentinaDateString()}
+                  className={`group w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gray-800/80 backdrop-blur border border-gray-700 transition-all duration-200 flex items-center justify-center ${dashboardDate >= getArgentinaDateString() ? 'opacity-30 cursor-not-allowed' : 'hover:border-blue-500/50 hover:bg-gray-700/80'}`}
+                >
+                  <svg className={`w-5 h-5 lg:w-6 lg:h-6 transition-colors ${dashboardDate >= getArgentinaDateString() ? 'text-gray-600' : 'text-gray-400 group-hover:text-blue-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </button>
               </div>
 
-              {/* Macro Circles + Progress Bars */}
-              <div className="bg-gray-800 rounded-lg p-3 border border-gray-700 overflow-hidden">
-                <div className="flex justify-between items-center mb-3">
-                  <h2 className="text-sm font-bold text-blue-400">📊 MACROS</h2>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-xs text-gray-500 hidden sm:inline">{getFoodsForDate(dashboardDate).length} comidas</span>
-                    <button onClick={copyMealsFromYesterday} className="text-[10px] bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded whitespace-nowrap">📋 Copiar</button>
-                  </div>
-                </div>
-
-                {/* Macro circles - balanced for mobile */}
-                <div className="flex justify-between items-start mb-3 px-1">
-                  <CircularProgress current={dashboardTotals.calories} target={dashboardTargets.calories} label="Cal" color="#3B82F6" size={58} />
-                  <CircularProgress current={dashboardTotals.protein} target={dashboardTargets.protein} label="Prot" color="#3b82f6" size={58} />
-                  <CircularProgress current={dashboardTotals.carbs} target={dashboardTargets.carbs} label="Carbs" color="#f59e0b" size={58} />
-                  <CircularProgress current={dashboardTotals.fat} target={dashboardTargets.fat} label="Gras" color="#ec4899" size={58} />
-                  <CircularProgress current={dashboardTotals.fiber} target={dashboardTargets.fiber} label="Fib" color="#8b5cf6" size={58} />
-                </div>
-
-                <div className="space-y-1 pt-2 border-t border-gray-700">
-                  <ProgressBar current={dashboardTotals.calories} target={dashboardTargets.calories} label="Calorías" unit="kcal" color="bg-blue-500" />
-                  <ProgressBar current={dashboardTotals.protein} target={dashboardTargets.protein} label="Proteína" unit="g" color="bg-blue-500" />
-                  <ProgressBar current={dashboardTotals.carbs} target={dashboardTargets.carbs} label="Carbos" unit="g" color="bg-amber-500" />
-                  <ProgressBar current={dashboardTotals.fat} target={dashboardTargets.fat} label="Grasas" unit="g" color="bg-pink-500" />
-                  <ProgressBar current={dashboardTotals.fiber} target={dashboardTargets.fiber} label="Fibra" unit="g" color="bg-purple-500" />
-                </div>
-              </div>
-
-              {/* Remaining */}
-              <div className="bg-gray-800 rounded-lg p-2.5 border border-gray-700 overflow-hidden">
-                <h3 className="text-xs font-bold text-blue-400 mb-2">🎯 TE QUEDAN</h3>
-                <div className="grid grid-cols-5 gap-1">
-                  {[
-                    { val: dashboardTargets.calories - dashboardTotals.calories, label: 'kcal', color: '#3B82F6' },
-                    { val: dashboardTargets.protein - dashboardTotals.protein, label: 'prot', color: '#3b82f6', suffix: 'g' },
-                    { val: dashboardTargets.carbs - dashboardTotals.carbs, label: 'carbs', color: '#f59e0b', suffix: 'g' },
-                    { val: dashboardTargets.fat - dashboardTotals.fat, label: 'fat', color: '#ec4899', suffix: 'g' },
-                    { val: dashboardTargets.fiber - dashboardTotals.fiber, label: 'fibra', color: '#8b5cf6', suffix: 'g' }
-                  ].map((item, i) => (
-                    <div key={i} className="text-center p-1.5 bg-gray-700/50 rounded min-w-0">
-                      <div className="text-sm font-bold truncate" style={{ color: item.val < 0 ? '#f87171' : item.color }}>{item.val}{item.suffix || ''}</div>
-                      <div className="text-[8px] text-gray-500 truncate">{item.label}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-            {/* Meals Summary */}
-            {getFoodsForDate(dashboardDate).length > 0 && (
-              <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-                <h3 className="text-xs font-bold text-blue-400 mb-2">🍽️ COMIDAS</h3>
-                <div className="space-y-1">
-                  {getFoodsForDate(dashboardDate).map(food => (
-                    <div key={food.id} className="flex justify-between items-center text-xs py-1 border-b border-gray-700/50 last:border-0">
-                      <div className="min-w-0 flex-1">
-                        <span className="text-[9px] text-blue-400 uppercase mr-1">{food.meal}</span>
-                        <span className="text-gray-200">{food.name}</span>
-                      </div>
-                      <div className="flex gap-1.5 text-[10px] flex-shrink-0 ml-2">
-                        <span className="text-blue-400">{food.calories}</span>
-                        <span className="text-blue-400">{food.protein}p</span>
+              {/* Desktop: 2-column layout / Mobile: single column */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                {/* Left Column - Macros */}
+                <div className="space-y-4 lg:space-y-5">
+                  {/* Macro Card - Glass Effect */}
+                  <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm rounded-2xl p-4 lg:p-6 border border-gray-700/50 shadow-xl shadow-black/20 hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-300">
+                    <div className="flex justify-between items-center mb-4 lg:mb-6">
+                      <h2 className="text-base lg:text-lg font-bold text-white flex items-center gap-2">
+                        <span className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-lg lg:text-xl">📊</span>
+                        Macros
+                      </h2>
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm text-gray-400">{getFoodsForDate(dashboardDate).length} comidas</span>
+                        <button onClick={copyMealsFromYesterday} className="text-xs bg-gray-700/80 hover:bg-gray-600 px-3 py-1.5 rounded-lg transition-colors">📋 Copiar ayer</button>
                       </div>
                     </div>
-                  ))}
+
+                    {/* Macro circles - Larger on desktop */}
+                    <div className="flex justify-around items-start mb-5 lg:mb-6">
+                      <CircularProgress current={dashboardTotals.calories} target={dashboardTargets.calories} label="Calorías" color="#3B82F6" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
+                      <CircularProgress current={dashboardTotals.protein} target={dashboardTargets.protein} label="Proteína" color="#06B6D4" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
+                      <CircularProgress current={dashboardTotals.carbs} target={dashboardTargets.carbs} label="Carbos" color="#f59e0b" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
+                      <CircularProgress current={dashboardTotals.fat} target={dashboardTargets.fat} label="Grasas" color="#ec4899" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
+                      <CircularProgress current={dashboardTotals.fiber} target={dashboardTargets.fiber} label="Fibra" color="#8b5cf6" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
+                    </div>
+
+                    <div className="space-y-2 pt-4 border-t border-gray-700/50">
+                      <ProgressBar current={dashboardTotals.calories} target={dashboardTargets.calories} label="Calorías" unit="kcal" color="bg-blue-500" />
+                      <ProgressBar current={dashboardTotals.protein} target={dashboardTargets.protein} label="Proteína" unit="g" color="bg-cyan-500" />
+                      <ProgressBar current={dashboardTotals.carbs} target={dashboardTargets.carbs} label="Carbos" unit="g" color="bg-amber-500" />
+                      <ProgressBar current={dashboardTotals.fat} target={dashboardTargets.fat} label="Grasas" unit="g" color="bg-pink-500" />
+                      <ProgressBar current={dashboardTotals.fiber} target={dashboardTargets.fiber} label="Fibra" unit="g" color="bg-purple-500" />
+                    </div>
+                  </div>
+
+                  {/* Remaining Card */}
+                  <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm rounded-2xl p-4 lg:p-5 border border-gray-700/50 shadow-xl shadow-black/20">
+                    <h3 className="text-sm lg:text-base font-bold text-white mb-3 flex items-center gap-2">
+                      <span className="w-7 h-7 lg:w-8 lg:h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">🎯</span>
+                      Te quedan
+                    </h3>
+                    <div className="grid grid-cols-5 gap-2 lg:gap-3">
+                      {[
+                        { val: dashboardTargets.calories - dashboardTotals.calories, label: 'kcal', color: '#3B82F6' },
+                        { val: dashboardTargets.protein - dashboardTotals.protein, label: 'prot', color: '#06B6D4', suffix: 'g' },
+                        { val: dashboardTargets.carbs - dashboardTotals.carbs, label: 'carbs', color: '#f59e0b', suffix: 'g' },
+                        { val: dashboardTargets.fat - dashboardTotals.fat, label: 'fat', color: '#ec4899', suffix: 'g' },
+                        { val: dashboardTargets.fiber - dashboardTotals.fiber, label: 'fibra', color: '#8b5cf6', suffix: 'g' }
+                      ].map((item, i) => (
+                        <div key={i} className="text-center p-2 lg:p-3 bg-gray-700/40 rounded-xl hover:bg-gray-700/60 transition-colors">
+                          <div className="text-base lg:text-xl font-bold" style={{ color: item.val < 0 ? '#f87171' : item.color }}>{item.val}{item.suffix || ''}</div>
+                          <div className="text-[10px] lg:text-xs text-gray-400 mt-0.5">{item.label}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )}
 
-              {/* Steps & Water Row */}
-              <div className="grid grid-cols-2 gap-2">
-                {/* Steps */}
-                <div className="bg-gray-800 rounded-lg p-2.5 border border-gray-700">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-[10px] font-bold text-cyan-400">👟</h3>
-                    <span className="text-sm font-bold text-white">{getStepsForDate(dashboardDate).toLocaleString()}</span>
-                  </div>
-                  <MiniBar current={getStepsForDate(dashboardDate)} target={8000} color="bg-cyan-500" />
-                </div>
-
-                {/* Water Tracking Widget - Compact */}
-                <div className="bg-gray-800 rounded-lg p-2.5 border border-cyan-500/30">
-                  <div className="flex justify-between items-center mb-1.5">
-                    <h3 className="text-[10px] font-bold text-cyan-400">💧</h3>
-                    <span className="text-sm font-bold text-white">{getTodayWater().glasses}/{WATER_GOAL_GLASSES}</span>
-                  </div>
-
-                  {/* Water glasses visual - smaller */}
-                  <div className="flex justify-center gap-0.5 mb-1.5">
-                    {Array.from({ length: WATER_GOAL_GLASSES }).map((_, i) => (
-                      <div
-                        key={i}
-                        className={`w-3 h-4 rounded-sm transition-all ${
-                          i < getTodayWater().glasses
-                            ? 'bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.4)]'
-                            : 'bg-gray-700'
-                        }`}
-                      />
-                    ))}
-                  </div>
-
-                  {/* Add/Remove buttons - smaller */}
-                  <div className="flex justify-center gap-1.5">
-                    <button
-                      onClick={removeWaterGlass}
-                      disabled={getTodayWater().glasses <= 0}
-                      className="w-7 h-7 rounded-full bg-gray-700 hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-sm transition-colors"
-                    >
-                      −
+                {/* Right Column - Activity & Meals */}
+                <div className="space-y-4 lg:space-y-5">
+                  {/* Quick Access - Pasos & Oura */}
+                  <div className="grid grid-cols-2 gap-3 lg:gap-4">
+                    <button onClick={() => setActiveTab('pasos')} className="group bg-gradient-to-br from-cyan-500/10 to-cyan-600/5 backdrop-blur-sm border border-cyan-500/30 rounded-2xl p-4 lg:p-5 flex flex-col items-center gap-2 hover:border-cyan-400/50 hover:shadow-lg hover:shadow-cyan-500/10 transition-all duration-300">
+                      <span className="text-2xl lg:text-3xl group-hover:scale-110 transition-transform">👟</span>
+                      <span className="text-cyan-400 text-lg lg:text-xl font-bold">{getStepsForDate(dashboardDate).toLocaleString()}</span>
+                      <span className="text-cyan-400/60 text-xs lg:text-sm">pasos hoy</span>
                     </button>
-                    <button
-                      onClick={addWaterGlass}
-                      className="w-7 h-7 rounded-full bg-cyan-500 hover:bg-cyan-400 flex items-center justify-center text-sm font-bold text-gray-900 transition-colors shadow-[0_0_10px_rgba(34,211,238,0.4)]"
-                    >
-                      +
+                    <button onClick={() => setActiveTab('oura')} className="group bg-gradient-to-br from-purple-500/10 to-purple-600/5 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-4 lg:p-5 flex flex-col items-center gap-2 hover:border-purple-400/50 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
+                      <span className="text-2xl lg:text-3xl group-hover:scale-110 transition-transform">💍</span>
+                      <span className="text-purple-400 text-lg lg:text-xl font-bold">Oura</span>
+                      <span className="text-purple-400/60 text-xs lg:text-sm">biométricos</span>
                     </button>
                   </div>
+
+                  {/* Water Card */}
+                  <div className="bg-gradient-to-br from-cyan-500/10 to-gray-900/90 backdrop-blur-sm rounded-2xl p-4 lg:p-5 border border-cyan-500/30 shadow-xl shadow-black/20">
+                    <div className="flex justify-between items-center mb-3">
+                      <h3 className="text-sm lg:text-base font-bold text-white flex items-center gap-2">
+                        <span className="w-7 h-7 lg:w-8 lg:h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">💧</span>
+                        Agua
+                      </h3>
+                      <span className="text-lg lg:text-xl font-bold text-cyan-400">{getTodayWater().glasses}/{WATER_GOAL_GLASSES}</span>
+                    </div>
+
+                    <div className="flex justify-center gap-1 lg:gap-1.5 mb-4">
+                      {Array.from({ length: WATER_GOAL_GLASSES }).map((_, i) => (
+                        <div
+                          key={i}
+                          className={`w-5 h-7 lg:w-6 lg:h-8 rounded transition-all duration-300 ${
+                            i < getTodayWater().glasses
+                              ? 'bg-gradient-to-t from-cyan-500 to-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.5)]'
+                              : 'bg-gray-700/60'
+                          }`}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="flex justify-center gap-3">
+                      <button
+                        onClick={removeWaterGlass}
+                        disabled={getTodayWater().glasses <= 0}
+                        className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gray-700/80 hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-xl transition-all"
+                      >
+                        −
+                      </button>
+                      <button
+                        onClick={addWaterGlass}
+                        className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 flex items-center justify-center text-xl font-bold text-white transition-all shadow-lg shadow-cyan-500/30"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <p className="text-center text-xs lg:text-sm text-gray-400 mt-2">{getTodayWater().ml || 0} ml / {WATER_GOAL_GLASSES * 250} ml</p>
+                  </div>
+
+                  {/* Meals Summary */}
+                  {getFoodsForDate(dashboardDate).length > 0 && (
+                    <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm rounded-2xl p-4 lg:p-5 border border-gray-700/50 shadow-xl shadow-black/20">
+                      <h3 className="text-sm lg:text-base font-bold text-white mb-3 flex items-center gap-2">
+                        <span className="w-7 h-7 lg:w-8 lg:h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">🍽️</span>
+                        Comidas de hoy
+                      </h3>
+                      <div className="space-y-2 max-h-48 lg:max-h-64 overflow-y-auto">
+                        {getFoodsForDate(dashboardDate).map(food => (
+                          <div key={food.id} className="flex justify-between items-center p-2 lg:p-3 bg-gray-700/30 rounded-xl hover:bg-gray-700/50 transition-colors">
+                            <div className="min-w-0 flex-1">
+                              <span className="text-[10px] lg:text-xs text-blue-400 uppercase font-medium">{food.meal}</span>
+                              <p className="text-sm lg:text-base text-gray-200 truncate">{food.name}</p>
+                            </div>
+                            <div className="flex gap-2 text-xs lg:text-sm flex-shrink-0 ml-3">
+                              <span className="text-blue-400 font-medium">{food.calories} kcal</span>
+                              <span className="text-cyan-400">{food.protein}p</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
