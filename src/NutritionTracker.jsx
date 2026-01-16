@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { useSupabase } from './hooks/useSupabase';
 import { AuthUI } from './components/AuthUI';
+import { OnboardingWizard } from './components/OnboardingWizard';
 
 // =====================================================
 // SWIPEABLE ITEM COMPONENT - Swipe left to delete
@@ -230,6 +231,7 @@ const NutritionTracker = () => {
   // Supabase auth and data hook
   const supabase = useSupabase();
   const [showAuth, setShowAuth] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [offlineMode, setOfflineMode] = useState(false);
 
   // Prompt 3: Migration modal state
@@ -651,9 +653,18 @@ const NutritionTracker = () => {
     // Wait for auth to initialize
     if (supabase.loading) return;
 
-    // If authenticated, hide auth screen
+    // If authenticated, hide auth screen and check onboarding
     if (supabase.isAuthenticated) {
       setShowAuth(false);
+
+      // Check if user needs onboarding (new user)
+      const checkOnboarding = async () => {
+        const needsOnboarding = await supabase.checkNeedsOnboarding();
+        if (needsOnboarding) {
+          setShowOnboarding(true);
+        }
+      };
+      checkOnboarding();
 
       // Prompt 3: Check for localStorage data to migrate
       const { hasData, localData } = supabase.checkLocalStorageForMigration();
@@ -2244,6 +2255,37 @@ const NutritionTracker = () => {
         error={supabase.authError}
         isSupabaseConfigured={supabase.isSupabaseConfigured}
         loading={supabase.loading}
+      />
+    );
+  }
+
+  // Show Onboarding Wizard for new users
+  if (showOnboarding && !offlineMode) {
+    const handleOnboardingComplete = async (profileData) => {
+      try {
+        await supabase.saveOnboardingProfile(profileData);
+        setShowOnboarding(false);
+        
+        // Update local config with the new targets
+        if (profileData.calorie_goal) {
+          setConfig(prev => ({
+            ...prev,
+            targetCalories: profileData.calorie_goal,
+            targetProtein: profileData.protein_goal || 150,
+            targetCarbs: profileData.carbs_goal || 220,
+            targetFat: profileData.fat_goal || 73,
+          }));
+        }
+      } catch (err) {
+        console.error('Error completing onboarding:', err);
+        setShowOnboarding(false);
+      }
+    };
+
+    return (
+      <OnboardingWizard
+        onComplete={handleOnboardingComplete}
+        userEmail={supabase.user?.email}
       />
     );
   }

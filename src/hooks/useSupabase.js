@@ -371,6 +371,65 @@ export function useSupabase() {
     }, 'Error guardando perfil');
   }, [canUseSupabase, user?.id]);
 
+  // Save onboarding profile data
+  const saveOnboardingProfile = useCallback(async (onboardingData) => {
+    if (!canUseSupabase) return { error: 'Not authenticated or offline' };
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          user_id: user.id,
+          current_weight: onboardingData.current_weight,
+          target_weight: onboardingData.goal_weight,
+          height: onboardingData.height,
+          age: onboardingData.age,
+          gender: onboardingData.gender,
+          activity_level: onboardingData.activity_level,
+          goal: onboardingData.primary_goal === 'lose' ? 'cut' : onboardingData.primary_goal === 'gain' ? 'bulk' : 'maintain',
+          target_calories: onboardingData.calorie_goal,
+          target_protein: onboardingData.protein_goal,
+          target_carbs: onboardingData.carbs_goal,
+          target_fat: onboardingData.fat_goal,
+          training_days_per_week: onboardingData.training_days_per_week,
+          onboarding_completed: true,
+          updated_at: new Date().toISOString(),
+        }, {
+          onConflict: 'user_id',
+        });
+
+      if (error) throw error;
+      return { error: null };
+    } catch (err) {
+      console.error('Error saving onboarding profile:', err);
+      return { error: err.message };
+    }
+  }, [canUseSupabase, user?.id]);
+
+  // Check if user needs onboarding
+  const checkNeedsOnboarding = useCallback(async () => {
+    if (!canUseSupabase) return false;
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('onboarding_completed')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error checking onboarding status:', error);
+        return false; // Default to not needing onboarding on error
+      }
+
+      // If no profile or onboarding not completed
+      return !data?.onboarding_completed;
+    } catch (err) {
+      console.error('Error checking onboarding:', err);
+      return false;
+    }
+  }, [canUseSupabase, user?.id]);
+
   // =====================================================
   // WEIGHT HISTORY OPERATIONS
   // =====================================================
@@ -883,6 +942,8 @@ export function useSupabase() {
     // Profile
     fetchProfile,
     saveProfile,
+    saveOnboardingProfile,
+    checkNeedsOnboarding,
 
     // Weight
     fetchWeightHistory,
