@@ -24,13 +24,13 @@ ALTER TABLE water_log ENABLE ROW LEVEL SECURITY;
 -- Create policies
 CREATE POLICY "Users can view own water log" ON water_log
   FOR SELECT USING (auth.uid() = user_id);
-  
+
 CREATE POLICY "Users can insert own water" ON water_log
   FOR INSERT WITH CHECK (auth.uid() = user_id);
-  
+
 CREATE POLICY "Users can update own water" ON water_log
   FOR UPDATE USING (auth.uid() = user_id);
-  
+
 CREATE POLICY "Users can delete own water" ON water_log
   FOR DELETE USING (auth.uid() = user_id);
 

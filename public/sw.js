@@ -56,14 +56,14 @@ self.addEventListener('fetch', (event) => {
       .then((response) => {
         // Clone the response before caching
         const responseClone = response.clone();
-        
+
         // Cache successful responses
         if (response.status === 200) {
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseClone);
           });
         }
-        
+
         return response;
       })
       .catch(() => {
@@ -72,12 +72,12 @@ self.addEventListener('fetch', (event) => {
           if (cachedResponse) {
             return cachedResponse;
           }
-          
+
           // For navigation requests, return the cached index.html
           if (event.request.mode === 'navigate') {
             return caches.match('/index.html');
           }
-          
+
           // Return a simple offline response for other requests
           return new Response('Offline', {
             status: 503,
