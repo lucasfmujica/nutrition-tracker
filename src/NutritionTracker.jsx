@@ -1074,24 +1074,24 @@ const NutritionTracker = () => {
     }
 
     try {
-      const sourceId = `manual-${newFood.date}-${Date.now()}`;
-      const entry = {
-        id: `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    const sourceId = `manual-${newFood.date}-${Date.now()}`;
+    const entry = {
+      id: `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         date: newFood.date || getArgentinaDateString(),
-        time: newFood.time || '',
+      time: newFood.time || '',
         meal: newFood.meal || 'Snack',
         name: newFood.name.trim(),
         description: newFood.description?.trim() || '',
-        calories: parseInt(newFood.calories) || 0,
-        protein: parseInt(newFood.protein) || 0,
-        carbs: parseInt(newFood.carbs) || 0,
-        fat: parseInt(newFood.fat) || 0,
-        fiber: parseInt(newFood.fiber) || 0,
-        source: 'manual',
-        reviewed: true,
-        confidence: 1,
-        sourceId
-      };
+      calories: parseInt(newFood.calories) || 0,
+      protein: parseInt(newFood.protein) || 0,
+      carbs: parseInt(newFood.carbs) || 0,
+      fat: parseInt(newFood.fat) || 0,
+      fiber: parseInt(newFood.fiber) || 0,
+      source: 'manual',
+      reviewed: true,
+      confidence: 1,
+      sourceId
+    };
 
       // Close form immediately for better UX
       setShowFoodForm(false);
@@ -1114,18 +1114,18 @@ const NutritionTracker = () => {
       setTimeout(() => setSaveStatus(''), 2000);
 
       // Reset form
-      setNewFood({
-        date: getArgentinaDateString(),
-        time: '12:00',
-        meal: 'Almuerzo',
-        name: '',
-        description: '',
-        calories: '',
-        protein: '',
-        carbs: '',
-        fat: '',
-        fiber: ''
-      });
+    setNewFood({
+      date: getArgentinaDateString(),
+      time: '12:00',
+      meal: 'Almuerzo',
+      name: '',
+      description: '',
+      calories: '',
+      protein: '',
+      carbs: '',
+      fat: '',
+      fiber: ''
+    });
     } catch (err) {
       console.error('Error adding food:', err);
       setSaveStatus('❌ Error al guardar');
@@ -2255,10 +2255,10 @@ const NutritionTracker = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 text-base md:text-lg">
-      {/* Google Font */}
+      {/* Google Font - Plus Jakarta Sans for modern fitness aesthetic */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-        * { font-family: 'DM Sans', system-ui, -apple-system, sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        * { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
         .scrollbar-hide::-webkit-scrollbar{display:none}
         .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
       `}</style>
@@ -2372,15 +2372,19 @@ const NutritionTracker = () => {
 
       {/* Manual Food Entry Modal */}
       {showFoodForm && (
-        <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-2 pt-10 overflow-y-auto">
-          <div className="bg-gray-800 rounded-lg p-4 w-full max-w-sm border border-gray-700">
-            <h3 className="text-base font-bold text-blue-400 mb-3">➕ Nueva Comida</h3>
-            <div className="space-y-2">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setShowFoodForm(false)}>
+          <div className="bg-gray-800 rounded-xl p-5 lg:p-6 w-full max-w-sm lg:max-w-md border border-gray-700 shadow-2xl" onClick={e => e.stopPropagation()}>
+            {/* Header with close button */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg lg:text-xl font-bold text-blue-400">🍽️ Nueva Comida</h3>
+              <button onClick={() => setShowFoodForm(false)} className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white text-xl lg:text-2xl transition-colors">×</button>
+            </div>
+            <div className="space-y-3">
               {/* Row 1: Meal type + Time */}
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Comida</label>
-                  <select value={newFood.meal} onChange={(e) => setNewFood({ ...newFood, meal: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm">
+                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Comida</label>
+                  <select value={newFood.meal} onChange={(e) => setNewFood({ ...newFood, meal: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm lg:text-base">
                     <option>Desayuno</option>
                     <option>Almuerzo</option>
                     <option>Merienda</option>
@@ -2389,51 +2393,50 @@ const NutritionTracker = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Hora</label>
-                  <input type="time" value={newFood.time} onChange={(e) => setNewFood({ ...newFood, time: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
-                </div>
+                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Hora</label>
+                  <input type="time" value={newFood.time} onChange={(e) => setNewFood({ ...newFood, time: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm lg:text-base" />
+              </div>
               </div>
               {/* Row 2: Name */}
               <div>
-                <label className="block text-xs text-gray-400 mb-1">Nombre *</label>
-                <input type="text" value={newFood.name} onChange={(e) => setNewFood({ ...newFood, name: e.target.value })} placeholder="Pollo con arroz" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                <label className="block text-sm lg:text-base text-gray-400 mb-1">Nombre *</label>
+                <input type="text" value={newFood.name} onChange={(e) => setNewFood({ ...newFood, name: e.target.value })} placeholder="Pollo con arroz" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm lg:text-base" />
               </div>
               {/* Row 3: Description */}
               <div>
-                <label className="block text-xs text-gray-400 mb-1">Descripción</label>
-                <input type="text" value={newFood.description} onChange={(e) => setNewFood({ ...newFood, description: e.target.value })} placeholder="200g pechuga, 150g arroz" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                <label className="block text-sm lg:text-base text-gray-400 mb-1">Descripción</label>
+                <input type="text" value={newFood.description} onChange={(e) => setNewFood({ ...newFood, description: e.target.value })} placeholder="200g pechuga, 150g arroz" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm lg:text-base" />
               </div>
-              {/* Row 4: Macros - 3+2 grid for mobile */}
-              <div className="grid grid-cols-3 gap-1.5">
+              {/* Row 4: Macros - 3+2 grid */}
+              <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Cal *</label>
-                  <input type="number" value={newFood.calories} onChange={(e) => setNewFood({ ...newFood, calories: e.target.value })} placeholder="500" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
+                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Cal *</label>
+                  <input type="number" value={newFood.calories} onChange={(e) => setNewFood({ ...newFood, calories: e.target.value })} placeholder="500" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Prot</label>
-                  <input type="number" value={newFood.protein} onChange={(e) => setNewFood({ ...newFood, protein: e.target.value })} placeholder="40" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
+                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Prot</label>
+                  <input type="number" value={newFood.protein} onChange={(e) => setNewFood({ ...newFood, protein: e.target.value })} placeholder="40" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Carbs</label>
-                  <input type="number" value={newFood.carbs} onChange={(e) => setNewFood({ ...newFood, carbs: e.target.value })} placeholder="50" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-1.5">
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">Fat</label>
-                  <input type="number" value={newFood.fat} onChange={(e) => setNewFood({ ...newFood, fat: e.target.value })} placeholder="15" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">Fibra</label>
-                  <input type="number" value={newFood.fiber} onChange={(e) => setNewFood({ ...newFood, fiber: e.target.value })} placeholder="5" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
+                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Carbs</label>
+                  <input type="number" value={newFood.carbs} onChange={(e) => setNewFood({ ...newFood, carbs: e.target.value })} placeholder="50" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
                 </div>
               </div>
-              {/* Hidden date - use selected date */}
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Fat</label>
+                  <input type="number" value={newFood.fat} onChange={(e) => setNewFood({ ...newFood, fat: e.target.value })} placeholder="15" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
+                </div>
+                <div>
+                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Fibra</label>
+                  <input type="number" value={newFood.fiber} onChange={(e) => setNewFood({ ...newFood, fiber: e.target.value })} placeholder="5" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
+                </div>
+              </div>
               <input type="hidden" value={newFood.date} />
             </div>
-            <div className="flex gap-2 mt-4">
-              <button onClick={() => setShowFoodForm(false)} className="flex-1 bg-gray-700 active:bg-gray-600 py-2.5 rounded text-sm">Cancelar</button>
-              <button onClick={addManualFood} className="flex-1 bg-blue-600 active:bg-blue-500 py-2.5 rounded text-sm font-bold">Guardar</button>
+            <div className="flex gap-3 mt-5">
+              <button onClick={() => setShowFoodForm(false)} className="flex-1 bg-gray-700 hover:bg-gray-600 py-3 rounded-lg text-sm lg:text-base font-medium transition-colors">Cancelar</button>
+              <button onClick={addManualFood} className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 py-3 rounded-lg text-sm lg:text-base font-bold transition-all">Guardar</button>
             </div>
           </div>
         </div>
@@ -2441,49 +2444,53 @@ const NutritionTracker = () => {
 
       {/* Manual Workout Entry Modal */}
       {showWorkoutForm && (
-        <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-2 pt-10 overflow-y-auto">
-          <div className="bg-gray-800 rounded-lg p-4 w-full max-w-sm border border-gray-700">
-            <h3 className="text-base font-bold text-amber-400 mb-3">🏋️ Nuevo Entreno</h3>
-            <div className="space-y-2">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setShowWorkoutForm(false)}>
+          <div className="bg-gray-800 rounded-xl p-5 lg:p-6 w-full max-w-sm lg:max-w-md border border-gray-700 shadow-2xl" onClick={e => e.stopPropagation()}>
+            {/* Header with close button */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg lg:text-xl font-bold text-amber-400">🏋️ Nuevo Entreno</h3>
+              <button onClick={() => setShowWorkoutForm(false)} className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white text-xl lg:text-2xl transition-colors">×</button>
+            </div>
+            <div className="space-y-3">
               {/* Row 1: Type */}
-              <div>
-                <label className="block text-xs text-gray-400 mb-1">Tipo</label>
-                <select value={newWorkout.type} onChange={(e) => setNewWorkout({ ...newWorkout, type: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm">
-                  <option value="gym">Gym</option>
-                  <option value="tennis">Tenis</option>
-                  <option value="cardio">Cardio</option>
-                  <option value="other">Otro</option>
-                </select>
-              </div>
+                <div>
+                <label className="block text-sm lg:text-base text-gray-400 mb-1">Tipo</label>
+                <select value={newWorkout.type} onChange={(e) => setNewWorkout({ ...newWorkout, type: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm lg:text-base">
+                    <option value="gym">Gym</option>
+                    <option value="tennis">Tenis</option>
+                    <option value="cardio">Cardio</option>
+                    <option value="other">Otro</option>
+                  </select>
+                </div>
               {/* Row 2: Name */}
               <div>
-                <label className="block text-xs text-gray-400 mb-1">Nombre *</label>
-                <input type="text" value={newWorkout.name} onChange={(e) => setNewWorkout({ ...newWorkout, name: e.target.value })} placeholder="Push Day, Clase de Tenis" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                <label className="block text-sm lg:text-base text-gray-400 mb-1">Nombre *</label>
+                <input type="text" value={newWorkout.name} onChange={(e) => setNewWorkout({ ...newWorkout, name: e.target.value })} placeholder="Push Day, Clase de Tenis" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm lg:text-base" />
               </div>
               {/* Row 3: Stats */}
-              <div className="grid grid-cols-3 gap-1.5">
+              <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Min</label>
-                  <input type="number" value={newWorkout.duration} onChange={(e) => setNewWorkout({ ...newWorkout, duration: e.target.value })} placeholder="60" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
+                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Min</label>
+                  <input type="number" value={newWorkout.duration} onChange={(e) => setNewWorkout({ ...newWorkout, duration: e.target.value })} placeholder="60" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Kcal</label>
-                  <input type="number" value={newWorkout.calories} onChange={(e) => setNewWorkout({ ...newWorkout, calories: e.target.value })} placeholder="300" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
+                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Kcal</label>
+                  <input type="number" value={newWorkout.calories} onChange={(e) => setNewWorkout({ ...newWorkout, calories: e.target.value })} placeholder="300" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Vol (kg)</label>
-                  <input type="number" value={newWorkout.volume} onChange={(e) => setNewWorkout({ ...newWorkout, volume: e.target.value })} placeholder="2500" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
+                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Vol (kg)</label>
+                  <input type="number" value={newWorkout.volume} onChange={(e) => setNewWorkout({ ...newWorkout, volume: e.target.value })} placeholder="2500" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
                 </div>
               </div>
               {/* Row 4: Notes */}
               <div>
-                <label className="block text-xs text-gray-400 mb-1">Notas</label>
-                <input type="text" value={newWorkout.notes} onChange={(e) => setNewWorkout({ ...newWorkout, notes: e.target.value })} placeholder="Subí peso en press banca" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                <label className="block text-sm lg:text-base text-gray-400 mb-1">Notas</label>
+                <input type="text" value={newWorkout.notes} onChange={(e) => setNewWorkout({ ...newWorkout, notes: e.target.value })} placeholder="Subí peso en press banca" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm lg:text-base" />
               </div>
             </div>
-            <div className="flex gap-2 mt-4">
-              <button onClick={() => setShowWorkoutForm(false)} className="flex-1 bg-gray-700 active:bg-gray-600 py-2.5 rounded text-sm">Cancelar</button>
-              <button onClick={addManualWorkout} className="flex-1 bg-amber-600 active:bg-amber-500 py-2.5 rounded text-sm font-bold">Guardar</button>
+            <div className="flex gap-3 mt-5">
+              <button onClick={() => setShowWorkoutForm(false)} className="flex-1 bg-gray-700 hover:bg-gray-600 py-3 rounded-lg text-sm lg:text-base font-medium transition-colors">Cancelar</button>
+              <button onClick={addManualWorkout} className="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 py-3 rounded-lg text-sm lg:text-base font-bold transition-all">Guardar</button>
             </div>
           </div>
         </div>
@@ -2555,13 +2562,13 @@ const NutritionTracker = () => {
               <path d="M10 7 L10 21 L19 21 L19 18 L13 18 L13 7 Z" fill="url(#headerGrad)" />
               <path d="M18 7 L14 15 L17 15 L15 25 L23 14 L19 14 L22 7 Z" fill="url(#headerGrad)" opacity="0.9" />
             </svg>
-            <div className="min-w-0">
+          <div className="min-w-0">
               <h1 className="text-lg font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent truncate">LUKENFIT</h1>
               <p className="text-xs text-gray-500 truncate">
-                {profile.currentWeight}kg → {profile.targetWeight}kg
+              {profile.currentWeight}kg → {profile.targetWeight}kg
                 {isTrainingDay(dashboardDate) && <span className="ml-1 text-amber-400">🏋️</span>}
-              </p>
-            </div>
+            </p>
+          </div>
           </div>
           <div className="flex items-center gap-1.5 flex-shrink-0">
             {/* Save status - small badge */}
@@ -2636,34 +2643,34 @@ const NutritionTracker = () => {
                 }`}
               >
                 {tab === 'oura' ? '💍 Oura' : '👟 Pasos'}
-              </button>
-            ))}
+            </button>
+          ))}
             <button
               onClick={() => setActiveTab('dashboard')}
               className="ml-auto text-gray-500 text-xs px-2"
             >
               ← Volver
             </button>
-          </div>
-        </nav>
+        </div>
+      </nav>
       )}
 
       {/* Main Content with Pull to Refresh */}
       <PullToRefresh onRefresh={handleRefresh} isRefreshing={isRefreshing}>
         <main className="p-4 lg:p-6 xl:p-8 pb-24 md:pb-28 w-full max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto">
-          {/* Dashboard Tab */}
-          {activeTab === 'dashboard' && (
+        {/* Dashboard Tab */}
+        {activeTab === 'dashboard' && (
             <div className="space-y-4 lg:space-y-6">
               {/* Date Navigator - Premium Design */}
               <div className="flex items-center justify-center gap-4 lg:gap-6">
-                <button
+              <button
                   onClick={() => setDashboardDate(changeDate(dashboardDate, -1))}
                   className="group w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gray-800/80 backdrop-blur border border-gray-700 hover:border-blue-500/50 hover:bg-gray-700/80 transition-all duration-200 flex items-center justify-center"
-                >
+              >
                   <svg className="w-5 h-5 lg:w-6 lg:h-6 text-gray-400 group-hover:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
-                </button>
+              </button>
                 <div className="text-center px-6 py-3 lg:px-10 lg:py-4 bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-gray-700/50">
                   <div className="flex items-center justify-center gap-3">
                     <span className="text-lg lg:text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">{formatDateDisplay(dashboardDate)}</span>
@@ -2672,16 +2679,16 @@ const NutritionTracker = () => {
                   </div>
                   <p className="text-xs lg:text-sm text-gray-500 mt-1">{dashboardDate}</p>
                 </div>
-                <button
+              <button
                   onClick={() => setDashboardDate(changeDate(dashboardDate, 1))}
                   disabled={dashboardDate >= getArgentinaDateString()}
                   className={`group w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gray-800/80 backdrop-blur border border-gray-700 transition-all duration-200 flex items-center justify-center ${dashboardDate >= getArgentinaDateString() ? 'opacity-30 cursor-not-allowed' : 'hover:border-blue-500/50 hover:bg-gray-700/80'}`}
-                >
+              >
                   <svg className={`w-5 h-5 lg:w-6 lg:h-6 transition-colors ${dashboardDate >= getArgentinaDateString() ? 'text-gray-600' : 'text-gray-400 group-hover:text-blue-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
-                </button>
-              </div>
+              </button>
+            </div>
 
               {/* Desktop: 2-column layout / Mobile: single column */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
@@ -2697,8 +2704,8 @@ const NutritionTracker = () => {
                       <div className="flex items-center gap-3">
                         <span className="text-sm text-gray-400">{getFoodsForDate(dashboardDate).length} comidas</span>
                         <button onClick={copyMealsFromYesterday} className="text-xs bg-gray-700/80 hover:bg-gray-600 px-3 py-1.5 rounded-lg transition-colors">📋 Copiar ayer</button>
-                      </div>
-                    </div>
+                </div>
+            </div>
 
                     {/* Macro circles - Larger on desktop */}
                     <div className="flex justify-around items-start mb-5 lg:mb-6">
@@ -2707,16 +2714,16 @@ const NutritionTracker = () => {
                       <CircularProgress current={dashboardTotals.carbs} target={dashboardTargets.carbs} label="Carbos" color="#f59e0b" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
                       <CircularProgress current={dashboardTotals.fat} target={dashboardTargets.fat} label="Grasas" color="#ec4899" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
                       <CircularProgress current={dashboardTotals.fiber} target={dashboardTargets.fiber} label="Fibra" color="#8b5cf6" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
-                    </div>
+              </div>
 
                     <div className="space-y-2 pt-4 border-t border-gray-700/50">
                       <ProgressBar current={dashboardTotals.calories} target={dashboardTargets.calories} label="Calorías" unit="kcal" color="bg-blue-500" />
                       <ProgressBar current={dashboardTotals.protein} target={dashboardTargets.protein} label="Proteína" unit="g" color="bg-cyan-500" />
-                      <ProgressBar current={dashboardTotals.carbs} target={dashboardTargets.carbs} label="Carbos" unit="g" color="bg-amber-500" />
-                      <ProgressBar current={dashboardTotals.fat} target={dashboardTargets.fat} label="Grasas" unit="g" color="bg-pink-500" />
-                      <ProgressBar current={dashboardTotals.fiber} target={dashboardTargets.fiber} label="Fibra" unit="g" color="bg-purple-500" />
-                    </div>
-                  </div>
+                <ProgressBar current={dashboardTotals.carbs} target={dashboardTargets.carbs} label="Carbos" unit="g" color="bg-amber-500" />
+                <ProgressBar current={dashboardTotals.fat} target={dashboardTargets.fat} label="Grasas" unit="g" color="bg-pink-500" />
+                <ProgressBar current={dashboardTotals.fiber} target={dashboardTargets.fiber} label="Fibra" unit="g" color="bg-purple-500" />
+              </div>
+            </div>
 
                   {/* Remaining Card */}
                   <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm rounded-2xl p-4 lg:p-5 border border-gray-700/50 shadow-xl shadow-black/20">
@@ -2728,17 +2735,17 @@ const NutritionTracker = () => {
                       {[
                         { val: dashboardTargets.calories - dashboardTotals.calories, label: 'kcal', color: '#3B82F6' },
                         { val: dashboardTargets.protein - dashboardTotals.protein, label: 'prot', color: '#06B6D4', suffix: 'g' },
-                        { val: dashboardTargets.carbs - dashboardTotals.carbs, label: 'carbs', color: '#f59e0b', suffix: 'g' },
-                        { val: dashboardTargets.fat - dashboardTotals.fat, label: 'fat', color: '#ec4899', suffix: 'g' },
-                        { val: dashboardTargets.fiber - dashboardTotals.fiber, label: 'fibra', color: '#8b5cf6', suffix: 'g' }
-                      ].map((item, i) => (
+                  { val: dashboardTargets.carbs - dashboardTotals.carbs, label: 'carbs', color: '#f59e0b', suffix: 'g' },
+                  { val: dashboardTargets.fat - dashboardTotals.fat, label: 'fat', color: '#ec4899', suffix: 'g' },
+                  { val: dashboardTargets.fiber - dashboardTotals.fiber, label: 'fibra', color: '#8b5cf6', suffix: 'g' }
+                ].map((item, i) => (
                         <div key={i} className="text-center p-2 lg:p-3 bg-gray-700/40 rounded-xl hover:bg-gray-700/60 transition-colors">
                           <div className="text-base lg:text-xl font-bold" style={{ color: item.val < 0 ? '#f87171' : item.color }}>{item.val}{item.suffix || ''}</div>
                           <div className="text-xs lg:text-xs text-gray-400 mt-0.5">{item.label}</div>
-                        </div>
-                      ))}
-                    </div>
                   </div>
+                ))}
+                    </div>
+              </div>
                 </div>
 
                 {/* Right Column - Activity & Meals */}
@@ -2796,33 +2803,33 @@ const NutritionTracker = () => {
                       </button>
                     </div>
                     <p className="text-center text-xs lg:text-sm text-gray-400 mt-2">{getTodayWater().ml || 0} ml / {WATER_GOAL_GLASSES * 250} ml</p>
-                  </div>
+            </div>
 
-                  {/* Meals Summary */}
-                  {getFoodsForDate(dashboardDate).length > 0 && (
+            {/* Meals Summary */}
+            {getFoodsForDate(dashboardDate).length > 0 && (
                     <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm rounded-2xl p-4 lg:p-5 border border-gray-700/50 shadow-xl shadow-black/20">
                       <h3 className="text-sm lg:text-base font-bold text-white mb-3 flex items-center gap-2">
                         <span className="w-7 h-7 lg:w-8 lg:h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">🍽️</span>
                         Comidas de hoy
                       </h3>
                       <div className="space-y-2 max-h-48 lg:max-h-64 overflow-y-auto">
-                        {getFoodsForDate(dashboardDate).map(food => (
+                  {getFoodsForDate(dashboardDate).map(food => (
                           <div key={food.id} className="flex justify-between items-center p-2 lg:p-3 bg-gray-700/30 rounded-xl hover:bg-gray-700/50 transition-colors">
-                            <div className="min-w-0 flex-1">
+                      <div className="min-w-0 flex-1">
                               <span className="text-xs lg:text-xs text-blue-400 uppercase font-medium">{food.meal}</span>
                               <p className="text-sm lg:text-base text-gray-200 truncate">{food.name}</p>
-                            </div>
+                      </div>
                             <div className="flex gap-2 text-xs lg:text-sm flex-shrink-0 ml-3">
                               <span className="text-blue-400 font-medium">{food.calories} kcal</span>
                               <span className="text-cyan-400">{food.protein}p</span>
-                            </div>
-                          </div>
-                        ))}
                       </div>
                     </div>
-                  )}
+                  ))}
                 </div>
               </div>
+            )}
+              </div>
+            </div>
 
             {/* Charts */}
             <div className="grid grid-cols-2 gap-3">
@@ -2930,17 +2937,17 @@ const NutritionTracker = () => {
                       onDelete={() => confirmDelete('food', entry.id, entry.name)}
                     >
                       <div className={`p-3 border-l-4 ${needsReview ? 'border-l-amber-500' : 'border-l-blue-500'}`}>
-                        <div className="flex justify-between items-start mb-1">
-                          <div className="min-w-0 flex-1">
+                      <div className="flex justify-between items-start mb-1">
+                        <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <span className="text-xs text-blue-400 uppercase font-medium">{entry.meal}</span>
                               {entry.time && <span className="text-xs text-gray-500">{entry.time}</span>}
-                              {needsReview && (
+                            {needsReview && (
                                 <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">⚠️</span>
-                              )}
-                            </div>
-                            <h3 className="font-medium text-base truncate">{entry.name}</h3>
+                            )}
                           </div>
+                            <h3 className="font-medium text-base truncate">{entry.name}</h3>
+                        </div>
                           {needsReview && (
                             <button onClick={() => confirmFood(entry.id)} className="text-blue-400 active:text-cyan-300 px-2 py-1 text-sm font-medium bg-blue-500/20 rounded ml-2 flex-shrink-0">✓</button>
                           )}
@@ -2953,7 +2960,7 @@ const NutritionTracker = () => {
                             <span className="text-amber-400">{entry.carbs}C</span>
                             <span className="text-pink-400">{entry.fat}F</span>
                             {entry.fiber > 0 && <span className="text-purple-400">{entry.fiber}Fib</span>}
-                          </div>
+                      </div>
                           <button
                             onClick={() => saveAsTemplate(entry)}
                             className="text-purple-400 active:text-purple-300 text-xs px-1.5 py-0.5 bg-purple-500/20 rounded"
@@ -2961,8 +2968,8 @@ const NutritionTracker = () => {
                           >
                             ⭐
                           </button>
-                        </div>
                       </div>
+                    </div>
                     </SwipeableItem>
                   );
                 })}
@@ -3046,37 +3053,37 @@ const NutritionTracker = () => {
                       onDelete={() => confirmDelete('workout', workout.id, workout.name)}
                     >
                       <div className={`p-3 border-l-4 ${workout.type === 'gym' ? 'border-l-amber-500' : 'border-l-green-500'}`}>
-                        <div className="flex justify-between items-start mb-1">
+                      <div className="flex justify-between items-start mb-1">
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <span className={`text-xs uppercase font-medium ${workout.type === 'gym' ? 'text-amber-400' : 'text-green-400'}`}>{workout.type}</span>
-                              {needsReview && (
+                            {needsReview && (
                                 <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">⚠️</span>
-                              )}
-                            </div>
-                            <h3 className="font-medium text-base truncate">{workout.name}</h3>
+                            )}
                           </div>
+                            <h3 className="font-medium text-base truncate">{workout.name}</h3>
+                        </div>
                           {needsReview && (
                             <button onClick={() => confirmWorkout(workout.id)} className="text-blue-400 active:text-cyan-300 px-2 py-1 text-sm font-medium bg-blue-500/20 rounded ml-2 flex-shrink-0">✓</button>
                           )}
                         </div>
                         <div className="flex flex-wrap gap-2 text-xs text-gray-400 mb-2">
-                          {workout.duration && <span>⏱️ {workout.duration}'</span>}
+                        {workout.duration && <span>⏱️ {workout.duration}'</span>}
                           {workout.volume && <span>📊 {workout.volume.toLocaleString()}kg</span>}
-                          {workout.calories && <span>🔥 {workout.calories}</span>}
-                        </div>
-                        {workout.exercises?.length > 0 && (
+                        {workout.calories && <span>🔥 {workout.calories}</span>}
+                      </div>
+                      {workout.exercises?.length > 0 && (
                           <div className="space-y-0.5 border-t border-gray-700 pt-2 max-h-32 overflow-y-auto">
-                            {workout.exercises.map((ex, idx) => (
+                          {workout.exercises.map((ex, idx) => (
                               <div key={idx} className="text-xs text-gray-300 flex justify-between">
                                 <span className="truncate flex-1 min-w-0">{ex.name}</span>
                                 <span className="text-gray-500 ml-2 flex-shrink-0">{ex.sets}x{ex.reps}@{ex.weight}kg</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                         {workout.notes && <p className="text-xs text-blue-400 mt-1.5 italic truncate">{workout.notes}</p>}
-                      </div>
+                    </div>
                     </SwipeableItem>
                   );
                 })}
@@ -3104,7 +3111,7 @@ const NutritionTracker = () => {
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
               <h2 className="text-sm font-bold text-blue-400 mb-2">⚖️ NUEVO PESO</h2>
               <div className="flex flex-col gap-2">
-                <div className="flex gap-2">
+              <div className="flex gap-2">
                   <input type="number" step="0.1" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} placeholder="84.5" className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2.5 text-lg min-w-0" />
                   <span className="flex items-center text-gray-400 text-sm">kg</span>
                 </div>
@@ -3252,7 +3259,7 @@ const NutritionTracker = () => {
 
         {/* Oura Tab */}
         {activeTab === 'oura' && (
-          <div className="space-y-3">
+              <div className="space-y-3">
             <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
               <h2 className="text-sm font-bold text-purple-400 mb-2">💍 REGISTRAR DATOS OURA</h2>
               <div className="space-y-2">
@@ -3275,7 +3282,7 @@ const NutritionTracker = () => {
                   <div>
                     <label className="block text-xs text-gray-400 mb-0.5">HRV</label>
                     <input type="number" value={newOuraEntry.hrv} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, hrv: e.target.value })} placeholder="45" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
-                  </div>
+                </div>
                   <div>
                     <label className="block text-xs text-gray-400 mb-0.5">RHR</label>
                     <input type="number" value={newOuraEntry.restingHr} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, restingHr: e.target.value })} placeholder="58" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
@@ -3423,18 +3430,18 @@ const NutritionTracker = () => {
             <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
               <h2 className="text-sm font-bold text-gray-300 mb-3">📤 EXPORTAR</h2>
               <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={exportForClaude}
+              <button
+                onClick={exportForClaude}
                   className="bg-cyan-600 active:bg-cyan-500 py-2.5 rounded font-medium text-sm flex items-center justify-center gap-1"
-                >
+              >
                   🤖 Claude
-                </button>
-                <button
-                  onClick={exportForNutritionist}
+              </button>
+              <button
+                onClick={exportForNutritionist}
                   className="bg-pink-600 active:bg-pink-500 py-2.5 rounded font-medium text-sm flex items-center justify-center gap-1"
-                >
+              >
                   🩺 Nutri
-                </button>
+              </button>
                 <button
                   onClick={exportBackup}
                   className="bg-amber-600 active:bg-amber-500 py-2.5 rounded font-medium text-sm flex items-center justify-center gap-1"
@@ -3452,15 +3459,15 @@ const NutritionTracker = () => {
                 <div className="p-1.5 bg-gray-700/50 rounded">
                   <div className="text-sm font-bold text-white">{weightHistory.length}</div>
                   <div className="text-xs text-gray-500">Peso</div>
-                </div>
+                  </div>
                 <div className="p-1.5 bg-gray-700/50 rounded">
                   <div className="text-sm font-bold text-white">{foodLog.length}</div>
                   <div className="text-xs text-gray-500">Comidas</div>
-                </div>
+                  </div>
                 <div className="p-1.5 bg-gray-700/50 rounded">
                   <div className="text-sm font-bold text-white">{workoutLog.length}</div>
                   <div className="text-xs text-gray-500">Entrenos</div>
-                </div>
+                  </div>
                 <div className="p-1.5 bg-gray-700/50 rounded">
                   <div className="text-sm font-bold text-white">{stepsLog.length}</div>
                   <div className="text-xs text-gray-500">Pasos</div>
@@ -3471,7 +3478,7 @@ const NutritionTracker = () => {
             </div>
           </div>
         )}
-        </main>
+      </main>
       </PullToRefresh>
 
       {/* Bottom Navigation */}
@@ -3483,8 +3490,8 @@ const NutritionTracker = () => {
       {/* Floating Action Button */}
       {showFab && ['dashboard', 'comidas', 'entrenos'].includes(activeTab) && (
         <FloatingActionButton
-          onAddFood={() => { setNewFood({ ...newFood, date: selectedFoodDate }); setShowFoodForm(true); }}
-          onAddWorkout={() => { setNewWorkout({ ...newWorkout, date: selectedWorkoutDate }); setShowWorkoutForm(true); }}
+          onAddFood={() => { setNewFood({ ...newFood, date: dashboardDate }); setShowFoodForm(true); }}
+          onAddWorkout={() => { setNewWorkout({ ...newWorkout, date: dashboardDate }); setShowWorkoutForm(true); }}
           onImportFood={() => setShowImportFoodModal(true)}
           onImportWorkout={() => setShowImportWorkoutModal(true)}
           onQuickAdd={() => setShowTemplatesModal(true)}
@@ -3495,9 +3502,9 @@ const NutritionTracker = () => {
       {showTemplatesModal && (
         <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-2 pt-8 overflow-y-auto">
           <div className="bg-gray-800 rounded-lg p-4 w-full max-w-sm border border-purple-500/30">
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="text-base font-bold text-purple-400">⭐ Favoritos</h3>
-              <button onClick={() => setShowTemplatesModal(false)} className="text-gray-400 text-xl">×</button>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg lg:text-xl font-bold text-purple-400">⭐ Favoritos</h3>
+              <button onClick={() => setShowTemplatesModal(false)} className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white text-xl lg:text-2xl transition-colors">×</button>
             </div>
 
             {mealTemplates.length === 0 ? (
