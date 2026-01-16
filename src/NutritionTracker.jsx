@@ -94,7 +94,7 @@ const BottomNav = ({ activeTab, setActiveTab, onFabClick }) => {
             onClick={() => setActiveTab(tab.id)}
             className={`flex flex-col items-center justify-center flex-1 h-full transition-colors ${
               activeTab === tab.id
-                ? 'text-emerald-400'
+                ? 'text-blue-400'
                 : 'text-gray-400 active:text-gray-200'
             }`}
           >
@@ -115,7 +115,7 @@ const FloatingActionButton = ({ onAddFood, onAddWorkout, onImportFood, onImportW
 
   const actions = [
     { icon: '⭐', label: 'Favoritos', onClick: onQuickAdd, color: 'bg-purple-500' },
-    { icon: '📸', label: 'Importar Comida', onClick: onImportFood, color: 'bg-emerald-500' },
+    { icon: '📸', label: 'Importar Comida', onClick: onImportFood, color: 'bg-blue-500' },
     { icon: '🏋️', label: 'Importar Entreno', onClick: onImportWorkout, color: 'bg-amber-500' },
     { icon: '🍽️', label: 'Agregar Comida', onClick: onAddFood, color: 'bg-blue-500' },
     { icon: '💪', label: 'Agregar Entreno', onClick: onAddWorkout, color: 'bg-orange-500' },
@@ -150,7 +150,7 @@ const FloatingActionButton = ({ onAddFood, onAddWorkout, onImportFood, onImportW
         {/* Main FAB */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className={`fab w-14 h-14 rounded-full bg-emerald-500 text-white flex items-center justify-center text-2xl transition-transform ${isOpen ? 'rotate-45' : ''}`}
+          className={`fab w-14 h-14 rounded-full bg-blue-500 text-white flex items-center justify-center text-2xl transition-transform ${isOpen ? 'rotate-45' : ''}`}
         >
           +
         </button>
@@ -207,12 +207,12 @@ const PullToRefresh = ({ children, onRefresh, isRefreshing }) => {
           style={{ height: isRefreshing ? 50 : pullDistance }}
         >
           {isRefreshing ? (
-            <svg className="animate-spin h-5 w-5 text-emerald-400" viewBox="0 0 24 24">
+            <svg className="animate-spin h-5 w-5 text-blue-400" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
           ) : (
-            <span className={`text-sm ${pullDistance >= PULL_THRESHOLD ? 'text-emerald-400' : 'text-gray-400'}`}>
+            <span className={`text-sm ${pullDistance >= PULL_THRESHOLD ? 'text-blue-400' : 'text-gray-400'}`}>
               {pullDistance >= PULL_THRESHOLD ? '↑ Soltar para actualizar' : '↓ Arrastra para actualizar'}
             </span>
           )}
@@ -1595,7 +1595,7 @@ const NutritionTracker = () => {
     const lastWeekStats = getWeeklyAdherence(1);
 
     // Build export text
-    let txt = '=== LUCAS TRACKER - EXPORT PARA CLAUDE ===\n';
+    let txt = '=== LUKENFIT - CONTEXTO PARA CLAUDE ===\n';
     txt += `Fecha: ${today}\n\n`;
 
     // Current profile
@@ -1836,9 +1836,9 @@ const NutritionTracker = () => {
     return (
       <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
         <div className="flex justify-between items-center mb-3">
-          <h3 className="text-sm font-bold text-emerald-400">📈 PESO</h3>
+          <h3 className="text-sm font-bold text-blue-400">📈 PESO</h3>
           <div className="flex gap-3 text-[10px]">
-            <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-emerald-400 inline-block"></span> Peso</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-blue-400 inline-block"></span> Peso</span>
             <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-amber-400 inline-block"></span> Media 7d</span>
             <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-gray-500 inline-block border-dashed"></span> Objetivo</span>
           </div>
@@ -1855,11 +1855,11 @@ const NutritionTracker = () => {
             <path d={avgPath} fill="none" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
 
             {/* Actual weight line */}
-            <path d={weightPath} fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <path d={weightPath} fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
 
             {/* Data points */}
             {data.map((d, i) => (
-              <circle key={i} cx={(i / (data.length - 1)) * 100} cy={getY(d.weight)} r="2" fill="#10b981" />
+              <circle key={i} cx={(i / (data.length - 1)) * 100} cy={getY(d.weight)} r="2" fill="#3B82F6" />
             ))}
           </svg>
 
@@ -1887,7 +1887,7 @@ const NutritionTracker = () => {
             <div className="text-[9px] text-gray-400">Media 7d</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-emerald-400">{profile.targetWeight}</div>
+            <div className="text-lg font-bold text-blue-400">{profile.targetWeight}</div>
             <div className="text-[9px] text-gray-400">Objetivo</div>
           </div>
         </div>
@@ -1898,7 +1898,7 @@ const NutritionTracker = () => {
   // Adherence Card Component
   const AdherenceCard = ({ data, label }) => {
     const getScoreColor = (score) => {
-      if (score >= 8) return 'text-emerald-400';
+      if (score >= 8) return 'text-blue-400';
       if (score >= 6) return 'text-amber-400';
       return 'text-red-400';
     };
@@ -1911,7 +1911,7 @@ const NutritionTracker = () => {
         </div>
         <div className="grid grid-cols-3 gap-2 text-center text-[10px]">
           <div>
-            <div className="text-emerald-400 font-bold">{data.calOkDays}/{data.daysTracked}</div>
+            <div className="text-blue-400 font-bold">{data.calOkDays}/{data.daysTracked}</div>
             <div className="text-gray-500">Cal OK</div>
           </div>
           <div>
@@ -2188,7 +2188,7 @@ const NutritionTracker = () => {
 
   // Show loading only when actually loading data (not during auth flows)
   if ((isLoading || supabase.loading) && !showAuth) {
-    return <div className="min-h-screen bg-gray-900 flex items-center justify-center"><div className="text-emerald-400 text-xl">Cargando...</div></div>;
+    return <div className="min-h-screen bg-gray-900 flex items-center justify-center"><div className="text-blue-400 text-xl">Cargando...</div></div>;
   }
 
   return (
@@ -2218,7 +2218,7 @@ const NutritionTracker = () => {
       {/* Prompt 3: Migration Modal */}
       {showMigrationModal && migrationData && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-xl p-6 max-w-md w-full border border-emerald-500/30 shadow-2xl">
+          <div className="bg-gray-800 rounded-xl p-6 max-w-md w-full border border-blue-500/30 shadow-2xl">
             <div className="text-center mb-6">
               <div className="text-4xl mb-3">☁️</div>
               <h3 className="text-xl font-bold text-white mb-2">Datos locales encontrados</h3>
@@ -2274,7 +2274,7 @@ const NutritionTracker = () => {
                   setShowMigrationModal(false);
                 }}
                 disabled={isMigrating}
-                className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all disabled:opacity-50"
+                className="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all disabled:opacity-50"
               >
                 {isMigrating ? (
                   <span className="flex items-center justify-center gap-2">
@@ -2312,7 +2312,7 @@ const NutritionTracker = () => {
       {showFoodForm && (
         <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-2 pt-10 overflow-y-auto">
           <div className="bg-gray-800 rounded-lg p-4 w-full max-w-sm border border-gray-700">
-            <h3 className="text-base font-bold text-emerald-400 mb-3">➕ Nueva Comida</h3>
+            <h3 className="text-base font-bold text-blue-400 mb-3">➕ Nueva Comida</h3>
             <div className="space-y-2">
               {/* Row 1: Meal type + Time */}
               <div className="grid grid-cols-2 gap-2">
@@ -2371,7 +2371,7 @@ const NutritionTracker = () => {
             </div>
             <div className="flex gap-2 mt-4">
               <button onClick={() => setShowFoodForm(false)} className="flex-1 bg-gray-700 active:bg-gray-600 py-2.5 rounded text-sm">Cancelar</button>
-              <button onClick={addManualFood} className="flex-1 bg-emerald-600 active:bg-emerald-500 py-2.5 rounded text-sm font-bold">Guardar</button>
+              <button onClick={addManualFood} className="flex-1 bg-blue-600 active:bg-blue-500 py-2.5 rounded text-sm font-bold">Guardar</button>
             </div>
           </div>
         </div>
@@ -2431,7 +2431,7 @@ const NutritionTracker = () => {
       {showImportFoodModal && (
         <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-2 pt-10 overflow-y-auto">
           <div className="bg-gray-800 rounded-lg p-4 w-full max-w-sm border border-gray-700">
-            <h3 className="text-base font-bold text-emerald-400 mb-2">📥 Importar Comida</h3>
+            <h3 className="text-base font-bold text-blue-400 mb-2">📥 Importar Comida</h3>
             <p className="text-xs text-gray-400 mb-3">Pegá el JSON de la comida.</p>
             <textarea
               value={importText}
@@ -2442,7 +2442,7 @@ const NutritionTracker = () => {
             {importError && <p className="text-red-400 text-xs mt-2">{importError}</p>}
             <div className="flex gap-2 mt-3">
               <button onClick={() => { setShowImportFoodModal(false); setImportText(''); setImportError(''); }} className="flex-1 bg-gray-700 active:bg-gray-600 py-2.5 rounded text-sm">Cancelar</button>
-              <button onClick={handleImportFood} className="flex-1 bg-emerald-600 active:bg-emerald-500 py-2.5 rounded text-sm font-bold">Importar</button>
+              <button onClick={handleImportFood} className="flex-1 bg-blue-600 active:bg-blue-500 py-2.5 rounded text-sm font-bold">Importar</button>
             </div>
           </div>
         </div>
@@ -2473,24 +2473,38 @@ const NutritionTracker = () => {
       {undoAction && (
         <div className="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-gray-800 border border-gray-600 rounded-full px-4 py-2 flex items-center gap-3 z-50 shadow-lg">
           <span className="text-sm text-gray-300">Eliminado</span>
-          <button onClick={() => { undoAction.restore(); setUndoAction(null); }} className="text-emerald-400 font-bold text-sm active:text-emerald-300">DESHACER</button>
+          <button onClick={() => { undoAction.restore(); setUndoAction(null); }} className="text-blue-400 font-bold text-sm active:text-cyan-300">DESHACER</button>
         </div>
       )}
 
-      {/* Header - Compact for mobile */}
-      <header className="bg-gray-800 border-b border-emerald-500/30 px-3 py-2 sticky top-0 z-30">
+      {/* Header - Premium LukenFit branding */}
+      <header className="bg-gradient-to-r from-slate-900 via-gray-800 to-slate-900 border-b border-blue-500/20 px-3 py-2 sticky top-0 z-30">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
-          <div className="min-w-0 flex-1">
-            <h1 className="text-lg font-bold text-emerald-400 truncate">LUCAS TRACKER</h1>
-            <p className="text-xs text-gray-500 truncate">
-              {profile.currentWeight}kg → {profile.targetWeight}kg
-              {isTrainingDay(dashboardDate) && <span className="ml-1 text-amber-400">🏋️</span>}
-            </p>
+          <div className="min-w-0 flex-1 flex items-center gap-2">
+            {/* Mini logo */}
+            <svg viewBox="0 0 32 32" className="w-7 h-7 flex-shrink-0">
+              <defs>
+                <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style={{ stopColor: '#3B82F6' }} />
+                  <stop offset="100%" style={{ stopColor: '#06B6D4' }} />
+                </linearGradient>
+              </defs>
+              <circle cx="16" cy="16" r="15" fill="#0F172A" />
+              <path d="M10 7 L10 21 L19 21 L19 18 L13 18 L13 7 Z" fill="url(#headerGrad)" />
+              <path d="M18 7 L14 15 L17 15 L15 25 L23 14 L19 14 L22 7 Z" fill="url(#headerGrad)" opacity="0.9" />
+            </svg>
+            <div className="min-w-0">
+              <h1 className="text-lg font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent truncate">LUKENFIT</h1>
+              <p className="text-[10px] text-gray-500 truncate">
+                {profile.currentWeight}kg → {profile.targetWeight}kg
+                {isTrainingDay(dashboardDate) && <span className="ml-1 text-amber-400">🏋️</span>}
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-1.5 flex-shrink-0">
             {/* Save status - small badge */}
             {saveStatus && (
-              <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded animate-pulse">{saveStatus}</span>
+              <span className="text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded animate-pulse">{saveStatus}</span>
             )}
 
             {/* Sync status - compact */}
@@ -2505,7 +2519,7 @@ const NutritionTracker = () => {
                 {supabase.isOnline && (
                   <span className={`text-[10px] w-6 h-6 rounded flex items-center justify-center ${
                     supabase.syncStatus === 'syncing' ? 'bg-blue-500/20 text-blue-400' :
-                    supabase.syncStatus === 'success' ? 'bg-emerald-500/20 text-emerald-400' :
+                    supabase.syncStatus === 'success' ? 'bg-blue-500/20 text-blue-400' :
                     supabase.syncStatus === 'error' ? 'bg-red-500/20 text-red-400' :
                     'text-gray-500'
                   }`}>
@@ -2536,7 +2550,7 @@ const NutritionTracker = () => {
                   setShowAuth(true);
                   setOfflineMode(false);
                 }}
-                className="text-[10px] text-emerald-400 active:text-emerald-300 px-2 py-1 rounded active:bg-gray-700"
+                className="text-[10px] text-blue-400 active:text-cyan-300 px-2 py-1 rounded active:bg-gray-700"
               >
                 Login
               </button>
@@ -2555,7 +2569,7 @@ const NutritionTracker = () => {
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 py-2 text-xs font-medium transition-colors ${
                   activeTab === tab
-                    ? 'text-emerald-400 border-b-2 border-emerald-400'
+                    ? 'text-blue-400 border-b-2 border-blue-400'
                     : 'text-gray-400 active:text-gray-200'
                 }`}
               >
@@ -2583,8 +2597,8 @@ const NutritionTracker = () => {
                 <button onClick={() => setDashboardDate(changeDate(dashboardDate, -1))} className="text-gray-400 active:text-white w-10 h-10 flex items-center justify-center text-xl rounded-lg hover:bg-gray-700">‹</button>
                 <div className="text-center min-w-0 flex-1">
                   <div className="flex items-center justify-center gap-2">
-                    <span className="text-base font-bold text-emerald-400 truncate">{formatDateDisplay(dashboardDate)}</span>
-                    {isDayCompleted(dashboardDate) && <span className="text-emerald-400 text-sm flex-shrink-0">✓</span>}
+                    <span className="text-base font-bold text-blue-400 truncate">{formatDateDisplay(dashboardDate)}</span>
+                    {isDayCompleted(dashboardDate) && <span className="text-blue-400 text-sm flex-shrink-0">✓</span>}
                     {isTrainingDay(dashboardDate) && <span className="text-amber-400 text-sm flex-shrink-0">🏋️</span>}
                   </div>
                 </div>
@@ -2606,7 +2620,7 @@ const NutritionTracker = () => {
               {/* Macro Circles + Progress Bars */}
               <div className="bg-gray-800 rounded-lg p-3 border border-gray-700 overflow-hidden">
                 <div className="flex justify-between items-center mb-3">
-                  <h2 className="text-sm font-bold text-emerald-400">📊 MACROS</h2>
+                  <h2 className="text-sm font-bold text-blue-400">📊 MACROS</h2>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <span className="text-xs text-gray-500 hidden sm:inline">{getFoodsForDate(dashboardDate).length} comidas</span>
                     <button onClick={copyMealsFromYesterday} className="text-[10px] bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded whitespace-nowrap">📋 Copiar</button>
@@ -2615,7 +2629,7 @@ const NutritionTracker = () => {
 
                 {/* Macro circles - balanced for mobile */}
                 <div className="flex justify-between items-start mb-3 px-1">
-                  <CircularProgress current={dashboardTotals.calories} target={dashboardTargets.calories} label="Cal" color="#10b981" size={58} />
+                  <CircularProgress current={dashboardTotals.calories} target={dashboardTargets.calories} label="Cal" color="#3B82F6" size={58} />
                   <CircularProgress current={dashboardTotals.protein} target={dashboardTargets.protein} label="Prot" color="#3b82f6" size={58} />
                   <CircularProgress current={dashboardTotals.carbs} target={dashboardTargets.carbs} label="Carbs" color="#f59e0b" size={58} />
                   <CircularProgress current={dashboardTotals.fat} target={dashboardTargets.fat} label="Gras" color="#ec4899" size={58} />
@@ -2623,7 +2637,7 @@ const NutritionTracker = () => {
                 </div>
 
                 <div className="space-y-1 pt-2 border-t border-gray-700">
-                  <ProgressBar current={dashboardTotals.calories} target={dashboardTargets.calories} label="Calorías" unit="kcal" color="bg-emerald-500" />
+                  <ProgressBar current={dashboardTotals.calories} target={dashboardTargets.calories} label="Calorías" unit="kcal" color="bg-blue-500" />
                   <ProgressBar current={dashboardTotals.protein} target={dashboardTargets.protein} label="Proteína" unit="g" color="bg-blue-500" />
                   <ProgressBar current={dashboardTotals.carbs} target={dashboardTargets.carbs} label="Carbos" unit="g" color="bg-amber-500" />
                   <ProgressBar current={dashboardTotals.fat} target={dashboardTargets.fat} label="Grasas" unit="g" color="bg-pink-500" />
@@ -2633,10 +2647,10 @@ const NutritionTracker = () => {
 
               {/* Remaining */}
               <div className="bg-gray-800 rounded-lg p-2.5 border border-gray-700 overflow-hidden">
-                <h3 className="text-xs font-bold text-emerald-400 mb-2">🎯 TE QUEDAN</h3>
+                <h3 className="text-xs font-bold text-blue-400 mb-2">🎯 TE QUEDAN</h3>
                 <div className="grid grid-cols-5 gap-1">
                   {[
-                    { val: dashboardTargets.calories - dashboardTotals.calories, label: 'kcal', color: '#10b981' },
+                    { val: dashboardTargets.calories - dashboardTotals.calories, label: 'kcal', color: '#3B82F6' },
                     { val: dashboardTargets.protein - dashboardTotals.protein, label: 'prot', color: '#3b82f6', suffix: 'g' },
                     { val: dashboardTargets.carbs - dashboardTotals.carbs, label: 'carbs', color: '#f59e0b', suffix: 'g' },
                     { val: dashboardTargets.fat - dashboardTotals.fat, label: 'fat', color: '#ec4899', suffix: 'g' },
@@ -2653,16 +2667,16 @@ const NutritionTracker = () => {
             {/* Meals Summary */}
             {getFoodsForDate(dashboardDate).length > 0 && (
               <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-                <h3 className="text-xs font-bold text-emerald-400 mb-2">🍽️ COMIDAS</h3>
+                <h3 className="text-xs font-bold text-blue-400 mb-2">🍽️ COMIDAS</h3>
                 <div className="space-y-1">
                   {getFoodsForDate(dashboardDate).map(food => (
                     <div key={food.id} className="flex justify-between items-center text-xs py-1 border-b border-gray-700/50 last:border-0">
                       <div className="min-w-0 flex-1">
-                        <span className="text-[9px] text-emerald-400 uppercase mr-1">{food.meal}</span>
+                        <span className="text-[9px] text-blue-400 uppercase mr-1">{food.meal}</span>
                         <span className="text-gray-200">{food.name}</span>
                       </div>
                       <div className="flex gap-1.5 text-[10px] flex-shrink-0 ml-2">
-                        <span className="text-emerald-400">{food.calories}</span>
+                        <span className="text-blue-400">{food.calories}</span>
                         <span className="text-blue-400">{food.protein}p</span>
                       </div>
                     </div>
@@ -2724,7 +2738,7 @@ const NutritionTracker = () => {
 
             {/* Charts */}
             <div className="grid grid-cols-2 gap-3">
-              <SimpleBarChart data={weeklyData} dataKey="calories" target={customTargets.calories} color="bg-emerald-500" label="Calorías 7d" />
+              <SimpleBarChart data={weeklyData} dataKey="calories" target={customTargets.calories} color="bg-blue-500" label="Calorías 7d" />
               <SimpleBarChart data={weeklyData} dataKey="protein" target={customTargets.protein} color="bg-blue-500" label="Proteína 7d" />
             </div>
 
@@ -2736,26 +2750,26 @@ const NutritionTracker = () => {
 
             {/* Week vs Week Comparison */}
             <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-              <h3 className="text-xs font-bold text-emerald-400 mb-2">📈 ESTA SEMANA VS ANTERIOR</h3>
+              <h3 className="text-xs font-bold text-blue-400 mb-2">📈 ESTA SEMANA VS ANTERIOR</h3>
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div>
                   <div className="text-sm text-gray-400">Calorías/día</div>
                   <div className="text-lg font-bold text-white">{weekComparison.thisWeek.avgCals || '-'}</div>
-                  <div className={`text-xs ${weekComparison.calsDiff < 0 ? 'text-emerald-400' : weekComparison.calsDiff > 0 ? 'text-red-400' : 'text-gray-400'}`}>
+                  <div className={`text-xs ${weekComparison.calsDiff < 0 ? 'text-blue-400' : weekComparison.calsDiff > 0 ? 'text-red-400' : 'text-gray-400'}`}>
                     {weekComparison.calsDiff !== 0 && (weekComparison.calsDiff > 0 ? '+' : '')}{weekComparison.calsDiff || '='} vs anterior
                   </div>
                 </div>
                 <div>
                   <div className="text-sm text-gray-400">Proteína/día</div>
                   <div className="text-lg font-bold text-white">{weekComparison.thisWeek.avgProt || '-'}g</div>
-                  <div className={`text-xs ${weekComparison.protDiff > 0 ? 'text-emerald-400' : weekComparison.protDiff < 0 ? 'text-red-400' : 'text-gray-400'}`}>
+                  <div className={`text-xs ${weekComparison.protDiff > 0 ? 'text-blue-400' : weekComparison.protDiff < 0 ? 'text-red-400' : 'text-gray-400'}`}>
                     {weekComparison.protDiff !== 0 && (weekComparison.protDiff > 0 ? '+' : '')}{weekComparison.protDiff || '='}g vs anterior
                   </div>
                 </div>
                 <div>
                   <div className="text-sm text-gray-400">Pasos/día</div>
                   <div className="text-lg font-bold text-white">{weekComparison.thisWeek.avgSteps?.toLocaleString() || '-'}</div>
-                  <div className={`text-xs ${weekComparison.stepsDiff > 0 ? 'text-emerald-400' : weekComparison.stepsDiff < 0 ? 'text-red-400' : 'text-gray-400'}`}>
+                  <div className={`text-xs ${weekComparison.stepsDiff > 0 ? 'text-blue-400' : weekComparison.stepsDiff < 0 ? 'text-red-400' : 'text-gray-400'}`}>
                     {weekComparison.stepsDiff !== 0 && (weekComparison.stepsDiff > 0 ? '+' : '')}{weekComparison.stepsDiff?.toLocaleString() || '='} vs anterior
                   </div>
                 </div>
@@ -2772,17 +2786,17 @@ const NutritionTracker = () => {
                     <div className="text-[9px] text-gray-400">Ritmo actual</div>
                   </div>
                   <div className="text-center p-2 bg-gray-700/50 rounded">
-                    <div className="text-lg font-bold text-emerald-400">
+                    <div className="text-lg font-bold text-blue-400">
                       {weightProjection.weeksToGoal ? `~${weightProjection.weeksToGoal} sem` : '-'}
                     </div>
                     <div className="text-[9px] text-gray-400">Para objetivo</div>
                   </div>
                 </div>
                 {weightProjection.goalDate && (
-                  <p className="text-xs text-gray-400 text-center">Fecha estimada: <span className="text-emerald-400">{weightProjection.goalDate}</span></p>
+                  <p className="text-xs text-gray-400 text-center">Fecha estimada: <span className="text-blue-400">{weightProjection.goalDate}</span></p>
                 )}
                 {weightProjection.recommendation && (
-                  <div className={`mt-2 p-2 rounded text-xs ${weightProjection.recommendation.type === 'good' ? 'bg-emerald-900/30 text-emerald-400' :
+                  <div className={`mt-2 p-2 rounded text-xs ${weightProjection.recommendation.type === 'good' ? 'bg-blue-900/30 text-blue-400' :
                     weightProjection.recommendation.type === 'decrease' ? 'bg-amber-900/30 text-amber-400' :
                       'bg-red-900/30 text-red-400'
                     }`}>
@@ -2816,7 +2830,7 @@ const NutritionTracker = () => {
             {getFoodsForDate(selectedFoodDate).length === 0 ? (
               <div className="bg-gray-800 rounded-lg p-6 text-center border border-gray-700">
                 <p className="text-gray-400 text-base">Sin comidas registradas.</p>
-                <p className="text-sm text-emerald-400 mt-2">Usá el botón + abajo a la derecha</p>
+                <p className="text-sm text-blue-400 mt-2">Usá el botón + abajo a la derecha</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -2827,11 +2841,11 @@ const NutritionTracker = () => {
                       key={entry.id}
                       onDelete={() => confirmDelete('food', entry.id, entry.name)}
                     >
-                      <div className={`p-3 border-l-4 ${needsReview ? 'border-l-amber-500' : 'border-l-emerald-500'}`}>
+                      <div className={`p-3 border-l-4 ${needsReview ? 'border-l-amber-500' : 'border-l-blue-500'}`}>
                         <div className="flex justify-between items-start mb-1">
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-xs text-emerald-400 uppercase font-medium">{entry.meal}</span>
+                              <span className="text-xs text-blue-400 uppercase font-medium">{entry.meal}</span>
                               {entry.time && <span className="text-xs text-gray-500">{entry.time}</span>}
                               {needsReview && (
                                 <span className="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">⚠️</span>
@@ -2840,13 +2854,13 @@ const NutritionTracker = () => {
                             <h3 className="font-medium text-base truncate">{entry.name}</h3>
                           </div>
                           {needsReview && (
-                            <button onClick={() => confirmFood(entry.id)} className="text-emerald-400 active:text-emerald-300 px-2 py-1 text-sm font-medium bg-emerald-500/20 rounded ml-2 flex-shrink-0">✓</button>
+                            <button onClick={() => confirmFood(entry.id)} className="text-blue-400 active:text-cyan-300 px-2 py-1 text-sm font-medium bg-blue-500/20 rounded ml-2 flex-shrink-0">✓</button>
                           )}
                         </div>
                         {entry.description && <p className="text-xs text-gray-400 mb-1.5 truncate-2">{entry.description}</p>}
                         <div className="flex justify-between items-center">
                           <div className="flex flex-wrap gap-2 text-xs">
-                            <span className="text-emerald-400 font-medium">{entry.calories}kcal</span>
+                            <span className="text-blue-400 font-medium">{entry.calories}kcal</span>
                             <span className="text-blue-400">{entry.protein}P</span>
                             <span className="text-amber-400">{entry.carbs}C</span>
                             <span className="text-pink-400">{entry.fat}F</span>
@@ -2868,13 +2882,13 @@ const NutritionTracker = () => {
             )}
 
             {getFoodsForDate(selectedFoodDate).length > 0 && (
-              <div className="bg-gray-800 rounded-lg p-4 border border-emerald-500/30">
-                <h3 className="text-sm font-bold text-emerald-400 mb-3">TOTAL DEL DÍA</h3>
+              <div className="bg-gray-800 rounded-lg p-4 border border-blue-500/30">
+                <h3 className="text-sm font-bold text-blue-400 mb-3">TOTAL DEL DÍA</h3>
                 {(() => {
                   const t = getTotalsForDate(selectedFoodDate);
                   return (
                     <div className="grid grid-cols-5 gap-2 text-center">
-                      <div><span className="text-base font-bold text-emerald-400">{t.calories}</span><br /><span className="text-[9px] text-gray-400">kcal</span></div>
+                      <div><span className="text-base font-bold text-blue-400">{t.calories}</span><br /><span className="text-[9px] text-gray-400">kcal</span></div>
                       <div><span className="text-base font-bold text-blue-400">{t.protein}g</span><br /><span className="text-[9px] text-gray-400">prot</span></div>
                       <div><span className="text-base font-bold text-amber-400">{t.carbs}g</span><br /><span className="text-[9px] text-gray-400">carbs</span></div>
                       <div><span className="text-base font-bold text-pink-400">{t.fat}g</span><br /><span className="text-[9px] text-gray-400">fat</span></div>
@@ -2891,9 +2905,9 @@ const NutritionTracker = () => {
         {activeTab === 'entrenos' && (
           <div className="space-y-3">
             {/* Weekly Analysis */}
-            <div className="bg-gray-800 rounded-lg p-3 border border-emerald-500/30">
+            <div className="bg-gray-800 rounded-lg p-3 border border-blue-500/30">
               <div className="flex justify-between items-center mb-2">
-                <h2 className="text-xs font-bold text-emerald-400">📊 SEMANA</h2>
+                <h2 className="text-xs font-bold text-blue-400">📊 SEMANA</h2>
                 <span className="text-[10px] text-gray-500">desde {workoutAnalysis.weekStart}</span>
               </div>
               <div className="grid grid-cols-3 gap-2 mb-2">
@@ -2955,7 +2969,7 @@ const NutritionTracker = () => {
                             <h3 className="font-medium text-base truncate">{workout.name}</h3>
                           </div>
                           {needsReview && (
-                            <button onClick={() => confirmWorkout(workout.id)} className="text-emerald-400 active:text-emerald-300 px-2 py-1 text-sm font-medium bg-emerald-500/20 rounded ml-2 flex-shrink-0">✓</button>
+                            <button onClick={() => confirmWorkout(workout.id)} className="text-blue-400 active:text-cyan-300 px-2 py-1 text-sm font-medium bg-blue-500/20 rounded ml-2 flex-shrink-0">✓</button>
                           )}
                         </div>
                         <div className="flex flex-wrap gap-2 text-xs text-gray-400 mb-2">
@@ -2973,7 +2987,7 @@ const NutritionTracker = () => {
                             ))}
                           </div>
                         )}
-                        {workout.notes && <p className="text-xs text-emerald-400 mt-1.5 italic truncate">{workout.notes}</p>}
+                        {workout.notes && <p className="text-xs text-blue-400 mt-1.5 italic truncate">{workout.notes}</p>}
                       </div>
                     </SwipeableItem>
                   );
@@ -3000,7 +3014,7 @@ const NutritionTracker = () => {
         {activeTab === 'peso' && (
           <div className="space-y-4">
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h2 className="text-sm font-bold text-emerald-400 mb-2">⚖️ NUEVO PESO</h2>
+              <h2 className="text-sm font-bold text-blue-400 mb-2">⚖️ NUEVO PESO</h2>
               <div className="flex flex-col gap-2">
                 <div className="flex gap-2">
                   <input type="number" step="0.1" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} placeholder="84.5" className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2.5 text-lg min-w-0" />
@@ -3008,20 +3022,20 @@ const NutritionTracker = () => {
                 </div>
                 <div className="flex gap-2">
                   <input type="time" value={newWeightTime} onChange={(e) => setNewWeightTime(e.target.value)} className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2.5 text-sm min-w-0" />
-                  <button onClick={addWeightEntry} disabled={!newWeight} className="bg-emerald-600 active:bg-emerald-500 disabled:opacity-50 px-5 py-2.5 rounded font-bold text-sm flex-shrink-0">Guardar</button>
+                  <button onClick={addWeightEntry} disabled={!newWeight} className="bg-blue-600 active:bg-blue-500 disabled:opacity-50 px-5 py-2.5 rounded font-bold text-sm flex-shrink-0">Guardar</button>
                 </div>
               </div>
             </div>
 
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h2 className="text-base font-bold text-emerald-400 mb-3">📍 PROGRESO</h2>
+              <h2 className="text-base font-bold text-blue-400 mb-3">📍 PROGRESO</h2>
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="p-2 bg-gray-700/50 rounded">
                   <div className="text-xl font-bold text-white">{profile.currentWeight}</div>
                   <div className="text-[10px] text-gray-400">actual</div>
                 </div>
                 <div className="p-2 bg-gray-700/50 rounded">
-                  <div className="text-xl font-bold text-emerald-400">{profile.targetWeight}</div>
+                  <div className="text-xl font-bold text-blue-400">{profile.targetWeight}</div>
                   <div className="text-[10px] text-gray-400">objetivo</div>
                 </div>
                 <div className="p-2 bg-gray-700/50 rounded">
@@ -3048,7 +3062,7 @@ const NutritionTracker = () => {
                     <div className="text-xs text-gray-400">por semana</div>
                   </div>
                   <div className="text-center p-3 bg-gray-700/50 rounded">
-                    <div className="text-xl font-bold text-emerald-400">
+                    <div className="text-xl font-bold text-blue-400">
                       {weightProjection.weeksToGoal ? `${weightProjection.weeksToGoal} sem` : '-'}
                     </div>
                     <div className="text-xs text-gray-400">para llegar a {profile.targetWeight}kg</div>
@@ -3056,18 +3070,18 @@ const NutritionTracker = () => {
                 </div>
 
                 {weightProjection.goalDate && (
-                  <div className="text-center p-2 bg-emerald-900/20 rounded mb-3">
+                  <div className="text-center p-2 bg-blue-900/20 rounded mb-3">
                     <span className="text-sm text-gray-300">Fecha estimada: </span>
-                    <span className="text-sm font-bold text-emerald-400">{weightProjection.goalDate}</span>
+                    <span className="text-sm font-bold text-blue-400">{weightProjection.goalDate}</span>
                   </div>
                 )}
 
                 {weightProjection.recommendation && (
-                  <div className={`p-3 rounded ${weightProjection.recommendation.type === 'good' ? 'bg-emerald-900/30 border border-emerald-500/30' :
+                  <div className={`p-3 rounded ${weightProjection.recommendation.type === 'good' ? 'bg-blue-900/30 border border-blue-500/30' :
                     weightProjection.recommendation.type === 'decrease' ? 'bg-amber-900/30 border border-amber-500/30' :
                       'bg-red-900/30 border border-red-500/30'
                     }`}>
-                    <p className={`text-sm ${weightProjection.recommendation.type === 'good' ? 'text-emerald-400' :
+                    <p className={`text-sm ${weightProjection.recommendation.type === 'good' ? 'text-blue-400' :
                       weightProjection.recommendation.type === 'decrease' ? 'text-amber-400' :
                         'text-red-400'
                       }`}>
@@ -3084,7 +3098,7 @@ const NutritionTracker = () => {
 
             {weightHistory.length > 0 && (
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                <h2 className="text-base font-bold text-emerald-400 mb-3">📉 HISTORIAL</h2>
+                <h2 className="text-base font-bold text-blue-400 mb-3">📉 HISTORIAL</h2>
                 <div className="space-y-1 max-h-72 overflow-y-auto">
                   {weightHistory.map((entry, idx) => (
                     <div key={entry.id} className="flex items-center justify-between py-2.5 border-b border-gray-700 text-base">
@@ -3095,14 +3109,14 @@ const NutritionTracker = () => {
                       {editingWeightId === entry.id ? (
                         <div className="flex items-center gap-2">
                           <input type="number" step="0.1" value={editingWeightValue} onChange={(e) => setEditingWeightValue(e.target.value)} className="w-24 bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-base" />
-                          <button onClick={saveEditWeight} className="text-emerald-400 px-2 text-lg">✓</button>
+                          <button onClick={saveEditWeight} className="text-blue-400 px-2 text-lg">✓</button>
                           <button onClick={cancelEditWeight} className="text-gray-400 px-2 text-lg">✕</button>
                         </div>
                       ) : (
                         <div className="flex items-center gap-3">
                           <span className="font-bold text-lg">{entry.weight} kg</span>
                           {idx < weightHistory.length - 1 && (
-                            <span className={`text-sm ${entry.weight < weightHistory[idx + 1].weight ? 'text-emerald-400' : entry.weight > weightHistory[idx + 1].weight ? 'text-red-400' : 'text-gray-400'}`}>
+                            <span className={`text-sm ${entry.weight < weightHistory[idx + 1].weight ? 'text-blue-400' : entry.weight > weightHistory[idx + 1].weight ? 'text-red-400' : 'text-gray-400'}`}>
                               {entry.weight < weightHistory[idx + 1].weight ? '↓' : entry.weight > weightHistory[idx + 1].weight ? '↑' : '='}{Math.abs(entry.weight - weightHistory[idx + 1].weight).toFixed(1)}
                             </span>
                           )}
@@ -3122,7 +3136,7 @@ const NutritionTracker = () => {
         {activeTab === 'pasos' && (
           <div className="space-y-3">
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h2 className="text-sm font-bold text-emerald-400 mb-3">👟 REGISTRAR PASOS</h2>
+              <h2 className="text-sm font-bold text-blue-400 mb-3">👟 REGISTRAR PASOS</h2>
               <input type="date" value={stepsDate} onChange={(e) => setStepsDate(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm mb-2" />
               <div className="flex gap-2">
                 <input type="number" value={newSteps} onChange={(e) => setNewSteps(e.target.value)} placeholder="ej: 8500" className="flex-1 bg-gray-700 border border-gray-600 rounded px-4 py-3 text-lg" />
@@ -3134,7 +3148,7 @@ const NutritionTracker = () => {
 
             {stepsLog.length > 0 && (
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                <h2 className="text-sm font-bold text-emerald-400 mb-3">📊 HISTORIAL</h2>
+                <h2 className="text-sm font-bold text-blue-400 mb-3">📊 HISTORIAL</h2>
                 <div className="space-y-1 max-h-48 overflow-y-auto">
                   {stepsLog.slice(0, 14).map((entry, idx) => (
                     <div key={idx} className="flex justify-between items-center py-1 border-b border-gray-700 text-sm">
@@ -3219,7 +3233,7 @@ const NutritionTracker = () => {
                         <span className="text-gray-300 text-sm font-medium">{entry.date}</span>
                         <div className="flex gap-1.5 text-xs">
                           {entry.sleepScore && <span className="text-purple-400">😴{entry.sleepScore}</span>}
-                          {entry.readinessScore && <span className="text-emerald-400">⚡{entry.readinessScore}</span>}
+                          {entry.readinessScore && <span className="text-blue-400">⚡{entry.readinessScore}</span>}
                           {entry.activityScore && <span className="text-amber-400">🏃{entry.activityScore}</span>}
                         </div>
                       </div>
@@ -3251,7 +3265,7 @@ const NutritionTracker = () => {
         {activeTab === 'config' && (
           <div className="space-y-3">
             <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-              <h2 className="text-sm font-bold text-emerald-400 mb-3">👤 PERFIL</h2>
+              <h2 className="text-sm font-bold text-blue-400 mb-3">👤 PERFIL</h2>
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-[10px] text-gray-400 mb-1">Peso Actual</label>
@@ -3272,8 +3286,8 @@ const NutritionTracker = () => {
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-lg p-3 border border-emerald-500/30">
-              <h2 className="text-sm font-bold text-emerald-400 mb-3">🎯 OBJETIVOS (Rest Day)</h2>
+            <div className="bg-gray-800 rounded-lg p-3 border border-blue-500/30">
+              <h2 className="text-sm font-bold text-blue-400 mb-3">🎯 OBJETIVOS (Rest Day)</h2>
               <div className="grid grid-cols-3 gap-2">
                 <div>
                   <label className="block text-[10px] text-gray-400 mb-1">Calorías</label>
@@ -3313,8 +3327,8 @@ const NutritionTracker = () => {
               <p className="text-[10px] text-gray-500 mt-2">Training day: {customTargets.calories + customTargets.trainingDayCaloriesBonus} kcal, {customTargets.trainingDayCarbs}g carbs</p>
             </div>
 
-            <div className="bg-emerald-900/20 border border-emerald-500/30 rounded-lg p-2.5">
-              <p className="text-[10px] text-emerald-400">💾 Auto-save (800ms)</p>
+            <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-2.5">
+              <p className="text-[10px] text-blue-400">💾 Auto-save (800ms)</p>
             </div>
 
             {/* Export buttons - compact grid */}
@@ -3420,7 +3434,7 @@ const NutritionTracker = () => {
                           <p className="text-[10px] text-gray-400 truncate">{template.description}</p>
                         )}
                         <div className="flex gap-2 mt-1 text-[10px]">
-                          <span className="text-emerald-400">{template.calories}kcal</span>
+                          <span className="text-blue-400">{template.calories}kcal</span>
                           <span className="text-blue-400">{template.protein}P</span>
                           <span className="text-amber-400">{template.carbs}C</span>
                           <span className="text-pink-400">{template.fat}F</span>

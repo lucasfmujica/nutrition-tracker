@@ -1,5 +1,5 @@
 /**
- * Supabase Database Types for Nutrition Tracker
+ * Supabase Database Types for LukenFit
  * These match the schema defined in supabase-schema.sql
  */
 

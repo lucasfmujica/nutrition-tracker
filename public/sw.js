@@ -1,5 +1,5 @@
-// Service Worker for Lucas Nutrition Tracker PWA
-const CACHE_NAME = 'nutrition-tracker-v1';
+// Service Worker for LukenFit PWA
+const CACHE_NAME = 'lukenfit-v1';
 const OFFLINE_URL = '/offline.html';
 
 // Assets to cache immediately on install

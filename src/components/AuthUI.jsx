@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 /**
- * Authentication UI Component
+ * Authentication UI Component - LukenFit Branding
  * Handles login, signup, and password reset
  */
 export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loading: externalLoading }) {
@@ -90,13 +90,31 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
     onAuth.continueOffline();
   };
 
+  // LukenFit Logo Component
+  const LukenFitLogo = () => (
+    <div className="w-20 h-20 mx-auto mb-4 relative">
+      <svg viewBox="0 0 64 64" className="w-full h-full">
+        <defs>
+          <linearGradient id="authGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style={{ stopColor: '#3B82F6' }} />
+            <stop offset="100%" style={{ stopColor: '#06B6D4' }} />
+          </linearGradient>
+        </defs>
+        <circle cx="32" cy="32" r="30" fill="#0F172A" />
+        <path d="M20 14 L20 42 L38 42 L38 36 L26 36 L26 14 Z" fill="url(#authGrad)" />
+        <path d="M36 14 L28 30 L34 30 L30 50 L46 28 L38 28 L44 14 Z" fill="url(#authGrad)" opacity="0.9" />
+        <circle cx="32" cy="32" r="30" fill="none" stroke="url(#authGrad)" strokeWidth="2" opacity="0.3" />
+      </svg>
+    </div>
+  );
+
   if (!isSupabaseConfigured) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
         <div className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full border border-slate-700/50 shadow-2xl">
           <div className="text-center mb-6">
-            <div className="text-5xl mb-4">🥗</div>
-            <h1 className="text-2xl font-bold text-white mb-2">Nutrition Tracker</h1>
+            <LukenFitLogo />
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2">LukenFit</h1>
             <p className="text-slate-400">Modo local activo</p>
           </div>
 
@@ -108,7 +126,7 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
 
           <button
             onClick={handleContinueOffline}
-            className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all shadow-lg shadow-emerald-500/25"
+            className="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all shadow-lg shadow-blue-500/25"
           >
             Continuar sin cuenta
           </button>
@@ -118,12 +136,12 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
       <div className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full border border-slate-700/50 shadow-2xl">
-        {/* Header */}
+        {/* Header with LukenFit branding */}
         <div className="text-center mb-8">
-          <div className="text-5xl mb-4">🥗</div>
-          <h1 className="text-2xl font-bold text-white mb-2">Nutrition Tracker</h1>
+          <LukenFitLogo />
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2">LukenFit</h1>
           <p className="text-slate-400">
             {mode === 'login' && 'Inicia sesión para sincronizar tus datos'}
             {mode === 'signup' && 'Crea una cuenta para guardar tus datos'}
@@ -138,8 +156,8 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
           </div>
         )}
         {message && (
-          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 mb-6">
-            <p className="text-emerald-300 text-sm">{message}</p>
+          <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 mb-6">
+            <p className="text-blue-300 text-sm">{message}</p>
           </div>
         )}
 
@@ -153,7 +171,7 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all"
+              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
               placeholder="tu@email.com"
               required
             />
@@ -168,7 +186,7 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all"
+                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
                 placeholder="••••••••"
                 required
               />
@@ -184,7 +202,7 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all"
+                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
                 placeholder="••••••••"
                 required
               />
@@ -194,7 +212,7 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all shadow-lg shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all shadow-lg shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -220,7 +238,7 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
             <>
               <button
                 onClick={() => { setMode('reset'); setError(''); setMessage(''); }}
-                className="text-slate-400 hover:text-emerald-400 text-sm transition-colors"
+                className="text-slate-400 hover:text-blue-400 text-sm transition-colors"
               >
                 ¿Olvidaste tu contraseña?
               </button>
@@ -228,7 +246,7 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
                 ¿No tienes cuenta?{' '}
                 <button
                   onClick={() => { setMode('signup'); setError(''); setMessage(''); }}
-                  className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors"
+                  className="text-blue-400 hover:text-cyan-400 font-medium transition-colors"
                 >
                   Regístrate
                 </button>
@@ -241,7 +259,7 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
               ¿Ya tienes cuenta?{' '}
               <button
                 onClick={() => { setMode('login'); setError(''); setMessage(''); }}
-                className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors"
+                className="text-blue-400 hover:text-cyan-400 font-medium transition-colors"
               >
                 Inicia sesión
               </button>
@@ -251,7 +269,7 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
           {mode === 'reset' && (
             <button
               onClick={() => { setMode('login'); setError(''); setMessage(''); }}
-              className="text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-colors"
+              className="text-blue-400 hover:text-cyan-400 text-sm font-medium transition-colors"
             >
               ← Volver al login
             </button>
