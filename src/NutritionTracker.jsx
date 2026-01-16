@@ -45,18 +45,18 @@ const SwipeableItem = ({ children, onDelete, deleteLabel = 'Eliminar' }) => {
   return (
     <div className="relative overflow-hidden rounded-lg">
       {/* Delete background */}
-      <div 
+      <div
         className="absolute inset-y-0 right-0 flex items-center bg-red-500 transition-all"
         style={{ width: Math.abs(translateX) + 'px' }}
       >
-        <button 
+        <button
           onClick={handleDelete}
           className="w-full h-full flex items-center justify-center text-white font-medium px-4"
         >
           {Math.abs(translateX) > 50 && <span>🗑️ {deleteLabel}</span>}
         </button>
       </div>
-      
+
       {/* Main content */}
       <div
         ref={itemRef}
@@ -93,8 +93,8 @@ const BottomNav = ({ activeTab, setActiveTab, onFabClick }) => {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex flex-col items-center justify-center flex-1 h-full transition-colors ${
-              activeTab === tab.id 
-                ? 'text-emerald-400' 
+              activeTab === tab.id
+                ? 'text-emerald-400'
                 : 'text-gray-400 active:text-gray-200'
             }`}
           >
@@ -110,10 +110,11 @@ const BottomNav = ({ activeTab, setActiveTab, onFabClick }) => {
 // =====================================================
 // FLOATING ACTION BUTTON COMPONENT
 // =====================================================
-const FloatingActionButton = ({ onAddFood, onAddWorkout, onImportFood, onImportWorkout }) => {
+const FloatingActionButton = ({ onAddFood, onAddWorkout, onImportFood, onImportWorkout, onQuickAdd }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const actions = [
+    { icon: '⭐', label: 'Favoritos', onClick: onQuickAdd, color: 'bg-purple-500' },
     { icon: '📸', label: 'Importar Comida', onClick: onImportFood, color: 'bg-emerald-500' },
     { icon: '🏋️', label: 'Importar Entreno', onClick: onImportWorkout, color: 'bg-amber-500' },
     { icon: '🍽️', label: 'Agregar Comida', onClick: onAddFood, color: 'bg-blue-500' },
@@ -124,12 +125,12 @@ const FloatingActionButton = ({ onAddFood, onAddWorkout, onImportFood, onImportW
     <>
       {/* Backdrop */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/40 z-40 transition-opacity"
           onClick={() => setIsOpen(false)}
         />
       )}
-      
+
       <div className="fixed right-4 bottom-20 z-50 flex flex-col items-end gap-3">
         {/* FAB Menu */}
         <div className={`fab-menu flex flex-col gap-2 ${isOpen ? 'open' : ''}`}>
@@ -145,7 +146,7 @@ const FloatingActionButton = ({ onAddFood, onAddWorkout, onImportFood, onImportW
             </button>
           ))}
         </div>
-        
+
         {/* Main FAB */}
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -201,7 +202,7 @@ const PullToRefresh = ({ children, onRefresh, isRefreshing }) => {
     >
       {/* Pull indicator */}
       {(pullDistance > 0 || isRefreshing) && (
-        <div 
+        <div
           className="pull-indicator absolute top-0 left-0 right-0 flex items-center justify-center bg-gray-800/80 z-10"
           style={{ height: isRefreshing ? 50 : pullDistance }}
         >
@@ -217,7 +218,7 @@ const PullToRefresh = ({ children, onRefresh, isRefreshing }) => {
           )}
         </div>
       )}
-      
+
       <div style={{ transform: `translateY(${isRefreshing ? 50 : pullDistance}px)`, transition: isPulling ? 'none' : 'transform 0.2s ease' }}>
         {children}
       </div>
@@ -507,6 +508,17 @@ const NutritionTracker = () => {
 
   // FAB menu state
   const [showFab, setShowFab] = useState(true);
+
+  // Meal Templates/Favorites state
+  const [mealTemplates, setMealTemplates] = useState([
+    // Default templates - can be customized
+    { id: 'tpl-1', name: 'Desayuno típico', meal: 'Desayuno', description: 'Yogur + fruta + granola', calories: 350, protein: 15, carbs: 45, fat: 12, fiber: 5 },
+    { id: 'tpl-2', name: 'Almuerzo proteico', meal: 'Almuerzo', description: 'Pollo + arroz + verduras', calories: 550, protein: 45, carbs: 50, fat: 12, fiber: 6 },
+    { id: 'tpl-3', name: 'Merienda', meal: 'Merienda', description: 'Café + tostadas', calories: 200, protein: 8, carbs: 25, fat: 8, fiber: 2 },
+  ]);
+  const [showTemplatesModal, setShowTemplatesModal] = useState(false);
+  const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
+  const [templateToSave, setTemplateToSave] = useState(null);
 
   // Manual food entry form
   const [showFoodForm, setShowFoodForm] = useState(false);
@@ -1088,6 +1100,102 @@ const NutritionTracker = () => {
       fiber: ''
     });
     setShowFoodForm(false);
+  };
+
+  // =====================================================
+  // MEAL TEMPLATES / FAVORITES
+  // =====================================================
+
+  // Load templates from localStorage on mount
+  useEffect(() => {
+    const loadTemplates = async () => {
+      try {
+        const stored = await storage.get('lucas-meal-templates-v1');
+        if (stored?.value) {
+          setMealTemplates(JSON.parse(stored.value));
+        }
+      } catch (err) {
+        console.log('Using default templates');
+      }
+    };
+    loadTemplates();
+  }, []);
+
+  // Save templates to localStorage when they change
+  const saveMealTemplates = async (templates) => {
+    setMealTemplates(templates);
+    try {
+      await storage.set('lucas-meal-templates-v1', JSON.stringify(templates));
+    } catch (err) {
+      console.error('Error saving templates:', err);
+    }
+  };
+
+  // Add food from template
+  const addFromTemplate = async (template) => {
+    const now = new Date();
+    const time = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: ARGENTINA_TZ });
+    
+    const entry = {
+      id: `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      date: selectedFoodDate,
+      time,
+      meal: template.meal,
+      name: template.name,
+      description: template.description || '',
+      calories: template.calories,
+      protein: template.protein,
+      carbs: template.carbs,
+      fat: template.fat,
+      fiber: template.fiber || 0,
+      source: 'template',
+      reviewed: true,
+      confidence: 1,
+      sourceId: `tpl-${template.id}-${Date.now()}`
+    };
+
+    // Save to Supabase first
+    const savedEntry = await saveFoodEntry(entry);
+    const finalEntry = savedEntry?.id ? savedEntry : entry;
+
+    saveFoodLog([...foodLog, finalEntry]);
+    setShowTemplatesModal(false);
+    setSaveStatus(`✓ ${template.name}`);
+    setTimeout(() => setSaveStatus(''), 2000);
+  };
+
+  // Save current food as template
+  const saveAsTemplate = (food) => {
+    setTemplateToSave({
+      name: food.name,
+      meal: food.meal,
+      description: food.description || '',
+      calories: food.calories,
+      protein: food.protein,
+      carbs: food.carbs,
+      fat: food.fat,
+      fiber: food.fiber || 0
+    });
+    setShowSaveTemplateModal(true);
+  };
+
+  // Confirm save template
+  const confirmSaveTemplate = () => {
+    if (!templateToSave?.name) return;
+    const newTemplate = {
+      id: `tpl-${Date.now()}`,
+      ...templateToSave
+    };
+    saveMealTemplates([...mealTemplates, newTemplate]);
+    setShowSaveTemplateModal(false);
+    setTemplateToSave(null);
+    setSaveStatus('✓ Plantilla guardada');
+    setTimeout(() => setSaveStatus(''), 2000);
+  };
+
+  // Delete template
+  const deleteTemplate = (id) => {
+    saveMealTemplates(mealTemplates.filter(t => t.id !== id));
   };
 
   // Add manual workout entry with IA schema
@@ -2038,7 +2146,8 @@ const NutritionTracker = () => {
   const workoutAnalysis = getWeeklyWorkoutAnalysis();
 
   // Show Auth UI if not authenticated and not in offline mode
-  if (showAuth && !offlineMode && !supabase.loading) {
+  // Priority: AuthUI should show even during loading states after logout
+  if (showAuth && !offlineMode) {
     return (
       <AuthUI
         onAuth={{
@@ -2052,11 +2161,13 @@ const NutritionTracker = () => {
         }}
         error={supabase.authError}
         isSupabaseConfigured={supabase.isSupabaseConfigured}
+        loading={supabase.loading}
       />
     );
   }
 
-  if (isLoading || supabase.loading) {
+  // Show loading only when actually loading data (not during auth flows)
+  if ((isLoading || supabase.loading) && !showAuth) {
     return <div className="min-h-screen bg-gray-900 flex items-center justify-center"><div className="text-emerald-400 text-xl">Cargando...</div></div>;
   }
 
@@ -2179,22 +2290,15 @@ const NutritionTracker = () => {
 
       {/* Manual Food Entry Modal */}
       {showFoodForm && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-gray-800 rounded-lg p-5 max-w-md w-full border border-gray-700 my-4">
-            <h3 className="text-lg font-bold text-emerald-400 mb-4">➕ Nueva Comida</h3>
-            <div className="space-y-3">
-              <div className="grid grid-cols-3 gap-3">
+        <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-2 pt-10 overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg p-4 w-full max-w-sm border border-gray-700">
+            <h3 className="text-base font-bold text-emerald-400 mb-3">➕ Nueva Comida</h3>
+            <div className="space-y-2">
+              {/* Row 1: Meal type + Time */}
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Fecha</label>
-                  <input type="date" value={newFood.date} onChange={(e) => setNewFood({ ...newFood, date: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
-                </div>
-                <div>
-                  <label className="block text-sm text-gray-400 mb-1">Hora</label>
-                  <input type="time" value={newFood.time} onChange={(e) => setNewFood({ ...newFood, time: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
-                </div>
-                <div>
-                  <label className="block text-sm text-gray-400 mb-1">Comida</label>
-                  <select value={newFood.meal} onChange={(e) => setNewFood({ ...newFood, meal: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base">
+                  <label className="block text-[10px] text-gray-400 mb-1">Comida</label>
+                  <select value={newFood.meal} onChange={(e) => setNewFood({ ...newFood, meal: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm">
                     <option>Desayuno</option>
                     <option>Almuerzo</option>
                     <option>Merienda</option>
@@ -2202,41 +2306,52 @@ const NutritionTracker = () => {
                     <option>Snack</option>
                   </select>
                 </div>
+                <div>
+                  <label className="block text-[10px] text-gray-400 mb-1">Hora</label>
+                  <input type="time" value={newFood.time} onChange={(e) => setNewFood({ ...newFood, time: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                </div>
               </div>
+              {/* Row 2: Name */}
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Nombre *</label>
-                <input type="text" value={newFood.name} onChange={(e) => setNewFood({ ...newFood, name: e.target.value })} placeholder="ej: Pollo con arroz" className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
+                <label className="block text-[10px] text-gray-400 mb-1">Nombre *</label>
+                <input type="text" value={newFood.name} onChange={(e) => setNewFood({ ...newFood, name: e.target.value })} placeholder="Pollo con arroz" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
               </div>
+              {/* Row 3: Description */}
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Descripción</label>
-                <input type="text" value={newFood.description} onChange={(e) => setNewFood({ ...newFood, description: e.target.value })} placeholder="ej: 200g pechuga, 150g arroz" className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
+                <label className="block text-[10px] text-gray-400 mb-1">Descripción</label>
+                <input type="text" value={newFood.description} onChange={(e) => setNewFood({ ...newFood, description: e.target.value })} placeholder="200g pechuga, 150g arroz" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
               </div>
-              <div className="grid grid-cols-5 gap-2">
+              {/* Row 4: Macros - 3+2 grid for mobile */}
+              <div className="grid grid-cols-3 gap-1.5">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Calorías *</label>
-                  <input type="number" value={newFood.calories} onChange={(e) => setNewFood({ ...newFood, calories: e.target.value })} placeholder="500" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-base" />
+                  <label className="block text-[10px] text-gray-400 mb-1">Cal *</label>
+                  <input type="number" value={newFood.calories} onChange={(e) => setNewFood({ ...newFood, calories: e.target.value })} placeholder="500" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Prot (g)</label>
-                  <input type="number" value={newFood.protein} onChange={(e) => setNewFood({ ...newFood, protein: e.target.value })} placeholder="40" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-base" />
+                  <label className="block text-[10px] text-gray-400 mb-1">Prot</label>
+                  <input type="number" value={newFood.protein} onChange={(e) => setNewFood({ ...newFood, protein: e.target.value })} placeholder="40" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Carbs (g)</label>
-                  <input type="number" value={newFood.carbs} onChange={(e) => setNewFood({ ...newFood, carbs: e.target.value })} placeholder="50" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-base" />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">Fat (g)</label>
-                  <input type="number" value={newFood.fat} onChange={(e) => setNewFood({ ...newFood, fat: e.target.value })} placeholder="15" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-base" />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">Fibra (g)</label>
-                  <input type="number" value={newFood.fiber} onChange={(e) => setNewFood({ ...newFood, fiber: e.target.value })} placeholder="5" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-base" />
+                  <label className="block text-[10px] text-gray-400 mb-1">Carbs</label>
+                  <input type="number" value={newFood.carbs} onChange={(e) => setNewFood({ ...newFood, carbs: e.target.value })} placeholder="50" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
                 </div>
               </div>
+              <div className="grid grid-cols-2 gap-1.5">
+                <div>
+                  <label className="block text-[10px] text-gray-400 mb-1">Fat</label>
+                  <input type="number" value={newFood.fat} onChange={(e) => setNewFood({ ...newFood, fat: e.target.value })} placeholder="15" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-400 mb-1">Fibra</label>
+                  <input type="number" value={newFood.fiber} onChange={(e) => setNewFood({ ...newFood, fiber: e.target.value })} placeholder="5" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
+                </div>
+              </div>
+              {/* Hidden date - use selected date */}
+              <input type="hidden" value={newFood.date} />
             </div>
-            <div className="flex gap-2 mt-5">
-              <button onClick={() => setShowFoodForm(false)} className="flex-1 bg-gray-700 hover:bg-gray-600 py-2.5 rounded text-base">Cancelar</button>
-              <button onClick={addManualFood} className="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2.5 rounded text-base font-bold">Guardar</button>
+            <div className="flex gap-2 mt-4">
+              <button onClick={() => setShowFoodForm(false)} className="flex-1 bg-gray-700 active:bg-gray-600 py-2.5 rounded text-sm">Cancelar</button>
+              <button onClick={addManualFood} className="flex-1 bg-emerald-600 active:bg-emerald-500 py-2.5 rounded text-sm font-bold">Guardar</button>
             </div>
           </div>
         </div>
@@ -2244,51 +2359,49 @@ const NutritionTracker = () => {
 
       {/* Manual Workout Entry Modal */}
       {showWorkoutForm && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-gray-800 rounded-lg p-5 max-w-md w-full border border-gray-700 my-4">
-            <h3 className="text-lg font-bold text-amber-400 mb-4">🏋️ Nuevo Entreno</h3>
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm text-gray-400 mb-1">Fecha</label>
-                  <input type="date" value={newWorkout.date} onChange={(e) => setNewWorkout({ ...newWorkout, date: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
-                </div>
-                <div>
-                  <label className="block text-sm text-gray-400 mb-1">Tipo</label>
-                  <select value={newWorkout.type} onChange={(e) => setNewWorkout({ ...newWorkout, type: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base">
-                    <option value="gym">Gym</option>
-                    <option value="tennis">Tenis</option>
-                    <option value="cardio">Cardio</option>
-                    <option value="other">Otro</option>
-                  </select>
-                </div>
-              </div>
+        <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-2 pt-10 overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg p-4 w-full max-w-sm border border-gray-700">
+            <h3 className="text-base font-bold text-amber-400 mb-3">🏋️ Nuevo Entreno</h3>
+            <div className="space-y-2">
+              {/* Row 1: Type */}
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Nombre *</label>
-                <input type="text" value={newWorkout.name} onChange={(e) => setNewWorkout({ ...newWorkout, name: e.target.value })} placeholder="ej: Push Day, Clase de Tenis" className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
+                <label className="block text-[10px] text-gray-400 mb-1">Tipo</label>
+                <select value={newWorkout.type} onChange={(e) => setNewWorkout({ ...newWorkout, type: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm">
+                  <option value="gym">Gym</option>
+                  <option value="tennis">Tenis</option>
+                  <option value="cardio">Cardio</option>
+                  <option value="other">Otro</option>
+                </select>
               </div>
-              <div className="grid grid-cols-3 gap-2">
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">Duración (min)</label>
-                  <input type="number" value={newWorkout.duration} onChange={(e) => setNewWorkout({ ...newWorkout, duration: e.target.value })} placeholder="60" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-base" />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">Calorías</label>
-                  <input type="number" value={newWorkout.calories} onChange={(e) => setNewWorkout({ ...newWorkout, calories: e.target.value })} placeholder="300" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-base" />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">Volumen (kg)</label>
-                  <input type="number" value={newWorkout.volume} onChange={(e) => setNewWorkout({ ...newWorkout, volume: e.target.value })} placeholder="2500" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-base" />
-                </div>
-              </div>
+              {/* Row 2: Name */}
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Notas</label>
-                <input type="text" value={newWorkout.notes} onChange={(e) => setNewWorkout({ ...newWorkout, notes: e.target.value })} placeholder="ej: Subí peso en press banca" className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-base" />
+                <label className="block text-[10px] text-gray-400 mb-1">Nombre *</label>
+                <input type="text" value={newWorkout.name} onChange={(e) => setNewWorkout({ ...newWorkout, name: e.target.value })} placeholder="Push Day, Clase de Tenis" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+              </div>
+              {/* Row 3: Stats */}
+              <div className="grid grid-cols-3 gap-1.5">
+                <div>
+                  <label className="block text-[10px] text-gray-400 mb-1">Min</label>
+                  <input type="number" value={newWorkout.duration} onChange={(e) => setNewWorkout({ ...newWorkout, duration: e.target.value })} placeholder="60" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-400 mb-1">Kcal</label>
+                  <input type="number" value={newWorkout.calories} onChange={(e) => setNewWorkout({ ...newWorkout, calories: e.target.value })} placeholder="300" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-400 mb-1">Vol (kg)</label>
+                  <input type="number" value={newWorkout.volume} onChange={(e) => setNewWorkout({ ...newWorkout, volume: e.target.value })} placeholder="2500" className="w-full bg-gray-700 border border-gray-600 rounded px-1.5 py-2 text-sm text-center" />
+                </div>
+              </div>
+              {/* Row 4: Notes */}
+              <div>
+                <label className="block text-[10px] text-gray-400 mb-1">Notas</label>
+                <input type="text" value={newWorkout.notes} onChange={(e) => setNewWorkout({ ...newWorkout, notes: e.target.value })} placeholder="Subí peso en press banca" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
               </div>
             </div>
-            <div className="flex gap-2 mt-5">
-              <button onClick={() => setShowWorkoutForm(false)} className="flex-1 bg-gray-700 hover:bg-gray-600 py-2.5 rounded text-base">Cancelar</button>
-              <button onClick={addManualWorkout} className="flex-1 bg-amber-600 hover:bg-amber-500 py-2.5 rounded text-base font-bold">Guardar</button>
+            <div className="flex gap-2 mt-4">
+              <button onClick={() => setShowWorkoutForm(false)} className="flex-1 bg-gray-700 active:bg-gray-600 py-2.5 rounded text-sm">Cancelar</button>
+              <button onClick={addManualWorkout} className="flex-1 bg-amber-600 active:bg-amber-500 py-2.5 rounded text-sm font-bold">Guardar</button>
             </div>
           </div>
         </div>
@@ -2296,20 +2409,20 @@ const NutritionTracker = () => {
 
       {/* Import Food Modal */}
       {showImportFoodModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-gray-800 rounded-lg p-5 max-w-lg w-full border border-gray-700 my-4">
-            <h3 className="text-lg font-bold text-emerald-400 mb-2">📥 Importar Comida</h3>
-            <p className="text-sm text-gray-400 mb-4">Pegá el JSON de la comida. Puede ser un objeto o un array de objetos.</p>
+        <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-2 pt-10 overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg p-4 w-full max-w-sm border border-gray-700">
+            <h3 className="text-base font-bold text-emerald-400 mb-2">📥 Importar Comida</h3>
+            <p className="text-xs text-gray-400 mb-3">Pegá el JSON de la comida.</p>
             <textarea
               value={importText}
               onChange={(e) => { setImportText(e.target.value); setImportError(''); }}
-              placeholder={`{\n  "date": "2026-01-16",\n  "meal": "Almuerzo",\n  "name": "Pollo con arroz",\n  "calories": 500,\n  "protein": 40,\n  "carbs": 50,\n  "fat": 10,\n  "fiber": 3\n}`}
-              className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm font-mono h-48 resize-none"
+              placeholder={`{"meal": "Almuerzo", "name": "Pollo", "calories": 500, "protein": 40}`}
+              className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-xs font-mono h-36 resize-none"
             />
-            {importError && <p className="text-red-400 text-sm mt-2">{importError}</p>}
-            <div className="flex gap-2 mt-4">
-              <button onClick={() => { setShowImportFoodModal(false); setImportText(''); setImportError(''); }} className="flex-1 bg-gray-700 hover:bg-gray-600 py-2.5 rounded text-base">Cancelar</button>
-              <button onClick={handleImportFood} className="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2.5 rounded text-base font-bold">Importar</button>
+            {importError && <p className="text-red-400 text-xs mt-2">{importError}</p>}
+            <div className="flex gap-2 mt-3">
+              <button onClick={() => { setShowImportFoodModal(false); setImportText(''); setImportError(''); }} className="flex-1 bg-gray-700 active:bg-gray-600 py-2.5 rounded text-sm">Cancelar</button>
+              <button onClick={handleImportFood} className="flex-1 bg-emerald-600 active:bg-emerald-500 py-2.5 rounded text-sm font-bold">Importar</button>
             </div>
           </div>
         </div>
@@ -2317,20 +2430,20 @@ const NutritionTracker = () => {
 
       {/* Import Workout Modal */}
       {showImportWorkoutModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-gray-800 rounded-lg p-5 max-w-lg w-full border border-gray-700 my-4">
-            <h3 className="text-lg font-bold text-amber-400 mb-2">📥 Importar Entreno</h3>
-            <p className="text-sm text-gray-400 mb-4">Pegá el JSON del entreno (desde Gravl o generado por IA).</p>
+        <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-2 pt-10 overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg p-4 w-full max-w-sm border border-gray-700">
+            <h3 className="text-base font-bold text-amber-400 mb-2">📥 Importar Entreno</h3>
+            <p className="text-xs text-gray-400 mb-3">Pegá el JSON del entreno (Gravl o IA).</p>
             <textarea
               value={importText}
               onChange={(e) => { setImportText(e.target.value); setImportError(''); }}
-              placeholder={`{\n  "date": "2026-01-16",\n  "type": "gym",\n  "name": "Push Day",\n  "duration": 60,\n  "calories": 250,\n  "volume": 2500,\n  "exercises": [...],\n  "notes": "Subí peso"\n}`}
-              className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm font-mono h-48 resize-none"
+              placeholder={`{"type": "gym", "name": "Push Day", "duration": 60, "exercises": [...]}`}
+              className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-xs font-mono h-36 resize-none"
             />
-            {importError && <p className="text-red-400 text-sm mt-2">{importError}</p>}
-            <div className="flex gap-2 mt-4">
-              <button onClick={() => { setShowImportWorkoutModal(false); setImportText(''); setImportError(''); }} className="flex-1 bg-gray-700 hover:bg-gray-600 py-2.5 rounded text-base">Cancelar</button>
-              <button onClick={handleImportWorkout} className="flex-1 bg-amber-600 hover:bg-amber-500 py-2.5 rounded text-base font-bold">Importar</button>
+            {importError && <p className="text-red-400 text-xs mt-2">{importError}</p>}
+            <div className="flex gap-2 mt-3">
+              <button onClick={() => { setShowImportWorkoutModal(false); setImportText(''); setImportError(''); }} className="flex-1 bg-gray-700 active:bg-gray-600 py-2.5 rounded text-sm">Cancelar</button>
+              <button onClick={handleImportWorkout} className="flex-1 bg-amber-600 active:bg-amber-500 py-2.5 rounded text-sm font-bold">Importar</button>
             </div>
           </div>
         </div>
@@ -2417,20 +2530,20 @@ const NutritionTracker = () => {
         <nav className="bg-gray-800/50 border-b border-gray-700 px-4">
           <div className="max-w-6xl mx-auto flex gap-1">
             {['pasos', 'oura'].map(tab => (
-              <button 
-                key={tab} 
-                onClick={() => setActiveTab(tab)} 
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
                 className={`px-4 py-2 text-xs font-medium transition-colors ${
-                  activeTab === tab 
-                    ? 'text-emerald-400 border-b-2 border-emerald-400' 
+                  activeTab === tab
+                    ? 'text-emerald-400 border-b-2 border-emerald-400'
                     : 'text-gray-400 active:text-gray-200'
                 }`}
               >
                 {tab === 'oura' ? '💍 Oura' : '👟 Pasos'}
               </button>
             ))}
-            <button 
-              onClick={() => setActiveTab('dashboard')} 
+            <button
+              onClick={() => setActiveTab('dashboard')}
               className="ml-auto text-gray-500 text-xs px-2"
             >
               ← Volver
@@ -2667,11 +2780,11 @@ const NutritionTracker = () => {
           <div className="space-y-3">
             {/* Date selector - compact */}
             <div className="flex items-center gap-2">
-              <input 
-                type="date" 
-                value={selectedFoodDate} 
-                onChange={(e) => setSelectedFoodDate(e.target.value)} 
-                className="bg-gray-800 border border-gray-600 rounded px-3 py-2.5 text-base flex-1 min-w-0" 
+              <input
+                type="date"
+                value={selectedFoodDate}
+                onChange={(e) => setSelectedFoodDate(e.target.value)}
+                className="bg-gray-800 border border-gray-600 rounded px-3 py-2.5 text-base flex-1 min-w-0"
               />
             </div>
 
@@ -2690,8 +2803,8 @@ const NutritionTracker = () => {
                 {getFoodsForDate(selectedFoodDate).map(entry => {
                   const needsReview = !entry.reviewed || (entry.confidence && entry.confidence < 0.7);
                   return (
-                    <SwipeableItem 
-                      key={entry.id} 
+                    <SwipeableItem
+                      key={entry.id}
                       onDelete={() => confirmDelete('food', entry.id, entry.name)}
                     >
                       <div className={`p-3 border-l-4 ${needsReview ? 'border-l-amber-500' : 'border-l-emerald-500'}`}>
@@ -2711,12 +2824,21 @@ const NutritionTracker = () => {
                           )}
                         </div>
                         {entry.description && <p className="text-xs text-gray-400 mb-1.5 truncate-2">{entry.description}</p>}
-                        <div className="flex flex-wrap gap-2 text-xs">
-                          <span className="text-emerald-400 font-medium">{entry.calories}kcal</span>
-                          <span className="text-blue-400">{entry.protein}P</span>
-                          <span className="text-amber-400">{entry.carbs}C</span>
-                          <span className="text-pink-400">{entry.fat}F</span>
-                          {entry.fiber > 0 && <span className="text-purple-400">{entry.fiber}Fib</span>}
+                        <div className="flex justify-between items-center">
+                          <div className="flex flex-wrap gap-2 text-xs">
+                            <span className="text-emerald-400 font-medium">{entry.calories}kcal</span>
+                            <span className="text-blue-400">{entry.protein}P</span>
+                            <span className="text-amber-400">{entry.carbs}C</span>
+                            <span className="text-pink-400">{entry.fat}F</span>
+                            {entry.fiber > 0 && <span className="text-purple-400">{entry.fiber}Fib</span>}
+                          </div>
+                          <button 
+                            onClick={() => saveAsTemplate(entry)}
+                            className="text-purple-400 active:text-purple-300 text-[10px] px-1.5 py-0.5 bg-purple-500/20 rounded"
+                            title="Guardar como favorito"
+                          >
+                            ⭐
+                          </button>
                         </div>
                       </div>
                     </SwipeableItem>
@@ -2774,11 +2896,11 @@ const NutritionTracker = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <input 
-                type="date" 
-                value={selectedWorkoutDate} 
-                onChange={(e) => setSelectedWorkoutDate(e.target.value)} 
-                className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2.5 text-base min-w-0" 
+              <input
+                type="date"
+                value={selectedWorkoutDate}
+                onChange={(e) => setSelectedWorkoutDate(e.target.value)}
+                className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2.5 text-base min-w-0"
               />
             </div>
 
@@ -2797,8 +2919,8 @@ const NutritionTracker = () => {
                 {getWorkoutsForDate(selectedWorkoutDate).map(workout => {
                   const needsReview = !workout.reviewed || (workout.confidence && workout.confidence < 0.7);
                   return (
-                    <SwipeableItem 
-                      key={workout.id} 
+                    <SwipeableItem
+                      key={workout.id}
                       onDelete={() => confirmDelete('workout', workout.id, workout.name)}
                     >
                       <div className={`p-3 border-l-4 ${workout.type === 'gym' ? 'border-l-amber-500' : 'border-l-green-500'}`}>
@@ -2858,28 +2980,33 @@ const NutritionTracker = () => {
         {activeTab === 'peso' && (
           <div className="space-y-4">
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h2 className="text-base font-bold text-emerald-400 mb-3">⚖️ NUEVO PESO</h2>
-              <div className="flex gap-2">
-                <input type="number" step="0.1" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} placeholder="84.5 kg" className="flex-1 bg-gray-700 border border-gray-600 rounded px-4 py-3 text-xl" />
-                <input type="time" value={newWeightTime} onChange={(e) => setNewWeightTime(e.target.value)} className="bg-gray-700 border border-gray-600 rounded px-3 py-3 text-base w-28" />
-                <button onClick={addWeightEntry} className="bg-emerald-600 active:bg-emerald-500 px-6 py-3 rounded font-bold text-lg">OK</button>
+              <h2 className="text-sm font-bold text-emerald-400 mb-2">⚖️ NUEVO PESO</h2>
+              <div className="flex flex-col gap-2">
+                <div className="flex gap-2">
+                  <input type="number" step="0.1" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} placeholder="84.5" className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2.5 text-lg min-w-0" />
+                  <span className="flex items-center text-gray-400 text-sm">kg</span>
+                </div>
+                <div className="flex gap-2">
+                  <input type="time" value={newWeightTime} onChange={(e) => setNewWeightTime(e.target.value)} className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2.5 text-sm min-w-0" />
+                  <button onClick={addWeightEntry} disabled={!newWeight} className="bg-emerald-600 active:bg-emerald-500 disabled:opacity-50 px-5 py-2.5 rounded font-bold text-sm flex-shrink-0">Guardar</button>
+                </div>
               </div>
             </div>
 
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
               <h2 className="text-base font-bold text-emerald-400 mb-3">📍 PROGRESO</h2>
-              <div className="grid grid-cols-3 gap-3 text-center">
-                <div className="p-3 bg-gray-700/50 rounded">
-                  <div className="text-2xl font-bold text-white">{profile.currentWeight}</div>
-                  <div className="text-sm text-gray-400">actual</div>
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="p-2 bg-gray-700/50 rounded">
+                  <div className="text-xl font-bold text-white">{profile.currentWeight}</div>
+                  <div className="text-[10px] text-gray-400">actual</div>
                 </div>
-                <div className="p-3 bg-gray-700/50 rounded">
-                  <div className="text-2xl font-bold text-emerald-400">{profile.targetWeight}</div>
-                  <div className="text-xs text-gray-400">objetivo</div>
+                <div className="p-2 bg-gray-700/50 rounded">
+                  <div className="text-xl font-bold text-emerald-400">{profile.targetWeight}</div>
+                  <div className="text-[10px] text-gray-400">objetivo</div>
                 </div>
-                <div className="p-3 bg-gray-700/50 rounded">
-                  <div className="text-2xl font-bold text-amber-400">{(profile.currentWeight - profile.targetWeight).toFixed(1)}</div>
-                  <div className="text-xs text-gray-400">faltan</div>
+                <div className="p-2 bg-gray-700/50 rounded">
+                  <div className="text-xl font-bold text-amber-400">{(profile.currentWeight - profile.targetWeight).toFixed(1)}</div>
+                  <div className="text-[10px] text-gray-400">faltan</div>
                 </div>
               </div>
             </div>
@@ -3232,8 +3359,8 @@ const NutritionTracker = () => {
       </PullToRefresh>
 
       {/* Bottom Navigation */}
-      <BottomNav 
-        activeTab={activeTab} 
+      <BottomNav
+        activeTab={activeTab}
         setActiveTab={setActiveTab}
       />
 
@@ -3244,7 +3371,116 @@ const NutritionTracker = () => {
           onAddWorkout={() => { setNewWorkout({ ...newWorkout, date: selectedWorkoutDate }); setShowWorkoutForm(true); }}
           onImportFood={() => setShowImportFoodModal(true)}
           onImportWorkout={() => setShowImportWorkoutModal(true)}
+          onQuickAdd={() => setShowTemplatesModal(true)}
         />
+      )}
+
+      {/* Meal Templates Modal */}
+      {showTemplatesModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-2 pt-8 overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg p-4 w-full max-w-sm border border-purple-500/30">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-base font-bold text-purple-400">⭐ Favoritos</h3>
+              <button onClick={() => setShowTemplatesModal(false)} className="text-gray-400 text-xl">×</button>
+            </div>
+            
+            {mealTemplates.length === 0 ? (
+              <p className="text-gray-400 text-sm text-center py-4">No hay plantillas guardadas. Agregá comidas y guardalas como favoritos.</p>
+            ) : (
+              <div className="space-y-2 max-h-80 overflow-y-auto">
+                {mealTemplates.map(template => (
+                  <div 
+                    key={template.id} 
+                    className="bg-gray-700 rounded-lg p-3 border border-gray-600 active:bg-gray-600"
+                  >
+                    <div className="flex justify-between items-start">
+                      <button 
+                        onClick={() => addFromTemplate(template)}
+                        className="flex-1 text-left"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] text-purple-400 uppercase">{template.meal}</span>
+                        </div>
+                        <h4 className="font-medium text-sm text-white">{template.name}</h4>
+                        {template.description && (
+                          <p className="text-[10px] text-gray-400 truncate">{template.description}</p>
+                        )}
+                        <div className="flex gap-2 mt-1 text-[10px]">
+                          <span className="text-emerald-400">{template.calories}kcal</span>
+                          <span className="text-blue-400">{template.protein}P</span>
+                          <span className="text-amber-400">{template.carbs}C</span>
+                          <span className="text-pink-400">{template.fat}F</span>
+                        </div>
+                      </button>
+                      <button 
+                        onClick={() => deleteTemplate(template.id)}
+                        className="text-gray-500 active:text-red-400 p-1"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <p className="text-[10px] text-gray-500 mt-3 text-center">
+              Toca una comida para agregarla · Desliza a las comidas para guardar nuevas
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Save as Template Modal */}
+      {showSaveTemplateModal && templateToSave && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg p-4 w-full max-w-xs border border-purple-500/30">
+            <h3 className="text-sm font-bold text-purple-400 mb-3">⭐ Guardar como Favorito</h3>
+            <div className="space-y-2">
+              <div>
+                <label className="block text-[10px] text-gray-400 mb-1">Nombre</label>
+                <input 
+                  type="text" 
+                  value={templateToSave.name} 
+                  onChange={(e) => setTemplateToSave({ ...templateToSave, name: e.target.value })}
+                  className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[10px] text-gray-400 mb-1">Tipo</label>
+                  <select 
+                    value={templateToSave.meal} 
+                    onChange={(e) => setTemplateToSave({ ...templateToSave, meal: e.target.value })}
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm"
+                  >
+                    <option>Desayuno</option>
+                    <option>Almuerzo</option>
+                    <option>Merienda</option>
+                    <option>Cena</option>
+                    <option>Snack</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-400 mb-1">Calorías</label>
+                  <input 
+                    type="number" 
+                    value={templateToSave.calories} 
+                    onChange={(e) => setTemplateToSave({ ...templateToSave, calories: parseInt(e.target.value) || 0 })}
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm"
+                  />
+                </div>
+              </div>
+              <div className="text-xs text-gray-400">
+                P: {templateToSave.protein}g · C: {templateToSave.carbs}g · F: {templateToSave.fat}g
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <button onClick={() => { setShowSaveTemplateModal(false); setTemplateToSave(null); }} className="flex-1 bg-gray-700 active:bg-gray-600 py-2.5 rounded text-sm">Cancelar</button>
+              <button onClick={confirmSaveTemplate} className="flex-1 bg-purple-600 active:bg-purple-500 py-2.5 rounded text-sm font-bold">Guardar</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

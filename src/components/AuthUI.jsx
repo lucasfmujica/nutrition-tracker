@@ -4,31 +4,34 @@ import { useState } from 'react';
  * Authentication UI Component
  * Handles login, signup, and password reset
  */
-export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured }) {
+export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loading: externalLoading }) {
   const [mode, setMode] = useState('login'); // 'login' | 'signup' | 'reset'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [internalLoading, setInternalLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+
+  // Combined loading state - loading during form submission OR external loading (from logout)
+  const loading = internalLoading;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setMessage('');
-    setLoading(true);
+    setInternalLoading(true);
 
     try {
       if (mode === 'signup') {
         if (password !== confirmPassword) {
           setError('Las contraseñas no coinciden');
-          setLoading(false);
+          setInternalLoading(false);
           return;
         }
         if (password.length < 6) {
           setError('La contraseña debe tener al menos 6 caracteres');
-          setLoading(false);
+          setInternalLoading(false);
           return;
         }
         const result = await onAuth.signUp(email, password);
@@ -80,7 +83,7 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured }) {
       setError('Error inesperado. Intenta de nuevo.');
     }
 
-    setLoading(false);
+    setInternalLoading(false);
   };
 
   const handleContinueOffline = () => {
