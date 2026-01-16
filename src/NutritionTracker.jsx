@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSupabase } from './hooks/useSupabase';
+import { AuthUI } from './components/AuthUI';
 
 const NutritionTracker = () => {
+  // Supabase auth and data hook
+  const supabase = useSupabase();
+  const [showAuth, setShowAuth] = useState(true);
+  const [offlineMode, setOfflineMode] = useState(false);
   // Argentina timezone constant
   const ARGENTINA_TZ = 'America/Argentina/Buenos_Aires';
 
@@ -358,7 +364,7 @@ const NutritionTracker = () => {
     return sortWeightHistory(history)[0];
   };
 
-  // Storage helper with localStorage fallback
+  // Storage helper with localStorage fallback (used in offline/unauthenticated mode)
   const storage = {
     async get(key) {
       try {
@@ -386,35 +392,65 @@ const NutritionTracker = () => {
     }
   };
 
-  // Load data from storage
+  // Check if using Supabase (authenticated) or localStorage (offline)
+  const useCloud = supabase.isAuthenticated && !offlineMode;
+
+  // Load data from Supabase or localStorage
   useEffect(() => {
+    // Wait for auth to initialize
+    if (supabase.loading) return;
+    
+    // If authenticated, hide auth screen
+    if (supabase.isAuthenticated) {
+      setShowAuth(false);
+    }
+
     const loadData = async () => {
       setIsLoading(true);
       try {
-        const [profileData, weightData, foodData, workoutData, stepsData, targetsData, ouraData] = await Promise.all([
-          storage.get('lucas-profile-v5').catch(() => null),
-          storage.get('lucas-weight-history-v5').catch(() => null),
-          storage.get('lucas-food-log-v5').catch(() => null),
-          storage.get('lucas-workout-log-v5').catch(() => null),
-          storage.get('lucas-steps-log-v5').catch(() => null),
-          storage.get('lucas-targets-v5').catch(() => null),
-          storage.get('lucas-oura-log-v5').catch(() => null)
-        ]);
+        if (useCloud) {
+          // Load from Supabase
+          const data = await supabase.fetchAllData();
+          if (data) {
+            if (data.profile) setProfile(data.profile);
+            if (data.targets) setCustomTargets(data.targets);
+            if (data.weightHistory?.length) setWeightHistory(data.weightHistory);
+            if (data.foodLog?.length) setFoodLog(data.foodLog);
+            if (data.workouts?.length) setWorkoutLog(data.workouts);
+            if (data.stepsLog?.length) setStepsLog(data.stepsLog);
+            if (data.ouraLog?.length) setOuraLog(data.ouraLog);
+          }
+        } else {
+          // Load from localStorage
+          const [profileData, weightData, foodData, workoutData, stepsData, targetsData, ouraData] = await Promise.all([
+            storage.get('lucas-profile-v5').catch(() => null),
+            storage.get('lucas-weight-history-v5').catch(() => null),
+            storage.get('lucas-food-log-v5').catch(() => null),
+            storage.get('lucas-workout-log-v5').catch(() => null),
+            storage.get('lucas-steps-log-v5').catch(() => null),
+            storage.get('lucas-targets-v5').catch(() => null),
+            storage.get('lucas-oura-log-v5').catch(() => null)
+          ]);
 
-        if (profileData?.value) setProfile(JSON.parse(profileData.value));
-        if (weightData?.value) setWeightHistory(JSON.parse(weightData.value));
-        if (foodData?.value) setFoodLog(JSON.parse(foodData.value));
-        if (workoutData?.value) setWorkoutLog(JSON.parse(workoutData.value));
-        if (stepsData?.value) setStepsLog(JSON.parse(stepsData.value));
-        if (targetsData?.value) setCustomTargets(JSON.parse(targetsData.value));
-        if (ouraData?.value) setOuraLog(JSON.parse(ouraData.value));
+          if (profileData?.value) setProfile(JSON.parse(profileData.value));
+          if (weightData?.value) setWeightHistory(JSON.parse(weightData.value));
+          if (foodData?.value) setFoodLog(JSON.parse(foodData.value));
+          if (workoutData?.value) setWorkoutLog(JSON.parse(workoutData.value));
+          if (stepsData?.value) setStepsLog(JSON.parse(stepsData.value));
+          if (targetsData?.value) setCustomTargets(JSON.parse(targetsData.value));
+          if (ouraData?.value) setOuraLog(JSON.parse(ouraData.value));
+        }
       } catch (err) {
-        console.log('Loading fresh state');
+        console.log('Loading fresh state:', err);
       }
       setIsLoading(false);
     };
-    loadData();
-  }, []);
+    
+    // Only load data if not showing auth screen or in offline mode
+    if (!showAuth || offlineMode) {
+      loadData();
+    }
+  }, [supabase.loading, supabase.isAuthenticated, useCloud, showAuth, offlineMode]);
 
   // Debounced config save
   useEffect(() => {
@@ -434,14 +470,22 @@ const NutritionTracker = () => {
     return () => clearTimeout(timer);
   }, [undoAction]);
 
-  // Save functions
+  // Save functions - save to both localStorage (backup) and Supabase (if authenticated)
   const saveProfile = async (newProfile) => {
     setProfile(newProfile);
     try {
+      // Always save to localStorage as backup
       await storage.set('lucas-profile-v5', JSON.stringify(newProfile));
+      
+      // Save to Supabase if authenticated
+      if (useCloud) {
+        await supabase.saveProfile(newProfile, customTargets);
+      }
+      
       setSaveStatus('✓');
       setTimeout(() => setSaveStatus(''), 2000);
     } catch (err) {
+      console.error('Error saving profile:', err);
       setSaveStatus('Error');
     }
   };
@@ -450,8 +494,12 @@ const NutritionTracker = () => {
     setCustomTargets(newTargets);
     try {
       await storage.set('lucas-targets-v5', JSON.stringify(newTargets));
+      
+      if (useCloud) {
+        await supabase.saveProfile(profile, newTargets);
+      }
     } catch (err) {
-      console.error('Error saving targets');
+      console.error('Error saving targets:', err);
     }
   };
 
@@ -460,13 +508,21 @@ const NutritionTracker = () => {
     setWeightHistory(sorted);
     try {
       await storage.set('lucas-weight-history-v5', JSON.stringify(sorted));
+      
       // Update current weight to most recent
       const mostRecent = getMostRecentWeight(sorted);
       if (mostRecent) {
         saveProfile({ ...profile, currentWeight: mostRecent.weight });
       }
     } catch (err) {
-      console.error('Error saving weight history');
+      console.error('Error saving weight history:', err);
+    }
+  };
+
+  // Save single weight entry to Supabase (called when adding/updating weight)
+  const saveWeightEntry = async (entry) => {
+    if (useCloud) {
+      await supabase.saveWeight(entry);
     }
   };
 
@@ -475,7 +531,23 @@ const NutritionTracker = () => {
     try {
       await storage.set('lucas-food-log-v5', JSON.stringify(newLog));
     } catch (err) {
-      console.error('Error saving food log');
+      console.error('Error saving food log:', err);
+    }
+  };
+
+  // Save single food entry to Supabase
+  const saveFoodEntry = async (entry) => {
+    if (useCloud) {
+      const result = await supabase.saveFood(entry);
+      return result.data; // Returns entry with Supabase-generated ID
+    }
+    return entry;
+  };
+
+  // Delete food entry from Supabase
+  const deleteFoodEntry = async (id) => {
+    if (useCloud) {
+      await supabase.deleteFood(id);
     }
   };
 
@@ -484,7 +556,23 @@ const NutritionTracker = () => {
     try {
       await storage.set('lucas-workout-log-v5', JSON.stringify(newLog));
     } catch (err) {
-      console.error('Error saving workout log');
+      console.error('Error saving workout log:', err);
+    }
+  };
+
+  // Save single workout to Supabase
+  const saveWorkoutEntry = async (entry) => {
+    if (useCloud) {
+      const result = await supabase.saveWorkout(entry);
+      return result.data;
+    }
+    return entry;
+  };
+
+  // Delete workout from Supabase
+  const deleteWorkoutEntry = async (id) => {
+    if (useCloud) {
+      await supabase.deleteWorkout(id);
     }
   };
 
@@ -493,7 +581,14 @@ const NutritionTracker = () => {
     try {
       await storage.set('lucas-steps-log-v5', JSON.stringify(newLog));
     } catch (err) {
-      console.error('Error saving steps log');
+      console.error('Error saving steps log:', err);
+    }
+  };
+
+  // Save single steps entry to Supabase
+  const saveStepsEntry = async (entry) => {
+    if (useCloud) {
+      await supabase.saveSteps(entry);
     }
   };
 
@@ -506,7 +601,7 @@ const NutritionTracker = () => {
   };
 
   // Add weight entry with time
-  const addWeightEntry = () => {
+  const addWeightEntry = async () => {
     if (!newWeight) return;
     // Parse time input to create timestamp
     const [hours, minutes] = newWeightTime.split(':').map(Number);
@@ -522,6 +617,7 @@ const NutritionTracker = () => {
       timestamp: argDate.getTime()
     };
     saveWeightHistory([...weightHistory, entry]);
+    await saveWeightEntry(entry); // Save to Supabase
     setNewWeight('');
     setNewWeightTime('09:00');
   };
@@ -600,23 +696,25 @@ const NutritionTracker = () => {
   };
 
   // Add steps entry
-  const addStepsEntry = () => {
+  const addStepsEntry = async () => {
     if (!newSteps) return;
+    const entry = { date: stepsDate, steps: parseInt(newSteps) };
     const existingIndex = stepsLog.findIndex(s => s.date === stepsDate);
     let newLog;
     if (existingIndex >= 0) {
       newLog = [...stepsLog];
-      newLog[existingIndex] = { date: stepsDate, steps: parseInt(newSteps) };
+      newLog[existingIndex] = entry;
     } else {
-      newLog = [...stepsLog, { date: stepsDate, steps: parseInt(newSteps) }];
+      newLog = [...stepsLog, entry];
     }
     newLog.sort((a, b) => new Date(b.date) - new Date(a.date));
     saveStepsLog(newLog);
+    await saveStepsEntry(entry); // Save to Supabase
     setNewSteps('');
   };
 
   // Add manual food entry with IA schema
-  const addManualFood = () => {
+  const addManualFood = async () => {
     if (!newFood.name || !newFood.calories) return;
     const sourceId = `manual-${newFood.date}-${Date.now()}`;
     const entry = {
@@ -637,7 +735,12 @@ const NutritionTracker = () => {
       confidence: 1,
       sourceId
     };
-    saveFoodLog([...foodLog, entry]);
+    
+    // Save to Supabase first to get the real ID
+    const savedEntry = await saveFoodEntry(entry);
+    const finalEntry = savedEntry?.id ? savedEntry : entry;
+    
+    saveFoodLog([...foodLog, finalEntry]);
     setNewFood({
       date: getArgentinaDateString(),
       time: '12:00',
@@ -654,7 +757,7 @@ const NutritionTracker = () => {
   };
 
   // Add manual workout entry with IA schema
-  const addManualWorkout = () => {
+  const addManualWorkout = async () => {
     if (!newWorkout.name) return;
     const sourceId = `manual-${newWorkout.date}-${Date.now()}`;
     const entry = {
@@ -673,7 +776,12 @@ const NutritionTracker = () => {
       confidence: 1,
       sourceId
     };
-    saveWorkoutLog([...workoutLog, entry]);
+    
+    // Save to Supabase first to get the real ID
+    const savedEntry = await saveWorkoutEntry(entry);
+    const finalEntry = savedEntry?.id ? savedEntry : entry;
+    
+    saveWorkoutLog([...workoutLog, finalEntry]);
     setNewWorkout({
       date: getArgentinaDateString(),
       type: 'gym',
@@ -859,12 +967,19 @@ const NutritionTracker = () => {
     try {
       await storage.set('lucas-oura-log-v5', JSON.stringify(newLog));
     } catch (err) {
-      console.error('Error saving oura log');
+      console.error('Error saving oura log:', err);
+    }
+  };
+
+  // Save single Oura entry to Supabase
+  const saveOuraEntry = async (entry) => {
+    if (useCloud) {
+      await supabase.saveOura(entry);
     }
   };
 
   // Add Oura entry
-  const addOuraEntry = () => {
+  const addOuraEntry = async () => {
     if (!newOuraEntry.sleepScore && !newOuraEntry.readinessScore) return;
     const existingIndex = ouraLog.findIndex(o => o.date === newOuraEntry.date);
     const entry = {
@@ -890,6 +1005,7 @@ const NutritionTracker = () => {
     }
     newLog.sort((a, b) => new Date(b.date) - new Date(a.date));
     saveOuraLog(newLog);
+    await saveOuraEntry(entry); // Save to Supabase
     setNewOuraEntry({
       date: getArgentinaDateString(),
       sleepScore: '', readinessScore: '', activityScore: '',
@@ -1585,7 +1701,26 @@ const NutritionTracker = () => {
   const weeklyData = getWeeklyData();
   const workoutAnalysis = getWeeklyWorkoutAnalysis();
 
-  if (isLoading) {
+  // Show Auth UI if not authenticated and not in offline mode
+  if (showAuth && !offlineMode && !supabase.loading) {
+    return (
+      <AuthUI
+        onAuth={{
+          signIn: supabase.signIn,
+          signUp: supabase.signUp,
+          resetPassword: supabase.resetPassword,
+          continueOffline: () => {
+            setOfflineMode(true);
+            setShowAuth(false);
+          },
+        }}
+        error={supabase.authError}
+        isSupabaseConfigured={supabase.isSupabaseConfigured}
+      />
+    );
+  }
+
+  if (isLoading || supabase.loading) {
     return <div className="min-h-screen bg-gray-900 flex items-center justify-center"><div className="text-emerald-400 text-xl">Cargando...</div></div>;
   }
 
@@ -1790,7 +1925,36 @@ const NutritionTracker = () => {
               {isTrainingDay(dashboardDate) && <span className="ml-2 text-amber-400">🏋️ Training Day</span>}
             </p>
           </div>
-          {saveStatus && <span className="text-sm text-emerald-400 flex-shrink-0 ml-2">{saveStatus}</span>}
+          <div className="flex items-center gap-3 flex-shrink-0">
+            {saveStatus && <span className="text-sm text-emerald-400">{saveStatus}</span>}
+            {/* Sync status indicator */}
+            {supabase.isAuthenticated ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-emerald-400 hidden sm:inline">☁️ Sync</span>
+                <button
+                  onClick={async () => {
+                    await supabase.signOut();
+                    setShowAuth(true);
+                    setOfflineMode(false);
+                  }}
+                  className="text-xs text-gray-400 hover:text-red-400 transition-colors px-2 py-1 rounded hover:bg-gray-700"
+                  title="Cerrar sesión"
+                >
+                  Salir
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  setShowAuth(true);
+                  setOfflineMode(false);
+                }}
+                className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors px-2 py-1 rounded hover:bg-gray-700"
+              >
+                Iniciar sesión
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
