@@ -14,13 +14,13 @@ export function OnboardingWizard({ onComplete, userEmail }) {
     height: '',
     age: '',
     gender: 'male',
-    
+
     // Step 2: Goals
     calorieGoal: '',
     proteinGoal: '',
     carbsGoal: '',
     fatGoal: '',
-    
+
     // Step 3: Training
     trainingDaysPerWeek: 4,
     primaryGoal: 'maintain', // lose, maintain, gain
@@ -39,7 +39,7 @@ export function OnboardingWizard({ onComplete, userEmail }) {
     const height = parseFloat(formData.height) || 170;
     const age = parseFloat(formData.age) || 30;
     const isMale = formData.gender === 'male';
-    
+
     // Mifflin-St Jeor equation for BMR
     let bmr;
     if (isMale) {
@@ -47,7 +47,7 @@ export function OnboardingWizard({ onComplete, userEmail }) {
     } else {
       bmr = 10 * weight + 6.25 * height - 5 * age - 161;
     }
-    
+
     // Activity multiplier
     const activityMultipliers = {
       sedentary: 1.2,
@@ -56,9 +56,9 @@ export function OnboardingWizard({ onComplete, userEmail }) {
       active: 1.725,
       very_active: 1.9
     };
-    
+
     const tdee = bmr * (activityMultipliers[formData.activityLevel] || 1.55);
-    
+
     // Adjust for goal
     let calories;
     if (formData.primaryGoal === 'lose') {
@@ -68,12 +68,12 @@ export function OnboardingWizard({ onComplete, userEmail }) {
     } else {
       calories = tdee;
     }
-    
+
     // Macro split: 30% protein, 40% carbs, 30% fat
     const protein = Math.round((calories * 0.30) / 4); // 4 kcal per gram
     const carbs = Math.round((calories * 0.40) / 4);
     const fat = Math.round((calories * 0.30) / 9); // 9 kcal per gram
-    
+
     return {
       calories: Math.round(calories),
       protein,
@@ -174,7 +174,7 @@ export function OnboardingWizard({ onComplete, userEmail }) {
 
         {/* Card */}
         <div className="bg-gray-800/80 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 shadow-2xl">
-          
+
           {/* Step 1: Physical Stats */}
           {step === 1 && (
             <div className="space-y-5">

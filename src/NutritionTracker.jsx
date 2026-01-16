@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { useSupabase } from './hooks/useSupabase';
 import { AuthUI } from './components/AuthUI';
 import { OnboardingWizard } from './components/OnboardingWizard';
+import { WeeklyReport } from './components/WeeklyReport';
 
 // =====================================================
 // SWIPEABLE ITEM COMPONENT - Swipe left to delete
@@ -118,7 +119,7 @@ const FloatingActionButton = ({ onAddFood, onAddWorkout, onImportFood, onImportW
     { icon: '⭐', label: 'Favoritos', onClick: onQuickAdd, color: 'bg-purple-500' },
     { icon: '📸', label: 'Importar Comida', onClick: onImportFood, color: 'bg-blue-500' },
     { icon: '🏋️', label: 'Importar Entreno', onClick: onImportWorkout, color: 'bg-amber-500' },
-    { icon: '🍽️', label: 'Agregar Comida', onClick: onAddFood, color: 'bg-blue-500' },
+    { icon: '🍽️', label: 'Agregar Comida', onClick: onAddFood, color: 'bg-cyan-500' },
     { icon: '💪', label: 'Agregar Entreno', onClick: onAddWorkout, color: 'bg-orange-500' },
   ];
 
@@ -127,33 +128,33 @@ const FloatingActionButton = ({ onAddFood, onAddWorkout, onImportFood, onImportW
       {/* Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-40 transition-opacity"
+          className="fixed inset-0 bg-black/50 z-40 transition-opacity backdrop-blur-sm"
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      <div className="fixed right-4 bottom-20 z-50 flex flex-col items-end gap-3">
+      <div className="fixed right-4 bottom-24 z-50 flex flex-col items-center gap-3">
         {/* FAB Menu */}
-        <div className={`fab-menu flex flex-col gap-2 ${isOpen ? 'open' : ''}`}>
+        <div className={`fab-menu flex flex-col items-end gap-2 ${isOpen ? 'open' : ''}`}>
           {actions.map((action, i) => (
             <button
               key={i}
               onClick={() => { action.onClick(); setIsOpen(false); }}
-              className={`fab-item flex items-center gap-2 ${action.color} text-white px-4 py-2.5 rounded-full whitespace-nowrap`}
+              className={`fab-item flex items-center gap-2 ${action.color} hover:brightness-110 text-white px-4 py-3 rounded-full whitespace-nowrap shadow-lg`}
               style={{ transitionDelay: `${i * 30}ms` }}
             >
-              <span>{action.icon}</span>
-              <span className="text-sm font-medium">{action.label}</span>
+              <span className="text-lg">{action.icon}</span>
+              <span className="text-sm font-semibold">{action.label}</span>
             </button>
           ))}
         </div>
 
-        {/* Main FAB */}
+        {/* Main FAB - centered + icon */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className={`fab w-14 h-14 rounded-full bg-blue-500 text-white flex items-center justify-center text-2xl transition-transform ${isOpen ? 'rotate-45' : ''}`}
+          className={`fab w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 text-white flex items-center justify-center shadow-xl shadow-blue-500/30 transition-all duration-300 ${isOpen ? 'rotate-45 scale-90' : 'scale-100'}`}
         >
-          +
+          <span className="text-3xl font-light leading-none">+</span>
         </button>
       </div>
     </>
@@ -521,9 +522,11 @@ const NutritionTracker = () => {
   const [showTemplatesModal, setShowTemplatesModal] = useState(false);
   const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
   const [templateToSave, setTemplateToSave] = useState(null);
+  const [showWeeklyReport, setShowWeeklyReport] = useState(false);
 
   // Manual food entry form
   const [showFoodForm, setShowFoodForm] = useState(false);
+  const [editingFoodId, setEditingFoodId] = useState(null); // null = new, id = editing
   const [newFood, setNewFood] = useState({
     date: getArgentinaDateString(),
     time: '12:00',
@@ -1084,28 +1087,31 @@ const NutritionTracker = () => {
       return;
     }
 
+    const isEditing = !!editingFoodId;
+
     try {
-    const sourceId = `manual-${newFood.date}-${Date.now()}`;
-    const entry = {
-      id: `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      const sourceId = `manual-${newFood.date}-${Date.now()}`;
+      const entry = {
+        id: isEditing ? editingFoodId : `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         date: newFood.date || getArgentinaDateString(),
-      time: newFood.time || '',
+        time: newFood.time || '',
         meal: newFood.meal || 'Snack',
         name: newFood.name.trim(),
         description: newFood.description?.trim() || '',
-      calories: parseInt(newFood.calories) || 0,
-      protein: parseInt(newFood.protein) || 0,
-      carbs: parseInt(newFood.carbs) || 0,
-      fat: parseInt(newFood.fat) || 0,
-      fiber: parseInt(newFood.fiber) || 0,
-      source: 'manual',
-      reviewed: true,
-      confidence: 1,
-      sourceId
-    };
+        calories: parseInt(newFood.calories) || 0,
+        protein: parseInt(newFood.protein) || 0,
+        carbs: parseInt(newFood.carbs) || 0,
+        fat: parseInt(newFood.fat) || 0,
+        fiber: parseInt(newFood.fiber) || 0,
+        source: 'manual',
+        reviewed: true,
+        confidence: 1,
+        sourceId
+      };
 
       // Close form immediately for better UX
       setShowFoodForm(false);
+      setEditingFoodId(null);
 
       // Save to Supabase
       let finalEntry = entry;
@@ -1119,24 +1125,29 @@ const NutritionTracker = () => {
         // Continue with local entry
       }
 
-      // Add to local state
-      saveFoodLog([...foodLog, finalEntry]);
-      setSaveStatus('✓ Comida agregada');
+      // Update or add to local state
+      if (isEditing) {
+        saveFoodLog(foodLog.map(f => f.id === editingFoodId ? finalEntry : f));
+        setSaveStatus('✓ Comida actualizada');
+      } else {
+        saveFoodLog([...foodLog, finalEntry]);
+        setSaveStatus('✓ Comida agregada');
+      }
       setTimeout(() => setSaveStatus(''), 2000);
 
       // Reset form
-    setNewFood({
-      date: getArgentinaDateString(),
-      time: '12:00',
-      meal: 'Almuerzo',
-      name: '',
-      description: '',
-      calories: '',
-      protein: '',
-      carbs: '',
-      fat: '',
-      fiber: ''
-    });
+      setNewFood({
+        date: getArgentinaDateString(),
+        time: '12:00',
+        meal: 'Almuerzo',
+        name: '',
+        description: '',
+        calories: '',
+        protein: '',
+        carbs: '',
+        fat: '',
+        fiber: ''
+      });
     } catch (err) {
       console.error('Error adding food:', err);
       setSaveStatus('❌ Error al guardar');
@@ -2265,7 +2276,7 @@ const NutritionTracker = () => {
       try {
         await supabase.saveOnboardingProfile(profileData);
         setShowOnboarding(false);
-        
+
         // Update local config with the new targets
         if (profileData.calorie_goal) {
           setConfig(prev => ({
@@ -2414,12 +2425,12 @@ const NutritionTracker = () => {
 
       {/* Manual Food Entry Modal */}
       {showFoodForm && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setShowFoodForm(false)}>
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => { setShowFoodForm(false); setEditingFoodId(null); }}>
           <div className="bg-gray-800 rounded-xl p-5 lg:p-6 w-full max-w-sm lg:max-w-md border border-gray-700 shadow-2xl" onClick={e => e.stopPropagation()}>
             {/* Header with close button */}
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg lg:text-xl font-bold text-blue-400">🍽️ Nueva Comida</h3>
-              <button onClick={() => setShowFoodForm(false)} className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white text-xl lg:text-2xl transition-colors">×</button>
+              <h3 className="text-lg lg:text-xl font-bold text-blue-400">{editingFoodId ? '✏️ Editar Comida' : '🍽️ Nueva Comida'}</h3>
+              <button onClick={() => { setShowFoodForm(false); setEditingFoodId(null); }} className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white text-xl lg:text-2xl transition-colors">×</button>
             </div>
             <div className="space-y-3">
               {/* Row 1: Meal type + Time */}
@@ -2477,8 +2488,10 @@ const NutritionTracker = () => {
               <input type="hidden" value={newFood.date} />
             </div>
             <div className="flex gap-3 mt-5">
-              <button onClick={() => setShowFoodForm(false)} className="flex-1 bg-gray-700 hover:bg-gray-600 py-3 rounded-lg text-sm lg:text-base font-medium transition-colors">Cancelar</button>
-              <button onClick={addManualFood} className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 py-3 rounded-lg text-sm lg:text-base font-bold transition-all">Guardar</button>
+              <button onClick={() => { setShowFoodForm(false); setEditingFoodId(null); }} className="flex-1 bg-gray-700 hover:bg-gray-600 py-3 rounded-lg text-sm lg:text-base font-medium transition-colors">Cancelar</button>
+              <button onClick={addManualFood} className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 py-3 rounded-lg text-sm lg:text-base font-bold transition-all">
+                {editingFoodId ? 'Actualizar' : 'Guardar'}
+              </button>
             </div>
           </div>
         </div>
@@ -2590,66 +2603,67 @@ const NutritionTracker = () => {
 
       {/* Header - Premium LukenFit branding */}
       <header className="bg-gradient-to-r from-slate-900 via-gray-800 to-slate-900 border-b border-blue-500/20 px-4 lg:px-8 py-3 lg:py-4 sticky top-0 z-30">
-        <div className="max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto flex items-center justify-between gap-3 lg:gap-4">
-          <div className="min-w-0 flex-1 flex items-center gap-2">
-            {/* Mini logo */}
-            <svg viewBox="0 0 32 32" className="w-7 h-7 flex-shrink-0">
+        <div className="max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto flex items-center justify-between gap-4">
+          <div className="min-w-0 flex-1 flex items-center gap-3">
+            {/* Logo - bigger */}
+            <svg viewBox="0 0 32 32" className="w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0">
               <defs>
                 <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" style={{ stopColor: '#3B82F6' }} />
                   <stop offset="100%" style={{ stopColor: '#06B6D4' }} />
                 </linearGradient>
               </defs>
-              <circle cx="16" cy="16" r="15" fill="#0F172A" />
+              <circle cx="16" cy="16" r="15" fill="#0F172A" stroke="url(#headerGrad)" strokeWidth="1" />
               <path d="M10 7 L10 21 L19 21 L19 18 L13 18 L13 7 Z" fill="url(#headerGrad)" />
               <path d="M18 7 L14 15 L17 15 L15 25 L23 14 L19 14 L22 7 Z" fill="url(#headerGrad)" opacity="0.9" />
             </svg>
-          <div className="min-w-0">
-              <h1 className="text-lg font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent truncate">LUKENFIT</h1>
-              <p className="text-xs text-gray-500 truncate">
-              {profile.currentWeight}kg → {profile.targetWeight}kg
+            <div className="min-w-0">
+              <h1 className="text-xl lg:text-2xl font-extrabold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent truncate tracking-tight">LUKENFIT</h1>
+              <p className="text-sm text-gray-500 truncate">
+                {profile.currentWeight}kg → {profile.targetWeight}kg
                 {isTrainingDay(dashboardDate) && <span className="ml-1 text-amber-400">🏋️</span>}
-            </p>
+              </p>
+            </div>
           </div>
-          </div>
-          <div className="flex items-center gap-1.5 flex-shrink-0">
-            {/* Save status - small badge */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Save status */}
             {saveStatus && (
-              <span className="text-xs text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded animate-pulse">{saveStatus}</span>
+              <span className="text-sm text-blue-400 bg-blue-500/10 px-2 py-1 rounded animate-pulse">{saveStatus}</span>
             )}
 
-            {/* Sync status - compact */}
+            {/* Sync status */}
             {supabase.isAuthenticated ? (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2">
                 {/* Offline indicator */}
                 {!supabase.isOnline && (
-                  <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">📴</span>
+                  <span className="text-sm bg-amber-500/20 text-amber-400 px-2 py-1 rounded">📴 Offline</span>
                 )}
 
-                {/* Sync status - icon only on mobile */}
+                {/* Sync status - bigger icons */}
                 {supabase.isOnline && (
-                  <span className={`text-xs w-6 h-6 rounded flex items-center justify-center ${
+                  <span className={`w-8 h-8 lg:w-9 lg:h-9 rounded-lg flex items-center justify-center text-lg ${
                     supabase.syncStatus === 'syncing' ? 'bg-blue-500/20 text-blue-400' :
-                    supabase.syncStatus === 'success' ? 'bg-blue-500/20 text-blue-400' :
+                    supabase.syncStatus === 'success' ? 'bg-green-500/20 text-green-400' :
                     supabase.syncStatus === 'error' ? 'bg-red-500/20 text-red-400' :
-                    'text-gray-500'
+                    'bg-gray-700/50 text-gray-400'
                   }`}>
                     {supabase.syncStatus === 'syncing' ? (
-                      <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24">
+                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                       </svg>
-                    ) : supabase.syncStatus === 'success' ? '✓' : supabase.syncStatus === 'error' ? '⚠️' : '☁️'}
+                    ) : supabase.syncStatus === 'success' ? '✓' : supabase.syncStatus === 'error' ? '⚠' : '☁️'}
                   </span>
                 )}
 
+                {/* Logout button - bigger */}
                 <button
                   onClick={async () => {
                     await supabase.signOut();
                     setShowAuth(true);
                     setOfflineMode(false);
                   }}
-                  className="text-xs text-gray-400 active:text-red-400 px-1.5 py-1 rounded active:bg-gray-700"
+                  className="w-8 h-8 lg:w-9 lg:h-9 flex items-center justify-center rounded-lg bg-gray-700/50 hover:bg-red-500/20 text-gray-400 hover:text-red-400 text-xl lg:text-2xl transition-colors"
                   title="Cerrar sesión"
                 >
                   ×
@@ -2661,7 +2675,7 @@ const NutritionTracker = () => {
                   setShowAuth(true);
                   setOfflineMode(false);
                 }}
-                className="text-xs text-blue-400 active:text-cyan-300 px-2 py-1 rounded active:bg-gray-700"
+                className="text-sm text-blue-400 hover:text-cyan-300 px-3 py-2 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
               >
                 Login
               </button>
@@ -2699,7 +2713,7 @@ const NutritionTracker = () => {
 
       {/* Main Content with Pull to Refresh */}
       <PullToRefresh onRefresh={handleRefresh} isRefreshing={isRefreshing}>
-        <main className="p-4 lg:p-6 xl:p-8 pb-24 md:pb-28 w-full max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto">
+        <main className="p-4 lg:p-6 xl:p-8 pb-32 md:pb-36 w-full max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto">
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
             <div className="space-y-4 lg:space-y-6">
@@ -2887,7 +2901,15 @@ const NutritionTracker = () => {
 
             {/* Week vs Week Comparison */}
             <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-              <h3 className="text-xs font-bold text-blue-400 mb-2">📈 ESTA SEMANA VS ANTERIOR</h3>
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-xs font-bold text-blue-400">📈 ESTA SEMANA VS ANTERIOR</h3>
+                <button
+                  onClick={() => setShowWeeklyReport(true)}
+                  className="text-xs text-blue-400 hover:text-cyan-400 px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg transition-colors"
+                >
+                  📊 Ver Reporte
+                </button>
+              </div>
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div>
                   <div className="text-sm text-gray-400">Calorías/día</div>
@@ -2973,23 +2995,25 @@ const NutritionTracker = () => {
               <div className="space-y-2">
                 {getFoodsForDate(selectedFoodDate).map(entry => {
                   const needsReview = !entry.reviewed || (entry.confidence && entry.confidence < 0.7);
+                  // Format time to HH:MM (remove seconds if present)
+                  const displayTime = entry.time ? entry.time.substring(0, 5) : '';
                   return (
                     <SwipeableItem
                       key={entry.id}
                       onDelete={() => confirmDelete('food', entry.id, entry.name)}
                     >
                       <div className={`p-3 border-l-4 ${needsReview ? 'border-l-amber-500' : 'border-l-blue-500'}`}>
-                      <div className="flex justify-between items-start mb-1">
-                        <div className="min-w-0 flex-1">
+                        <div className="flex justify-between items-start mb-1">
+                          <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <span className="text-xs text-blue-400 uppercase font-medium">{entry.meal}</span>
-                              {entry.time && <span className="text-xs text-gray-500">{entry.time}</span>}
-                            {needsReview && (
+                              {displayTime && <span className="text-xs text-gray-500">{displayTime}</span>}
+                              {needsReview && (
                                 <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">⚠️</span>
-                            )}
-                          </div>
+                              )}
+                            </div>
                             <h3 className="font-medium text-base truncate">{entry.name}</h3>
-                        </div>
+                          </div>
                           {needsReview && (
                             <button onClick={() => confirmFood(entry.id)} className="text-blue-400 active:text-cyan-300 px-2 py-1 text-sm font-medium bg-blue-500/20 rounded ml-2 flex-shrink-0">✓</button>
                           )}
@@ -3002,16 +3026,45 @@ const NutritionTracker = () => {
                             <span className="text-amber-400">{entry.carbs}C</span>
                             <span className="text-pink-400">{entry.fat}F</span>
                             {entry.fiber > 0 && <span className="text-purple-400">{entry.fiber}Fib</span>}
+                          </div>
+                          {/* Action buttons */}
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => {
+                                setNewFood({
+                                  ...entry,
+                                  time: displayTime,
+                                  calories: entry.calories.toString(),
+                                  protein: entry.protein.toString(),
+                                  carbs: entry.carbs.toString(),
+                                  fat: entry.fat.toString(),
+                                  fiber: entry.fiber?.toString() || '0'
+                                });
+                                setEditingFoodId(entry.id);
+                                setShowFoodForm(true);
+                              }}
+                              className="text-blue-400 hover:text-blue-300 text-sm px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 rounded transition-colors"
+                              title="Editar"
+                            >
+                              ✏️
+                            </button>
+                            <button
+                              onClick={() => confirmDelete('food', entry.id, entry.name)}
+                              className="text-red-400 hover:text-red-300 text-sm px-2 py-1 bg-red-500/10 hover:bg-red-500/20 rounded transition-colors"
+                              title="Eliminar"
+                            >
+                              🗑️
+                            </button>
+                            <button
+                              onClick={() => saveAsTemplate(entry)}
+                              className="text-purple-400 hover:text-purple-300 text-sm px-2 py-1 bg-purple-500/10 hover:bg-purple-500/20 rounded transition-colors"
+                              title="Guardar como favorito"
+                            >
+                              ⭐
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                          <button
-                            onClick={() => saveAsTemplate(entry)}
-                            className="text-purple-400 active:text-purple-300 text-xs px-1.5 py-0.5 bg-purple-500/20 rounded"
-                            title="Guardar como favorito"
-                          >
-                            ⭐
-                          </button>
-                      </div>
-                    </div>
                     </SwipeableItem>
                   );
                 })}
@@ -3646,6 +3699,23 @@ const NutritionTracker = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Weekly Report Modal */}
+      {showWeeklyReport && (
+        <WeeklyReport
+          foodLog={foodLog}
+          workoutLog={workoutLog}
+          weightHistory={weightHistory}
+          stepsLog={stepsLog}
+          targets={{
+            calories: todayTargets.calories,
+            protein: config.targetProtein,
+            carbs: config.targetCarbs,
+            fat: config.targetFat
+          }}
+          onClose={() => setShowWeeklyReport(false)}
+        />
       )}
     </div>
   );
