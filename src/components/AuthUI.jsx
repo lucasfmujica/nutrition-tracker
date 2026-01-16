@@ -41,6 +41,9 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured }) {
             errorMsg = 'Por favor ingresa un email válido.';
           } else if (errorMsg.includes('Password')) {
             errorMsg = 'La contraseña debe tener al menos 6 caracteres.';
+          } else if (errorMsg.includes('Database error')) {
+            // This happens when there's a trigger issue in Supabase
+            errorMsg = 'Error de configuración del servidor. Por favor, contacta al administrador para que ejecute el script de corrección en Supabase.';
           }
           setError(errorMsg);
         } else if (result.needsConfirmation) {

@@ -4,7 +4,7 @@ import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 /**
  * Custom hook for Supabase authentication and data operations
- * 
+ *
  * Features:
  * - Prompt 2: Auth + CRUD operations
  * - Prompt 3: Loading states, error handling, offline detection, migration
@@ -90,7 +90,7 @@ export function useSupabase() {
 
     // Setup real-time subscriptions for all tables
     const tables = ['profiles', 'weight_history', 'food_log', 'workouts', 'steps_log', 'oura_log'];
-    
+
     tables.forEach(table => {
       const channel = supabase
         .channel(`${table}_changes_${user.id}`)
@@ -153,7 +153,7 @@ export function useSupabase() {
         }
         return { success: true, created: true };
       }
-      
+
       if (error && error.code !== 'PGRST116') {
         console.error('Error checking profile:', error);
         return { success: false, error };
