@@ -44,6 +44,83 @@ export const useTrackerData = () => {
   const [ouraLog, setOuraLog] = useState([]);
   const [waterLog, setWaterLog] = useState([]);
 
+  // UI States
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [newWeight, setNewWeight] = useState('');
+  const [newWeightTime, setNewWeightTime] = useState('09:00');
+  const [newSteps, setNewSteps] = useState('');
+  const [stepsDate, setStepsDate] = useState(getArgentinaDateString());
+  const [selectedFoodDate, setSelectedFoodDate] = useState(getArgentinaDateString());
+  const [selectedWorkoutDate, setSelectedWorkoutDate] = useState(getArgentinaDateString());
+  const [dashboardDate, setDashboardDate] = useState(getArgentinaDateString());
+
+  // Modals & Forms
+  const [deleteModal, setDeleteModal] = useState({ show: false, type: '', id: null, name: '' });
+  const [undoAction, setUndoAction] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showFab, setShowFab] = useState(true);
+
+  // Templates
+  const [mealTemplates, setMealTemplates] = useState([
+    { id: 'tpl-1', name: 'Desayuno típico', meal: 'Desayuno', description: 'Yogur + fruta + granola', calories: 350, protein: 15, carbs: 45, fat: 12, fiber: 5 },
+    { id: 'tpl-2', name: 'Almuerzo proteico', meal: 'Almuerzo', description: 'Pollo + arroz + verduras', calories: 550, protein: 45, carbs: 50, fat: 12, fiber: 6 },
+    { id: 'tpl-3', name: 'Merienda', meal: 'Merienda', description: 'Café + tostadas', calories: 200, protein: 8, carbs: 25, fat: 8, fiber: 2 },
+  ]);
+  const [showTemplatesModal, setShowTemplatesModal] = useState(false);
+  const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
+  const [templateToSave, setTemplateToSave] = useState(null);
+  const [showWeeklyReport, setShowWeeklyReport] = useState(false);
+
+  // Forms
+  const [showFoodForm, setShowFoodForm] = useState(false);
+  const [editingFoodId, setEditingFoodId] = useState(null);
+  const [newFood, setNewFood] = useState({
+    date: getArgentinaDateString(),
+    time: '12:00',
+    meal: 'Almuerzo',
+    name: '',
+    description: '',
+    calories: '',
+    protein: '',
+    carbs: '',
+    fat: '',
+    fiber: ''
+  });
+
+  const [showWorkoutForm, setShowWorkoutForm] = useState(false);
+  const [newWorkout, setNewWorkout] = useState({
+    date: getArgentinaDateString(),
+    type: 'gym',
+    name: '',
+    duration: '',
+    calories: '',
+    volume: '',
+    notes: ''
+  });
+
+  const [editingWeightId, setEditingWeightId] = useState(null);
+  const [editingWeightValue, setEditingWeightValue] = useState('');
+
+  // Import Modals
+  const [showImportFoodModal, setShowImportFoodModal] = useState(false);
+  const [showImportWorkoutModal, setShowImportWorkoutModal] = useState(false);
+  const [importText, setImportText] = useState('');
+  const [importError, setImportError] = useState('');
+
+  const [newOuraEntry, setNewOuraEntry] = useState({
+    date: getArgentinaDateString(),
+    sleepScore: '',
+    readinessScore: '',
+    activityScore: '',
+    hrv: '',
+    restingHr: '',
+    sleepHours: '',
+    deepSleepMins: '',
+    remSleepMins: '',
+    bedtime: '',
+    wakeTime: ''
+  });
+
   // Local config state for debounced saving
   const [localConfig, setLocalConfig] = useState(null);
   const [configDirty, setConfigDirty] = useState(false);
@@ -190,6 +267,13 @@ export const useTrackerData = () => {
     }, 800);
     return () => clearTimeout(timer);
   }, [localConfig, configDirty]);
+
+  // Auto-hide undo after 5 seconds
+  useEffect(() => {
+    if (!undoAction) return;
+    const timer = setTimeout(() => setUndoAction(null), 5000);
+    return () => clearTimeout(timer);
+  }, [undoAction]);
 
   // Helpers
   const sortWeightHistory = (history) => {
@@ -471,6 +555,36 @@ export const useTrackerData = () => {
     getTodayWater,
     addWaterGlass,
     removeWaterGlass,
-    updateConfig
+    removeWaterGlass,
+    updateConfig,
+    activeTab, setActiveTab,
+    newWeight, setNewWeight,
+    newWeightTime, setNewWeightTime,
+    newSteps, setNewSteps,
+    stepsDate, setStepsDate,
+    selectedFoodDate, setSelectedFoodDate,
+    selectedWorkoutDate, setSelectedWorkoutDate,
+    dashboardDate, setDashboardDate,
+    deleteModal, setDeleteModal,
+    undoAction, setUndoAction,
+    isRefreshing, setIsRefreshing,
+    showFab, setShowFab,
+    mealTemplates, setMealTemplates,
+    showTemplatesModal, setShowTemplatesModal,
+    showSaveTemplateModal, setShowSaveTemplateModal,
+    templateToSave, setTemplateToSave,
+    showWeeklyReport, setShowWeeklyReport,
+    showFoodForm, setShowFoodForm,
+    editingFoodId, setEditingFoodId,
+    newFood, setNewFood,
+    showWorkoutForm, setShowWorkoutForm,
+    newWorkout, setNewWorkout,
+    editingWeightId, setEditingWeightId,
+    editingWeightValue, setEditingWeightValue,
+    showImportFoodModal, setShowImportFoodModal,
+    showImportWorkoutModal, setShowImportWorkoutModal,
+    importText, setImportText,
+    importError, setImportError,
+    newOuraEntry, setNewOuraEntry
   };
 };
