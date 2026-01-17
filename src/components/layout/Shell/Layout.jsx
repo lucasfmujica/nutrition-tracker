@@ -1,6 +1,6 @@
 import React from 'react';
-import { BottomNav } from './BottomNav';
-import { Sidebar } from './Sidebar';
+import { BottomNav } from '../Navigation/BottomNav';
+import { Sidebar } from '../Navigation/Sidebar';
 
 export const Layout = ({ children, activeTab, setActiveTab, profile, showNav = true }) => {
   return (

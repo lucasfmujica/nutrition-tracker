@@ -1,5 +1,5 @@
 import React from 'react';
-import { SwipeableItem } from '../SwipeableItem';
+import { SwipeableItem } from '../ui/SwipeableItem';
 
 export const FoodItem = ({ food, onEdit, onDelete, onTemplate }) => {
   const needsReview = !food.reviewed || (food.confidence && food.confidence < 0.7);

@@ -1,7 +1,7 @@
 import { addDaysToDate, getArgentinaDateString, getMondayOfWeek } from '../utils/dateUtils';
 import { downloadBackup, downloadFile, generateNutritionistReport, parseBackupFile } from '../utils/exportUtils';
 
-export const useExport = (trackerData) => {
+export const useExport = (trackerData, analyticsObject) => {
   const {
     profile, setProfile,
     customTargets, setCustomTargets,
@@ -89,8 +89,8 @@ export const useExport = (trackerData) => {
   // I will assume `trackerData` might contain analytics functions OR I will accept a second argument `analytics`.
   // I will write `useExport` to accept `analytics` object as second arg.
 
-  const exportForClaude = (analytics) => {
-    const { getWeeklyAdherence } = analytics;
+  const exportForClaude = () => {
+    const { getWeeklyAdherence } = analyticsObject;
 
     const today = getArgentinaDateString();
     const daysBack = 7; // Last 7 days of data
