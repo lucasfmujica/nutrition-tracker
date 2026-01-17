@@ -665,6 +665,8 @@ const NutritionTracker = () => {
     } else {
       console.log('[Auth] User not authenticated, showing auth screen');
       setShowAuth(true);
+      // Reset initialization flag when user logs out so data will reload on next login
+      hasInitialized.current = false;
     }
   }, [supabase.loading, supabase.isAuthenticated]);
 
@@ -1131,8 +1133,8 @@ const NutritionTracker = () => {
       // Sync deletion to Supabase
       if (useCloud && item) {
         try {
-          await supabase.deleteWeight(item.date);
-          console.log('[Sync] Weight deleted from Supabase:', item.date);
+          await supabase.deleteWeight(item.id);
+          console.log('[Sync] Weight deleted from Supabase:', item.id);
         } catch (err) {
           console.error('[Sync] Failed to delete weight from Supabase:', err);
         }

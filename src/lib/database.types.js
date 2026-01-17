@@ -237,6 +237,7 @@ export const mappers = {
 
   // Steps: Supabase -> localStorage format
   stepsFromDb: (dbEntry) => ({
+    id: dbEntry.id,
     date: dbEntry.date,
     steps: dbEntry.steps,
   }),
@@ -257,6 +258,7 @@ export const mappers = {
 
   // Oura: Supabase -> localStorage format
   ouraFromDb: (dbEntry) => ({
+    id: dbEntry.id,
     date: dbEntry.date,
     sleepScore: dbEntry.sleep_score,
     readinessScore: dbEntry.readiness_score,
@@ -278,6 +280,7 @@ export const mappers = {
 
   // Water: Supabase -> localStorage format
   waterFromDb: (dbEntry) => ({
+    id: dbEntry.id,
     date: dbEntry.date,
     glasses: dbEntry.glasses,
     ml: dbEntry.ml,
