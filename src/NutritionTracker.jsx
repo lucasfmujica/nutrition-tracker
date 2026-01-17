@@ -672,7 +672,7 @@ const NutritionTracker = () => {
   useEffect(() => {
     // Wait for auth to settle
     if (supabase.loading || showAuth === null) return;
-    
+
     // Don't load if showing auth screen (unless offline mode)
     if (showAuth && !offlineMode) return;
 
@@ -1068,25 +1068,86 @@ const NutritionTracker = () => {
     setDeleteModal({ show: true, type, id, name });
   };
 
-  // Execute delete with undo option
-  const executeDelete = () => {
+  // Execute delete with undo option - syncs to Supabase
+  const executeDelete = async () => {
     const { type, id } = deleteModal;
 
     if (type === 'food') {
       const item = foodLog.find(f => f.id === id);
       const newLog = foodLog.filter(f => f.id !== id);
       saveFoodLog(newLog);
-      setUndoAction({ type: 'food', item, restore: () => saveFoodLog([...newLog, item]) });
+      
+      // Sync deletion to Supabase
+      if (useCloud) {
+        try {
+          await supabase.deleteFood(id);
+          console.log('[Sync] Food deleted from Supabase:', id);
+        } catch (err) {
+          console.error('[Sync] Failed to delete food from Supabase:', err);
+        }
+      }
+      
+      setUndoAction({ 
+        type: 'food', 
+        item, 
+        restore: async () => {
+          saveFoodLog([...newLog, item]);
+          // Re-add to Supabase on undo
+          if (useCloud && item) {
+            await supabase.saveFood(item);
+          }
+        }
+      });
     } else if (type === 'workout') {
       const item = workoutLog.find(w => w.id === id);
       const newLog = workoutLog.filter(w => w.id !== id);
       saveWorkoutLog(newLog);
-      setUndoAction({ type: 'workout', item, restore: () => saveWorkoutLog([...newLog, item]) });
+      
+      // Sync deletion to Supabase
+      if (useCloud) {
+        try {
+          await supabase.deleteWorkout(id);
+          console.log('[Sync] Workout deleted from Supabase:', id);
+        } catch (err) {
+          console.error('[Sync] Failed to delete workout from Supabase:', err);
+        }
+      }
+      
+      setUndoAction({ 
+        type: 'workout', 
+        item, 
+        restore: async () => {
+          saveWorkoutLog([...newLog, item]);
+          if (useCloud && item) {
+            await supabase.saveWorkout(item);
+          }
+        }
+      });
     } else if (type === 'weight') {
       const item = weightHistory.find(w => w.id === id || weightHistory.indexOf(w) === id);
       const newHistory = weightHistory.filter(w => w.id !== id && weightHistory.indexOf(w) !== id);
       saveWeightHistory(newHistory);
-      setUndoAction({ type: 'weight', item, restore: () => saveWeightHistory([...newHistory, item]) });
+      
+      // Sync deletion to Supabase
+      if (useCloud && item) {
+        try {
+          await supabase.deleteWeight(item.date);
+          console.log('[Sync] Weight deleted from Supabase:', item.date);
+        } catch (err) {
+          console.error('[Sync] Failed to delete weight from Supabase:', err);
+        }
+      }
+      
+      setUndoAction({ 
+        type: 'weight', 
+        item, 
+        restore: async () => {
+          saveWeightHistory([...newHistory, item]);
+          if (useCloud && item) {
+            await supabase.saveWeight(item);
+          }
+        }
+      });
     }
 
     setDeleteModal({ show: false, type: '', id: null, name: '' });
@@ -1171,24 +1232,24 @@ const NutritionTracker = () => {
     const isEditing = !!editingFoodId;
 
     try {
-      const sourceId = `manual-${newFood.date}-${Date.now()}`;
-      const entry = {
+    const sourceId = `manual-${newFood.date}-${Date.now()}`;
+    const entry = {
         id: isEditing ? editingFoodId : `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         date: newFood.date || getArgentinaDateString(),
-        time: newFood.time || '',
+      time: newFood.time || '',
         meal: newFood.meal || 'Snack',
         name: newFood.name.trim(),
         description: newFood.description?.trim() || '',
-        calories: parseInt(newFood.calories) || 0,
-        protein: parseInt(newFood.protein) || 0,
-        carbs: parseInt(newFood.carbs) || 0,
-        fat: parseInt(newFood.fat) || 0,
-        fiber: parseInt(newFood.fiber) || 0,
-        source: 'manual',
-        reviewed: true,
-        confidence: 1,
-        sourceId
-      };
+      calories: parseInt(newFood.calories) || 0,
+      protein: parseInt(newFood.protein) || 0,
+      carbs: parseInt(newFood.carbs) || 0,
+      fat: parseInt(newFood.fat) || 0,
+      fiber: parseInt(newFood.fiber) || 0,
+      source: 'manual',
+      reviewed: true,
+      confidence: 1,
+      sourceId
+    };
 
       // Close form immediately for better UX
       setShowFoodForm(false);
@@ -1217,18 +1278,18 @@ const NutritionTracker = () => {
       setTimeout(() => setSaveStatus(''), 2000);
 
       // Reset form
-      setNewFood({
-        date: getArgentinaDateString(),
-        time: '12:00',
-        meal: 'Almuerzo',
-        name: '',
-        description: '',
-        calories: '',
-        protein: '',
-        carbs: '',
-        fat: '',
-        fiber: ''
-      });
+    setNewFood({
+      date: getArgentinaDateString(),
+      time: '12:00',
+      meal: 'Almuerzo',
+      name: '',
+      description: '',
+      calories: '',
+      protein: '',
+      carbs: '',
+      fat: '',
+      fiber: ''
+    });
     } catch (err) {
       console.error('Error adding food:', err);
       setSaveStatus('❌ Error al guardar');
@@ -2734,13 +2795,13 @@ const NutritionTracker = () => {
               <path d="M10 7 L10 21 L19 21 L19 18 L13 18 L13 7 Z" fill="url(#headerGrad)" />
               <path d="M18 7 L14 15 L17 15 L15 25 L23 14 L19 14 L22 7 Z" fill="url(#headerGrad)" opacity="0.9" />
             </svg>
-            <div className="min-w-0">
+          <div className="min-w-0">
               <h1 className="text-xl lg:text-2xl font-extrabold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent truncate tracking-tight">LUKENFIT</h1>
-              <p className="text-sm text-gray-500 truncate">
-                {profile.currentWeight}kg → {profile.targetWeight}kg
+            <p className="text-sm text-gray-500 truncate">
+              {profile.currentWeight}kg → {profile.targetWeight}kg
                 {isTrainingDay(dashboardDate) && <span className="ml-1 text-amber-400">🏋️</span>}
-              </p>
-            </div>
+            </p>
+          </div>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             {/* Save status */}
@@ -3120,17 +3181,17 @@ const NutritionTracker = () => {
                       onDelete={() => confirmDelete('food', entry.id, entry.name)}
                     >
                       <div className={`p-3 border-l-4 ${needsReview ? 'border-l-amber-500' : 'border-l-blue-500'}`}>
-                        <div className="flex justify-between items-start mb-1">
-                          <div className="min-w-0 flex-1">
+                      <div className="flex justify-between items-start mb-1">
+                        <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <span className="text-xs text-blue-400 uppercase font-medium">{entry.meal}</span>
                               {displayTime && <span className="text-xs text-gray-500">{displayTime}</span>}
-                              {needsReview && (
+                            {needsReview && (
                                 <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">⚠️</span>
-                              )}
-                            </div>
-                            <h3 className="font-medium text-base truncate">{entry.name}</h3>
+                            )}
                           </div>
+                            <h3 className="font-medium text-base truncate">{entry.name}</h3>
+                        </div>
                           {needsReview && (
                             <button onClick={() => confirmFood(entry.id)} className="text-blue-400 active:text-cyan-300 px-2 py-1 text-sm font-medium bg-blue-500/20 rounded ml-2 flex-shrink-0">✓</button>
                           )}
@@ -3143,7 +3204,7 @@ const NutritionTracker = () => {
                             <span className="text-amber-400">{entry.carbs}C</span>
                             <span className="text-pink-400">{entry.fat}F</span>
                             {entry.fiber > 0 && <span className="text-purple-400">{entry.fiber}Fib</span>}
-                          </div>
+                      </div>
                           {/* Action buttons */}
                           <div className="flex items-center gap-1">
                             <button
@@ -3179,8 +3240,8 @@ const NutritionTracker = () => {
                             >
                               ⭐
                             </button>
-                          </div>
-                        </div>
+                      </div>
+                    </div>
                       </div>
                     </SwipeableItem>
                   );

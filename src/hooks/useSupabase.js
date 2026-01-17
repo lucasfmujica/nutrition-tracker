@@ -845,26 +845,30 @@ export function useSupabase() {
         }
       }
 
-      // Migrate food log
+      // Migrate food log - use upsert to avoid duplicates
       if (localData.foodLog?.length > 0) {
         for (const entry of localData.foodLog) {
           try {
             await supabase
               .from('food_log')
-              .insert(mappers.foodToDb(entry, user.id));
+              .upsert(mappers.foodToDb(entry, user.id), {
+                onConflict: 'id',
+              });
           } catch (e) {
             errors.push(`food-${entry.id}`);
           }
         }
       }
 
-      // Migrate workouts
+      // Migrate workouts - use upsert to avoid duplicates
       if (localData.workouts?.length > 0) {
         for (const entry of localData.workouts) {
           try {
             await supabase
               .from('workouts')
-              .insert(mappers.workoutToDb(entry, user.id));
+              .upsert(mappers.workoutToDb(entry, user.id), {
+                onConflict: 'id',
+              });
           } catch (e) {
             errors.push(`workout-${entry.id}`);
           }
