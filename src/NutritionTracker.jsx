@@ -197,7 +197,7 @@ const PullToRefresh = ({ children, onRefresh, isRefreshing }) => {
   return (
     <div
       ref={containerRef}
-      className="relative overflow-auto h-screen"
+      className="relative overflow-auto h-[100dvh] lg:h-[104vh]"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -1025,12 +1025,21 @@ const NutritionTracker = () => {
     setTimeout(() => setSaveStatus(''), 1500);
   };
 
-  // Pull to refresh handler
+  // Pull to refresh handler with timeout protection
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
       if (useCloud) {
-        const data = await supabase.fetchAllData();
+        // Add timeout protection - max 10 seconds
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Refresh timeout')), 10000)
+        );
+
+        const data = await Promise.race([
+          supabase.fetchAllData(),
+          timeoutPromise
+        ]);
+
         if (data) {
           if (data.profile) setProfile(data.profile);
           if (data.targets) setCustomTargets(data.targets);
@@ -2874,17 +2883,33 @@ const NutritionTracker = () => {
                   </span>
                 )}
 
-                {/* Logout button - bigger */}
+                {/* Logout button - bigger and more visible */}
                 <button
-                  onClick={async () => {
-                    await supabase.signOut();
-                    setShowAuth(true);
-                    setOfflineMode(false);
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('[Logout] Button clicked');
+                    try {
+                      // Reset all local state first
+                      hasInitialized.current = false;
+                      setShowAuth(true);
+                      setOfflineMode(false);
+                      // Then sign out from Supabase
+                      const result = await supabase.signOut();
+                      console.log('[Logout] signOut result:', result);
+                    } catch (err) {
+                      console.error('[Logout] Error:', err);
+                      // Force show auth even on error
+                      setShowAuth(true);
+                    }
                   }}
-                  className="w-8 h-8 lg:w-9 lg:h-9 flex items-center justify-center rounded-lg bg-gray-700/50 hover:bg-red-500/20 text-gray-400 hover:text-red-400 text-xl lg:text-2xl transition-colors"
+                  className="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-xl bg-red-500/20 hover:bg-red-500/40 active:bg-red-500/60 text-red-400 hover:text-red-300 transition-all touch-manipulation"
                   title="Cerrar sesión"
+                  style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
-                  ×
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 lg:h-6 lg:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
                 </button>
               </div>
             ) : (
