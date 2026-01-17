@@ -55,3 +55,19 @@ export const formatDateDisplay = (dateStr) => {
     timeZone: ARGENTINA_TZ
   }).format(date);
 };
+
+// Helper to get timestamp in Argentina TZ (strict -03:00 offset)
+// Input: dateStr (YYYY-MM-DD), timeStr (HH:mm)
+export const getArgentinaTimestamp = (dateStr, timeStr) => {
+  if (!dateStr || !timeStr) return Date.now();
+  // Construct ISO string with fixed offset
+  const isoString = `${dateStr}T${timeStr}:00-03:00`;
+  return new Date(isoString).getTime();
+};
+
+// Format timestamp to time string (HH:mm) in Argentina Timezone
+export const formatTime = (timestamp) => {
+  if (!timestamp) return '';
+  const date = new Date(timestamp);
+  return date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' });
+};
