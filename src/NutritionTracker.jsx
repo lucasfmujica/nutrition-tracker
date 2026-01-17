@@ -1716,7 +1716,7 @@ const NutritionTracker = () => {
         <main className="p-4 lg:p-6 xl:p-8 pb-32 md:pb-36 w-full max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto">
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
-            <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6 lg:items-start">
+            <div className="space-y-6">
               {/* Date Navigator - Clean Desktop Design */}
               <div className="flex items-center lg:items-start lg:w-full lg:mb-8 justify-center lg:justify-between px-1">
                 <div className="hidden lg:block">
@@ -1748,9 +1748,11 @@ const NutritionTracker = () => {
                 </div>
               </div>
 
+              {/* Dashboard Content - Flex Desktop Layout */}
+              <div className="flex flex-col lg:flex-row gap-6 items-start">
 
-              {/* Left Column - Main Tracking */}
-              <div className="lg:col-span-8 space-y-4 lg:space-y-6">
+                {/* Left Column - Main Tracking (67%) */}
+                <div className="w-full lg:w-8/12 space-y-4 lg:space-y-6">
                  {/* Summary Card */}
                 <SummaryCard totals={dashboardTotals} targets={dashboardTargets} />
 
@@ -1767,8 +1769,8 @@ const NutritionTracker = () => {
                 />
               </div>
 
-              {/* Right Column - Analytics & Weight */}
-              <div className="lg:col-span-4 space-y-4 lg:space-y-6">
+              {/* Right Column - Analytics & Weight (33%) */}
+              <div className="lg:w-4/12 space-y-4 lg:space-y-6">
                 {/* Weight Chart */}
                 <WeightChartCard
                   data={weightHistory}
@@ -1816,9 +1818,13 @@ const NutritionTracker = () => {
 
         {/* Comidas Tab - uses selectedFoodDate */}
         {activeTab === 'comidas' && (
-          <div className="space-y-3">
-            {/* Date selector - compact */}
-            <div className="flex items-center gap-2">
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Diario</h1>
+                <p className="text-sm text-gray-500">Registro de alimentos</p>
+              </div>
+              <div className="flex items-center gap-2">
               <input
                 type="date"
                 value={selectedFoodDate}
@@ -1931,24 +1937,31 @@ const NutritionTracker = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <input
-                type="date"
-                value={selectedWorkoutDate}
-                onChange={(e) => setSelectedWorkoutDate(e.target.value)}
-                className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2.5 text-base min-w-0"
-              />
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Entrenos</h1>
+                <p className="text-sm text-gray-500">Registro de actividad física</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={selectedWorkoutDate}
+                  onChange={(e) => setSelectedWorkoutDate(e.target.value)}
+                  className="bg-white border border-gray-100 rounded-xl px-4 py-2 text-gray-900 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm"
+                />
+              </div>
             </div>
 
             {/* Swipe hint */}
             {getWorkoutsForDate(selectedWorkoutDate).length > 0 && (
-              <p className="text-xs text-gray-500 text-center">← Desliza para eliminar</p>
+              <p className="text-xs text-gray-400 text-center uppercase tracking-widest font-bold">← Desliza para eliminar</p>
             )}
 
             {getWorkoutsForDate(selectedWorkoutDate).length === 0 ? (
-              <div className="bg-gray-800 rounded-lg p-6 text-center border border-gray-700">
-                <p className="text-gray-400 text-base">Sin entrenos para esta fecha.</p>
-                <p className="text-sm text-amber-400 mt-2">Usá el botón + abajo a la derecha</p>
+              <div className="bg-white rounded-2xl p-12 text-center border border-gray-100 shadow-sm">
+                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">💪</div>
+                <h3 className="text-gray-900 font-bold text-lg mb-1">Sin entrenos registrados</h3>
+                <p className="text-gray-500 text-sm">Registra tu actividad para hoy.</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -1959,38 +1972,68 @@ const NutritionTracker = () => {
                       key={workout.id}
                       onDelete={() => confirmDelete('workout', workout.id, workout.name)}
                     >
-                      <div className={`p-3 border-l-4 ${workout.type === 'gym' ? 'border-l-amber-500' : 'border-l-green-500'}`}>
-                      <div className="flex justify-between items-start mb-1">
+                      <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm relative overflow-hidden">
+                        {/* Type Indicator */}
+                        <div className={`absolute top-0 left-0 bottom-0 w-1.5 ${workout.type === 'gym' ? 'bg-amber-500' : 'bg-green-500'}`} />
+
+                        <div className="flex justify-between items-start mb-2 pl-2">
                           <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className={`text-xs uppercase font-medium ${workout.type === 'gym' ? 'text-amber-400' : 'text-green-400'}`}>{workout.type}</span>
-                            {needsReview && (
-                                <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">⚠️</span>
-                            )}
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${workout.type === 'gym' ? 'bg-amber-50 text-amber-600' : 'bg-green-50 text-green-600'}`}>
+                                {workout.type}
+                              </span>
+                              {needsReview && (
+                                <span className="text-[10px] bg-red-50 text-red-600 px-2 py-0.5 rounded-full font-bold">REVISAR</span>
+                              )}
+                            </div>
+                            <h3 className="font-bold text-gray-900 text-lg leading-tight truncate">{workout.name}</h3>
                           </div>
-                            <h3 className="font-medium text-base truncate">{workout.name}</h3>
-                        </div>
                           {needsReview && (
-                            <button onClick={() => confirmWorkout(workout.id)} className="text-blue-400 active:text-cyan-300 px-2 py-1 text-sm font-medium bg-blue-500/20 rounded ml-2 flex-shrink-0">✓</button>
+                            <button onClick={() => confirmWorkout(workout.id)} className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/20 active:scale-90 transition-transform flex-shrink-0">
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                </svg>
+                            </button>
                           )}
                         </div>
-                        <div className="flex flex-wrap gap-2 text-xs text-gray-400 mb-2">
-                        {workout.duration && <span>⏱️ {workout.duration}'</span>}
-                          {workout.volume && <span>📊 {workout.volume.toLocaleString()}kg</span>}
-                        {workout.calories && <span>🔥 {workout.calories}</span>}
-                      </div>
-                      {workout.exercises?.length > 0 && (
-                          <div className="space-y-0.5 border-t border-gray-700 pt-2 max-h-32 overflow-y-auto">
-                          {workout.exercises.map((ex, idx) => (
-                              <div key={idx} className="text-xs text-gray-300 flex justify-between">
-                                <span className="truncate flex-1 min-w-0">{ex.name}</span>
-                                <span className="text-gray-500 ml-2 flex-shrink-0">{ex.sets}x{ex.reps}@{ex.weight}kg</span>
-                            </div>
-                          ))}
+
+                        <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-3 pl-2">
+                          {workout.duration && (
+                            <span className="flex items-center gap-1.5 font-medium">
+                                <span className="text-blue-500">⏱️</span> {workout.duration} min
+                            </span>
+                          )}
+                          {workout.volume && (
+                            <span className="flex items-center gap-1.5 font-medium">
+                                <span className="text-amber-500">📊</span> {workout.volume.toLocaleString()} kg
+                            </span>
+                          )}
+                          {workout.calories && (
+                            <span className="flex items-center gap-1.5 font-medium">
+                                <span className="text-red-500">🔥</span> {workout.calories} kcal
+                            </span>
+                          )}
                         </div>
-                      )}
-                        {workout.notes && <p className="text-xs text-blue-400 mt-1.5 italic truncate">{workout.notes}</p>}
-                    </div>
+
+                        {workout.exercises?.length > 0 && (
+                          <div className="space-y-2 border-t border-gray-50 pt-3 pl-2">
+                            {workout.exercises.map((ex, idx) => (
+                                <div key={idx} className="text-sm flex justify-between items-center group">
+                                  <span className="text-gray-700 font-medium truncate flex-1">{ex.name}</span>
+                                  <span className="text-gray-400 font-mono text-xs tabular-nums ml-4 bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">{ex.sets}x{ex.reps} · {ex.weight}kg</span>
+                                </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {workout.notes && (
+                          <div className="mt-3 pl-2 pt-2 border-t border-gray-50">
+                            <p className="text-sm text-blue-600 bg-blue-50/50 p-2 rounded-xl italic">
+                                "{workout.notes}"
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </SwipeableItem>
                   );
                 })}
@@ -1998,13 +2041,13 @@ const NutritionTracker = () => {
             )}
 
             {/* Schedule */}
-            <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-              <h3 className="text-xs font-bold text-gray-400 mb-2">SCHEDULE</h3>
-              <div className="grid grid-cols-7 gap-1 text-center">
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <h3 className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest">Plan Semanal</h3>
+              <div className="grid grid-cols-7 gap-2 text-center">
                 {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((day, i) => (
-                  <div key={day} className={`p-1.5 rounded text-xs ${[0, 3, 5].includes(i) ? 'bg-amber-500/20 text-amber-400' : i === 2 ? 'bg-green-500/20 text-green-400' : 'bg-gray-700/50 text-gray-500'}`}>
-                    <div className="font-bold">{day}</div>
-                    <div className="text-xs">{[0, 3, 5].includes(i) ? 'GYM' : i === 2 ? 'TEN' : '-'}</div>
+                  <div key={day} className={`p-2 rounded-xl border ${[0, 3, 5].includes(i) ? 'bg-amber-50 border-amber-100 text-amber-700' : i === 2 ? 'bg-green-50 border-green-100 text-green-700' : 'bg-gray-50 border-gray-100 text-gray-400'}`}>
+                    <div className="font-bold text-xs">{day}</div>
+                    <div className="text-[10px] font-bold mt-1 tracking-tighter">{[0, 3, 5].includes(i) ? 'GYM' : i === 2 ? 'TEN' : 'OFF'}</div>
                   </div>
                 ))}
               </div>
@@ -2014,11 +2057,16 @@ const NutritionTracker = () => {
 
         {/* Peso Tab */}
         {activeTab === 'peso' && (
-          <div className="space-y-4">
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="mb-2 px-1">
+              <h1 className="text-2xl font-bold text-gray-900">Peso</h1>
+              <p className="text-sm text-gray-500">Seguimiento de progreso corporal</p>
+            </div>
+
             <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
               <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">⚖️</span>
-                NUEVO PESO
+                NUEVO REGISTRO
               </h2>
               <div className="flex flex-col gap-3">
               <div className="flex gap-2">
@@ -2102,33 +2150,51 @@ const NutritionTracker = () => {
             )}
 
             {weightHistory.length > 0 && (
-              <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                <h2 className="text-base font-bold text-blue-400 mb-3">📉 HISTORIAL</h2>
-                <div className="space-y-1 max-h-72 overflow-y-auto">
+              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                <h2 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-widest">Historial</h2>
+                <div className="space-y-1 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                   {weightHistory.map((entry, idx) => (
-                    <div key={entry.id} className="flex items-center justify-between py-2.5 border-b border-gray-700 text-base">
+                    <div key={entry.id} className="flex items-center justify-between py-4 border-b border-gray-50 last:border-0 group">
                       <div className="flex flex-col">
-                        <span className="text-gray-300">{entry.date}</span>
-                        {entry.timestamp && <span className="text-sm text-gray-500">{formatTime(entry.timestamp)}</span>}
+                        <span className="text-gray-900 font-bold">{entry.date}</span>
+                        {entry.timestamp && <span className="text-xs text-gray-400 font-medium">{formatTime(entry.timestamp)}</span>}
                       </div>
-                      {editingWeightId === entry.id ? (
-                        <div className="flex items-center gap-2">
-                          <input type="number" step="0.1" value={editingWeightValue} onChange={(e) => setEditingWeightValue(e.target.value)} className="w-24 bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-base" />
-                          <button onClick={saveEditWeight} className="text-blue-400 px-2 text-lg">✓</button>
-                          <button onClick={cancelEditWeight} className="text-gray-400 px-2 text-lg">✕</button>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-3">
-                          <span className="font-bold text-lg">{entry.weight} kg</span>
-                          {idx < weightHistory.length - 1 && (
-                            <span className={`text-sm ${entry.weight < weightHistory[idx + 1].weight ? 'text-blue-400' : entry.weight > weightHistory[idx + 1].weight ? 'text-red-400' : 'text-gray-400'}`}>
-                              {entry.weight < weightHistory[idx + 1].weight ? '↓' : entry.weight > weightHistory[idx + 1].weight ? '↑' : '='}{Math.abs(entry.weight - weightHistory[idx + 1].weight).toFixed(1)}
-                            </span>
-                          )}
-                          <button onClick={() => startEditWeight(entry.id)} className="text-blue-400 px-1 text-lg">✎</button>
-                          <button onClick={() => confirmDelete('weight', entry.id, `${entry.weight} kg (${entry.date})`)} className="text-red-400 px-1 text-lg">✕</button>
-                        </div>
-                      )}
+
+                      <div className="flex items-center gap-6">
+                        {editingWeightId === entry.id ? (
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="number"
+                              step="0.1"
+                              value={editingWeightValue}
+                              onChange={(e) => setEditingWeightValue(e.target.value)}
+                              className="w-24 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-lg font-bold focus:border-blue-500 outline-none transition-all"
+                            />
+                            <button onClick={saveEditWeight} className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center">✓</button>
+                            <button onClick={cancelEditWeight} className="w-8 h-8 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center">✕</button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-4">
+                            <div className="text-right flex flex-col items-end">
+                              <span className="font-black text-xl text-gray-900">{entry.weight}<span className="text-xs font-medium text-gray-400 ml-1">kg</span></span>
+                              {idx < weightHistory.length - 1 && (
+                                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${entry.weight < weightHistory[idx + 1].weight ? 'bg-blue-50 text-blue-600' : entry.weight > weightHistory[idx + 1].weight ? 'bg-red-50 text-red-600' : 'bg-gray-50 text-gray-400'}`}>
+                                  {entry.weight < weightHistory[idx + 1].weight ? '↓' : entry.weight > weightHistory[idx + 1].weight ? '↑' : '='}{Math.abs(entry.weight - weightHistory[idx + 1].weight).toFixed(1)}
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button onClick={() => startEditWeight(entry.id)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                              </button>
+                              <button onClick={() => confirmDelete('weight', entry.id, `${entry.weight} kg (${entry.date})`)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -2139,16 +2205,21 @@ const NutritionTracker = () => {
 
         {/* Pasos Tab */}
         {activeTab === 'pasos' && (
-          <div className="space-y-3">
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="mb-2 px-1">
+              <h1 className="text-2xl font-bold text-gray-900">Pasos</h1>
+              <p className="text-sm text-gray-500">Actividad diaria</p>
+            </div>
+
             <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
               <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <span className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">👟</span>
                 REGISTRAR PASOS
               </h2>
-              <input type="date" value={stepsDate} onChange={(e) => setStepsDate(e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm mb-3 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none transition-all" />
+              <input type="date" value={stepsDate} onChange={(e) => setStepsDate(e.target.value)} className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm mb-3 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium" />
               <div className="flex gap-2">
-                <input type="number" value={newSteps} onChange={(e) => setNewSteps(e.target.value)} placeholder="ej: 8500" className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none transition-all" />
-                <button onClick={addStepsEntry} className="bg-orange-600 hover:bg-orange-700 active:bg-orange-800 px-8 py-3 rounded-xl font-bold text-white shadow-lg shadow-orange-500/30 transition-all">OK</button>
+                <input type="number" value={newSteps} onChange={(e) => setNewSteps(e.target.value)} placeholder="ej: 8500" className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-lg font-black focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all placeholder-gray-300" />
+                <button onClick={addStepsEntry} className="bg-orange-600 hover:bg-orange-700 active:bg-orange-800 px-8 py-3 rounded-xl font-bold text-white shadow-lg shadow-orange-500/20 transition-all">OK</button>
               </div>
             </div>
 
@@ -2172,7 +2243,11 @@ const NutritionTracker = () => {
 
         {/* Oura Tab */}
         {activeTab === 'oura' && (
-              <div className="space-y-3">
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="mb-2 px-1 text-center md:text-left">
+              <h1 className="text-2xl font-bold text-gray-900">Oura</h1>
+              <p className="text-sm text-gray-500">Sincronización de sueño y recuperación</p>
+            </div>
             <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
               <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <span className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">💍</span>
@@ -2274,81 +2349,101 @@ const NutritionTracker = () => {
 
         {/* Config Tab - with editable targets and debounced saving */}
         {activeTab === 'config' && (
-          <div className="space-y-4">
-            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-              <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
-                 <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">👤</span>
-                 PERFIL
+          <div className="max-w-3xl mx-auto space-y-6">
+            <div className="mb-2 px-1">
+              <h1 className="text-2xl font-bold text-gray-900">Configuración</h1>
+              <p className="text-sm text-gray-500">Ajustes de perfil y objetivos</p>
+            </div>
+
+            <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                <div className="flex items-center gap-4 mb-8">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-blue-500/20">
+                        {profile.name?.substring(0, 1) || 'L'}
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-black text-gray-900 leading-tight">{profile.name || 'Usuario'}</h3>
+                        <p className="text-sm text-gray-500 font-medium">Plan Premium · Activo</p>
+                    </div>
+                </div>
+
+              <h2 className="text-xs font-black text-gray-400 mb-4 uppercase tracking-[0.2em] flex items-center gap-2">
+                 PERFIL Y DATOS
               </h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs text-gray-500 font-medium mb-1">Peso Actual</label>
-                  <input type="number" step="0.1" value={profile.currentWeight} onChange={(e) => updateConfig({ ...profile, currentWeight: parseFloat(e.target.value) || 0 }, customTargets)} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Peso Actual (kg)</label>
+                  <input type="number" step="0.1" value={profile.currentWeight} onChange={(e) => updateConfig({ ...profile, currentWeight: parseFloat(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 font-medium mb-1">Peso Objetivo</label>
-                  <input type="number" step="0.1" value={profile.targetWeight} onChange={(e) => updateConfig({ ...profile, targetWeight: parseFloat(e.target.value) || 0 }, customTargets)} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Peso Objetivo (kg)</label>
+                  <input type="number" step="0.1" value={profile.targetWeight} onChange={(e) => updateConfig({ ...profile, targetWeight: parseFloat(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 font-medium mb-1">Altura (cm)</label>
-                  <input type="number" value={profile.height} onChange={(e) => updateConfig({ ...profile, height: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Altura (cm)</label>
+                  <input type="number" value={profile.height} onChange={(e) => updateConfig({ ...profile, height: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 font-medium mb-1">Edad</label>
-                  <input type="number" value={profile.age} onChange={(e) => updateConfig({ ...profile, age: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Edad</label>
+                  <input type="number" value={profile.age} onChange={(e) => updateConfig({ ...profile, age: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-              <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">🎯</span>
-                  OBJETIVOS (Rest Day)
+            <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+              <h2 className="text-xs font-black text-gray-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-2">
+                  OBJETIVOS (REST DAY)
               </h2>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 <div>
-                  <label className="block text-xs text-gray-500 font-medium mb-1">Calorías</label>
-                  <input type="number" value={customTargets.calories} onChange={(e) => updateConfig(profile, { ...customTargets, calories: parseInt(e.target.value) || 0 })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Calorías</label>
+                  <input type="number" value={customTargets.calories} onChange={(e) => updateConfig(profile, { ...customTargets, calories: parseInt(e.target.value) || 0 })} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-black text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 font-medium mb-1">Prot (g)</label>
-                  <input type="number" value={customTargets.protein} onChange={(e) => updateConfig(profile, { ...customTargets, protein: parseInt(e.target.value) || 0 })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1 text-green-600">Prot (g)</label>
+                  <input type="number" value={customTargets.protein} onChange={(e) => updateConfig(profile, { ...customTargets, protein: parseInt(e.target.value) || 0 })} className="w-full bg-green-50/30 border border-green-100 rounded-2xl px-4 py-3.5 text-lg font-black text-gray-900 focus:border-green-500 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 font-medium mb-1">Carbs (g)</label>
-                  <input type="number" value={customTargets.carbs} onChange={(e) => updateConfig(profile, { ...customTargets, carbs: parseInt(e.target.value) || 0 })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1 text-yellow-600">Carbs (g)</label>
+                  <input type="number" value={customTargets.carbs} onChange={(e) => updateConfig(profile, { ...customTargets, carbs: parseInt(e.target.value) || 0 })} className="w-full bg-yellow-50/30 border border-yellow-100 rounded-2xl px-4 py-3.5 text-lg font-black text-gray-900 focus:border-yellow-500 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 font-medium mb-1">Grasas (g)</label>
-                  <input type="number" value={customTargets.fat} onChange={(e) => updateConfig(profile, { ...customTargets, fat: parseInt(e.target.value) || 0 })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1 text-red-600">Grasas (g)</label>
+                  <input type="number" value={customTargets.fat} onChange={(e) => updateConfig(profile, { ...customTargets, fat: parseInt(e.target.value) || 0 })} className="w-full bg-red-50/30 border border-red-100 rounded-2xl px-4 py-3.5 text-lg font-black text-gray-900 focus:border-red-500 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 font-medium mb-1">Fibra (g)</label>
-                  <input type="number" value={customTargets.fiber} onChange={(e) => updateConfig(profile, { ...customTargets, fiber: parseInt(e.target.value) || 0 })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Fibra (g)</label>
+                  <input type="number" value={customTargets.fiber} onChange={(e) => updateConfig(profile, { ...customTargets, fiber: parseInt(e.target.value) || 0 })} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-black text-gray-900 focus:border-blue-500 outline-none transition-all" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-              <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
-                 <span className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">🏋️</span>
-                 TRAINING DAY
+            <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-full -mr-12 -mt-12 opacity-50" />
+              <h2 className="text-xs font-black text-gray-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-2">
+                 TRAINING DAY BONUS
               </h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6 relative z-10">
                 <div>
-                  <label className="block text-xs text-gray-500 font-medium mb-1">Kcal extra</label>
-                  <input type="number" value={customTargets.trainingDayCaloriesBonus} onChange={(e) => updateConfig(profile, { ...customTargets, trainingDayCaloriesBonus: parseInt(e.target.value) || 0 })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Kcal extra</label>
+                  <input type="number" value={customTargets.trainingDayCaloriesBonus} onChange={(e) => updateConfig(profile, { ...customTargets, trainingDayCaloriesBonus: parseInt(e.target.value) || 0 })} className="w-full bg-amber-50/30 border border-amber-100 rounded-2xl px-4 py-3.5 text-lg font-black text-gray-900 focus:border-amber-500 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 font-medium mb-1">Carbs (g)</label>
-                  <input type="number" value={customTargets.trainingDayCarbs} onChange={(e) => updateConfig(profile, { ...customTargets, trainingDayCarbs: parseInt(e.target.value) || 0 })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Carbs (g)</label>
+                  <input type="number" value={customTargets.trainingDayCarbs} onChange={(e) => updateConfig(profile, { ...customTargets, trainingDayCarbs: parseInt(e.target.value) || 0 })} className="w-full bg-amber-50/30 border border-amber-100 rounded-2xl px-4 py-3.5 text-lg font-black text-gray-900 focus:border-amber-500 outline-none transition-all" />
                 </div>
               </div>
-              <p className="text-xs text-gray-400 mt-2 font-medium">Training day: {customTargets.calories + customTargets.trainingDayCaloriesBonus} kcal, {customTargets.trainingDayCarbs}g carbs</p>
+              <p className="text-xs text-amber-600 mt-4 font-bold bg-amber-50 inline-block px-3 py-1 rounded-full border border-amber-100">
+                Training Day: {customTargets.calories + customTargets.trainingDayCaloriesBonus} kcal · {customTargets.trainingDayCarbs}g carbs
+              </p>
             </div>
 
-            <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-2.5">
-              <p className="text-xs text-blue-400">💾 Auto-save (800ms)</p>
+            <div className="bg-blue-50/50 border border-blue-100 border-dashed rounded-2xl p-4 flex items-center justify-between">
+                <p className="text-xs text-blue-600 font-bold">💾 Sincronización automática activa</p>
+                <div className="flex gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
             </div>
 
             {/* Export buttons - compact grid */}

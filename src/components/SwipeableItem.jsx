@@ -44,21 +44,21 @@ export const SwipeableItem = ({ children, onDelete, deleteLabel = 'Eliminar' }) 
     <div className="relative overflow-hidden rounded-lg">
       {/* Delete background */}
       <div
-        className="absolute inset-y-0 right-0 flex items-center bg-red-500 transition-all"
+        className="absolute inset-y-0 right-0 flex items-center bg-red-600 transition-all rounded-r-2xl"
         style={{ width: Math.abs(translateX) + 'px' }}
       >
         <button
           onClick={handleDelete}
-          className="w-full h-full flex items-center justify-center text-white font-medium px-4"
+          className="w-full h-full flex items-center justify-center text-white font-bold px-4"
         >
-          {Math.abs(translateX) > 50 && <span>🗑️ {deleteLabel}</span>}
+          {Math.abs(translateX) > 60 && <span className="flex items-center gap-2">🗑️ <span className="text-sm">{deleteLabel}</span></span>}
         </button>
       </div>
 
       {/* Main content */}
       <div
         ref={itemRef}
-        className={`swipe-item relative bg-gray-800 ${isSwiping ? 'swiping' : ''}`}
+        className={`swipe-item relative bg-white ${isSwiping ? 'swiping' : ''}`}
         style={{ transform: `translateX(${translateX}px)` }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}

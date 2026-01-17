@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 /**
- * Authentication UI Component - LukenFit Branding
- * Handles login, signup, and password reset
+ * Authentication UI Component - LukenFit
+ * Light Theme Design
  */
 export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loading: externalLoading }) {
   const [mode, setMode] = useState('login'); // 'login' | 'signup' | 'reset'
@@ -13,8 +13,8 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
 
-  // Combined loading state - loading during form submission OR external loading (from logout)
-  const loading = internalLoading;
+  // Combined loading state
+  const loading = internalLoading || externalLoading;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,16 +36,12 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
         }
         const result = await onAuth.signUp(email, password);
         if (result?.error) {
+          // Error handling similar to previous...
           let errorMsg = result.error.message || 'Error desconocido';
-          if (errorMsg.includes('already registered')) {
-            errorMsg = 'Este email ya está registrado. Intenta iniciar sesión.';
-          } else if (errorMsg.includes('valid email')) {
-            errorMsg = 'Por favor ingresa un email válido.';
-          } else if (errorMsg.includes('Password')) {
-            errorMsg = 'La contraseña debe tener al menos 6 caracteres.';
-          } else if (errorMsg.includes('Database error')) {
-            errorMsg = 'Error de configuración del servidor.';
-          }
+           if (errorMsg.includes('already registered')) errorMsg = 'Este email ya está registrado. Intenta iniciar sesión.';
+           else if (errorMsg.includes('valid email')) errorMsg = 'Por favor ingresa un email válido.';
+           else if (errorMsg.includes('Password')) errorMsg = 'La contraseña debe tener al menos 6 caracteres.';
+           else if (errorMsg.includes('Database error')) errorMsg = 'Error de configuración del servidor.';
           setError(errorMsg);
         } else if (result?.needsConfirmation) {
           setMessage('¡Cuenta creada! Revisa tu email para confirmar.');
@@ -63,15 +59,12 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
           setMessage('Email de recuperación enviado. Revisa tu bandeja.');
         }
       } else {
-        // LOGIN - no timeout, let Supabase handle it
+        // LOGIN
         const result = await onAuth.signIn(email, password);
         if (result?.error) {
           let errorMsg = result.error.message || 'Error desconocido';
-          if (errorMsg.includes('Invalid login')) {
-            errorMsg = 'Email o contraseña incorrectos.';
-          } else if (errorMsg.includes('Email not confirmed')) {
-            errorMsg = 'Debes confirmar tu email. Revisa tu bandeja.';
-          }
+          if (errorMsg.includes('Invalid login')) errorMsg = 'Email o contraseña incorrectos.';
+          else if (errorMsg.includes('Email not confirmed')) errorMsg = 'Debes confirmar tu email. Revisa tu bandeja.';
           setError(errorMsg);
         }
       }
@@ -87,43 +80,37 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
     onAuth.continueOffline();
   };
 
-  // LukenFit Logo Component
+  // LukenFit Logo
   const LukenFitLogo = () => (
-    <div className="w-20 h-20 mx-auto mb-4 relative">
-      <svg viewBox="0 0 64 64" className="w-full h-full">
-        <defs>
-          <linearGradient id="authGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style={{ stopColor: '#3B82F6' }} />
-            <stop offset="100%" style={{ stopColor: '#06B6D4' }} />
-          </linearGradient>
-        </defs>
-        <circle cx="32" cy="32" r="30" fill="#0F172A" />
-        <path d="M20 14 L20 42 L38 42 L38 36 L26 36 L26 14 Z" fill="url(#authGrad)" />
-        <path d="M36 14 L28 30 L34 30 L30 50 L46 28 L38 28 L44 14 Z" fill="url(#authGrad)" opacity="0.9" />
-        <circle cx="32" cy="32" r="30" fill="none" stroke="url(#authGrad)" strokeWidth="2" opacity="0.3" />
-      </svg>
+    <div className="w-16 h-16 mx-auto mb-6 relative">
+      <div className="w-full h-full rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
+        <span className="text-white font-bold text-2xl">LF</span>
+      </div>
     </div>
   );
 
+  const containerClasses = "min-h-screen bg-gray-50 flex items-center justify-center p-4";
+  const cardClasses = "bg-white rounded-3xl p-8 max-w-md w-full border border-gray-100 shadow-xl shadow-gray-200/50";
+
   if (!isSupabaseConfigured) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
-        <div className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full border border-slate-700/50 shadow-2xl">
+      <div className={containerClasses}>
+        <div className={cardClasses}>
           <div className="text-center mb-6">
             <LukenFitLogo />
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2">LukenFit</h1>
-            <p className="text-slate-400">Modo local activo</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">LukenFit</h1>
+            <p className="text-gray-500">Modo local activo</p>
           </div>
 
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-6">
-            <p className="text-amber-200 text-sm">
+          <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 mb-6">
+            <p className="text-amber-700 text-sm">
               ⚠️ Supabase no está configurado. Los datos se guardarán localmente en este dispositivo.
             </p>
           </div>
 
           <button
             onClick={handleContinueOffline}
-            className="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all shadow-lg shadow-blue-500/25"
+            className="w-full py-3.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all shadow-lg shadow-gray-200"
           >
             Continuar sin cuenta
           </button>
@@ -133,42 +120,42 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
-      <div className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full border border-slate-700/50 shadow-2xl">
-        {/* Header with LukenFit branding */}
+    <div className={containerClasses}>
+      <div className={cardClasses}>
+        {/* Header */}
         <div className="text-center mb-8">
           <LukenFitLogo />
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2">LukenFit</h1>
-          <p className="text-slate-400">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">LukenFit</h1>
+          <p className="text-gray-500 text-sm">
             {mode === 'login' && 'Inicia sesión para sincronizar tus datos'}
             {mode === 'signup' && 'Crea una cuenta para guardar tus datos'}
             {mode === 'reset' && 'Recupera el acceso a tu cuenta'}
           </p>
         </div>
 
-        {/* Error/Message display */}
+        {/* Messages */}
         {(error || externalError) && (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-6">
-            <p className="text-red-300 text-sm">{error || externalError}</p>
+          <div className="bg-red-50 border border-red-100 rounded-xl p-4 mb-6">
+            <p className="text-red-600 text-sm font-medium">{error || externalError}</p>
           </div>
         )}
         {message && (
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 mb-6">
-            <p className="text-blue-300 text-sm">{message}</p>
+          <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6">
+            <p className="text-blue-600 text-sm font-medium">{message}</p>
           </div>
         )}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-slate-300 text-sm font-medium mb-2">
+            <label className="block text-gray-700 text-xs font-bold mb-2 uppercase tracking-wide">
               Email
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+              className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
               placeholder="tu@email.com"
               required
             />
@@ -176,14 +163,14 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
 
           {mode !== 'reset' && (
             <div>
-              <label className="block text-slate-300 text-sm font-medium mb-2">
+              <label className="block text-gray-700 text-xs font-bold mb-2 uppercase tracking-wide">
                 Contraseña
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
                 placeholder="••••••••"
                 required
               />
@@ -192,14 +179,14 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
 
           {mode === 'signup' && (
             <div>
-              <label className="block text-slate-300 text-sm font-medium mb-2">
+              <label className="block text-gray-700 text-xs font-bold mb-2 uppercase tracking-wide">
                 Confirmar contraseña
               </label>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
                 placeholder="••••••••"
                 required
               />
@@ -209,7 +196,7 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all shadow-lg shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-blue-500/25 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -221,29 +208,29 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
               </span>
             ) : (
               <>
-                {mode === 'login' && 'Iniciar sesión'}
-                {mode === 'signup' && 'Crear cuenta'}
-                {mode === 'reset' && 'Enviar email'}
+                {mode === 'login' && 'Iniciar Sesión'}
+                {mode === 'signup' && 'Crear Cuenta'}
+                {mode === 'reset' && 'Enviar Email'}
               </>
             )}
           </button>
         </form>
 
         {/* Mode switches */}
-        <div className="mt-6 space-y-3 text-center">
+        <div className="mt-8 space-y-4 text-center">
           {mode === 'login' && (
             <>
               <button
                 onClick={() => { setMode('reset'); setError(''); setMessage(''); }}
-                className="text-slate-400 hover:text-blue-400 text-sm transition-colors"
+                className="text-gray-500 hover:text-blue-600 text-sm font-medium transition-colors"
               >
                 ¿Olvidaste tu contraseña?
               </button>
-              <div className="text-slate-500 text-sm">
+              <div className="text-gray-600 text-sm bg-gray-50 p-3 rounded-xl border border-gray-100">
                 ¿No tienes cuenta?{' '}
                 <button
                   onClick={() => { setMode('signup'); setError(''); setMessage(''); }}
-                  className="text-blue-400 hover:text-cyan-400 font-medium transition-colors"
+                  className="text-blue-600 hover:text-blue-700 font-bold transition-colors ml-1"
                 >
                   Regístrate
                 </button>
@@ -252,11 +239,11 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
           )}
 
           {mode === 'signup' && (
-            <div className="text-slate-500 text-sm">
+            <div className="text-gray-600 text-sm bg-gray-50 p-3 rounded-xl border border-gray-100">
               ¿Ya tienes cuenta?{' '}
               <button
                 onClick={() => { setMode('login'); setError(''); setMessage(''); }}
-                className="text-blue-400 hover:text-cyan-400 font-medium transition-colors"
+                className="text-blue-600 hover:text-blue-700 font-bold transition-colors ml-1"
               >
                 Inicia sesión
               </button>
@@ -266,7 +253,7 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
           {mode === 'reset' && (
             <button
               onClick={() => { setMode('login'); setError(''); setMessage(''); }}
-              className="text-blue-400 hover:text-cyan-400 text-sm font-medium transition-colors"
+              className="text-blue-600 hover:text-blue-700 text-sm font-bold transition-colors flex items-center justify-center gap-2"
             >
               ← Volver al login
             </button>
@@ -274,25 +261,22 @@ export function AuthUI({ onAuth, error: externalError, isSupabaseConfigured, loa
         </div>
 
         {/* Divider */}
-        <div className="relative my-6">
+        <div className="relative my-8">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-700"></div>
+            <div className="w-full border-t border-gray-100"></div>
           </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-slate-800 text-slate-500">o</span>
+          <div className="relative flex justify-center text-xs uppercase tracking-widest">
+            <span className="px-4 bg-white text-gray-400 font-bold">O continúa como invitado</span>
           </div>
         </div>
 
         {/* Offline mode */}
         <button
           onClick={handleContinueOffline}
-          className="w-full py-3 bg-slate-700/50 text-slate-300 font-medium rounded-xl hover:bg-slate-700 transition-all border border-slate-600"
+          className="w-full py-3.5 bg-white text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all border-2 border-dashed border-gray-200 hover:border-gray-300"
         >
-          Continuar sin cuenta
+          Usar sin cuenta
         </button>
-        <p className="text-slate-500 text-xs text-center mt-3">
-          Los datos se guardarán solo en este dispositivo
-        </p>
       </div>
     </div>
   );

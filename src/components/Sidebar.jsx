@@ -9,14 +9,14 @@ export const Sidebar = ({ activeTab, setActiveTab }) => {
     { id: 'peso', icon: Scale, label: 'Peso' },
     { id: 'pasos', icon: Activity, label: 'Pasos' },
     { id: 'oura', icon: Link, label: 'Oura' }, // Using Link icon for "Connected Apps" vibe or similar
-    { id: 'config', icon: Settings, label: 'Configuración' },
+    { id: 'config', icon: Settings, label: 'Config' },
   ];
 
   return (
     <aside className="w-64 bg-white border-r border-gray-100 hidden lg:flex flex-col h-screen sticky top-0">
       <div className="p-6">
         <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-          Nutrition
+          LukenFit
         </h1>
       </div>
 
