@@ -54,10 +54,20 @@ export const useInitialHydration = ({
   useEffect(() => {
     if (supabase.loading || showAuth === null) return;
     if (showAuth && !offlineMode) return;
-    if (hasInitialized.current) return;
-    hasInitialized.current = true;
 
-    console.log('[Data] Starting data load...');
+    // 🔒 CRITICAL AUTH GUARD: Prevent race condition on page refresh (F5)
+    // Wait for auth to be fully resolved before loading data
+    // This prevents fetchAllData() from executing with null/undefined session
+    if (!supabase.isAuthenticated || !supabase.user) {
+      console.log('[Data] Auth not ready, waiting for session confirmation before loading data');
+      return;
+    }
+
+    if (hasInitialized.current) return;
+
+    // ✅ Mark as initialized ONLY after auth is confirmed
+    hasInitialized.current = true;
+    console.log('[Data] Starting data load with authenticated user:', supabase.user?.email);
 
     // Check for onboarding and migration needs (only when authenticated)
     if (supabase.isAuthenticated) {
@@ -99,15 +109,26 @@ export const useInitialHydration = ({
           console.log('[Data] Fetching from Supabase...');
 
           let data = null;
+          let timeoutOccurred = false;
+
           // Retry logic with exponential backoff (3 attempts, 60s timeout)
           for (let attempt = 1; attempt <= 3; attempt++) {
             try {
               const fetchPromise = supabase.fetchAllData();
               const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 60000));
               data = await Promise.race([fetchPromise, timeoutPromise]);
-              if (data) break;
+
+              if (data) {
+                timeoutOccurred = false;
+                break;
+              }
+
+              // Mark timeout if no data after race
+              if (!data) timeoutOccurred = true;
+
               if (attempt < 3) await new Promise(r => setTimeout(r, attempt * 2000));
             } catch (err) {
+              console.error(`[Data] Fetch attempt ${attempt} failed:`, err);
               if (attempt < 3) await new Promise(r => setTimeout(r, attempt * 2000));
             }
           }
@@ -133,10 +154,23 @@ export const useInitialHydration = ({
             setSaveStatus('✓ Sincronizado');
             setTimeout(() => setSaveStatus(''), 2000);
           } else {
-            if (!hasCachedData) {
+            // 🔒 IMPROVED TIMEOUT FEEDBACK: Clear action message for user
+            if (timeoutOccurred && !hasCachedData) {
+              // No cache and timeout = critical UX issue
+              setSaveStatus('❌ Error de conexión - Recargá la página para reintentar');
+              setTimeout(() => setSaveStatus(''), 5000);
+              console.error('[Data] Failed to load from Supabase after 3 attempts. No cached data available.');
+            } else if (timeoutOccurred && hasCachedData) {
+              // Has cache but timeout = degrade gracefully
+              setSaveStatus('⚠️ Mostrando datos en caché - Sin conexión a Supabase');
+              setTimeout(() => setSaveStatus(''), 5000);
+              console.warn('[Data] Timeout occurred but showing cached data');
+            } else if (!hasCachedData) {
+              // Generic offline message (network offline, not timeout)
               setSaveStatus('⚠️ Sin conexión');
               setTimeout(() => setSaveStatus(''), 3000);
             }
+            // Note: If hasCachedData && !timeoutOccurred, we silently show cache (best UX)
           }
         }
       } catch (err) {
@@ -147,7 +181,7 @@ export const useInitialHydration = ({
     };
 
     loadData();
-  }, [supabase.loading, showAuth, offlineMode, supabase.isAuthenticated, supabase.isOnline]);
+  }, [supabase.loading, showAuth, offlineMode, supabase.isAuthenticated, supabase.isOnline, supabase.user]);
 
   // This hook only performs side effects, no return value needed
   return {};
