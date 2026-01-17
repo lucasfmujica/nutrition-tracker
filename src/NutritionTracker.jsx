@@ -23,6 +23,7 @@ import { PullToRefresh } from './components/PullToRefresh';
 import { SwipeableItem } from './components/SwipeableItem';
 import { ConfigTab } from './components/Tabs/ConfigTab';
 import { DashboardTab } from './components/Tabs/DashboardTab';
+import { DiaryTab } from './components/Tabs/DiaryTab';
 import { OuraTab } from './components/Tabs/OuraTab';
 import { StepsTab } from './components/Tabs/StepsTab';
 import { WeightTab } from './components/Tabs/WeightTab';
@@ -1489,114 +1490,21 @@ const NutritionTracker = () => {
         {/* Comidas Tab - uses selectedFoodDate */}
 
         {activeTab === 'comidas' && (
-          <div className="max-w-4xl mx-auto space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Diario</h1>
-                <p className="text-sm text-gray-500">Registro de alimentos</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setSelectedFoodDate(changeDate(selectedFoodDate, -1))}
-                  className="w-10 h-10 rounded-xl hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors flex items-center justify-center"
-                >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <input
-                  type="date"
-                  value={selectedFoodDate}
-                  onChange={(e) => setSelectedFoodDate(e.target.value)}
-                  className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-base flex-1 min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-                />
-                <button
-                  onClick={() => setSelectedFoodDate(changeDate(selectedFoodDate, 1))}
-                  disabled={selectedFoodDate >= getArgentinaDateString()}
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${selectedFoodDate >= getArgentinaDateString() ? 'text-gray-200 cursor-not-allowed' : 'hover:bg-gray-50 text-gray-400 hover:text-blue-500'}`}
-                >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            {/* Swipe hint */}
-            {getFoodsForDate(selectedFoodDate).length > 0 && (
-              <p className="text-xs text-gray-500 text-center">← Desliza para eliminar</p>
-            )}
-
-            {getFoodsForDate(selectedFoodDate).length === 0 ? (
-              <div className="bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm">
-                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">🍽️</span>
-                </div>
-                <h3 className="text-gray-900 font-bold text-lg mb-1">Sin comidas registradas</h3>
-                <p className="text-gray-500 text-sm">Registra tu primera comida del día.</p>
-                <button
-                  onClick={() => { setNewFood({ ...newFood, date: selectedFoodDate, meal: 'Desayuno' }); setShowFoodForm(true); }}
-                  className="mt-6 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-blue-600/20"
-                >
-                  Registrar Comida
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-6 pb-24">
-                {['Desayuno', 'Almuerzo', 'Merienda', 'Cena', 'Snack'].map(mealType => {
-                  const mealFoods = getFoodsForDate(selectedFoodDate).filter(f =>
-                     // Normalize string comparison
-                     (f.meal || '').toLowerCase() === mealType.toLowerCase() ||
-                     // Fallback for old data or mismatches
-                     (mealType === 'Snack' && !['desayuno', 'almuerzo', 'merienda', 'cena'].includes((f.meal || '').toLowerCase()))
-                  );
-
-                  // Skip section if no foods (optional: keeping it clean)
-                 // if (mealFoods.length === 0) return null;
-
-                  // Calculate totals for this meal
-                  const mealTotals = mealFoods.reduce((acc, food) => ({
-                    calories: acc.calories + (parseInt(food.calories) || 0)
-                  }), { calories: 0 });
-
-                  return (
-                    <MealSection
-                      key={mealType}
-                      title={mealType}
-                      foods={mealFoods}
-                      totals={mealTotals}
-                      onAddFood={() => {
-                        setNewFood({ ...newFood, date: selectedFoodDate, meal: mealType });
-                        setShowFoodForm(true);
-                      }}
-                      onEditFood={(food) => {
-                        setNewFood({
-                            ...food,
-                            calories: food.calories.toString(),
-                            protein: food.protein.toString(),
-                            carbs: food.carbs.toString(),
-                            fat: food.fat.toString(),
-                            fiber: food.fiber?.toString() || '0'
-                        });
-                        setEditingFoodId(food.id);
-                        setShowFoodForm(true);
-                      }}
-                      onDeleteFood={(food) => confirmDelete('food', food.id, food.name)}
-                    />
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Sticky Day Summary Footer */}
-             {getFoodsForDate(selectedFoodDate).length > 0 && (
-                <DaySummary
-                  totals={getTotalsForDate(selectedFoodDate)}
-                  targets={getTargetsForDate(selectedFoodDate)}
-                />
-             )}
-          </div>
+          <DiaryTab
+            selectedFoodDate={selectedFoodDate}
+            setSelectedFoodDate={setSelectedFoodDate}
+            changeDate={changeDate}
+            getFoodsForDate={getFoodsForDate}
+            getTotalsForDate={getTotalsForDate}
+            getTargetsForDate={getTargetsForDate}
+            confirmDelete={confirmDelete}
+            newFood={newFood}
+            setNewFood={setNewFood}
+            setShowFoodForm={setShowFoodForm}
+            setEditingFoodId={setEditingFoodId}
+          />
         )}
+
 
         {/* Entrenos Tab */}
         {activeTab === 'entrenos' && (
