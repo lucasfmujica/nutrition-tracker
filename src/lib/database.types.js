@@ -203,17 +203,36 @@ export const mappers = {
   }),
 
   // Workout: localStorage -> Supabase
-  workoutToDb: (entry, userId) => ({
-    user_id: userId,
-    date: entry.date,
-    type: entry.type,
-    name: entry.name,
-    duration: entry.duration || 0,
-    calories: entry.calories || 0,
-    volume: entry.volume || null,
-    exercises: entry.exercises || [],
-    notes: entry.notes || null,
-  }),
+  workoutToDb: (entry, userId) => {
+    // Normalize type to valid Supabase types: 'gym', 'cardio', 'sport', 'other'
+    const validTypes = ['gym', 'cardio', 'sport', 'other'];
+    const typeMap = {
+      'tennis': 'sport',
+      'tenis': 'sport',
+      'running': 'cardio',
+      'swimming': 'cardio',
+      'cycling': 'cardio',
+      'yoga': 'other',
+      'stretching': 'other',
+    };
+
+    let normalizedType = entry.type?.toLowerCase() || 'other';
+    if (!validTypes.includes(normalizedType)) {
+      normalizedType = typeMap[normalizedType] || 'other';
+    }
+
+    return {
+      user_id: userId,
+      date: entry.date,
+      type: normalizedType,
+      name: entry.name,
+      duration: entry.duration || 0,
+      calories: entry.calories || 0,
+      volume: entry.volume || null,
+      exercises: entry.exercises || [],
+      notes: entry.notes || null,
+    };
+  },
 
   // Workout: Supabase -> localStorage format
   workoutFromDb: (dbEntry) => ({
