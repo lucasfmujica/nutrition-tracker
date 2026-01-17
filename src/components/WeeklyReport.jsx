@@ -132,7 +132,7 @@ export function WeeklyReport({
     try {
       const html2canvas = (await import('html2canvas')).default;
       const canvas = await html2canvas(reportRef.current, {
-        backgroundColor: '#1f2937',
+        backgroundColor: '#ffffff',
         scale: 2,
         useCORS: true
       });
@@ -156,7 +156,7 @@ export function WeeklyReport({
   const getBarHeight = (value, max) => Math.min((value / max) * 100, 100);
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-2 overflow-y-auto">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 overflow-y-auto">
       <div className="w-full max-w-2xl my-4">
         {/* Header outside export area */}
         <div className="flex items-center justify-between mb-4 px-2">
@@ -165,13 +165,13 @@ export function WeeklyReport({
             <button
               onClick={exportAsImage}
               disabled={isExporting}
-              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white rounded-lg font-medium text-sm flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-medium text-sm flex items-center gap-2 disabled:opacity-50 shadow-lg transition-all"
             >
               {isExporting ? '⏳' : '📷'} {isExporting ? 'Exportando...' : 'Exportar'}
             </button>
             <button
               onClick={onClose}
-              className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white text-2xl"
+              className="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white text-2xl transition-all"
             >
               ×
             </button>
@@ -182,74 +182,74 @@ export function WeeklyReport({
         <div className="flex justify-center gap-2 mb-4">
           <button
             onClick={() => setSelectedWeek(s => s - 1)}
-            className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm"
+            className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm transition-all"
           >
             ← Anterior
           </button>
-          <span className="px-4 py-1.5 bg-blue-500/20 text-blue-400 rounded-lg text-sm font-medium">
+          <span className="px-4 py-1.5 bg-blue-500 text-white rounded-lg text-sm font-medium shadow-lg">
             {currentWeek.label}
           </span>
           <button
             onClick={() => setSelectedWeek(s => Math.min(s + 1, 0))}
             disabled={selectedWeek >= 0}
-            className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed text-white rounded-lg text-sm"
+            className="px-3 py-1.5 bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed text-white rounded-lg text-sm transition-all"
           >
             Siguiente →
           </button>
         </div>
 
         {/* Exportable Report Card */}
-        <div ref={reportRef} className="bg-gray-800 rounded-2xl p-5 border border-gray-700 space-y-5">
+        <div ref={reportRef} className="bg-white rounded-2xl p-5 border border-gray-200 shadow-2xl space-y-5">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
                 <span className="text-2xl">💪</span>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white">LukenFit</h3>
-                <p className="text-sm text-gray-400">{currentWeek.monday} → {currentWeek.sunday}</p>
+                <h3 className="text-lg font-bold text-gray-900">LukenFit</h3>
+                <p className="text-sm text-gray-500">{currentWeek.monday} → {currentWeek.sunday}</p>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-blue-400">{thisWeekStats.summary.calOkDays}/7</div>
-              <p className="text-xs text-gray-400">días en meta</p>
+              <div className="text-2xl font-bold text-blue-500">{thisWeekStats.summary.calOkDays}/7</div>
+              <p className="text-xs text-gray-500">días en meta</p>
             </div>
           </div>
 
           {/* Main Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="bg-gray-700/50 rounded-xl p-3 text-center">
-              <div className="text-2xl font-bold text-blue-400">{thisWeekStats.summary.avgCalories}</div>
-              <div className="text-xs text-gray-400">kcal/día</div>
-              <div className={`text-xs mt-1 ${parseFloat(calChange) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+            <div className="bg-blue-50 rounded-xl p-3 text-center border border-blue-100">
+              <div className="text-2xl font-bold text-blue-600">{thisWeekStats.summary.avgCalories}</div>
+              <div className="text-xs text-gray-600">kcal/día</div>
+              <div className={`text-xs mt-1 font-medium ${parseFloat(calChange) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {calChange > 0 ? '↑' : calChange < 0 ? '↓' : '='} {Math.abs(calChange)}%
               </div>
             </div>
-            <div className="bg-gray-700/50 rounded-xl p-3 text-center">
-              <div className="text-2xl font-bold text-cyan-400">{thisWeekStats.summary.avgProtein}g</div>
-              <div className="text-xs text-gray-400">proteína/día</div>
-              <div className={`text-xs mt-1 ${parseFloat(protChange) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+            <div className="bg-cyan-50 rounded-xl p-3 text-center border border-cyan-100">
+              <div className="text-2xl font-bold text-cyan-600">{thisWeekStats.summary.avgProtein}g</div>
+              <div className="text-xs text-gray-600">proteína/día</div>
+              <div className={`text-xs mt-1 font-medium ${parseFloat(protChange) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {protChange > 0 ? '↑' : protChange < 0 ? '↓' : '='} {Math.abs(protChange)}%
               </div>
             </div>
-            <div className="bg-gray-700/50 rounded-xl p-3 text-center">
-              <div className="text-2xl font-bold text-amber-400">{thisWeekStats.summary.totalWorkouts}</div>
-              <div className="text-xs text-gray-400">entrenos</div>
-              <div className="text-xs mt-1 text-gray-500">{thisWeekStats.summary.totalWorkoutMins} min</div>
+            <div className="bg-amber-50 rounded-xl p-3 text-center border border-amber-100">
+              <div className="text-2xl font-bold text-amber-600">{thisWeekStats.summary.totalWorkouts}</div>
+              <div className="text-xs text-gray-600">entrenos</div>
+              <div className="text-xs mt-1 text-gray-500 font-medium">{thisWeekStats.summary.totalWorkoutMins} min</div>
             </div>
-            <div className="bg-gray-700/50 rounded-xl p-3 text-center">
-              <div className="text-2xl font-bold text-purple-400">{Math.round(thisWeekStats.summary.avgSteps / 1000)}k</div>
-              <div className="text-xs text-gray-400">pasos/día</div>
-              <div className="text-xs mt-1 text-gray-500">prom.</div>
+            <div className="bg-purple-50 rounded-xl p-3 text-center border border-purple-100">
+              <div className="text-2xl font-bold text-purple-600">{Math.round(thisWeekStats.summary.avgSteps / 1000)}k</div>
+              <div className="text-xs text-gray-600">pasos/día</div>
+              <div className="text-xs mt-1 text-gray-500 font-medium">prom.</div>
             </div>
           </div>
 
           {/* Calories Chart */}
-          <div className="bg-gray-700/30 rounded-xl p-4">
+          <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
             <div className="flex justify-between items-center mb-3">
-              <h4 className="text-sm font-semibold text-white">Calorías 7 días</h4>
-              <span className="text-xs text-gray-400">Meta: {targets.calories}</span>
+              <h4 className="text-sm font-semibold text-gray-900">Calorías 7 días</h4>
+              <span className="text-xs text-gray-500">Meta: {targets.calories}</span>
             </div>
             <div className="flex items-end justify-between gap-1 h-24">
               {thisWeekStats.dailyStats.map((day, i) => {
@@ -261,17 +261,17 @@ export function WeeklyReport({
                     <div className="w-full relative" style={{ height: '80px' }}>
                       <div
                         className={`absolute bottom-0 w-full rounded-t transition-all ${
-                          isOk ? 'bg-green-500' : isOver ? 'bg-red-500' : day.calories > 0 ? 'bg-blue-500' : 'bg-gray-600'
+                          isOk ? 'bg-green-500' : isOver ? 'bg-red-500' : day.calories > 0 ? 'bg-blue-500' : 'bg-gray-300'
                         }`}
                         style={{ height: `${height}%` }}
                       />
                       {/* Goal line */}
                       <div
-                        className="absolute w-full border-t border-dashed border-gray-500"
+                        className="absolute w-full border-t border-dashed border-gray-400"
                         style={{ bottom: `${getBarHeight(targets.calories, targets.calories * 1.3)}%` }}
                       />
                     </div>
-                    <span className="text-xs text-gray-400">{dayNames[i]}</span>
+                    <span className="text-xs text-gray-600 font-medium">{dayNames[i]}</span>
                   </div>
                 );
               })}
@@ -279,10 +279,10 @@ export function WeeklyReport({
           </div>
 
           {/* Protein Chart */}
-          <div className="bg-gray-700/30 rounded-xl p-4">
+          <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
             <div className="flex justify-between items-center mb-3">
-              <h4 className="text-sm font-semibold text-white">Proteína 7 días</h4>
-              <span className="text-xs text-gray-400">Meta: {targets.protein}g</span>
+              <h4 className="text-sm font-semibold text-gray-900">Proteína 7 días</h4>
+              <span className="text-xs text-gray-500">Meta: {targets.protein}g</span>
             </div>
             <div className="flex items-end justify-between gap-1 h-24">
               {thisWeekStats.dailyStats.map((day, i) => {
@@ -293,16 +293,16 @@ export function WeeklyReport({
                     <div className="w-full relative" style={{ height: '80px' }}>
                       <div
                         className={`absolute bottom-0 w-full rounded-t transition-all ${
-                          isOk ? 'bg-cyan-500' : day.protein > 0 ? 'bg-cyan-500/50' : 'bg-gray-600'
+                          isOk ? 'bg-cyan-500' : day.protein > 0 ? 'bg-cyan-300' : 'bg-gray-300'
                         }`}
                         style={{ height: `${height}%` }}
                       />
                       <div
-                        className="absolute w-full border-t border-dashed border-gray-500"
+                        className="absolute w-full border-t border-dashed border-gray-400"
                         style={{ bottom: `${getBarHeight(targets.protein, targets.protein * 1.3)}%` }}
                       />
                     </div>
-                    <span className="text-xs text-gray-400">{dayNames[i]}</span>
+                    <span className="text-xs text-gray-600 font-medium">{dayNames[i]}</span>
                   </div>
                 );
               })}
@@ -311,32 +311,32 @@ export function WeeklyReport({
 
           {/* Adherence Summary */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/10 border border-green-500/20 rounded-xl p-4">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg">✅</span>
-                <span className="text-sm font-medium text-white">Adherencia Calorías</span>
+                <span className="text-sm font-medium text-gray-900">Adherencia Calorías</span>
               </div>
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-green-400">{thisWeekStats.summary.calOkDays}</span>
-                <span className="text-gray-400">/7 días</span>
+                <span className="text-3xl font-bold text-green-600">{thisWeekStats.summary.calOkDays}</span>
+                <span className="text-gray-600">/7 días</span>
               </div>
-              <div className="mt-2 h-2 bg-gray-700 rounded-full overflow-hidden">
+              <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-green-500 rounded-full transition-all"
                   style={{ width: `${(thisWeekStats.summary.calOkDays / 7) * 100}%` }}
                 />
               </div>
             </div>
-            <div className="bg-gradient-to-br from-cyan-500/20 to-blue-500/10 border border-cyan-500/20 rounded-xl p-4">
+            <div className="bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-200 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg">💪</span>
-                <span className="text-sm font-medium text-white">Adherencia Proteína</span>
+                <span className="text-sm font-medium text-gray-900">Adherencia Proteína</span>
               </div>
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-cyan-400">{thisWeekStats.summary.protOkDays}</span>
-                <span className="text-gray-400">/7 días</span>
+                <span className="text-3xl font-bold text-cyan-600">{thisWeekStats.summary.protOkDays}</span>
+                <span className="text-gray-600">/7 días</span>
               </div>
-              <div className="mt-2 h-2 bg-gray-700 rounded-full overflow-hidden">
+              <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-cyan-500 rounded-full transition-all"
                   style={{ width: `${(thisWeekStats.summary.protOkDays / 7) * 100}%` }}
@@ -347,12 +347,12 @@ export function WeeklyReport({
 
           {/* Best Day Highlight */}
           {thisWeekStats.summary.bestDay && thisWeekStats.summary.bestDay.calories > 0 && (
-            <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-xl p-4">
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-lg">🏆</span>
-                <span className="text-sm font-medium text-amber-400">Mejor día de la semana</span>
+                <span className="text-sm font-medium text-amber-700">Mejor día de la semana</span>
               </div>
-              <p className="text-white">
+              <p className="text-gray-900">
                 <span className="font-bold">{new Date(thisWeekStats.summary.bestDay.date + 'T12:00:00').toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric' })}</span>
                 {' - '}
                 {thisWeekStats.summary.bestDay.calories} kcal, {thisWeekStats.summary.bestDay.protein}g proteína
@@ -361,7 +361,7 @@ export function WeeklyReport({
           )}
 
           {/* Footer */}
-          <div className="text-center pt-2 border-t border-gray-700">
+          <div className="text-center pt-2 border-t border-gray-200">
             <p className="text-xs text-gray-500">
               Generado por LukenFit • {new Date().toLocaleDateString('es-AR')}
             </p>

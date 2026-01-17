@@ -854,13 +854,13 @@ const NutritionTracker = () => {
     const targetY = getY(profile.targetWeight);
 
     return (
-      <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+      <div className="bg-[#2C3E50] rounded-lg p-4 border border-gray-600/30">
         <div className="flex justify-between items-center mb-3">
-          <h3 className="text-sm font-bold text-blue-400">📈 PESO</h3>
-          <div className="flex gap-3 text-xs">
+          <h3 className="text-sm font-bold text-white">📈 PESO</h3>
+          <div className="flex gap-3 text-xs text-gray-300">
             <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-blue-400 inline-block"></span> Peso</span>
             <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-amber-400 inline-block"></span> Media 7d</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-gray-500 inline-block border-dashed"></span> Objetivo</span>
+            <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-gray-400 inline-block border-dashed"></span> Objetivo</span>
           </div>
         </div>
 
@@ -868,47 +868,47 @@ const NutritionTracker = () => {
           <svg viewBox={`0 0 100 ${chartHeight}`} preserveAspectRatio="none" className="w-full h-full">
             {/* Target line */}
             {profile.targetWeight >= minWeight && profile.targetWeight <= maxWeight && (
-              <line x1="0" y1={targetY} x2="100" y2={targetY} stroke="#6b7280" strokeWidth="0.5" strokeDasharray="2,2" />
+              <line x1="0" y1={targetY} x2="100" y2={targetY} stroke="#9CA3AF" strokeWidth="0.5" strokeDasharray="2,2" />
             )}
 
             {/* 7-day average line */}
             <path d={avgPath} fill="none" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
 
             {/* Actual weight line */}
-            <path d={weightPath} fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <path d={weightPath} fill="none" stroke="#60A5FA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
 
             {/* Data points */}
             {data.map((d, i) => (
-              <circle key={i} cx={(i / (data.length - 1)) * 100} cy={getY(d.weight)} r="2" fill="#3B82F6" />
+              <circle key={i} cx={(i / (data.length - 1)) * 100} cy={getY(d.weight)} r="2" fill="#60A5FA" />
             ))}
           </svg>
 
           {/* Y-axis labels */}
-          <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-500 -ml-1">
+          <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400 -ml-1">
             <span>{maxWeight.toFixed(1)}</span>
             <span>{minWeight.toFixed(1)}</span>
           </div>
         </div>
 
         {/* X-axis labels */}
-        <div className="flex justify-between mt-1 text-xs text-gray-500">
+        <div className="flex justify-between mt-1 text-xs text-gray-400">
           {data.length > 0 && <span>{data[0].dayLabel}</span>}
           {data.length > 1 && <span>{data[data.length - 1].dayLabel}</span>}
         </div>
 
         {/* Current stats */}
-        <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-gray-700">
+        <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-gray-600/30">
           <div className="text-center">
             <div className="text-lg font-bold text-white">{data[data.length - 1]?.weight || '-'}</div>
-            <div className="text-xs text-gray-400">Último</div>
+            <div className="text-xs text-gray-300">Último</div>
           </div>
           <div className="text-center">
             <div className="text-lg font-bold text-amber-400">{data[data.length - 1]?.avg7d || '-'}</div>
-            <div className="text-xs text-gray-400">Media 7d</div>
+            <div className="text-xs text-gray-300">Media 7d</div>
           </div>
           <div className="text-center">
             <div className="text-lg font-bold text-blue-400">{profile.targetWeight}</div>
-            <div className="text-xs text-gray-400">Objetivo</div>
+            <div className="text-xs text-gray-300">Objetivo</div>
           </div>
         </div>
       </div>
@@ -1331,13 +1331,13 @@ const NutritionTracker = () => {
 
       {/* Delete Confirmation Modal */}
       {deleteModal.show && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-lg p-5 max-w-sm w-full border border-gray-700">
-            <h3 className="text-lg font-bold text-white mb-2">¿Eliminar?</h3>
-            <p className="text-base text-gray-400 mb-4">"{deleteModal.name}"</p>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full border border-gray-200 shadow-2xl">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">¿Eliminar?</h3>
+            <p className="text-base text-gray-600 mb-4">"{deleteModal.name}"</p>
             <div className="flex gap-2">
-              <button onClick={() => setDeleteModal({ show: false, type: '', id: null, name: '' })} className="flex-1 bg-gray-700 hover:bg-gray-600 py-2.5 rounded text-base">Cancelar</button>
-              <button onClick={executeDelete} className="flex-1 bg-red-600 hover:bg-red-500 py-2.5 rounded text-base font-bold">Eliminar</button>
+              <button onClick={() => setDeleteModal({ show: false, type: '', id: null, name: '' })} className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-base font-medium transition-colors">Cancelar</button>
+              <button onClick={executeDelete} className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-base font-bold transition-colors">Eliminar</button>
             </div>
           </div>
         </div>
@@ -1345,19 +1345,19 @@ const NutritionTracker = () => {
 
       {/* Prompt 3: Migration Modal */}
       {showMigrationModal && migrationData && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-xl p-6 max-w-md w-full border border-blue-500/30 shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full border border-blue-200 shadow-2xl">
             <div className="text-center mb-6">
               <div className="text-4xl mb-3">☁️</div>
-              <h3 className="text-xl font-bold text-white mb-2">Datos locales encontrados</h3>
-              <p className="text-gray-400 text-sm">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Datos locales encontrados</h3>
+              <p className="text-gray-600 text-sm">
                 Tienes datos guardados en este dispositivo. ¿Quieres sincronizarlos con tu cuenta?
               </p>
             </div>
 
             {/* Summary of data to migrate */}
-            <div className="bg-gray-700/50 rounded-lg p-4 mb-6 text-sm">
-              <div className="grid grid-cols-2 gap-2 text-gray-300">
+            <div className="bg-blue-50 rounded-xl p-4 mb-6 text-sm border border-blue-100">
+              <div className="grid grid-cols-2 gap-2 text-gray-700 font-medium">
                 {migrationData.weightHistory?.length > 0 && (
                   <div>📊 {migrationData.weightHistory.length} registros de peso</div>
                 )}
@@ -1404,12 +1404,12 @@ const NutritionTracker = () => {
                   setMigrationData(null);
                 }}
                 disabled={isMigrating}
-                className="w-full py-3 bg-gray-700 text-gray-300 font-medium rounded-xl hover:bg-gray-600 transition-all disabled:opacity-50"
+                className="w-full py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-all disabled:opacity-50"
               >
                 No, empezar de cero
               </button>
 
-              <p className="text-xs text-gray-500 text-center">
+              <p className="text-xs text-gray-600 text-center font-medium">
                 Si eliges "empezar de cero", los datos locales se mantendrán pero no se sincronizarán.
               </p>
             </div>
@@ -2577,21 +2577,21 @@ const NutritionTracker = () => {
 
       {/* Meal Templates Modal */}
       {showTemplatesModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-2 pt-8 overflow-y-auto">
-          <div className="bg-gray-800 rounded-lg p-4 w-full max-w-sm border border-purple-500/30">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start justify-center z-50 p-2 pt-8 overflow-y-auto">
+          <div className="bg-white rounded-2xl p-5 w-full max-w-sm border border-purple-200 shadow-2xl">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg lg:text-xl font-bold text-purple-400">⭐ Favoritos</h3>
-              <button onClick={() => setShowTemplatesModal(false)} className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white text-xl lg:text-2xl transition-colors">×</button>
+              <h3 className="text-lg lg:text-xl font-bold text-purple-600">⭐ Favoritos</h3>
+              <button onClick={() => setShowTemplatesModal(false)} className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 text-xl lg:text-2xl transition-colors">×</button>
             </div>
 
             {mealTemplates.length === 0 ? (
-              <p className="text-gray-400 text-sm text-center py-4">No hay plantillas guardadas. Agregá comidas y guardalas como favoritos.</p>
+              <p className="text-gray-500 text-sm text-center py-4">No hay plantillas guardadas. Agregá comidas y guardalas como favoritos.</p>
             ) : (
               <div className="space-y-2 max-h-80 overflow-y-auto">
                 {mealTemplates.map(template => (
                   <div
                     key={template.id}
-                    className="bg-gray-700 rounded-lg p-3 border border-gray-600 active:bg-gray-600"
+                    className="bg-purple-50 rounded-xl p-3 border border-purple-100 active:bg-purple-100 transition-colors"
                   >
                     <div className="flex justify-between items-start">
                       <button
@@ -2599,22 +2599,22 @@ const NutritionTracker = () => {
                         className="flex-1 text-left"
                       >
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-purple-400 uppercase">{template.meal}</span>
+                          <span className="text-xs text-purple-600 uppercase font-bold">{template.meal}</span>
                         </div>
-                        <h4 className="font-medium text-sm text-white">{template.name}</h4>
+                        <h4 className="font-medium text-sm text-gray-900">{template.name}</h4>
                         {template.description && (
-                          <p className="text-xs text-gray-400 truncate">{template.description}</p>
+                          <p className="text-xs text-gray-600 truncate">{template.description}</p>
                         )}
-                        <div className="flex gap-2 mt-1 text-xs">
-                          <span className="text-blue-400">{template.calories}kcal</span>
-                          <span className="text-blue-400">{template.protein}P</span>
-                          <span className="text-amber-400">{template.carbs}C</span>
-                          <span className="text-pink-400">{template.fat}F</span>
+                        <div className="flex gap-2 mt-1 text-xs font-medium">
+                          <span className="text-blue-600">{template.calories}kcal</span>
+                          <span className="text-blue-600">{template.protein}P</span>
+                          <span className="text-amber-600">{template.carbs}C</span>
+                          <span className="text-pink-600">{template.fat}F</span>
                         </div>
                       </button>
                       <button
                         onClick={() => deleteTemplate(template.id)}
-                        className="text-gray-500 active:text-red-400 p-1"
+                        className="text-gray-400 hover:text-red-500 active:text-red-600 p-1 transition-colors"
                       >
                         ×
                       </button>
@@ -2633,26 +2633,26 @@ const NutritionTracker = () => {
 
       {/* Save as Template Modal */}
       {showSaveTemplateModal && templateToSave && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-lg p-4 w-full max-w-xs border border-purple-500/30">
-            <h3 className="text-sm font-bold text-purple-400 mb-3">⭐ Guardar como Favorito</h3>
-            <div className="space-y-2">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-5 w-full max-w-xs border border-purple-200 shadow-2xl">
+            <h3 className="text-base font-bold text-purple-600 mb-3">⭐ Guardar como Favorito</h3>
+            <div className="space-y-3">
               <div>
-                <label className="block text-xs text-gray-400 mb-1">Nombre</label>
+                <label className="block text-xs font-medium text-gray-600 mb-1.5">Nombre</label>
                 <input
                   type="text"
                   value={templateToSave.name}
                   onChange={(e) => setTemplateToSave({ ...templateToSave, name: e.target.value })}
-                  className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
                 />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Tipo</label>
+                  <label className="block text-xs font-medium text-gray-600 mb-1.5">Tipo</label>
                   <select
                     value={templateToSave.meal}
                     onChange={(e) => setTemplateToSave({ ...templateToSave, meal: e.target.value })}
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
                   >
                     <option>Desayuno</option>
                     <option>Almuerzo</option>
@@ -2662,22 +2662,22 @@ const NutritionTracker = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Calorías</label>
+                  <label className="block text-xs font-medium text-gray-600 mb-1.5">Calorías</label>
                   <input
                     type="number"
                     value={templateToSave.calories}
                     onChange={(e) => setTemplateToSave({ ...templateToSave, calories: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
                   />
                 </div>
               </div>
-              <div className="text-xs text-gray-400">
+              <div className="text-xs text-gray-600 font-medium bg-gray-50 px-3 py-2 rounded-lg">
                 P: {templateToSave.protein}g · C: {templateToSave.carbs}g · F: {templateToSave.fat}g
               </div>
             </div>
             <div className="flex gap-2 mt-4">
-              <button onClick={() => { setShowSaveTemplateModal(false); setTemplateToSave(null); }} className="flex-1 bg-gray-700 active:bg-gray-600 py-2.5 rounded text-sm">Cancelar</button>
-              <button onClick={confirmSaveTemplate} className="flex-1 bg-purple-600 active:bg-purple-500 py-2.5 rounded text-sm font-bold">Guardar</button>
+              <button onClick={() => { setShowSaveTemplateModal(false); setTemplateToSave(null); }} className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-medium transition-colors">Cancelar</button>
+              <button onClick={confirmSaveTemplate} className="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-2.5 rounded-xl text-sm font-bold transition-colors">Guardar</button>
             </div>
           </div>
         </div>
