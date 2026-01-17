@@ -586,6 +586,54 @@ export const useTrackerData = () => {
     setConfigDirty(true);
   };
 
+  // Force sync all local data to Supabase
+  const forceSyncToCloud = async () => {
+    if (!useCloud) {
+      console.log('[Sync] Cannot sync - not connected to cloud');
+      return { success: false, message: 'No conectado a la nube' };
+    }
+
+    setSaveStatus('Sincronizando...');
+    let syncedWorkouts = 0;
+    let syncedFoods = 0;
+    let errors = 0;
+
+    try {
+      // Sync all workouts
+      for (const workout of workoutLog) {
+        try {
+          await supabase.saveWorkout(workout);
+          syncedWorkouts++;
+        } catch (err) {
+          console.error('[Sync] Failed to sync workout:', workout.id, err);
+          errors++;
+        }
+      }
+
+      // Sync all foods
+      for (const food of foodLog) {
+        try {
+          await supabase.saveFood(food);
+          syncedFoods++;
+        } catch (err) {
+          console.error('[Sync] Failed to sync food:', food.id, err);
+          errors++;
+        }
+      }
+
+      const message = `✓ Sincronizado: ${syncedWorkouts} entrenos, ${syncedFoods} comidas${errors > 0 ? ` (${errors} errores)` : ''}`;
+      setSaveStatus(message);
+      setTimeout(() => setSaveStatus(''), 4000);
+      console.log('[Sync] Force sync complete:', message);
+      return { success: true, message, syncedWorkouts, syncedFoods, errors };
+    } catch (err) {
+      console.error('[Sync] Force sync failed:', err);
+      setSaveStatus('❌ Error al sincronizar');
+      setTimeout(() => setSaveStatus(''), 3000);
+      return { success: false, message: err.message };
+    }
+  };
+
   const handleLogout = async () => {
     console.log('[Logout] Handling logout in useTrackerData');
     try {
@@ -646,6 +694,7 @@ export const useTrackerData = () => {
     addWaterGlass,
     removeWaterGlass,
     handleRefresh,
+    forceSyncToCloud,
     updateConfig,
     handleLogout,
     activeTab, setActiveTab,

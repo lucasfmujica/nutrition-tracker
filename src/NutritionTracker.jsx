@@ -59,6 +59,7 @@ const NutritionTracker = () => {
     removeWaterGlass,
     handleRefresh,
     handleLogout,
+    forceSyncToCloud,
     updateConfig,
     activeTab, setActiveTab,
     newWeight, setNewWeight,
@@ -491,12 +492,24 @@ const NutritionTracker = () => {
   };
 
   // Add or update food entry (for IA imports with deduplication)
-  const upsertFood = (entry) => {
+  const upsertFood = async (entry) => {
+    const finalEntry = { ...entry, id: entry.id || `f-${Date.now()}` };
+
     if (!entry.sourceId) {
       // No sourceId, just add
-      saveFoodLog([...foodLog, { ...entry, id: entry.id || `f-${Date.now()}` }]);
+      saveFoodLog([...foodLog, finalEntry]);
+      // Sync to Supabase
+      if (useCloud) {
+        try {
+          await supabase.saveFood(finalEntry);
+          console.log('[Sync] Food synced to Supabase:', finalEntry.id);
+        } catch (err) {
+          console.error('[Sync] Failed to sync food:', err);
+        }
+      }
       return;
     }
+
     // Check for existing entry with same sourceId
     const existingIndex = foodLog.findIndex(f => f.sourceId === entry.sourceId);
     if (existingIndex >= 0) {
@@ -504,25 +517,71 @@ const NutritionTracker = () => {
       const newLog = [...foodLog];
       newLog[existingIndex] = { ...newLog[existingIndex], ...entry };
       saveFoodLog(newLog);
+      // Sync update to Supabase
+      if (useCloud) {
+        try {
+          await supabase.saveFood(newLog[existingIndex]);
+        } catch (err) {
+          console.error('[Sync] Failed to sync food update:', err);
+        }
+      }
     } else {
       // Add new
-      saveFoodLog([...foodLog, { ...entry, id: entry.id || `f-${Date.now()}` }]);
+      saveFoodLog([...foodLog, finalEntry]);
+      // Sync new entry to Supabase
+      if (useCloud) {
+        try {
+          await supabase.saveFood(finalEntry);
+          console.log('[Sync] Food synced to Supabase:', finalEntry.id);
+        } catch (err) {
+          console.error('[Sync] Failed to sync food:', err);
+        }
+      }
     }
   };
 
   // Add or update workout entry (for IA imports with deduplication)
-  const upsertWorkout = (entry) => {
+  const upsertWorkout = async (entry) => {
+    const finalEntry = { ...entry, id: entry.id || `w-${Date.now()}` };
+
     if (!entry.sourceId) {
-      saveWorkoutLog([...workoutLog, { ...entry, id: entry.id || `w-${Date.now()}` }]);
+      saveWorkoutLog([...workoutLog, finalEntry]);
+      // Sync to Supabase
+      if (useCloud) {
+        try {
+          await supabase.saveWorkout(finalEntry);
+          console.log('[Sync] Workout synced to Supabase:', finalEntry.id);
+        } catch (err) {
+          console.error('[Sync] Failed to sync workout:', err);
+        }
+      }
       return;
     }
+
     const existingIndex = workoutLog.findIndex(w => w.sourceId === entry.sourceId);
     if (existingIndex >= 0) {
       const newLog = [...workoutLog];
       newLog[existingIndex] = { ...newLog[existingIndex], ...entry };
       saveWorkoutLog(newLog);
+      // Sync update to Supabase
+      if (useCloud) {
+        try {
+          await supabase.saveWorkout(newLog[existingIndex]);
+        } catch (err) {
+          console.error('[Sync] Failed to sync workout update:', err);
+        }
+      }
     } else {
-      saveWorkoutLog([...workoutLog, { ...entry, id: entry.id || `w-${Date.now()}` }]);
+      saveWorkoutLog([...workoutLog, finalEntry]);
+      // Sync new entry to Supabase
+      if (useCloud) {
+        try {
+          await supabase.saveWorkout(finalEntry);
+          console.log('[Sync] Workout synced to Supabase:', finalEntry.id);
+        } catch (err) {
+          console.error('[Sync] Failed to sync workout:', err);
+        }
+      }
     }
   };
 
@@ -1879,6 +1938,22 @@ const NutritionTracker = () => {
                     ) : supabase.syncStatus === 'success' ? '✓' : supabase.syncStatus === 'error' ? '⚠' : '☁️'}
                   </span>
                 )}
+
+                {/* Force Sync button */}
+                <button
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    await forceSyncToCloud();
+                  }}
+                  className="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-xl bg-green-500/20 hover:bg-green-500/40 active:bg-green-500/60 text-green-400 hover:text-green-300 transition-all touch-manipulation"
+                  title="Forzar sincronización a la nube"
+                  style={{ WebkitTapHighlightColor: 'transparent' }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 lg:h-6 lg:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                </button>
 
                 {/* Logout button - bigger and more visible */}
                 <button
