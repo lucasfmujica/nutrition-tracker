@@ -13,12 +13,8 @@ import { DaySummary } from './components/Diary/DaySummary';
 import { MealSection } from './components/Diary/MealSection';
 import { FloatingActionButton } from './components/FloatingActionButton';
 import { Layout } from './components/Layout';
+import { ModalsManager } from './components/layout/Modals/ModalsManager';
 import { LoadingScreen } from './components/layout/Shell/LoadingScreen';
-import { DeleteConfirmModal } from './components/Modals/DeleteConfirmModal';
-import { FoodFormModal } from './components/Modals/FoodFormModal';
-import { ImportModal } from './components/Modals/ImportModal';
-import { MigrationModal } from './components/Modals/MigrationModal';
-import { WorkoutFormModal } from './components/Modals/WorkoutFormModal';
 import { OnboardingWizard } from './components/OnboardingWizard';
 import { PullToRefresh } from './components/PullToRefresh';
 import { UndoToast } from './components/shared/UndoToast';
@@ -33,7 +29,7 @@ import { WorkoutsTab } from './components/Tabs/WorkoutsTab';
 import { CircularProgress } from './components/UI/CircularProgress';
 import { MiniBar } from './components/UI/MiniBar';
 import { ProgressBar } from './components/UI/ProgressBar';
-import { WeeklyReport } from './components/WeeklyReport';
+
 import { useAnalytics } from './hooks/useAnalytics';
 import { useDataOperations } from './hooks/useDataOperations';
 import { useExport } from './hooks/useExport';
@@ -460,209 +456,57 @@ const NutritionTracker = () => {
         .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
       `}</style>
 
-      {/* Delete Confirmation Modal */}
-      <DeleteConfirmModal
-        isOpen={deleteModal.show}
-        itemName={deleteModal.name}
-        onConfirm={executeDelete}
-        onCancel={() => setDeleteModal({ show: false, type: '', id: null, name: '' })}
-      />
-
-      {/* Migration Modal */}
-      <MigrationModal
-        isOpen={showMigrationModal}
-        data={migrationData}
-        onMigrate={handleMigration}
-        onSkip={() => {
-          setShowMigrationModal(false);
-          setMigrationData(null);
-        }}
+      {/* Modals Manager - Handles all modal dialogs */}
+      <ModalsManager
+        deleteModal={deleteModal}
+        setDeleteModal={setDeleteModal}
+        executeDelete={executeDelete}
+        showMigrationModal={showMigrationModal}
+        setShowMigrationModal={setShowMigrationModal}
+        migrationData={migrationData}
+        setMigrationData={setMigrationData}
+        handleMigration={handleMigration}
         isMigrating={isMigrating}
+        showFoodForm={showFoodForm}
+        setShowFoodForm={setShowFoodForm}
+        newFood={newFood}
+        setNewFood={setNewFood}
+        editingFoodId={editingFoodId}
+        setEditingFoodId={setEditingFoodId}
+        addManualFood={addManualFood}
+        showWorkoutForm={showWorkoutForm}
+        setShowWorkoutForm={setShowWorkoutForm}
+        newWorkout={newWorkout}
+        setNewWorkout={setNewWorkout}
+        addManualWorkout={addManualWorkout}
+        showImportFoodModal={showImportFoodModal}
+        setShowImportFoodModal={setShowImportFoodModal}
+        showImportWorkoutModal={showImportWorkoutModal}
+        setShowImportWorkoutModal={setShowImportWorkoutModal}
+        importText={importText}
+        setImportText={setImportText}
+        importError={importError}
+        setImportError={setImportError}
+        handleImportFood={handleImportFood}
+        handleImportWorkout={handleImportWorkout}
+        showTemplatesModal={showTemplatesModal}
+        setShowTemplatesModal={setShowTemplatesModal}
+        mealTemplates={mealTemplates}
+        addFromTemplate={addFromTemplate}
+        deleteTemplate={deleteTemplate}
+        showSaveTemplateModal={showSaveTemplateModal}
+        setShowSaveTemplateModal={setShowSaveTemplateModal}
+        templateToSave={templateToSave}
+        setTemplateToSave={setTemplateToSave}
+        confirmSaveTemplate={confirmSaveTemplate}
+        showWeeklyReport={showWeeklyReport}
+        setShowWeeklyReport={setShowWeeklyReport}
+        foodLog={foodLog}
+        workoutLog={workoutLog}
+        weightHistory={weightHistory}
+        stepsLog={stepsLog}
+        customTargets={customTargets}
       />
-
-      {/* Manual Food Entry Modal */}
-      {showFoodForm && (
-        <div className="fixed inset-0 bg-slate-900/40 flex items-center justify-center z-50 p-4 backdrop-blur-sm" onClick={() => { setShowFoodForm(false); setEditingFoodId(null); }}>
-          <div className="bg-white rounded-3xl p-6 lg:p-8 w-full max-w-sm lg:max-w-md border border-gray-100 shadow-2xl" onClick={e => e.stopPropagation()}>
-            {/* Header with close button */}
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl lg:text-2xl font-bold text-slate-900">{editingFoodId ? '✏️ Editar Comida' : '🍽️ Nueva Comida'}</h3>
-              <button onClick={() => { setShowFoodForm(false); setEditingFoodId(null); }} className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">×</button>
-            </div>
-            <div className="space-y-4">
-              {/* Row 1: Meal type + Time */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Comida</label>
-                  <select value={newFood.meal} onChange={(e) => setNewFood({ ...newFood, meal: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer">
-                    <option>Desayuno</option>
-                    <option>Almuerzo</option>
-                    <option>Merienda</option>
-                    <option>Cena</option>
-                    <option>Snack</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Hora</label>
-                  <input type="time" value={newFood.time} onChange={(e) => setNewFood({ ...newFood, time: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
-              </div>
-              </div>
-              {/* Row 2: Name */}
-              <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Nombre *</label>
-                <input type="text" value={newFood.name} onChange={(e) => setNewFood({ ...newFood, name: e.target.value })} placeholder="Pollo con arroz" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
-              </div>
-              {/* Row 3: Description */}
-              <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Descripción</label>
-                <input type="text" value={newFood.description} onChange={(e) => setNewFood({ ...newFood, description: e.target.value })} placeholder="200g pechuga, 150g arroz" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
-              </div>
-              {/* Row 4: Macros - 3+2 grid */}
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Cal *</label>
-                  <input type="number" value={newFood.calories} onChange={(e) => setNewFood({ ...newFood, calories: e.target.value })} placeholder="500" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Prot</label>
-                  <input type="number" value={newFood.protein} onChange={(e) => setNewFood({ ...newFood, protein: e.target.value })} placeholder="40" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Carbs</label>
-                  <input type="number" value={newFood.carbs} onChange={(e) => setNewFood({ ...newFood, carbs: e.target.value })} placeholder="50" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Fat</label>
-                  <input type="number" value={newFood.fat} onChange={(e) => setNewFood({ ...newFood, fat: e.target.value })} placeholder="15" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Fibra</label>
-                  <input type="number" value={newFood.fiber} onChange={(e) => setNewFood({ ...newFood, fiber: e.target.value })} placeholder="5" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
-                </div>
-              </div>
-              <input type="hidden" value={newFood.date} />
-            </div>
-            <div className="flex gap-4 mt-8">
-              <button onClick={() => { setShowFoodForm(false); setEditingFoodId(null); }} className="flex-1 bg-slate-100 hover:bg-slate-200 py-4 rounded-2xl text-slate-600 text-sm lg:text-base font-bold transition-all active:scale-95">Cancelar</button>
-              <button onClick={addManualFood} className="flex-1 bg-gradient-to-br from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 py-4 rounded-2xl text-white text-sm lg:text-base font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-95">
-                {editingFoodId ? 'Actualizar' : 'Guardar'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Manual Workout Entry Modal */}
-      {showWorkoutForm && (
-        <div className="fixed inset-0 bg-slate-900/40 flex items-center justify-center z-50 p-4 backdrop-blur-sm" onClick={() => setShowWorkoutForm(false)}>
-          <div className="bg-white rounded-3xl p-6 lg:p-8 w-full max-w-sm lg:max-w-md border border-gray-100 shadow-2xl" onClick={e => e.stopPropagation()}>
-            {/* Header with close button */}
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl lg:text-2xl font-bold text-slate-900">🏋️ Nuevo Entreno</h3>
-              <button onClick={() => setShowWorkoutForm(false)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">×</button>
-            </div>
-            <div className="space-y-4">
-              {/* Row 1: Type */}
-                <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Tipo</label>
-                <select value={newWorkout.type} onChange={(e) => setNewWorkout({ ...newWorkout, type: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all appearance-none cursor-pointer">
-                    <option value="gym">Gym</option>
-                    <option value="tennis">Tenis</option>
-                    <option value="cardio">Cardio</option>
-                    <option value="other">Otro</option>
-                  </select>
-                </div>
-              {/* Row 2: Name */}
-              <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Nombre *</label>
-                <input type="text" value={newWorkout.name} onChange={(e) => setNewWorkout({ ...newWorkout, name: e.target.value })} placeholder="Push Day, Clase de Tenis" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all" />
-              </div>
-              {/* Row 3: Stats */}
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Min</label>
-                  <input type="number" value={newWorkout.duration} onChange={(e) => setNewWorkout({ ...newWorkout, duration: e.target.value })} placeholder="60" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Kcal</label>
-                  <input type="number" value={newWorkout.calories} onChange={(e) => setNewWorkout({ ...newWorkout, calories: e.target.value })} placeholder="300" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Vol (kg)</label>
-                  <input type="number" value={newWorkout.volume} onChange={(e) => setNewWorkout({ ...newWorkout, volume: e.target.value })} placeholder="2500" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all" />
-                </div>
-              </div>
-              {/* Row 4: Notes */}
-              <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Notas</label>
-                <input type="text" value={newWorkout.notes} onChange={(e) => setNewWorkout({ ...newWorkout, notes: e.target.value })} placeholder="Subí peso en press banca" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all" />
-              </div>
-            </div>
-            <div className="flex gap-4 mt-8">
-              <button onClick={() => setShowWorkoutForm(false)} className="flex-1 bg-slate-100 hover:bg-slate-200 py-4 rounded-2xl text-slate-600 text-sm lg:text-base font-bold transition-all active:scale-95">Cancelar</button>
-              <button onClick={addManualWorkout} className="flex-1 bg-gradient-to-br from-amber-600 to-orange-500 hover:from-amber-500 hover:to-orange-400 py-4 rounded-2xl text-white text-sm lg:text-base font-bold shadow-lg shadow-orange-500/20 transition-all active:scale-95">Guardar</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Import Food Modal */}
-      {showImportFoodModal && (
-        <div className="fixed inset-0 bg-slate-900/40 flex items-start justify-center z-50 p-4 pt-20 overflow-y-auto backdrop-blur-sm">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-md border border-gray-100 shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-slate-900">📥 Importar Comida</h3>
-              <button onClick={() => { setShowImportFoodModal(false); setImportText(''); setImportError(''); }} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400">×</button>
-            </div>
-            <p className="text-sm text-slate-500 mb-4">Pegá el JSON de la comida generado por la IA.</p>
-            <textarea
-              value={importText}
-              onChange={(e) => { setImportText(e.target.value); setImportError(''); }}
-              placeholder={`{"meal": "Almuerzo", "name": "Pollo", "calories": 500, "protein": 40}`}
-              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-slate-900 text-sm font-mono h-48 resize-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
-            />
-            {importError && (
-              <div className="bg-red-50 text-red-500 text-xs p-3 rounded-xl mt-3 flex items-center gap-2">
-                <span>⚠️</span> {importError}
-              </div>
-            )}
-            <div className="flex gap-4 mt-6">
-              <button onClick={() => { setShowImportFoodModal(false); setImportText(''); setImportError(''); }} className="flex-1 bg-slate-100 hover:bg-slate-200 py-4 rounded-2xl text-slate-600 font-bold transition-all active:scale-95">Cancelar</button>
-              <button onClick={handleImportFood} className="flex-1 bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl text-white font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-95">Importar</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Import Workout Modal */}
-      {showImportWorkoutModal && (
-        <div className="fixed inset-0 bg-slate-900/40 flex items-start justify-center z-50 p-4 pt-20 overflow-y-auto backdrop-blur-sm">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-md border border-gray-100 shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-slate-900">📥 Importar Entreno</h3>
-              <button onClick={() => { setShowImportWorkoutModal(false); setImportText(''); setImportError(''); }} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400">×</button>
-            </div>
-            <p className="text-sm text-slate-500 mb-4">Pegá el JSON del entreno (Gravl o IA).</p>
-            <textarea
-              value={importText}
-              onChange={(e) => { setImportText(e.target.value); setImportError(''); }}
-              placeholder={`{"type": "gym", "name": "Push Day", "duration": 60, "exercises": [...]}`}
-              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-slate-900 text-sm font-mono h-48 resize-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all"
-            />
-            {importError && (
-              <div className="bg-red-50 text-red-500 text-xs p-3 rounded-xl mt-3 flex items-center gap-2">
-                <span>⚠️</span> {importError}
-              </div>
-            )}
-            <div className="flex gap-4 mt-6">
-              <button onClick={() => { setShowImportWorkoutModal(false); setImportText(''); setImportError(''); }} className="flex-1 bg-slate-100 hover:bg-slate-200 py-4 rounded-2xl text-slate-600 font-bold transition-all active:scale-95">Cancelar</button>
-              <button onClick={handleImportWorkout} className="flex-1 bg-amber-600 hover:bg-amber-500 py-4 rounded-2xl text-white font-bold shadow-lg shadow-amber-500/20 transition-all active:scale-95">Importar</button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Undo Toast - positioned above bottom nav */}
       {/* Undo Toast - positioned above bottom nav */}
@@ -947,129 +791,7 @@ const NutritionTracker = () => {
       )}
 
       {/* Meal Templates Modal */}
-      {showTemplatesModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start justify-center z-50 p-2 pt-8 overflow-y-auto">
-          <div className="bg-white rounded-2xl p-5 w-full max-w-sm border border-purple-200 shadow-2xl">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg lg:text-xl font-bold text-purple-600">⭐ Favoritos</h3>
-              <button onClick={() => setShowTemplatesModal(false)} className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 text-xl lg:text-2xl transition-colors">×</button>
-            </div>
 
-            {mealTemplates.length === 0 ? (
-              <p className="text-gray-500 text-sm text-center py-4">No hay plantillas guardadas. Agregá comidas y guardalas como favoritos.</p>
-            ) : (
-              <div className="space-y-2 max-h-80 overflow-y-auto">
-                {mealTemplates.map(template => (
-                  <div
-                    key={template.id}
-                    className="bg-purple-50 rounded-xl p-3 border border-purple-100 active:bg-purple-100 transition-colors"
-                  >
-                    <div className="flex justify-between items-start">
-                      <button
-                        onClick={() => addFromTemplate(template)}
-                        className="flex-1 text-left"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-purple-600 uppercase font-bold">{template.meal}</span>
-                        </div>
-                        <h4 className="font-medium text-sm text-gray-900">{template.name}</h4>
-                        {template.description && (
-                          <p className="text-xs text-gray-600 truncate">{template.description}</p>
-                        )}
-                        <div className="flex gap-2 mt-1 text-xs font-medium">
-                          <span className="text-blue-600">{template.calories}kcal</span>
-                          <span className="text-blue-600">{template.protein}P</span>
-                          <span className="text-amber-600">{template.carbs}C</span>
-                          <span className="text-pink-600">{template.fat}F</span>
-                        </div>
-                      </button>
-                      <button
-                        onClick={() => deleteTemplate(template.id)}
-                        className="text-gray-400 hover:text-red-500 active:text-red-600 p-1 transition-colors"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <p className="text-xs text-gray-500 mt-3 text-center">
-              Toca una comida para agregarla · Desliza a las comidas para guardar nuevas
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Save as Template Modal */}
-      {showSaveTemplateModal && templateToSave && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-5 w-full max-w-xs border border-purple-200 shadow-2xl">
-            <h3 className="text-base font-bold text-purple-600 mb-3">⭐ Guardar como Favorito</h3>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Nombre</label>
-                <input
-                  type="text"
-                  value={templateToSave.name}
-                  onChange={(e) => setTemplateToSave({ ...templateToSave, name: e.target.value })}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1.5">Tipo</label>
-                  <select
-                    value={templateToSave.meal}
-                    onChange={(e) => setTemplateToSave({ ...templateToSave, meal: e.target.value })}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
-                  >
-                    <option>Desayuno</option>
-                    <option>Almuerzo</option>
-                    <option>Merienda</option>
-                    <option>Cena</option>
-                    <option>Snack</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1.5">Calorías</label>
-                  <input
-                    type="number"
-                    value={templateToSave.calories}
-                    onChange={(e) => setTemplateToSave({ ...templateToSave, calories: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
-                  />
-                </div>
-              </div>
-              <div className="text-xs text-gray-600 font-medium bg-gray-50 px-3 py-2 rounded-lg">
-                P: {templateToSave.protein}g · C: {templateToSave.carbs}g · F: {templateToSave.fat}g
-              </div>
-            </div>
-            <div className="flex gap-2 mt-4">
-              <button onClick={() => { setShowSaveTemplateModal(false); setTemplateToSave(null); }} className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-medium transition-colors">Cancelar</button>
-              <button onClick={confirmSaveTemplate} className="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-2.5 rounded-xl text-sm font-bold transition-colors">Guardar</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Weekly Report Modal */}
-      {showWeeklyReport && (
-        <WeeklyReport
-          foodLog={foodLog}
-          workoutLog={workoutLog}
-          weightHistory={weightHistory}
-          stepsLog={stepsLog}
-          targets={{
-            calories: config.targetCalories,
-            protein: config.targetProtein,
-            carbs: config.targetCarbs,
-            fat: config.targetFat
-          }}
-          onClose={() => setShowWeeklyReport(false)}
-        />
-      )}
     </Layout>
   );
 };
