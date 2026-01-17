@@ -77,6 +77,7 @@ const NutritionTracker = () => {
     activeTab, setActiveTab,
     newWeight, setNewWeight,
     newWeightTime, setNewWeightTime,
+    weightDate, setWeightDate,
     newSteps, setNewSteps,
     stepsDate, setStepsDate,
     selectedFoodDate, setSelectedFoodDate,
@@ -157,23 +158,27 @@ const NutritionTracker = () => {
   // Add weight entry with time
   const addWeightEntry = async () => {
     if (!newWeight) return;
-    // Parse time input to create timestamp
+    // Parse time input and use selected date to create timestamp
     const [hours, minutes] = newWeightTime.split(':').map(Number);
-    const dateObj = new Date();
-    // Set to Argentina timezone
-    const argDate = new Date(dateObj.toLocaleString('en-US', { timeZone: 'America/Argentina/Buenos_Aires' }));
-    argDate.setHours(hours, minutes, 0, 0);
+    const [year, month, day] = weightDate.split('-').map(Number);
+
+    // Create date in Argentina timezone
+    const argDate = new Date();
+    // Use the selected date and time
+    const dateObj = new Date(year, month - 1, day, hours, minutes, 0, 0);
 
     const entry = {
       id: `wh-${Date.now()}`,
-      date: getArgentinaDateString(),
+      date: weightDate,
       weight: parseFloat(newWeight),
-      timestamp: argDate.getTime()
+      timestamp: dateObj.getTime()
     };
     saveWeightHistory([...weightHistory, entry]);
     await saveWeightEntry(entry); // Save to Supabase
     setNewWeight('');
     setNewWeightTime('09:00');
+    // Keep the weightDate as it might be useful for batch entry, or reset to today?
+    // User probably wants to stay on the chosen date if they have multiple entries to log.
   };
 
   // Show delete confirmation
@@ -1077,7 +1082,10 @@ const NutritionTracker = () => {
 
     const weekWorkouts = workoutLog.filter(w => w.date >= mondayStr && w.date <= todayStr);
     const gymSessions = weekWorkouts.filter(w => w.type === 'gym');
-    const tennisSessions = weekWorkouts.filter(w => w.type === 'tennis');
+    const tennisSessions = weekWorkouts.filter(w =>
+      w.type === 'tennis' ||
+      (w.type === 'sport' && (w.name.toLowerCase().includes('tenis') || w.name.toLowerCase().includes('tennis')))
+    );
 
     const totalVolume = gymSessions.reduce((sum, w) => sum + (w.volume || 0), 0);
     const totalDuration = weekWorkouts.reduce((sum, w) => sum + (w.duration || 0), 0);
@@ -1312,7 +1320,7 @@ const NutritionTracker = () => {
   }
 
   return (
-    <Layout activeTab={activeTab} setActiveTab={setActiveTab} showNav={!!profile.name && !showOnboarding}>
+    <Layout activeTab={activeTab} setActiveTab={setActiveTab} showNav={!showOnboarding}>
       {/* Google Font - Plus Jakarta Sans for modern fitness aesthetic */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -2102,8 +2110,14 @@ const NutritionTracker = () => {
                 NUEVO REGISTRO
               </h2>
               <div className="flex flex-col gap-3">
-              <div className="flex gap-2">
-                  <input type="number" step="0.1" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} placeholder="84.5" className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-lg min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                <div className="flex gap-2">
+                  <input
+                    type="date"
+                    value={weightDate}
+                    onChange={(e) => setWeightDate(e.target.value)}
+                    className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                  />
+                  <input type="number" step="0.1" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} placeholder="84.5" className="flex-[1.5] bg-white border border-gray-200 rounded-xl px-4 py-3 text-lg min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
                   <span className="flex items-center text-gray-500 text-sm font-medium">kg</span>
                 </div>
                 <div className="flex gap-2">

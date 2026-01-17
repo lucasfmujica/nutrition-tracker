@@ -77,6 +77,7 @@ export const useTrackerData = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [newWeight, setNewWeight] = useState('');
   const [newWeightTime, setNewWeightTime] = useState('09:00');
+  const [weightDate, setWeightDate] = useState(getArgentinaDateString());
   const [newSteps, setNewSteps] = useState('');
   const [stepsDate, setStepsDate] = useState(getArgentinaDateString());
   const [selectedFoodDate, setSelectedFoodDate] = useState(getArgentinaDateString());
@@ -797,6 +798,7 @@ export const useTrackerData = () => {
     activeTab, setActiveTab,
     newWeight, setNewWeight,
     newWeightTime, setNewWeightTime,
+    weightDate, setWeightDate,
     newSteps, setNewSteps,
     stepsDate, setStepsDate,
     selectedFoodDate, setSelectedFoodDate,
