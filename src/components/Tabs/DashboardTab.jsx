@@ -2,6 +2,7 @@ import { formatDateDisplay, getArgentinaDateString } from '../../utils/dateUtils
 import { ActivityCards } from '../Dashboard/ActivityCards';
 import { GoalInsightsCard } from '../Dashboard/GoalInsightsCard';
 import { MacroCards } from '../Dashboard/MacroCards';
+import { MacroCloserCard } from '../Dashboard/MacroCloserCard';
 import { SummaryCard } from '../Dashboard/SummaryCard';
 import { TrainingWidget } from '../Dashboard/TrainingWidget';
 import { WeightChartCard } from '../Dashboard/WeightChartCard';
@@ -77,6 +78,9 @@ export const DashboardTab = ({
 
         {/* Macro Cards */}
         <MacroCards totals={dashboardTotals} targets={dashboardTargets} />
+
+        {/* The Macro Closer (Feature) */}
+        <MacroCloserCard totals={dashboardTotals} targets={dashboardTargets} />
 
           <ActivityCards
             steps={getStepsForDate(dashboardDate)}

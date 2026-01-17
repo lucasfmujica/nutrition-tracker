@@ -119,6 +119,7 @@ const NutritionTrackerContent = () => {
             {activeTab === 'entrenos' && (
               <WorkoutsTab
                 selectedWorkoutDate={selectedWorkoutDate} setSelectedWorkoutDate={setSelectedWorkoutDate} changeDate={changeDate}
+                workoutLog={workoutLog} // Added
                 workoutAnalysis={workoutAnalysis} weightAnalytics={weightAnalytics}
                 ouraLog={ouraLog} currentWeight={profile.currentWeight}
                 getWorkoutsForDate={getWorkoutsForDate}

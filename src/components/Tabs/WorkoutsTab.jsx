@@ -1,6 +1,7 @@
-import { Dumbbell, Target, Trophy, Zap } from 'lucide-react';
-import { getWeeklyCoachInsight } from '../../utils/coachInsights';
+import { Dumbbell, Target, Trophy } from 'lucide-react';
+import { useEffortAnalytics } from '../../hooks/useEffortAnalytics';
 import { addDaysToDate, getArgentinaDateString, getMondayOfWeek } from '../../utils/dateUtils';
+import { EffortRadar } from '../Workouts/EffortRadar';
 import { SwipeableItem } from '../ui/SwipeableItem';
 
 /**
@@ -13,6 +14,7 @@ export const WorkoutsTab = ({
   setSelectedWorkoutDate,
   changeDate,
   // Data
+  workoutLog,
   workoutAnalysis,
   weightAnalytics,
   ouraLog,
@@ -24,13 +26,8 @@ export const WorkoutsTab = ({
 }) => {
   const workoutsForSelectedDate = getWorkoutsForDate(selectedWorkoutDate);
 
-  // Generate AI-driven insight
-  const coachInsight = getWeeklyCoachInsight({
-    weightAnalytics,
-    ouraLog,
-    workoutAnalysis,
-    currentWeight
-  });
+  // AES Intelligence Engine
+  const effortAnalytics = useEffortAnalytics(workoutLog, ouraLog, weightAnalytics);
 
   return (
     <div className="space-y-3">
@@ -44,23 +41,8 @@ export const WorkoutsTab = ({
         {/* Main Grid: AI Insight + Stats */}
         <div className="grid grid-cols-3 gap-3">
           {/* AI Coach Insight Card - spans 2 columns */}
-          <div className={`col-span-2 bg-gradient-to-br ${coachInsight.gradient} rounded-2xl p-4 border border-${coachInsight.type === 'success' ? 'green' : coachInsight.type === 'warning' ? 'purple' : coachInsight.type === 'caution' ? 'orange' : 'blue'}-100 shadow-sm relative overflow-hidden`}>
-            {/* AI Badge */}
-            <div className="absolute top-3 right-3">
-              <span className="text-[10px] bg-white/80 backdrop-blur-sm text-purple-600 px-2 py-1 rounded-full font-bold flex items-center gap-1">
-                <Zap className="w-3 h-3" /> AI Coach
-              </span>
-            </div>
-
-            {/* Icon + Message */}
-            <div className="flex items-start gap-3 pr-16">
-              <div className="text-3xl flex-shrink-0">{coachInsight.icon}</div>
-              <div>
-                <p className="text-sm font-semibold text-gray-800 leading-relaxed">
-                  {coachInsight.message}
-                </p>
-              </div>
-            </div>
+          <div className="col-span-2">
+            <EffortRadar analytics={effortAnalytics} />
           </div>
 
           {/* Total Workouts Card */}
