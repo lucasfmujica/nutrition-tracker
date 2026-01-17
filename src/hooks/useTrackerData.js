@@ -230,7 +230,7 @@ export const useTrackerData = () => {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        console.log('[Data] Loading localStorage...');
+        console.log('[Data] Loading localStorage cache...');
         const [profileData, weightData, foodData, workoutData, stepsData, targetsData, ouraData, waterData] = await Promise.all([
           storage.get('lucas-profile-v5').catch(() => null),
           storage.get('lucas-weight-history-v5').catch(() => null),
@@ -251,6 +251,7 @@ export const useTrackerData = () => {
         const localOura = ouraData?.value ? JSON.parse(ouraData.value) : [];
         const localWater = waterData?.value ? JSON.parse(waterData.value) : [];
 
+        // Set cached data immediately so user sees something
         if (localProfile) setProfile(localProfile);
         if (localTargets) setCustomTargets(localTargets);
         if (localWeight.length) setWeightHistory(localWeight);
@@ -260,29 +261,81 @@ export const useTrackerData = () => {
         if (localOura.length) setOuraLog(localOura);
         if (localWater.length) setWaterLog(localWater);
 
+        // If we have cached data, stop loading immediately (show data while syncing in background)
+        const hasCachedData = localFood.length > 0 || localWorkout.length > 0 || localWeight.length > 0;
+        if (hasCachedData) {
+          setIsLoading(false);
+          console.log('[Data] Showing cached data, syncing from Supabase in background...');
+        }
+
         if (supabase.isAuthenticated && supabase.isOnline && !offlineMode) {
           console.log('[Data] Fetching from Supabase...');
-          try {
-            // Safety timeout for supabase fetch (50s to allow for slow connections)
-            const fetchPromise = supabase.fetchAllData();
-            const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 50000));
 
-            const data = await Promise.race([fetchPromise, timeoutPromise]);
+          // Retry logic - try up to 3 times with increasing delay
+          let data = null;
+          let lastError = null;
+          for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+              console.log(`[Data] Supabase fetch attempt ${attempt}/3...`);
+              const fetchPromise = supabase.fetchAllData();
+              const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 60000)); // 60s timeout
 
-            if (data) {
-              if (data.profile) setProfile(data.profile);
-              if (data.targets) setCustomTargets(data.targets);
-              if (data.weightHistory?.length > 0) setWeightHistory(data.weightHistory);
-              if (data.foodLog?.length > 0) setFoodLog(data.foodLog);
-              if (data.workouts?.length > 0) setWorkoutLog(data.workouts);
-              if (data.stepsLog?.length > 0) setStepsLog(data.stepsLog);
-              if (data.ouraLog?.length > 0) setOuraLog(data.ouraLog);
-              if (data.waterLog?.length > 0) setWaterLog(data.waterLog);
-            } else {
-              console.warn('[Data] Supabase fetch timed out or returned null - keeping local data');
+              data = await Promise.race([fetchPromise, timeoutPromise]);
+
+              if (data) {
+                console.log(`[Data] Supabase fetch succeeded on attempt ${attempt}`);
+                break; // Success, exit retry loop
+              } else {
+                console.warn(`[Data] Supabase fetch attempt ${attempt} timed out`);
+                if (attempt < 3) {
+                  // Wait before retry: 2s, 4s
+                  await new Promise(r => setTimeout(r, attempt * 2000));
+                }
+              }
+            } catch (err) {
+              lastError = err;
+              console.warn(`[Data] Supabase fetch attempt ${attempt} failed:`, err.message);
+              if (attempt < 3) {
+                await new Promise(r => setTimeout(r, attempt * 2000));
+              }
             }
-          } catch (supabaseErr) {
-            console.error('[Data] Supabase fetch failed, using localStorage:', supabaseErr);
+          }
+
+          if (data) {
+            // Update state with Supabase data
+            if (data.profile) setProfile(data.profile);
+            if (data.targets) setCustomTargets(data.targets);
+            if (data.weightHistory?.length > 0) setWeightHistory(data.weightHistory);
+            if (data.foodLog?.length > 0) setFoodLog(data.foodLog);
+            if (data.workouts?.length > 0) setWorkoutLog(data.workouts);
+            if (data.stepsLog?.length > 0) setStepsLog(data.stepsLog);
+            if (data.ouraLog?.length > 0) setOuraLog(data.ouraLog);
+            if (data.waterLog?.length > 0) setWaterLog(data.waterLog);
+
+            // Cache Supabase data to localStorage for next time
+            console.log('[Data] Caching Supabase data to localStorage...');
+            try {
+              if (data.profile) await storage.set('lucas-profile-v5', JSON.stringify(data.profile));
+              if (data.targets) await storage.set('lucas-targets-v5', JSON.stringify(data.targets));
+              if (data.weightHistory?.length > 0) await storage.set('lucas-weight-history-v5', JSON.stringify(data.weightHistory));
+              if (data.foodLog?.length > 0) await storage.set('lucas-food-log-v5', JSON.stringify(data.foodLog));
+              if (data.workouts?.length > 0) await storage.set('lucas-workout-log-v5', JSON.stringify(data.workouts));
+              if (data.stepsLog?.length > 0) await storage.set('lucas-steps-log-v5', JSON.stringify(data.stepsLog));
+              if (data.ouraLog?.length > 0) await storage.set('lucas-oura-log-v5', JSON.stringify(data.ouraLog));
+              if (data.waterLog?.length > 0) await storage.set('lucas-water-log-v5', JSON.stringify(data.waterLog));
+              console.log('[Data] Cache updated successfully');
+            } catch (cacheErr) {
+              console.warn('[Data] Failed to cache data:', cacheErr);
+            }
+
+            setSaveStatus('✓ Sincronizado');
+            setTimeout(() => setSaveStatus(''), 2000);
+          } else {
+            console.warn('[Data] All Supabase fetch attempts failed - using cached/local data');
+            if (!hasCachedData) {
+              setSaveStatus('⚠️ Sin conexión');
+              setTimeout(() => setSaveStatus(''), 3000);
+            }
           }
         }
       } catch (err) {
