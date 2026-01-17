@@ -596,6 +596,10 @@ export const useTrackerData = () => {
     setSaveStatus('Sincronizando...');
     let syncedWorkouts = 0;
     let syncedFoods = 0;
+    let syncedSteps = 0;
+    let syncedOura = 0;
+    let syncedWater = 0;
+    let syncedWeight = 0;
     let errors = 0;
 
     try {
@@ -621,11 +625,56 @@ export const useTrackerData = () => {
         }
       }
 
-      const message = `✓ Sincronizado: ${syncedWorkouts} entrenos, ${syncedFoods} comidas${errors > 0 ? ` (${errors} errores)` : ''}`;
+      // Sync all steps
+      for (const step of stepsLog) {
+        try {
+          await supabase.saveSteps(step);
+          syncedSteps++;
+        } catch (err) {
+          console.error('[Sync] Failed to sync steps:', step.date, err);
+          errors++;
+        }
+      }
+
+      // Sync all oura entries
+      for (const oura of ouraLog) {
+        try {
+          await supabase.saveOura(oura);
+          syncedOura++;
+        } catch (err) {
+          console.error('[Sync] Failed to sync oura:', oura.date, err);
+          errors++;
+        }
+      }
+
+      // Sync all water entries
+      for (const water of waterLog) {
+        try {
+          await supabase.saveWater(water);
+          syncedWater++;
+        } catch (err) {
+          console.error('[Sync] Failed to sync water:', water.date, err);
+          errors++;
+        }
+      }
+
+      // Sync all weight entries
+      for (const weight of weightHistory) {
+        try {
+          await supabase.saveWeight(weight);
+          syncedWeight++;
+        } catch (err) {
+          console.error('[Sync] Failed to sync weight:', weight.date, err);
+          errors++;
+        }
+      }
+
+      const total = syncedWorkouts + syncedFoods + syncedSteps + syncedOura + syncedWater + syncedWeight;
+      const message = `✓ Sincronizado: ${total} registros${errors > 0 ? ` (${errors} errores)` : ''}`;
       setSaveStatus(message);
       setTimeout(() => setSaveStatus(''), 4000);
-      console.log('[Sync] Force sync complete:', message);
-      return { success: true, message, syncedWorkouts, syncedFoods, errors };
+      console.log('[Sync] Force sync complete:', { syncedWorkouts, syncedFoods, syncedSteps, syncedOura, syncedWater, syncedWeight, errors });
+      return { success: true, message, syncedWorkouts, syncedFoods, syncedSteps, syncedOura, syncedWater, syncedWeight, errors };
     } catch (err) {
       console.error('[Sync] Force sync failed:', err);
       setSaveStatus('❌ Error al sincronizar');

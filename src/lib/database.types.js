@@ -273,6 +273,8 @@ export const mappers = {
     sleep_hours: entry.sleepHours,
     deep_sleep_mins: entry.deepSleepMins,
     rem_sleep_mins: entry.remSleepMins,
+    bedtime: entry.bedtime || null,
+    wake_time: entry.wakeTime || null,
   }),
 
   // Oura: Supabase -> localStorage format
@@ -287,6 +289,8 @@ export const mappers = {
     sleepHours: dbEntry.sleep_hours ? parseFloat(dbEntry.sleep_hours) : null,
     deepSleepMins: dbEntry.deep_sleep_mins,
     remSleepMins: dbEntry.rem_sleep_mins,
+    bedtime: dbEntry.bedtime || null,
+    wakeTime: dbEntry.wake_time || null,
   }),
 
   // Water: localStorage -> Supabase
