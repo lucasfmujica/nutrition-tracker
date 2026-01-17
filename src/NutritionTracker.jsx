@@ -9,6 +9,8 @@ import { WeeklyReport } from './components/WeeklyReport';
 import { useTrackerData } from './hooks/useTrackerData';
 import { ARGENTINA_TZ, addDaysToDate, getArgentinaDateString, getArgentinaDay, getMondayOfWeek } from './utils/dateUtils';
 
+const WATER_GOAL_GLASSES = 8;
+
 const NutritionTracker = () => {
   // Use custom hook for all data management
   const {
