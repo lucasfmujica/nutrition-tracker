@@ -1714,7 +1714,7 @@ const NutritionTracker = () => {
         <main className="p-4 lg:p-6 xl:p-8 pb-32 md:pb-36 w-full max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto">
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
-            <div className="space-y-4 lg:space-y-6">
+            <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6 lg:items-start">
               {/* Date Navigator - Premium Design */}
               <div className="flex items-center justify-center gap-4 lg:gap-6">
               <button
@@ -1744,58 +1744,69 @@ const NutritionTracker = () => {
               </button>
             </div>
 
-              {/* Summary Card */}
-              <SummaryCard totals={dashboardTotals} targets={dashboardTargets} />
 
-              {/* Macro Cards */}
-              <MacroCards totals={dashboardTotals} targets={dashboardTargets} />
+              {/* Left Column - Main Tracking */}
+              <div className="lg:col-span-8 space-y-4 lg:space-y-6">
+                 {/* Summary Card */}
+                <SummaryCard totals={dashboardTotals} targets={dashboardTargets} />
 
-              {/* Weight Chart */}
-              <WeightChartCard
-                data={weightHistory}
-                currentWeight={getMostRecentWeight(weightHistory)?.weight || profile.currentWeight}
-                targetWeight={profile.targetWeight}
-              />
+                {/* Macro Cards */}
+                <MacroCards totals={dashboardTotals} targets={dashboardTargets} />
 
-              {/* Activity Cards */}
-              <ActivityCards
-                steps={getStepsForDate(dashboardDate)}
-                stepsTarget={10000}
-                water={getTodayWater().glasses}
-                waterTarget={WATER_GOAL_GLASSES}
-                onAddWater={addWaterGlass}
-              />
-
-            {/* Weight Projection */}
-            {weightProjection && (
-              <div className="bg-gray-800 rounded-lg p-3 border border-amber-500/30">
-                <h3 className="text-xs font-bold text-amber-400 mb-2">🎯 PROYECCIÓN</h3>
-                <div className="grid grid-cols-2 gap-3 mb-2">
-                  <div className="text-center p-2 bg-gray-700/50 rounded">
-                    <div className="text-lg font-bold text-white">{weightProjection.weeklyRate > 0 ? '-' : '+'}{Math.abs(weightProjection.weeklyRate)} kg/sem</div>
-                    <div className="text-xs text-gray-400">Ritmo actual</div>
-                  </div>
-                  <div className="text-center p-2 bg-gray-700/50 rounded">
-                    <div className="text-lg font-bold text-blue-400">
-                      {weightProjection.weeksToGoal ? `~${weightProjection.weeksToGoal} sem` : '-'}
-                    </div>
-                    <div className="text-xs text-gray-400">Para objetivo</div>
-                  </div>
-                </div>
-                {weightProjection.goalDate && (
-                  <p className="text-xs text-gray-400 text-center">Fecha estimada: <span className="text-blue-400">{weightProjection.goalDate}</span></p>
-                )}
-                {weightProjection.recommendation && (
-                  <div className={`mt-2 p-2 rounded text-xs ${weightProjection.recommendation.type === 'good' ? 'bg-blue-900/30 text-blue-400' :
-                    weightProjection.recommendation.type === 'decrease' ? 'bg-amber-900/30 text-amber-400' :
-                      'bg-red-900/30 text-red-400'
-                    }`}>
-                    💡 {weightProjection.recommendation.text}
-                  </div>
-                )}
-                <p className="text-xs text-gray-500 mt-2 text-center">Basado en {weightProjection.dataPoints} registros ({weightProjection.daysCovered} días)</p>
+                {/* Activity Cards */}
+                <ActivityCards
+                  steps={getStepsForDate(dashboardDate)}
+                  stepsTarget={10000}
+                  water={getTodayWater().glasses}
+                  waterTarget={WATER_GOAL_GLASSES}
+                  onAddWater={addWaterGlass}
+                />
               </div>
-            )}
+
+              {/* Right Column - Analytics & Weight */}
+              <div className="lg:col-span-4 space-y-4 lg:space-y-6">
+                {/* Weight Chart */}
+                <WeightChartCard
+                  data={weightHistory}
+                  currentWeight={getMostRecentWeight(weightHistory)?.weight || profile.currentWeight}
+                  targetWeight={profile.targetWeight}
+                />
+
+                {/* Weight Projection */}
+                {weightProjection && (
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50">
+                    <h3 className="text-gray-900 font-bold text-lg mb-4">Proyección</h3>
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="text-center p-3 bg-gray-50 rounded-xl">
+                        <div className="text-xl font-bold text-gray-900">{weightProjection.weeklyRate > 0 ? '-' : '+'}{Math.abs(weightProjection.weeklyRate)} <span className="text-xs font-normal text-gray-500">kg/sem</span></div>
+                        <div className="text-xs text-gray-400 mt-1">Ritmo actual</div>
+                      </div>
+                      <div className="text-center p-3 bg-gray-50 rounded-xl">
+                        <div className="text-xl font-bold text-blue-600">
+                          {weightProjection.weeksToGoal ? `~${weightProjection.weeksToGoal}` : '-'} <span className="text-xs font-normal text-gray-500">sem</span>
+                        </div>
+                        <div className="text-xs text-gray-400 mt-1">Para objetivo</div>
+                      </div>
+                    </div>
+                    {weightProjection.goalDate && (
+                      <div className="mb-4 text-center">
+                         <span className="text-xs text-gray-400">Fecha estimada: </span>
+                         <span className="text-sm font-semibold text-gray-900">{weightProjection.goalDate}</span>
+                      </div>
+                    )}
+                    {weightProjection.recommendation && (
+                      <div className={`p-3 rounded-xl text-xs leading-relaxed ${weightProjection.recommendation.type === 'good' ? 'bg-blue-50 text-blue-700' :
+                        weightProjection.recommendation.type === 'decrease' ? 'bg-amber-50 text-amber-700' :
+                          'bg-red-50 text-red-700'
+                        }`}>
+                        💡 {weightProjection.recommendation.text}
+                      </div>
+                    )}
+                    <p className="text-[10px] text-gray-400 mt-3 text-center">Basado en {weightProjection.dataPoints} registros ({weightProjection.daysCovered} días)</p>
+                  </div>
+                )}
+              </div>
+
           </div>
         )}
 
