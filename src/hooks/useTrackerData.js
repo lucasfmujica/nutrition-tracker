@@ -447,10 +447,14 @@ export const useTrackerData = () => {
   const saveStepsEntry = async (entry) => {
     if (useCloud) {
       try {
-        await supabase.saveSteps(entry);
-        console.log('[Sync] Steps saved to Supabase');
+        const result = await supabase.saveSteps(entry);
+        if (result?.error) {
+          console.error('[Sync] Error saving steps to Supabase:', result.error);
+        } else {
+          console.log('[Sync] Steps saved to Supabase');
+        }
       } catch (err) {
-        console.error('[Sync] Error saving steps to Supabase:', err);
+        console.error('[Sync] Unexpected error saving steps:', err);
       }
     }
   };
