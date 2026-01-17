@@ -1261,6 +1261,7 @@ const NutritionTracker = () => {
         onAuth={{
           signIn: handleSignIn,
           signUp: handleSignUp,
+          signInWithGoogle: supabase.signInWithGoogle,
           resetPassword: supabase.resetPassword,
           continueOffline: () => {
             setOfflineMode(true);
