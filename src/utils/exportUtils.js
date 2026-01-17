@@ -83,7 +83,7 @@ export const generateNutritionistReport = (foodLog, workoutLog, ouraLog, profile
     const foods = foodLog.filter(f => f.date === date).sort((a, b) => {
       // Sort by time if available, otherwise by meal order
       if (a.time && b.time) return a.time.localeCompare(b.time);
-      const mealOrder = { 'Desayuno': 1, 'Almuerzo': 2, 'Merienda': 3, 'Snack': 4, 'Cena': 5 };
+      const mealOrder = { 'Desayuno': 1, 'Almuerzo': 2, 'Merienda': 3, 'Cena': 4, 'Snack': 5 };
       return (mealOrder[a.meal] || 99) - (mealOrder[b.meal] || 99);
     });
 

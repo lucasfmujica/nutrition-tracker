@@ -1633,7 +1633,7 @@ const NutritionTracker = () => {
             <div className="min-w-0">
               <h1 className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tighter">LUKEN<span className="text-blue-600">FIT</span></h1>
               <p className="text-xs lg:text-sm font-bold text-slate-400 flex items-center gap-1.5">
-                <span className="bg-slate-100 px-2 py-0.5 rounded-full">{profile.currentWeight}kg</span>
+                <span className="bg-slate-100 px-2 py-0.5 rounded-full">{getMostRecentWeight(weightHistory)?.weight || profile.currentWeight}kg</span>
                 <span className="text-slate-300">→</span>
                 <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">{profile.targetWeight}kg</span>
               </p>
@@ -1912,12 +1912,12 @@ const NutritionTracker = () => {
               </div>
             ) : (
               <div className="space-y-6 pb-24">
-                {['Desayuno', 'Almuerzo', 'Cena', 'Snack'].map(mealType => {
+                {['Desayuno', 'Almuerzo', 'Merienda', 'Cena', 'Snack'].map(mealType => {
                   const mealFoods = getFoodsForDate(selectedFoodDate).filter(f =>
                      // Normalize string comparison
                      (f.meal || '').toLowerCase() === mealType.toLowerCase() ||
                      // Fallback for old data or mismatches
-                     (mealType === 'Snack' && !['desayuno', 'almuerzo', 'cena'].includes((f.meal || '').toLowerCase()))
+                     (mealType === 'Snack' && !['desayuno', 'almuerzo', 'merienda', 'cena'].includes((f.meal || '').toLowerCase()))
                   );
 
                   // Skip section if no foods (optional: keeping it clean)
