@@ -306,6 +306,14 @@ const NutritionTracker = () => {
     trainingDayCarbs: 220
   });
 
+  // Config state for nutrition targets (used by WeeklyReport)
+  const [config, setConfig] = useState({
+    targetCalories: 2100,
+    targetProtein: 170,
+    targetCarbs: 180,
+    targetFat: 70
+  });
+
   // Local config state for debounced saving
   const [localConfig, setLocalConfig] = useState(null);
   const [configDirty, setConfigDirty] = useState(false);
