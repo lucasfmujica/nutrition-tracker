@@ -13,6 +13,11 @@ import { DaySummary } from './components/Diary/DaySummary';
 import { MealSection } from './components/Diary/MealSection';
 import { FloatingActionButton } from './components/FloatingActionButton';
 import { Layout } from './components/Layout';
+import { DeleteConfirmModal } from './components/Modals/DeleteConfirmModal';
+import { FoodFormModal } from './components/Modals/FoodFormModal';
+import { ImportModal } from './components/Modals/ImportModal';
+import { MigrationModal } from './components/Modals/MigrationModal';
+import { WorkoutFormModal } from './components/Modals/WorkoutFormModal';
 import { OnboardingWizard } from './components/OnboardingWizard';
 import { PullToRefresh } from './components/PullToRefresh';
 import { SwipeableItem } from './components/SwipeableItem';
@@ -1117,92 +1122,24 @@ const NutritionTracker = () => {
       `}</style>
 
       {/* Delete Confirmation Modal */}
-      {deleteModal.show && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full border border-gray-200 shadow-2xl">
-            <h3 className="text-lg font-bold text-gray-900 mb-2">¿Eliminar?</h3>
-            <p className="text-base text-gray-600 mb-4">"{deleteModal.name}"</p>
-            <div className="flex gap-2">
-              <button onClick={() => setDeleteModal({ show: false, type: '', id: null, name: '' })} className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-base font-medium transition-colors">Cancelar</button>
-              <button onClick={executeDelete} className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-base font-bold transition-colors">Eliminar</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DeleteConfirmModal
+        isOpen={deleteModal.show}
+        itemName={deleteModal.name}
+        onConfirm={executeDelete}
+        onCancel={() => setDeleteModal({ show: false, type: '', id: null, name: '' })}
+      />
 
-      {/* Prompt 3: Migration Modal */}
-      {showMigrationModal && migrationData && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full border border-blue-200 shadow-2xl">
-            <div className="text-center mb-6">
-              <div className="text-4xl mb-3">☁️</div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Datos locales encontrados</h3>
-              <p className="text-gray-600 text-sm">
-                Tienes datos guardados en este dispositivo. ¿Quieres sincronizarlos con tu cuenta?
-              </p>
-            </div>
-
-            {/* Summary of data to migrate */}
-            <div className="bg-blue-50 rounded-xl p-4 mb-6 text-sm border border-blue-100">
-              <div className="grid grid-cols-2 gap-2 text-gray-700 font-medium">
-                {migrationData.weightHistory?.length > 0 && (
-                  <div>📊 {migrationData.weightHistory.length} registros de peso</div>
-                )}
-                {migrationData.foodLog?.length > 0 && (
-                  <div>🍽️ {migrationData.foodLog.length} comidas</div>
-                )}
-                {migrationData.workouts?.length > 0 && (
-                  <div>🏋️ {migrationData.workouts.length} entrenos</div>
-                )}
-                {migrationData.stepsLog?.length > 0 && (
-                  <div>👟 {migrationData.stepsLog.length} días de pasos</div>
-                )}
-                {migrationData.ouraLog?.length > 0 && (
-                  <div>💍 {migrationData.ouraLog.length} registros Oura</div>
-                )}
-                {migrationData.profile && (
-                  <div>👤 Perfil y objetivos</div>
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <button
-                onClick={handleMigration}
-                disabled={isMigrating}
-                className="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all disabled:opacity-50"
-              >
-                {isMigrating ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                    Migrando datos...
-                  </span>
-                ) : (
-                  'Sí, sincronizar todo'
-                )}
-              </button>
-
-              <button
-                onClick={() => {
-                  setShowMigrationModal(false);
-                  setMigrationData(null);
-                }}
-                disabled={isMigrating}
-                className="w-full py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-all disabled:opacity-50"
-              >
-                No, empezar de cero
-              </button>
-
-              <p className="text-xs text-gray-600 text-center font-medium">
-                Si eliges "empezar de cero", los datos locales se mantendrán pero no se sincronizarán.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Migration Modal */}
+      <MigrationModal
+        isOpen={showMigrationModal}
+        data={migrationData}
+        onMigrate={handleMigration}
+        onSkip={() => {
+          setShowMigrationModal(false);
+          setMigrationData(null);
+        }}
+        isMigrating={isMigrating}
+      />
 
       {/* Manual Food Entry Modal */}
       {showFoodForm && (
