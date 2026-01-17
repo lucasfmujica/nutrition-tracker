@@ -1865,12 +1865,29 @@ const NutritionTracker = () => {
                 <p className="text-sm text-gray-500">Registro de alimentos</p>
               </div>
               <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setSelectedFoodDate(changeDate(selectedFoodDate, -1))}
+                  className="w-10 h-10 rounded-xl hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors flex items-center justify-center"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
                 <input
                   type="date"
                   value={selectedFoodDate}
                   onChange={(e) => setSelectedFoodDate(e.target.value)}
                   className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-base flex-1 min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
                 />
+                <button
+                  onClick={() => setSelectedFoodDate(changeDate(selectedFoodDate, 1))}
+                  disabled={selectedFoodDate >= getArgentinaDateString()}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${selectedFoodDate >= getArgentinaDateString() ? 'text-gray-200 cursor-not-allowed' : 'hover:bg-gray-50 text-gray-400 hover:text-blue-500'}`}
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
               </div>
             </div>
 
@@ -1984,12 +2001,29 @@ const NutritionTracker = () => {
                 <p className="text-sm text-gray-500">Registro de actividad física</p>
               </div>
               <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setSelectedWorkoutDate(changeDate(selectedWorkoutDate, -1))}
+                  className="w-10 h-10 rounded-xl hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors flex items-center justify-center"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
                 <input
                   type="date"
                   value={selectedWorkoutDate}
                   onChange={(e) => setSelectedWorkoutDate(e.target.value)}
                   className="bg-white border border-gray-100 rounded-xl px-4 py-2 text-gray-900 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm"
                 />
+                <button
+                  onClick={() => setSelectedWorkoutDate(changeDate(selectedWorkoutDate, 1))}
+                  disabled={selectedWorkoutDate >= getArgentinaDateString()}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${selectedWorkoutDate >= getArgentinaDateString() ? 'text-gray-200 cursor-not-allowed' : 'hover:bg-gray-50 text-gray-400 hover:text-blue-500'}`}
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
               </div>
             </div>
 
@@ -2131,7 +2165,7 @@ const NutritionTracker = () => {
               <h2 className="text-sm font-bold text-gray-900 mb-4">Progreso</h2>
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div className="p-3 bg-gray-50 rounded-xl">
-                  <div className="text-xl font-bold text-gray-900">{profile.currentWeight}</div>
+                  <div className="text-xl font-bold text-gray-900">{getMostRecentWeight(weightHistory)?.weight || profile.currentWeight}</div>
                   <div className="text-xs text-gray-400 font-medium mt-1">Actual</div>
                 </div>
                 <div className="p-3 bg-gray-50 rounded-xl">
@@ -2139,7 +2173,7 @@ const NutritionTracker = () => {
                   <div className="text-xs text-gray-400 font-medium mt-1">Objetivo</div>
                 </div>
                 <div className="p-3 bg-gray-50 rounded-xl">
-                  <div className="text-xl font-bold text-amber-500">{(profile.currentWeight - profile.targetWeight).toFixed(1)}</div>
+                  <div className="text-xl font-bold text-amber-500">{((getMostRecentWeight(weightHistory)?.weight || profile.currentWeight) - profile.targetWeight).toFixed(1)}</div>
                   <div className="text-xs text-gray-400 font-medium mt-1">Faltan</div>
                 </div>
               </div>
