@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AuthUI } from './components/AuthUI';
 import { BottomNav } from './components/BottomNav';
+import { ActivityCards } from './components/Dashboard/ActivityCards';
+import { MacroCards } from './components/Dashboard/MacroCards';
+import { SummaryCard } from './components/Dashboard/SummaryCard';
+import { TrainingWidget } from './components/Dashboard/TrainingWidget';
+import { WeightChartCard } from './components/Dashboard/WeightChartCard';
+import { DaySummary } from './components/Diary/DaySummary';
+import { MealSection } from './components/Diary/MealSection';
 import { FloatingActionButton } from './components/FloatingActionButton';
+import { Layout } from './components/Layout';
 import { OnboardingWizard } from './components/OnboardingWizard';
 import { PullToRefresh } from './components/PullToRefresh';
 import { SwipeableItem } from './components/SwipeableItem';
@@ -1130,20 +1138,24 @@ const NutritionTracker = () => {
   const SimpleBarChart = ({ data, dataKey, target, color, label }) => {
     const maxVal = Math.max(...data.map(d => d[dataKey]), target) * 1.1 || target * 1.1;
     return (
-      <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-xs font-medium text-gray-300">{label}</span>
-          <span className="text-xs text-gray-500">Meta: {target}</span>
+      <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
+        <div className="flex justify-between items-center mb-4">
+          <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">{label}</span>
+          <span className="text-xs font-bold text-slate-400">Meta: {target}</span>
         </div>
-        <div className="flex items-end justify-between h-16 gap-0.5">
+        <div className="flex items-end justify-between h-20 gap-1">
           {data.map((d, i) => (
             <div key={i} className="flex flex-col items-center flex-1 min-w-0">
-              <div className="w-full bg-gray-700 rounded-t relative" style={{ height: '48px' }}>
-                <div className={`absolute bottom-0 w-full rounded-t transition-all ${color} ${d[dataKey] > target ? 'opacity-60' : ''}`} style={{ height: `${Math.min((d[dataKey] / maxVal) * 100, 100)}%` }} />
-                <div className="absolute w-full border-t border-dashed border-gray-500" style={{ bottom: `${(target / maxVal) * 100}%` }} />
-                {d.completed && <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 text-xs">✓</div>}
+              <div className="w-full bg-slate-50 rounded-t-lg relative group" style={{ height: '56px' }}>
+                <div className={`absolute bottom-0 w-full rounded-t-lg transition-all duration-500 ${color} ${d[dataKey] > target ? 'opacity-80' : ''}`} style={{ height: `${Math.min((d[dataKey] / maxVal) * 100, 100)}%` }}>
+                  <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] py-1 px-2 rounded-lg pointer-events-none transition-opacity font-bold z-10 whitespace-nowrap">
+                    {d[dataKey].toLocaleString()}
+                  </div>
+                </div>
+                <div className="absolute w-full border-t border-dashed border-slate-200" style={{ bottom: `${(target / maxVal) * 100}%` }} />
+                {d.completed && <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 text-[10px] bg-white rounded-full shadow-sm w-4 h-4 flex items-center justify-center">✓</div>}
               </div>
-              <span className="text-xs text-gray-500 mt-0.5">{d.day}</span>
+              <span className="text-[10px] font-bold text-slate-400 mt-1.5 uppercase">{d.day}</span>
             </div>
           ))}
         </div>
@@ -1300,7 +1312,7 @@ const NutritionTracker = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 text-base md:text-lg">
+    <Layout activeTab={activeTab} setActiveTab={setActiveTab} showNav={!!profile.name && !showOnboarding}>
       {/* Google Font - Plus Jakarta Sans for modern fitness aesthetic */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -1399,19 +1411,19 @@ const NutritionTracker = () => {
 
       {/* Manual Food Entry Modal */}
       {showFoodForm && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => { setShowFoodForm(false); setEditingFoodId(null); }}>
-          <div className="bg-gray-800 rounded-xl p-5 lg:p-6 w-full max-w-sm lg:max-w-md border border-gray-700 shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-slate-900/40 flex items-center justify-center z-50 p-4 backdrop-blur-sm" onClick={() => { setShowFoodForm(false); setEditingFoodId(null); }}>
+          <div className="bg-white rounded-3xl p-6 lg:p-8 w-full max-w-sm lg:max-w-md border border-gray-100 shadow-2xl" onClick={e => e.stopPropagation()}>
             {/* Header with close button */}
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg lg:text-xl font-bold text-blue-400">{editingFoodId ? '✏️ Editar Comida' : '🍽️ Nueva Comida'}</h3>
-              <button onClick={() => { setShowFoodForm(false); setEditingFoodId(null); }} className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white text-xl lg:text-2xl transition-colors">×</button>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl lg:text-2xl font-bold text-slate-900">{editingFoodId ? '✏️ Editar Comida' : '🍽️ Nueva Comida'}</h3>
+              <button onClick={() => { setShowFoodForm(false); setEditingFoodId(null); }} className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">×</button>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {/* Row 1: Meal type + Time */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Comida</label>
-                  <select value={newFood.meal} onChange={(e) => setNewFood({ ...newFood, meal: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm lg:text-base">
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Comida</label>
+                  <select value={newFood.meal} onChange={(e) => setNewFood({ ...newFood, meal: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer">
                     <option>Desayuno</option>
                     <option>Almuerzo</option>
                     <option>Merienda</option>
@@ -1420,50 +1432,50 @@ const NutritionTracker = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Hora</label>
-                  <input type="time" value={newFood.time} onChange={(e) => setNewFood({ ...newFood, time: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm lg:text-base" />
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Hora</label>
+                  <input type="time" value={newFood.time} onChange={(e) => setNewFood({ ...newFood, time: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
               </div>
               </div>
               {/* Row 2: Name */}
               <div>
-                <label className="block text-sm lg:text-base text-gray-400 mb-1">Nombre *</label>
-                <input type="text" value={newFood.name} onChange={(e) => setNewFood({ ...newFood, name: e.target.value })} placeholder="Pollo con arroz" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm lg:text-base" />
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Nombre *</label>
+                <input type="text" value={newFood.name} onChange={(e) => setNewFood({ ...newFood, name: e.target.value })} placeholder="Pollo con arroz" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
               </div>
               {/* Row 3: Description */}
               <div>
-                <label className="block text-sm lg:text-base text-gray-400 mb-1">Descripción</label>
-                <input type="text" value={newFood.description} onChange={(e) => setNewFood({ ...newFood, description: e.target.value })} placeholder="200g pechuga, 150g arroz" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm lg:text-base" />
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Descripción</label>
+                <input type="text" value={newFood.description} onChange={(e) => setNewFood({ ...newFood, description: e.target.value })} placeholder="200g pechuga, 150g arroz" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
               </div>
               {/* Row 4: Macros - 3+2 grid */}
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Cal *</label>
-                  <input type="number" value={newFood.calories} onChange={(e) => setNewFood({ ...newFood, calories: e.target.value })} placeholder="500" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Cal *</label>
+                  <input type="number" value={newFood.calories} onChange={(e) => setNewFood({ ...newFood, calories: e.target.value })} placeholder="500" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Prot</label>
-                  <input type="number" value={newFood.protein} onChange={(e) => setNewFood({ ...newFood, protein: e.target.value })} placeholder="40" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Prot</label>
+                  <input type="number" value={newFood.protein} onChange={(e) => setNewFood({ ...newFood, protein: e.target.value })} placeholder="40" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Carbs</label>
-                  <input type="number" value={newFood.carbs} onChange={(e) => setNewFood({ ...newFood, carbs: e.target.value })} placeholder="50" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Carbs</label>
+                  <input type="number" value={newFood.carbs} onChange={(e) => setNewFood({ ...newFood, carbs: e.target.value })} placeholder="50" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Fat</label>
-                  <input type="number" value={newFood.fat} onChange={(e) => setNewFood({ ...newFood, fat: e.target.value })} placeholder="15" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Fat</label>
+                  <input type="number" value={newFood.fat} onChange={(e) => setNewFood({ ...newFood, fat: e.target.value })} placeholder="15" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Fibra</label>
-                  <input type="number" value={newFood.fiber} onChange={(e) => setNewFood({ ...newFood, fiber: e.target.value })} placeholder="5" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Fibra</label>
+                  <input type="number" value={newFood.fiber} onChange={(e) => setNewFood({ ...newFood, fiber: e.target.value })} placeholder="5" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
                 </div>
               </div>
               <input type="hidden" value={newFood.date} />
             </div>
-            <div className="flex gap-3 mt-5">
-              <button onClick={() => { setShowFoodForm(false); setEditingFoodId(null); }} className="flex-1 bg-gray-700 hover:bg-gray-600 py-3 rounded-lg text-sm lg:text-base font-medium transition-colors">Cancelar</button>
-              <button onClick={addManualFood} className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 py-3 rounded-lg text-sm lg:text-base font-bold transition-all">
+            <div className="flex gap-4 mt-8">
+              <button onClick={() => { setShowFoodForm(false); setEditingFoodId(null); }} className="flex-1 bg-slate-100 hover:bg-slate-200 py-4 rounded-2xl text-slate-600 text-sm lg:text-base font-bold transition-all active:scale-95">Cancelar</button>
+              <button onClick={addManualFood} className="flex-1 bg-gradient-to-br from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 py-4 rounded-2xl text-white text-sm lg:text-base font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-95">
                 {editingFoodId ? 'Actualizar' : 'Guardar'}
               </button>
             </div>
@@ -1473,18 +1485,18 @@ const NutritionTracker = () => {
 
       {/* Manual Workout Entry Modal */}
       {showWorkoutForm && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setShowWorkoutForm(false)}>
-          <div className="bg-gray-800 rounded-xl p-5 lg:p-6 w-full max-w-sm lg:max-w-md border border-gray-700 shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-slate-900/40 flex items-center justify-center z-50 p-4 backdrop-blur-sm" onClick={() => setShowWorkoutForm(false)}>
+          <div className="bg-white rounded-3xl p-6 lg:p-8 w-full max-w-sm lg:max-w-md border border-gray-100 shadow-2xl" onClick={e => e.stopPropagation()}>
             {/* Header with close button */}
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg lg:text-xl font-bold text-amber-400">🏋️ Nuevo Entreno</h3>
-              <button onClick={() => setShowWorkoutForm(false)} className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white text-xl lg:text-2xl transition-colors">×</button>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl lg:text-2xl font-bold text-slate-900">🏋️ Nuevo Entreno</h3>
+              <button onClick={() => setShowWorkoutForm(false)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">×</button>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {/* Row 1: Type */}
                 <div>
-                <label className="block text-sm lg:text-base text-gray-400 mb-1">Tipo</label>
-                <select value={newWorkout.type} onChange={(e) => setNewWorkout({ ...newWorkout, type: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm lg:text-base">
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Tipo</label>
+                <select value={newWorkout.type} onChange={(e) => setNewWorkout({ ...newWorkout, type: e.target.value })} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all appearance-none cursor-pointer">
                     <option value="gym">Gym</option>
                     <option value="tennis">Tenis</option>
                     <option value="cardio">Cardio</option>
@@ -1493,33 +1505,33 @@ const NutritionTracker = () => {
                 </div>
               {/* Row 2: Name */}
               <div>
-                <label className="block text-sm lg:text-base text-gray-400 mb-1">Nombre *</label>
-                <input type="text" value={newWorkout.name} onChange={(e) => setNewWorkout({ ...newWorkout, name: e.target.value })} placeholder="Push Day, Clase de Tenis" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm lg:text-base" />
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Nombre *</label>
+                <input type="text" value={newWorkout.name} onChange={(e) => setNewWorkout({ ...newWorkout, name: e.target.value })} placeholder="Push Day, Clase de Tenis" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all" />
               </div>
               {/* Row 3: Stats */}
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Min</label>
-                  <input type="number" value={newWorkout.duration} onChange={(e) => setNewWorkout({ ...newWorkout, duration: e.target.value })} placeholder="60" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Min</label>
+                  <input type="number" value={newWorkout.duration} onChange={(e) => setNewWorkout({ ...newWorkout, duration: e.target.value })} placeholder="60" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Kcal</label>
-                  <input type="number" value={newWorkout.calories} onChange={(e) => setNewWorkout({ ...newWorkout, calories: e.target.value })} placeholder="300" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Kcal</label>
+                  <input type="number" value={newWorkout.calories} onChange={(e) => setNewWorkout({ ...newWorkout, calories: e.target.value })} placeholder="300" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-sm lg:text-base text-gray-400 mb-1">Vol (kg)</label>
-                  <input type="number" value={newWorkout.volume} onChange={(e) => setNewWorkout({ ...newWorkout, volume: e.target.value })} placeholder="2500" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-2 py-2.5 text-sm lg:text-base text-center" />
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">Vol (kg)</label>
+                  <input type="number" value={newWorkout.volume} onChange={(e) => setNewWorkout({ ...newWorkout, volume: e.target.value })} placeholder="2500" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all" />
                 </div>
               </div>
               {/* Row 4: Notes */}
               <div>
-                <label className="block text-sm lg:text-base text-gray-400 mb-1">Notas</label>
-                <input type="text" value={newWorkout.notes} onChange={(e) => setNewWorkout({ ...newWorkout, notes: e.target.value })} placeholder="Subí peso en press banca" className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2.5 text-sm lg:text-base" />
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Notas</label>
+                <input type="text" value={newWorkout.notes} onChange={(e) => setNewWorkout({ ...newWorkout, notes: e.target.value })} placeholder="Subí peso en press banca" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all" />
               </div>
             </div>
-            <div className="flex gap-3 mt-5">
-              <button onClick={() => setShowWorkoutForm(false)} className="flex-1 bg-gray-700 hover:bg-gray-600 py-3 rounded-lg text-sm lg:text-base font-medium transition-colors">Cancelar</button>
-              <button onClick={addManualWorkout} className="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 py-3 rounded-lg text-sm lg:text-base font-bold transition-all">Guardar</button>
+            <div className="flex gap-4 mt-8">
+              <button onClick={() => setShowWorkoutForm(false)} className="flex-1 bg-slate-100 hover:bg-slate-200 py-4 rounded-2xl text-slate-600 text-sm lg:text-base font-bold transition-all active:scale-95">Cancelar</button>
+              <button onClick={addManualWorkout} className="flex-1 bg-gradient-to-br from-amber-600 to-orange-500 hover:from-amber-500 hover:to-orange-400 py-4 rounded-2xl text-white text-sm lg:text-base font-bold shadow-lg shadow-orange-500/20 transition-all active:scale-95">Guardar</button>
             </div>
           </div>
         </div>
@@ -1527,20 +1539,27 @@ const NutritionTracker = () => {
 
       {/* Import Food Modal */}
       {showImportFoodModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-2 pt-10 overflow-y-auto">
-          <div className="bg-gray-800 rounded-lg p-4 w-full max-w-sm border border-gray-700">
-            <h3 className="text-base font-bold text-blue-400 mb-2">📥 Importar Comida</h3>
-            <p className="text-xs text-gray-400 mb-3">Pegá el JSON de la comida.</p>
+        <div className="fixed inset-0 bg-slate-900/40 flex items-start justify-center z-50 p-4 pt-20 overflow-y-auto backdrop-blur-sm">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-md border border-gray-100 shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-slate-900">📥 Importar Comida</h3>
+              <button onClick={() => { setShowImportFoodModal(false); setImportText(''); setImportError(''); }} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400">×</button>
+            </div>
+            <p className="text-sm text-slate-500 mb-4">Pegá el JSON de la comida generado por la IA.</p>
             <textarea
               value={importText}
               onChange={(e) => { setImportText(e.target.value); setImportError(''); }}
               placeholder={`{"meal": "Almuerzo", "name": "Pollo", "calories": 500, "protein": 40}`}
-              className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-xs font-mono h-36 resize-none"
+              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-slate-900 text-sm font-mono h-48 resize-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
             />
-            {importError && <p className="text-red-400 text-xs mt-2">{importError}</p>}
-            <div className="flex gap-2 mt-3">
-              <button onClick={() => { setShowImportFoodModal(false); setImportText(''); setImportError(''); }} className="flex-1 bg-gray-700 active:bg-gray-600 py-2.5 rounded text-sm">Cancelar</button>
-              <button onClick={handleImportFood} className="flex-1 bg-blue-600 active:bg-blue-500 py-2.5 rounded text-sm font-bold">Importar</button>
+            {importError && (
+              <div className="bg-red-50 text-red-500 text-xs p-3 rounded-xl mt-3 flex items-center gap-2">
+                <span>⚠️</span> {importError}
+              </div>
+            )}
+            <div className="flex gap-4 mt-6">
+              <button onClick={() => { setShowImportFoodModal(false); setImportText(''); setImportError(''); }} className="flex-1 bg-slate-100 hover:bg-slate-200 py-4 rounded-2xl text-slate-600 font-bold transition-all active:scale-95">Cancelar</button>
+              <button onClick={handleImportFood} className="flex-1 bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl text-white font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-95">Importar</button>
             </div>
           </div>
         </div>
@@ -1548,20 +1567,27 @@ const NutritionTracker = () => {
 
       {/* Import Workout Modal */}
       {showImportWorkoutModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-2 pt-10 overflow-y-auto">
-          <div className="bg-gray-800 rounded-lg p-4 w-full max-w-sm border border-gray-700">
-            <h3 className="text-base font-bold text-amber-400 mb-2">📥 Importar Entreno</h3>
-            <p className="text-xs text-gray-400 mb-3">Pegá el JSON del entreno (Gravl o IA).</p>
+        <div className="fixed inset-0 bg-slate-900/40 flex items-start justify-center z-50 p-4 pt-20 overflow-y-auto backdrop-blur-sm">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-md border border-gray-100 shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-slate-900">📥 Importar Entreno</h3>
+              <button onClick={() => { setShowImportWorkoutModal(false); setImportText(''); setImportError(''); }} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400">×</button>
+            </div>
+            <p className="text-sm text-slate-500 mb-4">Pegá el JSON del entreno (Gravl o IA).</p>
             <textarea
               value={importText}
               onChange={(e) => { setImportText(e.target.value); setImportError(''); }}
               placeholder={`{"type": "gym", "name": "Push Day", "duration": 60, "exercises": [...]}`}
-              className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-xs font-mono h-36 resize-none"
+              className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-slate-900 text-sm font-mono h-48 resize-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all"
             />
-            {importError && <p className="text-red-400 text-xs mt-2">{importError}</p>}
-            <div className="flex gap-2 mt-3">
-              <button onClick={() => { setShowImportWorkoutModal(false); setImportText(''); setImportError(''); }} className="flex-1 bg-gray-700 active:bg-gray-600 py-2.5 rounded text-sm">Cancelar</button>
-              <button onClick={handleImportWorkout} className="flex-1 bg-amber-600 active:bg-amber-500 py-2.5 rounded text-sm font-bold">Importar</button>
+            {importError && (
+              <div className="bg-red-50 text-red-500 text-xs p-3 rounded-xl mt-3 flex items-center gap-2">
+                <span>⚠️</span> {importError}
+              </div>
+            )}
+            <div className="flex gap-4 mt-6">
+              <button onClick={() => { setShowImportWorkoutModal(false); setImportText(''); setImportError(''); }} className="flex-1 bg-slate-100 hover:bg-slate-200 py-4 rounded-2xl text-slate-600 font-bold transition-all active:scale-95">Cancelar</button>
+              <button onClick={handleImportWorkout} className="flex-1 bg-amber-600 hover:bg-amber-500 py-4 rounded-2xl text-white font-bold shadow-lg shadow-amber-500/20 transition-all active:scale-95">Importar</button>
             </div>
           </div>
         </div>
@@ -1576,33 +1602,39 @@ const NutritionTracker = () => {
       )}
 
       {/* Header - Premium LukenFit branding */}
-      <header className="bg-gradient-to-r from-slate-900 via-gray-800 to-slate-900 border-b border-blue-500/20 px-4 lg:px-8 py-3 lg:py-4 sticky top-0 z-30">
+      <header className="bg-white/90 backdrop-blur-md border-b border-slate-100 px-4 lg:px-8 py-4 lg:py-5 sticky top-0 z-30 shadow-sm">
         <div className="max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto flex items-center justify-between gap-4">
-          <div className="min-w-0 flex-1 flex items-center gap-3">
-            {/* Logo - bigger */}
-            <svg viewBox="0 0 32 32" className="w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0">
-              <defs>
-                <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style={{ stopColor: '#3B82F6' }} />
-                  <stop offset="100%" style={{ stopColor: '#06B6D4' }} />
-                </linearGradient>
-              </defs>
-              <circle cx="16" cy="16" r="15" fill="#0F172A" stroke="url(#headerGrad)" strokeWidth="1" />
-              <path d="M10 7 L10 21 L19 21 L19 18 L13 18 L13 7 Z" fill="url(#headerGrad)" />
-              <path d="M18 7 L14 15 L17 15 L15 25 L23 14 L19 14 L22 7 Z" fill="url(#headerGrad)" opacity="0.9" />
-            </svg>
-          <div className="min-w-0">
-              <h1 className="text-xl lg:text-2xl font-extrabold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent truncate tracking-tight">LUKENFIT</h1>
-            <p className="text-sm text-gray-500 truncate">
-              {profile.currentWeight}kg → {profile.targetWeight}kg
-                {isTrainingDay(dashboardDate) && <span className="ml-1 text-amber-400">🏋️</span>}
-            </p>
+          <div className="min-w-0 flex-1 flex items-center gap-4">
+            {/* Logo - bigger and refined */}
+            <div className="relative">
+              <svg viewBox="0 0 32 32" className="w-12 h-12 lg:w-14 lg:h-14 flex-shrink-0">
+                <defs>
+                  <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style={{ stopColor: '#2563EB' }} />
+                    <stop offset="100%" style={{ stopColor: '#0891B2' }} />
+                  </linearGradient>
+                </defs>
+                <circle cx="16" cy="16" r="15" fill="#F8FAFC" stroke="url(#headerGrad)" strokeWidth="1.5" />
+                <path d="M10 7 L10 21 L19 21 L19 18 L13 18 L13 7 Z" fill="url(#headerGrad)" />
+                <path d="M18 7 L14 15 L17 15 L15 25 L23 14 L19 14 L22 7 Z" fill="url(#headerGrad)" opacity="0.9" />
+              </svg>
+              {isTrainingDay(dashboardDate) && (
+                <div className="absolute -top-1 -right-1 bg-amber-400 text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm">🏋️</div>
+              )}
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tighter">LUKEN<span className="text-blue-600">FIT</span></h1>
+              <p className="text-xs lg:text-sm font-bold text-slate-400 flex items-center gap-1.5">
+                <span className="bg-slate-100 px-2 py-0.5 rounded-full">{profile.currentWeight}kg</span>
+                <span className="text-slate-300">→</span>
+                <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">{profile.targetWeight}kg</span>
+              </p>
+            </div>
           </div>
-          </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-3 flex-shrink-0">
             {/* Save status */}
             {saveStatus && (
-              <span className="text-sm text-blue-400 bg-blue-500/10 px-2 py-1 rounded animate-pulse">{saveStatus}</span>
+              <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full animate-pulse border border-blue-100">{saveStatus}</span>
             )}
 
             {/* Sync status */}
@@ -1610,19 +1642,19 @@ const NutritionTracker = () => {
               <div className="flex items-center gap-2">
                 {/* Offline indicator */}
                 {!supabase.isOnline && (
-                  <span className="text-sm bg-amber-500/20 text-amber-400 px-2 py-1 rounded">📴 Offline</span>
+                  <span className="text-xs font-bold bg-amber-50 text-amber-600 px-3 py-1.5 rounded-full border border-amber-100">📴 Offline</span>
                 )}
 
-                {/* Sync status - bigger icons */}
+                {/* Sync status */}
                 {supabase.isOnline && (
-                  <span className={`w-8 h-8 lg:w-9 lg:h-9 rounded-lg flex items-center justify-center text-lg ${
-                    supabase.syncStatus === 'syncing' ? 'bg-blue-500/20 text-blue-400' :
-                    supabase.syncStatus === 'success' ? 'bg-green-500/20 text-green-400' :
-                    supabase.syncStatus === 'error' ? 'bg-red-500/20 text-red-400' :
-                    'bg-gray-700/50 text-gray-400'
+                  <span className={`w-10 h-10 lg:w-11 lg:h-11 rounded-2xl flex items-center justify-center text-xl shadow-sm border transition-all ${
+                    supabase.syncStatus === 'syncing' ? 'bg-blue-50 text-blue-600 border-blue-100' :
+                    supabase.syncStatus === 'success' ? 'bg-green-50 text-green-600 border-green-100' :
+                    supabase.syncStatus === 'error' ? 'bg-red-50 text-red-600 border-red-100' :
+                    'bg-slate-50 text-slate-400 border-slate-100'
                   }`}>
                     {supabase.syncStatus === 'syncing' ? (
-                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <svg className="animate-spin h-6 w-6" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                       </svg>
@@ -1637,27 +1669,27 @@ const NutritionTracker = () => {
                     e.stopPropagation();
                     await forceSyncToCloud();
                   }}
-                  className="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-xl bg-green-500/20 hover:bg-green-500/40 active:bg-green-500/60 text-green-400 hover:text-green-300 transition-all touch-manipulation"
+                  className="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-2xl bg-white hover:bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 transition-all shadow-sm active:scale-90"
                   title="Forzar sincronización a la nube"
                   style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 lg:h-6 lg:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                 </button>
 
-                {/* Logout button - bigger and more visible */}
+                {/* Logout button */}
                 <button
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     handleLogout();
                   }}
-                  className="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-xl bg-red-500/20 hover:bg-red-500/40 active:bg-red-500/60 text-red-400 hover:text-red-300 transition-all touch-manipulation"
+                  className="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-2xl bg-white hover:bg-red-50 border border-slate-100 text-slate-400 hover:text-red-600 transition-all shadow-sm active:scale-90"
                   title="Cerrar sesión"
                   style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 lg:h-6 lg:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 lg:w-6 lg:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                   </svg>
                 </button>
@@ -1668,7 +1700,7 @@ const NutritionTracker = () => {
                   setShowAuth(true);
                   setOfflineMode(false);
                 }}
-                className="text-sm text-blue-400 hover:text-cyan-300 px-3 py-2 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
+                className="text-sm font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-5 py-2.5 rounded-2xl border border-blue-100 shadow-sm transition-all active:scale-95"
               >
                 Login
               </button>
@@ -1709,269 +1741,129 @@ const NutritionTracker = () => {
         <main className="p-4 lg:p-6 xl:p-8 pb-32 md:pb-36 w-full max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto">
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
-            <div className="space-y-4 lg:space-y-6">
-              {/* Date Navigator - Premium Design */}
-              <div className="flex items-center justify-center gap-4 lg:gap-6">
-              <button
-                  onClick={() => setDashboardDate(changeDate(dashboardDate, -1))}
-                  className="group w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gray-800/80 backdrop-blur border border-gray-700 hover:border-blue-500/50 hover:bg-gray-700/80 transition-all duration-200 flex items-center justify-center"
-              >
-                  <svg className="w-5 h-5 lg:w-6 lg:h-6 text-gray-400 group-hover:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-              </button>
-                <div className="text-center px-6 py-3 lg:px-10 lg:py-4 bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-gray-700/50">
-                  <div className="flex items-center justify-center gap-3">
-                    <span className="text-lg lg:text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">{formatDateDisplay(dashboardDate)}</span>
-                    {isDayCompleted(dashboardDate) && <span className="text-blue-400 text-base lg:text-lg">✓</span>}
-                    {isTrainingDay(dashboardDate) && <span className="text-amber-400 text-base lg:text-lg">🏋️</span>}
-                  </div>
-                  <p className="text-xs lg:text-sm text-gray-500 mt-1">{dashboardDate}</p>
-                </div>
-              <button
-                  onClick={() => setDashboardDate(changeDate(dashboardDate, 1))}
-                  disabled={dashboardDate >= getArgentinaDateString()}
-                  className={`group w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gray-800/80 backdrop-blur border border-gray-700 transition-all duration-200 flex items-center justify-center ${dashboardDate >= getArgentinaDateString() ? 'opacity-30 cursor-not-allowed' : 'hover:border-blue-500/50 hover:bg-gray-700/80'}`}
-              >
-                  <svg className={`w-5 h-5 lg:w-6 lg:h-6 transition-colors ${dashboardDate >= getArgentinaDateString() ? 'text-gray-600' : 'text-gray-400 group-hover:text-blue-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-              </button>
-            </div>
-
-              {/* Desktop: 2-column layout / Mobile: single column */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-                {/* Left Column - Macros */}
-                <div className="space-y-4 lg:space-y-5">
-                  {/* Macro Card - Glass Effect */}
-                  <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm rounded-2xl p-4 lg:p-6 border border-gray-700/50 shadow-xl shadow-black/20 hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-300">
-                    <div className="flex justify-between items-center mb-4 lg:mb-6">
-                      <h2 className="text-base lg:text-lg font-bold text-white flex items-center gap-2">
-                        <span className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-lg lg:text-xl">📊</span>
-                        Macros
-                      </h2>
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm text-gray-400">{getFoodsForDate(dashboardDate).length} comidas</span>
-                        <button onClick={copyMealsFromYesterday} className="text-xs bg-gray-700/80 hover:bg-gray-600 px-3 py-1.5 rounded-lg transition-colors">📋 Copiar ayer</button>
-                </div>
-            </div>
-
-                    {/* Macro circles - Larger on desktop */}
-                    <div className="flex justify-around items-start mb-5 lg:mb-6">
-                      <CircularProgress current={dashboardTotals.calories} target={dashboardTargets.calories} label="Calorías" color="#3B82F6" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
-                      <CircularProgress current={dashboardTotals.protein} target={dashboardTargets.protein} label="Proteína" color="#06B6D4" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
-                      <CircularProgress current={dashboardTotals.carbs} target={dashboardTargets.carbs} label="Carbos" color="#f59e0b" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
-                      <CircularProgress current={dashboardTotals.fat} target={dashboardTargets.fat} label="Grasas" color="#ec4899" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
-                      <CircularProgress current={dashboardTotals.fiber} target={dashboardTargets.fiber} label="Fibra" color="#8b5cf6" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
-              </div>
-
-                    <div className="space-y-2 pt-4 border-t border-gray-700/50">
-                      <ProgressBar current={dashboardTotals.calories} target={dashboardTargets.calories} label="Calorías" unit="kcal" color="bg-blue-500" />
-                      <ProgressBar current={dashboardTotals.protein} target={dashboardTargets.protein} label="Proteína" unit="g" color="bg-cyan-500" />
-                <ProgressBar current={dashboardTotals.carbs} target={dashboardTargets.carbs} label="Carbos" unit="g" color="bg-amber-500" />
-                <ProgressBar current={dashboardTotals.fat} target={dashboardTargets.fat} label="Grasas" unit="g" color="bg-pink-500" />
-                <ProgressBar current={dashboardTotals.fiber} target={dashboardTargets.fiber} label="Fibra" unit="g" color="bg-purple-500" />
-              </div>
-            </div>
-
-                  {/* Remaining Card */}
-                  <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm rounded-2xl p-4 lg:p-5 border border-gray-700/50 shadow-xl shadow-black/20">
-                    <h3 className="text-sm lg:text-base font-bold text-white mb-3 flex items-center gap-2">
-                      <span className="w-7 h-7 lg:w-8 lg:h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">🎯</span>
-                      Te quedan
-                    </h3>
-                    <div className="grid grid-cols-5 gap-2 lg:gap-3">
-                      {[
-                        { val: dashboardTargets.calories - dashboardTotals.calories, label: 'kcal', color: '#3B82F6' },
-                        { val: dashboardTargets.protein - dashboardTotals.protein, label: 'prot', color: '#06B6D4', suffix: 'g' },
-                  { val: dashboardTargets.carbs - dashboardTotals.carbs, label: 'carbs', color: '#f59e0b', suffix: 'g' },
-                  { val: dashboardTargets.fat - dashboardTotals.fat, label: 'fat', color: '#ec4899', suffix: 'g' },
-                  { val: dashboardTargets.fiber - dashboardTotals.fiber, label: 'fibra', color: '#8b5cf6', suffix: 'g' }
-                ].map((item, i) => (
-                        <div key={i} className="text-center p-2 lg:p-3 bg-gray-700/40 rounded-xl hover:bg-gray-700/60 transition-colors">
-                          <div className="text-base lg:text-xl font-bold" style={{ color: item.val < 0 ? '#f87171' : item.color }}>{item.val}{item.suffix || ''}</div>
-                          <div className="text-xs lg:text-xs text-gray-400 mt-0.5">{item.label}</div>
-                  </div>
-                ))}
-                    </div>
-              </div>
+            <div className="space-y-6">
+              {/* Date Navigator - Clean Desktop Design */}
+              <div className="flex items-center lg:items-start lg:w-full lg:mb-8 justify-center lg:justify-between px-1">
+                <div className="hidden lg:block">
+                  <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+                  <p className="text-sm text-gray-500">Resumen diario</p>
                 </div>
 
-                {/* Right Column - Activity & Meals */}
-                <div className="space-y-4 lg:space-y-5">
-                  {/* Quick Access - Pasos & Oura */}
-                  <div className="grid grid-cols-2 gap-3 lg:gap-4">
-                    <button onClick={() => setActiveTab('pasos')} className="group bg-gradient-to-br from-cyan-500/10 to-cyan-600/5 backdrop-blur-sm border border-cyan-500/30 rounded-2xl p-4 lg:p-5 flex flex-col items-center gap-2 hover:border-cyan-400/50 hover:shadow-lg hover:shadow-cyan-500/10 transition-all duration-300">
-                      <span className="text-2xl lg:text-3xl group-hover:scale-110 transition-transform">👟</span>
-                      <span className="text-cyan-400 text-lg lg:text-xl font-bold">{getStepsForDate(dashboardDate).toLocaleString()}</span>
-                      <span className="text-cyan-400/60 text-xs lg:text-sm">pasos hoy</span>
-                    </button>
-                    <button onClick={() => setActiveTab('oura')} className="group bg-gradient-to-br from-purple-500/10 to-purple-600/5 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-4 lg:p-5 flex flex-col items-center gap-2 hover:border-purple-400/50 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
-                      <span className="text-2xl lg:text-3xl group-hover:scale-110 transition-transform">💍</span>
-                      <span className="text-purple-400 text-lg lg:text-xl font-bold">Oura</span>
-                      <span className="text-purple-400/60 text-xs lg:text-sm">biométricos</span>
-                    </button>
+                <div className="flex items-center gap-4 bg-white p-1 rounded-2xl shadow-sm border border-gray-100">
+                  <button
+                      onClick={() => setDashboardDate(changeDate(dashboardDate, -1))}
+                      className="w-10 h-10 rounded-xl hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors flex items-center justify-center"
+                  >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                  </button>
+                  <div className="text-center min-w-[120px]">
+                    <span className="block text-sm font-bold text-gray-900">{formatDateDisplay(dashboardDate)}</span>
                   </div>
+                  <button
+                      onClick={() => setDashboardDate(changeDate(dashboardDate, 1))}
+                      disabled={dashboardDate >= getArgentinaDateString()}
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${dashboardDate >= getArgentinaDateString() ? 'text-gray-200 cursor-not-allowed' : 'hover:bg-gray-50 text-gray-400 hover:text-blue-500'}`}
+                  >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                  </button>
+                </div>
+              </div>
 
-                  {/* Water Card */}
-                  <div className="bg-gradient-to-br from-cyan-500/10 to-gray-900/90 backdrop-blur-sm rounded-2xl p-4 lg:p-5 border border-cyan-500/30 shadow-xl shadow-black/20">
-                    <div className="flex justify-between items-center mb-3">
-                      <h3 className="text-sm lg:text-base font-bold text-white flex items-center gap-2">
-                        <span className="w-7 h-7 lg:w-8 lg:h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">💧</span>
-                        Agua
-                      </h3>
-                      <span className="text-lg lg:text-xl font-bold text-cyan-400">{getTodayWater().glasses}/{WATER_GOAL_GLASSES}</span>
-                    </div>
+              {/* Dashboard Content - Flex Desktop Layout */}
+              <div className="flex flex-col lg:flex-row gap-6 items-start">
 
-                    <div className="flex justify-center gap-1 lg:gap-1.5 mb-4">
-                      {Array.from({ length: WATER_GOAL_GLASSES }).map((_, i) => (
-                        <div
-                          key={i}
-                          className={`w-5 h-7 lg:w-6 lg:h-8 rounded transition-all duration-300 ${
-                            i < getTodayWater().glasses
-                              ? 'bg-gradient-to-t from-cyan-500 to-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.5)]'
-                              : 'bg-gray-700/60'
-                          }`}
-                        />
-                      ))}
-                    </div>
+                {/* Left Column - Main Tracking (67%) */}
+                <div className="w-full lg:w-8/12 space-y-4 lg:space-y-6">
+                 {/* Summary Card */}
+                <SummaryCard totals={dashboardTotals} targets={dashboardTargets} />
 
-                    <div className="flex justify-center gap-3">
-                      <button
-                        onClick={removeWaterGlass}
-                        disabled={getTodayWater().glasses <= 0}
-                        className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gray-700/80 hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-xl transition-all"
-                      >
-                        −
-                      </button>
-                      <button
-                        onClick={addWaterGlass}
-                        className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 flex items-center justify-center text-xl font-bold text-white transition-all shadow-lg shadow-cyan-500/30"
-                      >
-                        +
-                      </button>
-                    </div>
-                    <p className="text-center text-xs lg:text-sm text-gray-400 mt-2">{getTodayWater().ml || 0} ml / {WATER_GOAL_GLASSES * 250} ml</p>
-            </div>
+                {/* Macro Cards */}
+                <MacroCards totals={dashboardTotals} targets={dashboardTargets} />
 
-            {/* Meals Summary */}
-            {getFoodsForDate(dashboardDate).length > 0 && (
-                    <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm rounded-2xl p-4 lg:p-5 border border-gray-700/50 shadow-xl shadow-black/20">
-                      <h3 className="text-sm lg:text-base font-bold text-white mb-3 flex items-center gap-2">
-                        <span className="w-7 h-7 lg:w-8 lg:h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">🍽️</span>
-                        Comidas de hoy
-                      </h3>
-                      <div className="space-y-2 max-h-48 lg:max-h-64 overflow-y-auto">
-                  {getFoodsForDate(dashboardDate).map(food => (
-                          <div key={food.id} className="flex justify-between items-center p-2 lg:p-3 bg-gray-700/30 rounded-xl hover:bg-gray-700/50 transition-colors">
-                      <div className="min-w-0 flex-1">
-                              <span className="text-xs lg:text-xs text-blue-400 uppercase font-medium">{food.meal}</span>
-                              <p className="text-sm lg:text-base text-gray-200 truncate">{food.name}</p>
+                  <ActivityCards
+                    steps={getStepsForDate(dashboardDate)}
+                    stepsTarget={10000}
+                    water={getTodayWater().glasses}
+                    waterTarget={WATER_GOAL_GLASSES}
+                    onAddWater={addWaterGlass}
+                  />
+
+                  {/* Training Widget */}
+                  <TrainingWidget
+                    gymCount={workoutAnalysis.gymCount}
+                    tennisCount={workoutAnalysis.tennisCount}
+                    totalDuration={workoutAnalysis.totalDuration}
+                    analysis={workoutAnalysis.analysis}
+                  />
+                </div>
+
+              {/* Right Column - Analytics & Weight (33%) */}
+              <div className="lg:w-4/12 space-y-4 lg:space-y-6">
+                {/* Weight Chart */}
+                <WeightChartCard
+                  data={weightHistory}
+                  currentWeight={getMostRecentWeight(weightHistory)?.weight || profile.currentWeight}
+                  targetWeight={profile.targetWeight}
+                />
+
+                {/* Weight Projection */}
+                {weightProjection && (
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50">
+                    <h3 className="text-gray-900 font-bold text-lg mb-4">Proyección</h3>
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="text-center p-3 bg-gray-50 rounded-xl">
+                        <div className="text-xl font-bold text-gray-900">{weightProjection.weeklyRate > 0 ? '-' : '+'}{Math.abs(weightProjection.weeklyRate)} <span className="text-xs font-normal text-gray-500">kg/sem</span></div>
+                        <div className="text-xs text-gray-400 mt-1">Ritmo actual</div>
                       </div>
-                            <div className="flex gap-2 text-xs lg:text-sm flex-shrink-0 ml-3">
-                              <span className="text-blue-400 font-medium">{food.calories} kcal</span>
-                              <span className="text-cyan-400">{food.protein}p</span>
+                      <div className="text-center p-3 bg-gray-50 rounded-xl">
+                        <div className="text-xl font-bold text-blue-600">
+                          {weightProjection.weeksToGoal ? `~${weightProjection.weeksToGoal}` : '-'} <span className="text-xs font-normal text-gray-500">sem</span>
+                        </div>
+                        <div className="text-xs text-gray-400 mt-1">Para objetivo</div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-              </div>
-            </div>
-
-            {/* Charts */}
-            <div className="grid grid-cols-2 gap-3">
-              <SimpleBarChart data={weeklyData} dataKey="calories" target={customTargets.calories} color="bg-blue-500" label="Calorías 7d" />
-              <SimpleBarChart data={weeklyData} dataKey="protein" target={customTargets.protein} color="bg-blue-500" label="Proteína 7d" />
-            </div>
-
-            {/* Weekly Adherence */}
-            <div className="grid grid-cols-2 gap-3">
-              <AdherenceCard data={weekComparison.thisWeek} label="📊 ESTA SEMANA" />
-              <AdherenceCard data={weekComparison.lastWeek} label="📊 SEMANA PASADA" />
-            </div>
-
-            {/* Week vs Week Comparison */}
-            <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-xs font-bold text-blue-400">📈 ESTA SEMANA VS ANTERIOR</h3>
-                <button
-                  onClick={() => setShowWeeklyReport(true)}
-                  className="text-xs text-blue-400 hover:text-cyan-400 px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg transition-colors"
-                >
-                  📊 Ver Reporte
-                </button>
-              </div>
-              <div className="grid grid-cols-3 gap-3 text-center">
-                <div>
-                  <div className="text-sm text-gray-400">Calorías/día</div>
-                  <div className="text-lg font-bold text-white">{weekComparison.thisWeek.avgCals || '-'}</div>
-                  <div className={`text-xs ${weekComparison.calsDiff < 0 ? 'text-blue-400' : weekComparison.calsDiff > 0 ? 'text-red-400' : 'text-gray-400'}`}>
-                    {weekComparison.calsDiff !== 0 && (weekComparison.calsDiff > 0 ? '+' : '')}{weekComparison.calsDiff || '='} vs anterior
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-400">Proteína/día</div>
-                  <div className="text-lg font-bold text-white">{weekComparison.thisWeek.avgProt || '-'}g</div>
-                  <div className={`text-xs ${weekComparison.protDiff > 0 ? 'text-blue-400' : weekComparison.protDiff < 0 ? 'text-red-400' : 'text-gray-400'}`}>
-                    {weekComparison.protDiff !== 0 && (weekComparison.protDiff > 0 ? '+' : '')}{weekComparison.protDiff || '='}g vs anterior
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-400">Pasos/día</div>
-                  <div className="text-lg font-bold text-white">{weekComparison.thisWeek.avgSteps?.toLocaleString() || '-'}</div>
-                  <div className={`text-xs ${weekComparison.stepsDiff > 0 ? 'text-blue-400' : weekComparison.stepsDiff < 0 ? 'text-red-400' : 'text-gray-400'}`}>
-                    {weekComparison.stepsDiff !== 0 && (weekComparison.stepsDiff > 0 ? '+' : '')}{weekComparison.stepsDiff?.toLocaleString() || '='} vs anterior
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Weight Projection */}
-            {weightProjection && (
-              <div className="bg-gray-800 rounded-lg p-3 border border-amber-500/30">
-                <h3 className="text-xs font-bold text-amber-400 mb-2">🎯 PROYECCIÓN</h3>
-                <div className="grid grid-cols-2 gap-3 mb-2">
-                  <div className="text-center p-2 bg-gray-700/50 rounded">
-                    <div className="text-lg font-bold text-white">{weightProjection.weeklyRate > 0 ? '-' : '+'}{Math.abs(weightProjection.weeklyRate)} kg/sem</div>
-                    <div className="text-xs text-gray-400">Ritmo actual</div>
-                  </div>
-                  <div className="text-center p-2 bg-gray-700/50 rounded">
-                    <div className="text-lg font-bold text-blue-400">
-                      {weightProjection.weeksToGoal ? `~${weightProjection.weeksToGoal} sem` : '-'}
-                    </div>
-                    <div className="text-xs text-gray-400">Para objetivo</div>
-                  </div>
-                </div>
-                {weightProjection.goalDate && (
-                  <p className="text-xs text-gray-400 text-center">Fecha estimada: <span className="text-blue-400">{weightProjection.goalDate}</span></p>
+                    {weightProjection.goalDate && (
+                      <div className="mb-4 text-center">
+                         <span className="text-xs text-gray-400">Fecha estimada: </span>
+                         <span className="text-sm font-semibold text-gray-900">{weightProjection.goalDate}</span>
+                      </div>
+                    )}
+                    {weightProjection.recommendation && (
+                      <div className={`p-3 rounded-xl text-xs leading-relaxed ${weightProjection.recommendation.type === 'good' ? 'bg-blue-50 text-blue-700' :
+                        weightProjection.recommendation.type === 'decrease' ? 'bg-amber-50 text-amber-700' :
+                          'bg-red-50 text-red-700'
+                        }`}>
+                        💡 {weightProjection.recommendation.text}
+                      </div>
                 )}
-                {weightProjection.recommendation && (
-                  <div className={`mt-2 p-2 rounded text-xs ${weightProjection.recommendation.type === 'good' ? 'bg-blue-900/30 text-blue-400' :
-                    weightProjection.recommendation.type === 'decrease' ? 'bg-amber-900/30 text-amber-400' :
-                      'bg-red-900/30 text-red-400'
-                    }`}>
-                    💡 {weightProjection.recommendation.text}
+                    <p className="text-[10px] text-gray-400 mt-3 text-center">Basado en {weightProjection.dataPoints} registros ({weightProjection.daysCovered} días)</p>
                   </div>
                 )}
-                <p className="text-xs text-gray-500 mt-2 text-center">Basado en {weightProjection.dataPoints} registros ({weightProjection.daysCovered} días)</p>
               </div>
-            )}
+            </div>
           </div>
         )}
 
         {/* Comidas Tab - uses selectedFoodDate */}
         {activeTab === 'comidas' && (
-          <div className="space-y-3">
-            {/* Date selector - compact */}
-            <div className="flex items-center gap-2">
-              <input
-                type="date"
-                value={selectedFoodDate}
-                onChange={(e) => setSelectedFoodDate(e.target.value)}
-                className="bg-gray-800 border border-gray-600 rounded px-3 py-2.5 text-base flex-1 min-w-0"
-              />
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Diario</h1>
+                <p className="text-sm text-gray-500">Registro de alimentos</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={selectedFoodDate}
+                  onChange={(e) => setSelectedFoodDate(e.target.value)}
+                  className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-base flex-1 min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                />
+              </div>
             </div>
 
             {/* Swipe hint */}
@@ -1980,107 +1872,73 @@ const NutritionTracker = () => {
             )}
 
             {getFoodsForDate(selectedFoodDate).length === 0 ? (
-              <div className="bg-gray-800 rounded-lg p-6 text-center border border-gray-700">
-                <p className="text-gray-400 text-base">Sin comidas registradas.</p>
-                <p className="text-sm text-blue-400 mt-2">Usá el botón + abajo a la derecha</p>
+              <div className="bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm">
+                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">🍽️</span>
+                </div>
+                <h3 className="text-gray-900 font-bold text-lg mb-1">Sin comidas registradas</h3>
+                <p className="text-gray-500 text-sm">Registra tu primera comida del día.</p>
+                <button
+                  onClick={() => { setNewFood({ ...newFood, date: selectedFoodDate, meal: 'Desayuno' }); setShowFoodForm(true); }}
+                  className="mt-6 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-blue-600/20"
+                >
+                  Registrar Comida
+                </button>
               </div>
             ) : (
-              <div className="space-y-2">
-                {getFoodsForDate(selectedFoodDate).map(entry => {
-                  const needsReview = !entry.reviewed || (entry.confidence && entry.confidence < 0.7);
-                  // Format time to HH:MM (remove seconds if present)
-                  const displayTime = entry.time ? entry.time.substring(0, 5) : '';
+              <div className="space-y-6 pb-24">
+                {['Desayuno', 'Almuerzo', 'Cena', 'Snack'].map(mealType => {
+                  const mealFoods = getFoodsForDate(selectedFoodDate).filter(f =>
+                     // Normalize string comparison
+                     (f.meal || '').toLowerCase() === mealType.toLowerCase() ||
+                     // Fallback for old data or mismatches
+                     (mealType === 'Snack' && !['desayuno', 'almuerzo', 'cena'].includes((f.meal || '').toLowerCase()))
+                  );
+
+                  // Skip section if no foods (optional: keeping it clean)
+                 // if (mealFoods.length === 0) return null;
+
+                  // Calculate totals for this meal
+                  const mealTotals = mealFoods.reduce((acc, food) => ({
+                    calories: acc.calories + (parseInt(food.calories) || 0)
+                  }), { calories: 0 });
+
                   return (
-                    <SwipeableItem
-                      key={entry.id}
-                      onDelete={() => confirmDelete('food', entry.id, entry.name)}
-                    >
-                      <div className={`p-3 border-l-4 ${needsReview ? 'border-l-amber-500' : 'border-l-blue-500'}`}>
-                      <div className="flex justify-between items-start mb-1">
-                        <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-xs text-blue-400 uppercase font-medium">{entry.meal}</span>
-                              {displayTime && <span className="text-xs text-gray-500">{displayTime}</span>}
-                            {needsReview && (
-                                <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">⚠️</span>
-                            )}
-                          </div>
-                            <h3 className="font-medium text-base truncate">{entry.name}</h3>
-                        </div>
-                          {needsReview && (
-                            <button onClick={() => confirmFood(entry.id)} className="text-blue-400 active:text-cyan-300 px-2 py-1 text-sm font-medium bg-blue-500/20 rounded ml-2 flex-shrink-0">✓</button>
-                          )}
-                        </div>
-                        {entry.description && <p className="text-xs text-gray-400 mb-1.5 truncate-2">{entry.description}</p>}
-                        <div className="flex justify-between items-center">
-                          <div className="flex flex-wrap gap-2 text-xs">
-                            <span className="text-blue-400 font-medium">{entry.calories}kcal</span>
-                            <span className="text-blue-400">{entry.protein}P</span>
-                            <span className="text-amber-400">{entry.carbs}C</span>
-                            <span className="text-pink-400">{entry.fat}F</span>
-                            {entry.fiber > 0 && <span className="text-purple-400">{entry.fiber}Fib</span>}
-                      </div>
-                          {/* Action buttons */}
-                          <div className="flex items-center gap-1">
-                            <button
-                              onClick={() => {
-                                setNewFood({
-                                  ...entry,
-                                  time: displayTime,
-                                  calories: entry.calories.toString(),
-                                  protein: entry.protein.toString(),
-                                  carbs: entry.carbs.toString(),
-                                  fat: entry.fat.toString(),
-                                  fiber: entry.fiber?.toString() || '0'
-                                });
-                                setEditingFoodId(entry.id);
-                                setShowFoodForm(true);
-                              }}
-                              className="text-blue-400 hover:text-blue-300 text-sm px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 rounded transition-colors"
-                              title="Editar"
-                            >
-                              ✏️
-                            </button>
-                            <button
-                              onClick={() => confirmDelete('food', entry.id, entry.name)}
-                              className="text-red-400 hover:text-red-300 text-sm px-2 py-1 bg-red-500/10 hover:bg-red-500/20 rounded transition-colors"
-                              title="Eliminar"
-                            >
-                              🗑️
-                            </button>
-                            <button
-                              onClick={() => saveAsTemplate(entry)}
-                              className="text-purple-400 hover:text-purple-300 text-sm px-2 py-1 bg-purple-500/10 hover:bg-purple-500/20 rounded transition-colors"
-                              title="Guardar como favorito"
-                            >
-                              ⭐
-                            </button>
-                      </div>
-                    </div>
-                      </div>
-                    </SwipeableItem>
+                    <MealSection
+                      key={mealType}
+                      title={mealType}
+                      foods={mealFoods}
+                      totals={mealTotals}
+                      onAddFood={() => {
+                        setNewFood({ ...newFood, date: selectedFoodDate, meal: mealType });
+                        setShowFoodForm(true);
+                      }}
+                      onEditFood={(food) => {
+                        setNewFood({
+                            ...food,
+                            calories: food.calories.toString(),
+                            protein: food.protein.toString(),
+                            carbs: food.carbs.toString(),
+                            fat: food.fat.toString(),
+                            fiber: food.fiber?.toString() || '0'
+                        });
+                        setEditingFoodId(food.id);
+                        setShowFoodForm(true);
+                      }}
+                      onDeleteFood={(food) => confirmDelete('food', food.id, food.name)}
+                    />
                   );
                 })}
               </div>
             )}
 
-            {getFoodsForDate(selectedFoodDate).length > 0 && (
-              <div className="bg-gray-800 rounded-lg p-4 border border-blue-500/30">
-                <h3 className="text-sm font-bold text-blue-400 mb-3">TOTAL DEL DÍA</h3>
-                {(() => {
-                  const t = getTotalsForDate(selectedFoodDate);
-                  return (
-                    <div className="grid grid-cols-5 gap-2 text-center">
-                      <div><span className="text-base font-bold text-blue-400">{t.calories}</span><br /><span className="text-xs text-gray-400">kcal</span></div>
-                      <div><span className="text-base font-bold text-blue-400">{t.protein}g</span><br /><span className="text-xs text-gray-400">prot</span></div>
-                      <div><span className="text-base font-bold text-amber-400">{t.carbs}g</span><br /><span className="text-xs text-gray-400">carbs</span></div>
-                      <div><span className="text-base font-bold text-pink-400">{t.fat}g</span><br /><span className="text-xs text-gray-400">fat</span></div>
-                      <div><span className="text-base font-bold text-purple-400">{t.fiber}g</span><br /><span className="text-xs text-gray-400">fibra</span></div>
-                    </div>
-                  );
-                })()}
-              </div>
-            )}
+            {/* Sticky Day Summary Footer */}
+             {getFoodsForDate(selectedFoodDate).length > 0 && (
+                <DaySummary
+                  totals={getTotalsForDate(selectedFoodDate)}
+                  targets={getTargetsForDate(selectedFoodDate)}
+                />
+             )}
           </div>
         )}
 
@@ -2088,23 +1946,23 @@ const NutritionTracker = () => {
         {activeTab === 'entrenos' && (
           <div className="space-y-3">
             {/* Weekly Analysis */}
-            <div className="bg-gray-800 rounded-lg p-3 border border-blue-500/30">
-              <div className="flex justify-between items-center mb-2">
-                <h2 className="text-xs font-bold text-blue-400">📊 SEMANA</h2>
+            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-sm font-bold text-gray-900">Resumen Semanal</h2>
                 <span className="text-xs text-gray-500">desde {workoutAnalysis.weekStart}</span>
               </div>
               <div className="grid grid-cols-3 gap-2 mb-2">
-                <div className="text-center p-2 bg-gray-700/50 rounded">
-                  <div className="text-lg font-bold text-amber-400">{workoutAnalysis.gymCount}</div>
-                  <div className="text-xs text-gray-400">Gym</div>
+                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                  <div className="text-xl font-bold text-amber-500">{workoutAnalysis.gymCount}</div>
+                  <div className="text-xs text-gray-500 font-medium">Gym</div>
                 </div>
-                <div className="text-center p-2 bg-gray-700/50 rounded">
-                  <div className="text-lg font-bold text-green-400">{workoutAnalysis.tennisCount}</div>
-                  <div className="text-xs text-gray-400">Tenis</div>
+                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                  <div className="text-xl font-bold text-green-500">{workoutAnalysis.tennisCount}</div>
+                  <div className="text-xs text-gray-500 font-medium">Tenis</div>
                 </div>
-                <div className="text-center p-2 bg-gray-700/50 rounded">
-                  <div className="text-lg font-bold text-cyan-400">{workoutAnalysis.totalDuration}'</div>
-                  <div className="text-xs text-gray-400">Min</div>
+                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                  <div className="text-xl font-bold text-cyan-500">{workoutAnalysis.totalDuration}'</div>
+                  <div className="text-xs text-gray-500 font-medium">Min</div>
                 </div>
               </div>
               <div className="space-y-0.5">
@@ -2112,24 +1970,31 @@ const NutritionTracker = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <input
-                type="date"
-                value={selectedWorkoutDate}
-                onChange={(e) => setSelectedWorkoutDate(e.target.value)}
-                className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2.5 text-base min-w-0"
-              />
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Entrenos</h1>
+                <p className="text-sm text-gray-500">Registro de actividad física</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={selectedWorkoutDate}
+                  onChange={(e) => setSelectedWorkoutDate(e.target.value)}
+                  className="bg-white border border-gray-100 rounded-xl px-4 py-2 text-gray-900 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm"
+                />
+              </div>
             </div>
 
             {/* Swipe hint */}
             {getWorkoutsForDate(selectedWorkoutDate).length > 0 && (
-              <p className="text-xs text-gray-500 text-center">← Desliza para eliminar</p>
+              <p className="text-xs text-gray-400 text-center uppercase tracking-widest font-bold">← Desliza para eliminar</p>
             )}
 
             {getWorkoutsForDate(selectedWorkoutDate).length === 0 ? (
-              <div className="bg-gray-800 rounded-lg p-6 text-center border border-gray-700">
-                <p className="text-gray-400 text-base">Sin entrenos para esta fecha.</p>
-                <p className="text-sm text-amber-400 mt-2">Usá el botón + abajo a la derecha</p>
+              <div className="bg-white rounded-2xl p-12 text-center border border-gray-100 shadow-sm">
+                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">💪</div>
+                <h3 className="text-gray-900 font-bold text-lg mb-1">Sin entrenos registrados</h3>
+                <p className="text-gray-500 text-sm">Registra tu actividad para hoy.</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -2140,38 +2005,68 @@ const NutritionTracker = () => {
                       key={workout.id}
                       onDelete={() => confirmDelete('workout', workout.id, workout.name)}
                     >
-                      <div className={`p-3 border-l-4 ${workout.type === 'gym' ? 'border-l-amber-500' : 'border-l-green-500'}`}>
-                      <div className="flex justify-between items-start mb-1">
+                      <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm relative overflow-hidden">
+                        {/* Type Indicator */}
+                        <div className={`absolute top-0 left-0 bottom-0 w-1.5 ${workout.type === 'gym' ? 'bg-amber-500' : 'bg-green-500'}`} />
+
+                        <div className="flex justify-between items-start mb-2 pl-2">
                           <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className={`text-xs uppercase font-medium ${workout.type === 'gym' ? 'text-amber-400' : 'text-green-400'}`}>{workout.type}</span>
-                            {needsReview && (
-                                <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">⚠️</span>
-                            )}
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${workout.type === 'gym' ? 'bg-amber-50 text-amber-600' : 'bg-green-50 text-green-600'}`}>
+                                {workout.type}
+                              </span>
+                              {needsReview && (
+                                <span className="text-[10px] bg-red-50 text-red-600 px-2 py-0.5 rounded-full font-bold">REVISAR</span>
+                              )}
+                            </div>
+                            <h3 className="font-bold text-gray-900 text-lg leading-tight truncate">{workout.name}</h3>
                           </div>
-                            <h3 className="font-medium text-base truncate">{workout.name}</h3>
-                        </div>
                           {needsReview && (
-                            <button onClick={() => confirmWorkout(workout.id)} className="text-blue-400 active:text-cyan-300 px-2 py-1 text-sm font-medium bg-blue-500/20 rounded ml-2 flex-shrink-0">✓</button>
+                            <button onClick={() => confirmWorkout(workout.id)} className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/20 active:scale-90 transition-transform flex-shrink-0">
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                </svg>
+                            </button>
                           )}
                         </div>
-                        <div className="flex flex-wrap gap-2 text-xs text-gray-400 mb-2">
-                        {workout.duration && <span>⏱️ {workout.duration}'</span>}
-                          {workout.volume && <span>📊 {workout.volume.toLocaleString()}kg</span>}
-                        {workout.calories && <span>🔥 {workout.calories}</span>}
-                      </div>
-                      {workout.exercises?.length > 0 && (
-                          <div className="space-y-0.5 border-t border-gray-700 pt-2 max-h-32 overflow-y-auto">
-                          {workout.exercises.map((ex, idx) => (
-                              <div key={idx} className="text-xs text-gray-300 flex justify-between">
-                                <span className="truncate flex-1 min-w-0">{ex.name}</span>
-                                <span className="text-gray-500 ml-2 flex-shrink-0">{ex.sets}x{ex.reps}@{ex.weight}kg</span>
-                            </div>
-                          ))}
+
+                        <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-3 pl-2">
+                          {workout.duration && (
+                            <span className="flex items-center gap-1.5 font-medium">
+                                <span className="text-blue-500">⏱️</span> {workout.duration} min
+                            </span>
+                          )}
+                          {workout.volume && (
+                            <span className="flex items-center gap-1.5 font-medium">
+                                <span className="text-amber-500">📊</span> {workout.volume.toLocaleString()} kg
+                            </span>
+                          )}
+                          {workout.calories && (
+                            <span className="flex items-center gap-1.5 font-medium">
+                                <span className="text-red-500">🔥</span> {workout.calories} kcal
+                            </span>
+                          )}
                         </div>
-                      )}
-                        {workout.notes && <p className="text-xs text-blue-400 mt-1.5 italic truncate">{workout.notes}</p>}
-                    </div>
+
+                        {workout.exercises?.length > 0 && (
+                          <div className="space-y-2 border-t border-gray-50 pt-3 pl-2">
+                            {workout.exercises.map((ex, idx) => (
+                                <div key={idx} className="text-sm flex justify-between items-center group">
+                                  <span className="text-gray-700 font-medium truncate flex-1">{ex.name}</span>
+                                  <span className="text-gray-400 font-mono text-xs tabular-nums ml-4 bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">{ex.sets}x{ex.reps} · {ex.weight}kg</span>
+                                </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {workout.notes && (
+                          <div className="mt-3 pl-2 pt-2 border-t border-gray-50">
+                            <p className="text-sm text-blue-600 bg-blue-50/50 p-2 rounded-xl italic">
+                                "{workout.notes}"
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </SwipeableItem>
                   );
                 })}
@@ -2179,13 +2074,13 @@ const NutritionTracker = () => {
             )}
 
             {/* Schedule */}
-            <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-              <h3 className="text-xs font-bold text-gray-400 mb-2">SCHEDULE</h3>
-              <div className="grid grid-cols-7 gap-1 text-center">
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <h3 className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest">Plan Semanal</h3>
+              <div className="grid grid-cols-7 gap-2 text-center">
                 {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((day, i) => (
-                  <div key={day} className={`p-1.5 rounded text-xs ${[0, 3, 5].includes(i) ? 'bg-amber-500/20 text-amber-400' : i === 2 ? 'bg-green-500/20 text-green-400' : 'bg-gray-700/50 text-gray-500'}`}>
-                    <div className="font-bold">{day}</div>
-                    <div className="text-xs">{[0, 3, 5].includes(i) ? 'GYM' : i === 2 ? 'TEN' : '-'}</div>
+                  <div key={day} className={`p-2 rounded-xl border ${[0, 3, 5].includes(i) ? 'bg-amber-50 border-amber-100 text-amber-700' : i === 2 ? 'bg-green-50 border-green-100 text-green-700' : 'bg-gray-50 border-gray-100 text-gray-400'}`}>
+                    <div className="font-bold text-xs">{day}</div>
+                    <div className="text-[10px] font-bold mt-1 tracking-tighter">{[0, 3, 5].includes(i) ? 'GYM' : i === 2 ? 'TEN' : 'OFF'}</div>
                   </div>
                 ))}
               </div>
@@ -2195,35 +2090,43 @@ const NutritionTracker = () => {
 
         {/* Peso Tab */}
         {activeTab === 'peso' && (
-          <div className="space-y-4">
-            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h2 className="text-sm font-bold text-blue-400 mb-2">⚖️ NUEVO PESO</h2>
-              <div className="flex flex-col gap-2">
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="mb-2 px-1">
+              <h1 className="text-2xl font-bold text-gray-900">Peso</h1>
+              <p className="text-sm text-gray-500">Seguimiento de progreso corporal</p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">⚖️</span>
+                NUEVO REGISTRO
+              </h2>
+              <div className="flex flex-col gap-3">
               <div className="flex gap-2">
-                  <input type="number" step="0.1" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} placeholder="84.5" className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2.5 text-lg min-w-0" />
-                  <span className="flex items-center text-gray-400 text-sm">kg</span>
+                  <input type="number" step="0.1" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} placeholder="84.5" className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-lg min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                  <span className="flex items-center text-gray-500 text-sm font-medium">kg</span>
                 </div>
                 <div className="flex gap-2">
-                  <input type="time" value={newWeightTime} onChange={(e) => setNewWeightTime(e.target.value)} className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2.5 text-sm min-w-0" />
-                  <button onClick={addWeightEntry} disabled={!newWeight} className="bg-blue-600 active:bg-blue-500 disabled:opacity-50 px-5 py-2.5 rounded font-bold text-sm flex-shrink-0">Guardar</button>
+                  <input type="time" value={newWeightTime} onChange={(e) => setNewWeightTime(e.target.value)} className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                  <button onClick={addWeightEntry} disabled={!newWeight} className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 px-6 py-3 rounded-xl font-bold text-white shadow-lg shadow-blue-500/30 transition-all">Guardar</button>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h2 className="text-base font-bold text-blue-400 mb-3">📍 PROGRESO</h2>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="p-2 bg-gray-700/50 rounded">
-                  <div className="text-xl font-bold text-white">{profile.currentWeight}</div>
-                  <div className="text-xs text-gray-400">actual</div>
+            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+              <h2 className="text-sm font-bold text-gray-900 mb-4">Progreso</h2>
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div className="p-3 bg-gray-50 rounded-xl">
+                  <div className="text-xl font-bold text-gray-900">{profile.currentWeight}</div>
+                  <div className="text-xs text-gray-400 font-medium mt-1">Actual</div>
                 </div>
-                <div className="p-2 bg-gray-700/50 rounded">
-                  <div className="text-xl font-bold text-blue-400">{profile.targetWeight}</div>
-                  <div className="text-xs text-gray-400">objetivo</div>
+                <div className="p-3 bg-gray-50 rounded-xl">
+                  <div className="text-xl font-bold text-blue-600">{profile.targetWeight}</div>
+                  <div className="text-xs text-gray-400 font-medium mt-1">Objetivo</div>
                 </div>
-                <div className="p-2 bg-gray-700/50 rounded">
-                  <div className="text-xl font-bold text-amber-400">{(profile.currentWeight - profile.targetWeight).toFixed(1)}</div>
-                  <div className="text-xs text-gray-400">faltan</div>
+                <div className="p-3 bg-gray-50 rounded-xl">
+                  <div className="text-xl font-bold text-amber-500">{(profile.currentWeight - profile.targetWeight).toFixed(1)}</div>
+                  <div className="text-xs text-gray-400 font-medium mt-1">Faltan</div>
                 </div>
               </div>
             </div>
@@ -2235,20 +2138,20 @@ const NutritionTracker = () => {
 
             {/* Projection */}
             {weightProjection && (
-              <div className="bg-gray-800 rounded-lg p-4 border border-amber-500/30">
-                <h2 className="text-sm font-bold text-amber-400 mb-3">🎯 PROYECCIÓN</h2>
-                <div className="grid grid-cols-2 gap-3 mb-3">
-                  <div className="text-center p-3 bg-gray-700/50 rounded">
-                    <div className="text-xl font-bold text-white">
-                      {weightProjection.weeklyRate > 0 ? '-' : '+'}{Math.abs(weightProjection.weeklyRate)} kg
+              <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                <h2 className="text-sm font-bold text-gray-900 mb-4">Proyección</h2>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="text-center p-3 bg-gray-50 rounded-xl">
+                    <div className="text-xl font-bold text-gray-900">
+                      {weightProjection.weeklyRate > 0 ? '-' : '+'}{Math.abs(weightProjection.weeklyRate)} <span className="text-xs font-normal text-gray-500">kg</span>
                     </div>
-                    <div className="text-xs text-gray-400">por semana</div>
+                    <div className="text-xs text-gray-400 font-medium mt-1">Por semana</div>
                   </div>
-                  <div className="text-center p-3 bg-gray-700/50 rounded">
-                    <div className="text-xl font-bold text-blue-400">
+                  <div className="text-center p-3 bg-gray-50 rounded-xl">
+                    <div className="text-xl font-bold text-blue-600">
                       {weightProjection.weeksToGoal ? `${weightProjection.weeksToGoal} sem` : '-'}
                     </div>
-                    <div className="text-xs text-gray-400">para llegar a {profile.targetWeight}kg</div>
+                    <div className="text-xs text-gray-400 font-medium mt-1">Para llegar</div>
                   </div>
                 </div>
 
@@ -2280,33 +2183,51 @@ const NutritionTracker = () => {
             )}
 
             {weightHistory.length > 0 && (
-              <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                <h2 className="text-base font-bold text-blue-400 mb-3">📉 HISTORIAL</h2>
-                <div className="space-y-1 max-h-72 overflow-y-auto">
+              <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                <h2 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-widest">Historial</h2>
+                <div className="space-y-1 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                   {weightHistory.map((entry, idx) => (
-                    <div key={entry.id} className="flex items-center justify-between py-2.5 border-b border-gray-700 text-base">
+                    <div key={entry.id} className="flex items-center justify-between py-4 border-b border-gray-50 last:border-0 group">
                       <div className="flex flex-col">
-                        <span className="text-gray-300">{entry.date}</span>
-                        {entry.timestamp && <span className="text-sm text-gray-500">{formatTime(entry.timestamp)}</span>}
+                        <span className="text-gray-900 font-bold">{entry.date}</span>
+                        {entry.timestamp && <span className="text-xs text-gray-400 font-medium">{formatTime(entry.timestamp)}</span>}
                       </div>
-                      {editingWeightId === entry.id ? (
-                        <div className="flex items-center gap-2">
-                          <input type="number" step="0.1" value={editingWeightValue} onChange={(e) => setEditingWeightValue(e.target.value)} className="w-24 bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-base" />
-                          <button onClick={saveEditWeight} className="text-blue-400 px-2 text-lg">✓</button>
-                          <button onClick={cancelEditWeight} className="text-gray-400 px-2 text-lg">✕</button>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-3">
-                          <span className="font-bold text-lg">{entry.weight} kg</span>
-                          {idx < weightHistory.length - 1 && (
-                            <span className={`text-sm ${entry.weight < weightHistory[idx + 1].weight ? 'text-blue-400' : entry.weight > weightHistory[idx + 1].weight ? 'text-red-400' : 'text-gray-400'}`}>
-                              {entry.weight < weightHistory[idx + 1].weight ? '↓' : entry.weight > weightHistory[idx + 1].weight ? '↑' : '='}{Math.abs(entry.weight - weightHistory[idx + 1].weight).toFixed(1)}
-                            </span>
-                          )}
-                          <button onClick={() => startEditWeight(entry.id)} className="text-blue-400 px-1 text-lg">✎</button>
-                          <button onClick={() => confirmDelete('weight', entry.id, `${entry.weight} kg (${entry.date})`)} className="text-red-400 px-1 text-lg">✕</button>
-                        </div>
-                      )}
+
+                      <div className="flex items-center gap-6">
+                        {editingWeightId === entry.id ? (
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="number"
+                              step="0.1"
+                              value={editingWeightValue}
+                              onChange={(e) => setEditingWeightValue(e.target.value)}
+                              className="w-24 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-lg font-bold focus:border-blue-500 outline-none transition-all"
+                            />
+                            <button onClick={saveEditWeight} className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center">✓</button>
+                            <button onClick={cancelEditWeight} className="w-8 h-8 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center">✕</button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-4">
+                            <div className="text-right flex flex-col items-end">
+                              <span className="font-black text-xl text-gray-900">{entry.weight}<span className="text-xs font-medium text-gray-400 ml-1">kg</span></span>
+                              {idx < weightHistory.length - 1 && (
+                                <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${entry.weight < weightHistory[idx + 1].weight ? 'bg-blue-50 text-blue-600' : entry.weight > weightHistory[idx + 1].weight ? 'bg-red-50 text-red-600' : 'bg-gray-50 text-gray-400'}`}>
+                                  {entry.weight < weightHistory[idx + 1].weight ? '↓' : entry.weight > weightHistory[idx + 1].weight ? '↑' : '='}{Math.abs(entry.weight - weightHistory[idx + 1].weight).toFixed(1)}
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button onClick={() => startEditWeight(entry.id)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                              </button>
+                              <button onClick={() => confirmDelete('weight', entry.id, `${entry.weight} kg (${entry.date})`)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -2317,26 +2238,40 @@ const NutritionTracker = () => {
 
         {/* Pasos Tab */}
         {activeTab === 'pasos' && (
-          <div className="space-y-3">
-            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h2 className="text-sm font-bold text-blue-400 mb-3">👟 REGISTRAR PASOS</h2>
-              <input type="date" value={stepsDate} onChange={(e) => setStepsDate(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm mb-2" />
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="mb-2 px-1">
+              <h1 className="text-2xl font-bold text-gray-900">Pasos</h1>
+              <p className="text-sm text-gray-500">Actividad diaria</p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">👟</span>
+                REGISTRAR PASOS
+              </h2>
+              <input type="date" value={stepsDate} onChange={(e) => setStepsDate(e.target.value)} className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm mb-3 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium" />
               <div className="flex gap-2">
-                <input type="number" value={newSteps} onChange={(e) => setNewSteps(e.target.value)} placeholder="ej: 8500" className="flex-1 bg-gray-700 border border-gray-600 rounded px-4 py-3 text-lg" />
-                <button onClick={addStepsEntry} className="bg-cyan-600 active:bg-cyan-500 px-6 py-3 rounded font-bold">OK</button>
+                <input type="number" value={newSteps} onChange={(e) => setNewSteps(e.target.value)} placeholder="ej: 8500" className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-lg font-black focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all placeholder-gray-300" />
+                <button onClick={addStepsEntry} className="bg-orange-600 hover:bg-orange-700 active:bg-orange-800 px-8 py-3 rounded-xl font-bold text-white shadow-lg shadow-orange-500/20 transition-all">OK</button>
               </div>
             </div>
 
             <SimpleBarChart data={weeklyData} dataKey="steps" target={8000} color="bg-cyan-500" label="Pasos 7 días" />
 
             {stepsLog.length > 0 && (
-              <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                <h2 className="text-sm font-bold text-blue-400 mb-3">📊 HISTORIAL</h2>
-                <div className="space-y-1 max-h-48 overflow-y-auto">
+              <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+                <h2 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">📊</span>
+                  HISTORIAL
+                </h2>
+                <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
                   {stepsLog.slice(0, 14).map((entry, idx) => (
-                    <div key={idx} className="flex justify-between items-center py-1 border-b border-gray-700 text-sm">
-                      <span className="text-gray-400">{entry.date}</span>
-                      <span className={`font-bold ${entry.steps >= 8000 ? 'text-cyan-400' : 'text-gray-300'}`}>{entry.steps.toLocaleString()}</span>
+                    <div key={idx} className="flex justify-between items-center py-2 border-b border-slate-50 last:border-0 text-sm">
+                      <span className="text-slate-500 font-medium">{entry.date}</span>
+                      <span className={`font-black text-base ${entry.steps >= 8000 ? 'text-cyan-600' : 'text-slate-400'}`}>
+                        {entry.steps.toLocaleString()}
+                        <span className="text-[10px] font-bold ml-1 text-slate-300 uppercase">pasos</span>
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -2347,84 +2282,94 @@ const NutritionTracker = () => {
 
         {/* Oura Tab */}
         {activeTab === 'oura' && (
-              <div className="space-y-3">
-            <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-              <h2 className="text-sm font-bold text-purple-400 mb-2">💍 REGISTRAR DATOS OURA</h2>
-              <div className="space-y-2">
-                <input type="date" value={newOuraEntry.date} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, date: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="mb-2 px-1 text-center md:text-left">
+              <h1 className="text-2xl font-bold text-gray-900">Oura</h1>
+              <p className="text-sm text-gray-500">Sincronización de sueño y recuperación</p>
+            </div>
+            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+              <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">💍</span>
+                REGISTRAR DATOS OURA
+              </h2>
+              <div className="space-y-4">
+                <input type="date" value={newOuraEntry.date} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, date: e.target.value })} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
 
                 {/* Scores - 2 cols on mobile, 3 on larger */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">Sleep</label>
-                    <input type="number" value={newOuraEntry.sleepScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, sleepScore: e.target.value })} placeholder="85" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">Sleep</label>
+                    <input type="number" value={newOuraEntry.sleepScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, sleepScore: e.target.value })} placeholder="85" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">Ready</label>
-                    <input type="number" value={newOuraEntry.readinessScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, readinessScore: e.target.value })} placeholder="80" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">Ready</label>
+                    <input type="number" value={newOuraEntry.readinessScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, readinessScore: e.target.value })} placeholder="80" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">Activity</label>
-                    <input type="number" value={newOuraEntry.activityScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, activityScore: e.target.value })} placeholder="75" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">Activity</label>
+                    <input type="number" value={newOuraEntry.activityScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, activityScore: e.target.value })} placeholder="75" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">HRV</label>
-                    <input type="number" value={newOuraEntry.hrv} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, hrv: e.target.value })} placeholder="45" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
-                </div>
-                  <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">RHR</label>
-                    <input type="number" value={newOuraEntry.restingHr} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, restingHr: e.target.value })} placeholder="58" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">HRV</label>
+                    <input type="number" value={newOuraEntry.hrv} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, hrv: e.target.value })} placeholder="45" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">Horas</label>
-                    <input type="number" step="0.1" value={newOuraEntry.sleepHours} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, sleepHours: e.target.value })} placeholder="7.5" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">RHR</label>
+                    <input type="number" value={newOuraEntry.restingHr} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, restingHr: e.target.value })} placeholder="58" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 font-medium mb-1">Horas</label>
+                    <input type="number" step="0.1" value={newOuraEntry.sleepHours} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, sleepHours: e.target.value })} placeholder="7.5" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                 </div>
 
                 {/* Sleep details - compact 2x2 grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">Deep</label>
-                    <input type="number" value={newOuraEntry.deepSleepMins} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, deepSleepMins: e.target.value })} placeholder="90" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">Deep</label>
+                    <input type="number" value={newOuraEntry.deepSleepMins} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, deepSleepMins: e.target.value })} placeholder="90" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">REM</label>
-                    <input type="number" value={newOuraEntry.remSleepMins} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, remSleepMins: e.target.value })} placeholder="100" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">REM</label>
+                    <input type="number" value={newOuraEntry.remSleepMins} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, remSleepMins: e.target.value })} placeholder="100" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">Acostarse</label>
-                    <input type="time" value={newOuraEntry.bedtime} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, bedtime: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">Acostarse</label>
+                    <input type="time" value={newOuraEntry.bedtime} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, bedtime: e.target.value })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">Despertar</label>
-                    <input type="time" value={newOuraEntry.wakeTime} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, wakeTime: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">Despertar</label>
+                    <input type="time" value={newOuraEntry.wakeTime} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, wakeTime: e.target.value })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                 </div>
 
-                <button onClick={addOuraEntry} className="w-full bg-purple-600 hover:bg-purple-500 py-2.5 rounded font-bold text-sm">Guardar</button>
+                <button onClick={addOuraEntry} className="w-full bg-purple-600 hover:bg-purple-700 active:bg-purple-800 py-3 rounded-xl font-bold text-sm text-white shadow-lg shadow-purple-500/30 transition-all">Guardar Datos</button>
               </div>
             </div>
 
             {/* Oura History - Compact */}
             {ouraLog.length > 0 && (
-              <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-                <h2 className="text-sm font-bold text-purple-400 mb-2">📊 HISTORIAL</h2>
-                <div className="space-y-2 max-h-72 overflow-y-auto">
+              <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">📊</span>
+                  HISTORIAL
+                </h2>
+                <div className="space-y-2 max-h-72 overflow-y-auto pr-1 custom-scrollbar">
                   {ouraLog.slice(0, 14).map((entry, idx) => (
-                    <div key={idx} className="bg-gray-700/50 rounded p-2">
+                    <div key={idx} className="bg-gray-50/50 rounded-xl p-3 border border-gray-100">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-gray-300 text-sm font-medium">{entry.date}</span>
+                        <span className="text-gray-900 text-sm font-bold">{entry.date}</span>
                         <div className="flex gap-1.5 text-xs">
-                          {entry.sleepScore && <span className="text-purple-400">😴{entry.sleepScore}</span>}
-                          {entry.readinessScore && <span className="text-blue-400">⚡{entry.readinessScore}</span>}
-                          {entry.activityScore && <span className="text-amber-400">🏃{entry.activityScore}</span>}
+                          {entry.sleepScore && <span className="text-purple-600 font-bold">😴{entry.sleepScore}</span>}
+                          {entry.readinessScore && <span className="text-blue-600 font-bold">⚡{entry.readinessScore}</span>}
+                          {entry.activityScore && <span className="text-amber-600 font-bold">🏃{entry.activityScore}</span>}
                         </div>
                       </div>
-                      <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-xs text-gray-400">
-                        {entry.hrv && <span>HRV:{entry.hrv}</span>}
-                        {entry.restingHr && <span>RHR:{entry.restingHr}</span>}
-                        {entry.sleepHours && <span>{entry.sleepHours}h</span>}
-                        {entry.bedtime && entry.wakeTime && <span>{entry.bedtime}→{entry.wakeTime}</span>}
+                      <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-gray-500 font-medium">
+                        {entry.hrv && <span>HRV: <span className="text-gray-900">{entry.hrv}</span></span>}
+                        {entry.restingHr && <span>RHR: <span className="text-gray-900">{entry.restingHr}</span></span>}
+                        {entry.sleepHours && <span>Horas: <span className="text-gray-900">{entry.sleepHours}h</span></span>}
+                        {entry.bedtime && entry.wakeTime && <span>{entry.bedtime} → {entry.wakeTime}</span>}
                       </div>
                     </div>
                   ))}
@@ -2433,9 +2378,9 @@ const NutritionTracker = () => {
             )}
 
             {/* Oura Insights - Compact */}
-            <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-3">
-              <h3 className="text-xs font-bold text-purple-400 mb-1.5">💡 GUÍA RÁPIDA</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 text-xs text-gray-300">
+            <div className="bg-purple-50 border border-purple-100 rounded-2xl p-4">
+              <h3 className="text-xs font-bold text-purple-700 mb-2 uppercase tracking-wider">💡 Guía Rápida</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[10px] text-purple-600 font-medium">
                 <span>😴 Sleep ≥85 = óptimo</span>
                 <span>⚡ Ready &lt;70 = descanso</span>
                 <span>❤️ HRV = recuperación</span>
@@ -2446,123 +2391,155 @@ const NutritionTracker = () => {
 
         {/* Config Tab - with editable targets and debounced saving */}
         {activeTab === 'config' && (
-          <div className="space-y-3">
-            <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-              <h2 className="text-sm font-bold text-blue-400 mb-3">👤 PERFIL</h2>
-              <div className="grid grid-cols-2 gap-2">
+          <div className="max-w-3xl mx-auto space-y-6">
+            <div className="mb-2 px-1">
+              <h1 className="text-2xl font-bold text-gray-900">Configuración</h1>
+              <p className="text-sm text-gray-500">Ajustes de perfil y objetivos</p>
+            </div>
+
+            <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                <div className="flex items-center gap-4 mb-8">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-blue-500/20">
+                        {profile.name?.substring(0, 1) || 'L'}
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-black text-gray-900 leading-tight">{profile.name || 'Usuario'}</h3>
+                        <p className="text-sm text-gray-500 font-medium">Plan Premium · Activo</p>
+                    </div>
+                </div>
+
+              <h2 className="text-xs font-black text-gray-400 mb-4 uppercase tracking-[0.2em] flex items-center gap-2">
+                 PERFIL Y DATOS
+              </h2>
+              <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Peso Actual</label>
-                  <input type="number" step="0.1" value={profile.currentWeight} onChange={(e) => updateConfig({ ...profile, currentWeight: parseFloat(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Peso Actual (kg)</label>
+                  <input type="number" step="0.1" value={profile.currentWeight} onChange={(e) => updateConfig({ ...profile, currentWeight: parseFloat(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Peso Objetivo</label>
-                  <input type="number" step="0.1" value={profile.targetWeight} onChange={(e) => updateConfig({ ...profile, targetWeight: parseFloat(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Peso Objetivo (kg)</label>
+                  <input type="number" step="0.1" value={profile.targetWeight} onChange={(e) => updateConfig({ ...profile, targetWeight: parseFloat(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Altura (cm)</label>
-                  <input type="number" value={profile.height} onChange={(e) => updateConfig({ ...profile, height: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Altura (cm)</label>
+                  <input type="number" value={profile.height} onChange={(e) => updateConfig({ ...profile, height: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Edad</label>
-                  <input type="number" value={profile.age} onChange={(e) => updateConfig({ ...profile, age: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Edad</label>
+                  <input type="number" value={profile.age} onChange={(e) => updateConfig({ ...profile, age: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-lg p-3 border border-blue-500/30">
-              <h2 className="text-sm font-bold text-blue-400 mb-3">🎯 OBJETIVOS (Rest Day)</h2>
-              <div className="grid grid-cols-3 gap-2">
+            <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+              <h2 className="text-xs font-black text-gray-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-2">
+                  OBJETIVOS (REST DAY)
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Calorías</label>
-                  <input type="number" value={customTargets.calories} onChange={(e) => updateConfig(profile, { ...customTargets, calories: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Calorías</label>
+                  <input type="number" value={customTargets.calories} onChange={(e) => updateConfig(profile, { ...customTargets, calories: parseInt(e.target.value) || 0 })} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-black text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Prot (g)</label>
-                  <input type="number" value={customTargets.protein} onChange={(e) => updateConfig(profile, { ...customTargets, protein: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1 text-green-600">Prot (g)</label>
+                  <input type="number" value={customTargets.protein} onChange={(e) => updateConfig(profile, { ...customTargets, protein: parseInt(e.target.value) || 0 })} className="w-full bg-green-50/30 border border-green-100 rounded-2xl px-4 py-3.5 text-lg font-black text-gray-900 focus:border-green-500 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Carbs (g)</label>
-                  <input type="number" value={customTargets.carbs} onChange={(e) => updateConfig(profile, { ...customTargets, carbs: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1 text-yellow-600">Carbs (g)</label>
+                  <input type="number" value={customTargets.carbs} onChange={(e) => updateConfig(profile, { ...customTargets, carbs: parseInt(e.target.value) || 0 })} className="w-full bg-yellow-50/30 border border-yellow-100 rounded-2xl px-4 py-3.5 text-lg font-black text-gray-900 focus:border-yellow-500 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Grasas (g)</label>
-                  <input type="number" value={customTargets.fat} onChange={(e) => updateConfig(profile, { ...customTargets, fat: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1 text-red-600">Grasas (g)</label>
+                  <input type="number" value={customTargets.fat} onChange={(e) => updateConfig(profile, { ...customTargets, fat: parseInt(e.target.value) || 0 })} className="w-full bg-red-50/30 border border-red-100 rounded-2xl px-4 py-3.5 text-lg font-black text-gray-900 focus:border-red-500 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Fibra (g)</label>
-                  <input type="number" value={customTargets.fiber} onChange={(e) => updateConfig(profile, { ...customTargets, fiber: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Fibra (g)</label>
+                  <input type="number" value={customTargets.fiber} onChange={(e) => updateConfig(profile, { ...customTargets, fiber: parseInt(e.target.value) || 0 })} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-black text-gray-900 focus:border-blue-500 outline-none transition-all" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-lg p-3 border border-amber-500/30">
-              <h2 className="text-sm font-bold text-amber-400 mb-3">🏋️ TRAINING DAY</h2>
-              <div className="grid grid-cols-2 gap-2">
+            <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-full -mr-12 -mt-12 opacity-50" />
+              <h2 className="text-xs font-black text-gray-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-2">
+                 TRAINING DAY BONUS
+              </h2>
+              <div className="grid grid-cols-2 gap-6 relative z-10">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Kcal extra</label>
-                  <input type="number" value={customTargets.trainingDayCaloriesBonus} onChange={(e) => updateConfig(profile, { ...customTargets, trainingDayCaloriesBonus: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Kcal extra</label>
+                  <input type="number" value={customTargets.trainingDayCaloriesBonus} onChange={(e) => updateConfig(profile, { ...customTargets, trainingDayCaloriesBonus: parseInt(e.target.value) || 0 })} className="w-full bg-amber-50/30 border border-amber-100 rounded-2xl px-4 py-3.5 text-lg font-black text-gray-900 focus:border-amber-500 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Carbs (g)</label>
-                  <input type="number" value={customTargets.trainingDayCarbs} onChange={(e) => updateConfig(profile, { ...customTargets, trainingDayCarbs: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Carbs (g)</label>
+                  <input type="number" value={customTargets.trainingDayCarbs} onChange={(e) => updateConfig(profile, { ...customTargets, trainingDayCarbs: parseInt(e.target.value) || 0 })} className="w-full bg-amber-50/30 border border-amber-100 rounded-2xl px-4 py-3.5 text-lg font-black text-gray-900 focus:border-amber-500 outline-none transition-all" />
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mt-2">Training day: {customTargets.calories + customTargets.trainingDayCaloriesBonus} kcal, {customTargets.trainingDayCarbs}g carbs</p>
+              <p className="text-xs text-amber-600 mt-4 font-bold bg-amber-50 inline-block px-3 py-1 rounded-full border border-amber-100">
+                Training Day: {customTargets.calories + customTargets.trainingDayCaloriesBonus} kcal · {customTargets.trainingDayCarbs}g carbs
+              </p>
             </div>
 
-            <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-2.5">
-              <p className="text-xs text-blue-400">💾 Auto-save (800ms)</p>
+            <div className="bg-blue-50/50 border border-blue-100 border-dashed rounded-2xl p-4 flex items-center justify-between">
+                <p className="text-xs text-blue-600 font-bold">💾 Sincronización automática activa</p>
+                <div className="flex gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
             </div>
 
             {/* Export buttons - compact grid */}
-            <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-              <h2 className="text-sm font-bold text-gray-300 mb-3">📤 EXPORTAR</h2>
-              <div className="grid grid-cols-2 gap-2">
+            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+              <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                 <span className="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 flex items-center justify-center">📤</span>
+                 EXPORTAR
+              </h2>
+              <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={exportForClaude}
-                  className="bg-cyan-600 active:bg-cyan-500 py-2.5 rounded font-medium text-sm flex items-center justify-center gap-1"
+                  className="bg-cyan-50 hover:bg-cyan-100 text-cyan-700 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors"
               >
                   🤖 Claude
               </button>
               <button
                 onClick={exportForNutritionist}
-                  className="bg-pink-600 active:bg-pink-500 py-2.5 rounded font-medium text-sm flex items-center justify-center gap-1"
+                  className="bg-pink-50 hover:bg-pink-100 text-pink-700 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors"
               >
                   🩺 Nutri
               </button>
                 <button
                   onClick={exportBackup}
-                  className="bg-amber-600 active:bg-amber-500 py-2.5 rounded font-medium text-sm flex items-center justify-center gap-1"
+                  className="bg-amber-50 hover:bg-amber-100 text-amber-700 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors"
                 >
                   📤 Backup
                 </button>
-                <label className="bg-gray-700 active:bg-gray-600 py-2.5 rounded font-medium text-sm flex items-center justify-center gap-1 cursor-pointer">
+                <label className="bg-gray-50 hover:bg-gray-100 text-gray-700 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-colors">
                   📥 Importar
                   <input type="file" accept=".json" onChange={importBackup} className="hidden" />
                 </label>
               </div>
 
               {/* Stats */}
-              <div className="mt-3 grid grid-cols-4 gap-1 text-center">
-                <div className="p-1.5 bg-gray-700/50 rounded">
-                  <div className="text-sm font-bold text-white">{weightHistory.length}</div>
-                  <div className="text-xs text-gray-500">Peso</div>
+              <div className="mt-4 grid grid-cols-4 gap-2 text-center">
+                <div className="p-2 bg-gray-50 rounded-xl">
+                  <div className="text-sm font-bold text-gray-900">{weightHistory.length}</div>
+                  <div className="text-xs text-gray-500 font-medium">Peso</div>
                   </div>
-                <div className="p-1.5 bg-gray-700/50 rounded">
-                  <div className="text-sm font-bold text-white">{foodLog.length}</div>
-                  <div className="text-xs text-gray-500">Comidas</div>
+                <div className="p-2 bg-gray-50 rounded-xl">
+                  <div className="text-sm font-bold text-gray-900">{foodLog.length}</div>
+                  <div className="text-xs text-gray-500 font-medium">Comidas</div>
                   </div>
-                <div className="p-1.5 bg-gray-700/50 rounded">
-                  <div className="text-sm font-bold text-white">{workoutLog.length}</div>
-                  <div className="text-xs text-gray-500">Entrenos</div>
+                <div className="p-2 bg-gray-50 rounded-xl">
+                  <div className="text-sm font-bold text-gray-900">{workoutLog.length}</div>
+                  <div className="text-xs text-gray-500 font-medium">Entrenos</div>
                   </div>
-                <div className="p-1.5 bg-gray-700/50 rounded">
-                  <div className="text-sm font-bold text-white">{stepsLog.length}</div>
-                  <div className="text-xs text-gray-500">Pasos</div>
+                <div className="p-2 bg-gray-50 rounded-xl">
+                  <div className="text-sm font-bold text-gray-900">{stepsLog.length}</div>
+                  <div className="text-xs text-gray-500 font-medium">Pasos</div>
                 </div>
               </div>
 
-              <p className="text-xs text-gray-500 mt-2 text-center">⚠️ Importar reemplaza TODOS los datos</p>
+              <p className="text-xs text-gray-400 mt-4 text-center">⚠️ Importar reemplaza TODOS los datos</p>
             </div>
           </div>
         )}
@@ -2570,10 +2547,7 @@ const NutritionTracker = () => {
       </PullToRefresh>
 
       {/* Bottom Navigation */}
-      <BottomNav
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-      />
+
 
       {/* Floating Action Button - hide when any modal is open */}
       {showFab && ['dashboard', 'comidas', 'entrenos'].includes(activeTab) &&
@@ -2711,7 +2685,7 @@ const NutritionTracker = () => {
           onClose={() => setShowWeeklyReport(false)}
         />
       )}
-    </div>
+    </Layout>
   );
 };
 

@@ -1,0 +1,39 @@
+import React from 'react';
+import { SwipeableItem } from '../SwipeableItem';
+
+export const FoodItem = ({ food, onEdit, onDelete, onTemplate }) => {
+  const needsReview = !food.reviewed || (food.confidence && food.confidence < 0.7);
+
+  return (
+    <SwipeableItem onDelete={onDelete}>
+      <div className={`p-3 bg-white border-b border-gray-50 flex justify-between items-center ${needsReview ? 'bg-amber-50/50' : ''}`}>
+        <div className="flex-1 min-w-0 pr-3">
+          <div className="flex items-center gap-2 mb-0.5">
+            <h4 className="text-gray-900 font-medium truncate">{food.name}</h4>
+            {needsReview && <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>}
+          </div>
+          <p className="text-xs text-gray-500 truncate">{food.description}</p>
+        </div>
+
+        <div className="text-right flex-shrink-0">
+          <span className="block text-gray-900 font-bold">{food.calories}</span>
+          <div className="flex gap-1 justify-end text-[10px] text-gray-400 font-medium uppercase">
+            <span className="text-green-600">{food.protein}p</span>
+            <span className="text-amber-500">{food.carbs}c</span>
+            <span className="text-orange-500">{food.fat}f</span>
+          </div>
+        </div>
+
+        {/* Edit Button (Visible or Swipe?) - Keeping simple for now, maybe tap to edit */}
+        <button
+          onClick={onEdit}
+          className="ml-3 p-1.5 text-gray-400 hover:text-blue-500 transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+          </svg>
+        </button>
+      </div>
+    </SwipeableItem>
+  );
+};
