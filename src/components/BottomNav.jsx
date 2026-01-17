@@ -1,13 +1,13 @@
-import { BarChart2, BookOpen, Home, PlusCircle, User } from 'lucide-react';
+import { BarChart2, BookOpen, Dumbbell, Home, PlusCircle, User } from 'lucide-react';
 import React from 'react';
 
 export const BottomNav = ({ activeTab, setActiveTab }) => {
   const tabs = [
     { id: 'dashboard', icon: Home, label: 'Diario' },
-    { id: 'diary', icon: BookOpen, label: 'Alimentos' },
+    { id: 'comidas', icon: BookOpen, label: 'Comidas' },
     { id: 'add', icon: PlusCircle, label: '', isFab: true },
-    { id: 'reports', icon: BarChart2, label: 'Progreso' },
-    { id: 'profile', icon: User, label: 'Perfil' }
+    { id: 'entrenos', icon: Dumbbell, label: 'Entrenos' },
+    { id: 'peso', icon: BarChart2, label: 'Peso' }
   ];
 
   return (
