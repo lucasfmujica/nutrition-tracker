@@ -741,8 +741,44 @@ export const useTrackerData = () => {
     try {
       hasInitialized.current = false;
       setOfflineMode(false);
-      setShowAuth(true);
+      setIsLoading(false);
+
+      // Clear localStorage cache to prevent data from previous session
+      console.log('[Logout] Clearing localStorage cache...');
+      const cacheKeys = [
+        'lucas-profile-v5',
+        'lucas-weight-history-v5',
+        'lucas-food-log-v5',
+        'lucas-workout-log-v5',
+        'lucas-steps-log-v5',
+        'lucas-targets-v5',
+        'lucas-oura-log-v5',
+        'lucas-water-log-v5'
+      ];
+      for (const key of cacheKeys) {
+        try {
+          localStorage.removeItem(key);
+        } catch (e) {
+          console.warn('[Logout] Failed to clear:', key);
+        }
+      }
+
+      // Reset state to defaults
+      setProfile({ height: 173, currentWeight: 84.9, targetWeight: 75, age: 27, activityLevel: 'moderate', goal: 'cut' });
+      setCustomTargets({ calories: 2100, protein: 170, carbs: 180, fat: 70, fiber: 30, trainingDayCaloriesBonus: 200, trainingDayCarbs: 220 });
+      setWeightHistory([]);
+      setFoodLog([]);
+      setWorkoutLog([]);
+      setStepsLog([]);
+      setOuraLog([]);
+      setWaterLog([]);
+
+      // Sign out from Supabase
       await supabase.signOut();
+
+      // Show auth screen
+      setShowAuth(true);
+      console.log('[Logout] Logout complete');
     } catch (err) {
       console.error('[Logout] Error during logout:', err);
       // Force auth screen anyway
