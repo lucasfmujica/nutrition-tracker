@@ -897,9 +897,9 @@ export function useSupabase() {
     // Only set syncing if not already syncing (prevent multiple spinners)
     setSyncStatus(prev => prev === 'syncing' ? prev : 'syncing');
 
-    // Timeout protection - 20 seconds for all fetches (handles slow connections)
+    // Timeout protection - 45 seconds for all fetches (handles slow connections on initial load)
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Fetch timeout after 20s')), 20000)
+      setTimeout(() => reject(new Error('Fetch timeout after 45s')), 45000)
     );
 
     try {
