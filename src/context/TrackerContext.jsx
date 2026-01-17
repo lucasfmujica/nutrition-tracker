@@ -140,6 +140,14 @@ export const TrackerProvider = ({ children }) => {
     getTargetsForDate: nutrition.getTargetsForDate
   });
 
+  // 5b. Intelligence Engine - Weight Analytics (needed by useExport)
+  const weightAnalytics = useWeightAnalytics(
+    biometrics.weightHistory,
+    nutrition.foodLog,
+    biometrics.customTargets,
+    biometrics.profile.currentWeight
+  );
+
   // 6. Export
   const exportDoc = useExport({
     profile: biometrics.profile, setProfile: biometrics.setProfile,
@@ -154,7 +162,7 @@ export const TrackerProvider = ({ children }) => {
     getTargetsForDate: nutrition.getTargetsForDate,
     getStepsForDate: (date) => biometrics.stepsLog.find(s => s.date === date)?.steps || 0,
     getWorkoutsForDate: (date) => workouts.workoutLog.filter(entry => entry.date === date)
-  }, analytics); // Pass analytics as 2nd arg
+  }, analytics, weightAnalytics); // Pass analytics as 2nd arg, weightAnalytics as 3rd
 
   // 7. Food Entry
   const foodEntry = useFoodEntry({
@@ -190,14 +198,6 @@ export const TrackerProvider = ({ children }) => {
 
   // 11. Global Delete Actions
   const globalDelete = useGlobalDelete(nutrition, workouts, biometrics, supabase, useCloud);
-
-  // 12. Intelligence Engine - Weight Analytics
-  const weightAnalytics = useWeightAnalytics(
-    biometrics.weightHistory,
-    nutrition.foodLog,
-    biometrics.customTargets,
-    biometrics.profile.currentWeight
-  );
 
   // Derived State
   const workoutAnalysis = useWorkoutAnalysis(workouts.workoutLog);

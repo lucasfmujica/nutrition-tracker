@@ -33,6 +33,8 @@ const NutritionTrackerContent = () => {
     stepsLog,
     ouraLog,
     customTargets, updateConfig,
+    // Intelligence Engine
+    weightAnalytics,
     // Actions
     undoAction, setUndoAction,
     isRefreshing, handleRefresh,
@@ -117,7 +119,9 @@ const NutritionTrackerContent = () => {
             {activeTab === 'entrenos' && (
               <WorkoutsTab
                 selectedWorkoutDate={selectedWorkoutDate} setSelectedWorkoutDate={setSelectedWorkoutDate} changeDate={changeDate}
-                workoutAnalysis={workoutAnalysis} getWorkoutsForDate={getWorkoutsForDate}
+                workoutAnalysis={workoutAnalysis} weightAnalytics={weightAnalytics}
+                ouraLog={ouraLog} currentWeight={profile.currentWeight}
+                getWorkoutsForDate={getWorkoutsForDate}
                 confirmDelete={confirmDelete} confirmWorkout={confirmWorkout}
               />
             )}

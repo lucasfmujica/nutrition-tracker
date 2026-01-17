@@ -1,3 +1,5 @@
+import { Dumbbell, Target, Trophy, Zap } from 'lucide-react';
+import { getWeeklyCoachInsight } from '../../utils/coachInsights';
 import { addDaysToDate, getArgentinaDateString, getMondayOfWeek } from '../../utils/dateUtils';
 import { SwipeableItem } from '../ui/SwipeableItem';
 
@@ -12,6 +14,9 @@ export const WorkoutsTab = ({
   changeDate,
   // Data
   workoutAnalysis,
+  weightAnalytics,
+  ouraLog,
+  currentWeight,
   getWorkoutsForDate,
   // Actions
   confirmDelete,
@@ -19,30 +24,83 @@ export const WorkoutsTab = ({
 }) => {
   const workoutsForSelectedDate = getWorkoutsForDate(selectedWorkoutDate);
 
+  // Generate AI-driven insight
+  const coachInsight = getWeeklyCoachInsight({
+    weightAnalytics,
+    ouraLog,
+    workoutAnalysis,
+    currentWeight
+  });
+
   return (
     <div className="space-y-3">
-      {/* Weekly Analysis */}
-      <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-        <div className="flex justify-between items-center mb-4">
+      {/* Weekly Summary - Bento Box Layout */}
+      <div className="space-y-3">
+        <div className="flex justify-between items-center">
           <h2 className="text-sm font-bold text-gray-900">Resumen Semanal</h2>
           <span className="text-xs text-gray-500">desde {workoutAnalysis.weekStart}</span>
         </div>
-        <div className="grid grid-cols-3 gap-2 mb-2">
-          <div className="text-center p-3 bg-gray-50 rounded-xl">
-            <div className="text-xl font-bold text-amber-500">{workoutAnalysis.gymCount}</div>
-            <div className="text-xs text-gray-500 font-medium">Gym</div>
+
+        {/* Main Grid: AI Insight + Stats */}
+        <div className="grid grid-cols-3 gap-3">
+          {/* AI Coach Insight Card - spans 2 columns */}
+          <div className={`col-span-2 bg-gradient-to-br ${coachInsight.gradient} rounded-2xl p-4 border border-${coachInsight.type === 'success' ? 'green' : coachInsight.type === 'warning' ? 'purple' : coachInsight.type === 'caution' ? 'orange' : 'blue'}-100 shadow-sm relative overflow-hidden`}>
+            {/* AI Badge */}
+            <div className="absolute top-3 right-3">
+              <span className="text-[10px] bg-white/80 backdrop-blur-sm text-purple-600 px-2 py-1 rounded-full font-bold flex items-center gap-1">
+                <Zap className="w-3 h-3" /> AI Coach
+              </span>
+            </div>
+
+            {/* Icon + Message */}
+            <div className="flex items-start gap-3 pr-16">
+              <div className="text-3xl flex-shrink-0">{coachInsight.icon}</div>
+              <div>
+                <p className="text-sm font-semibold text-gray-800 leading-relaxed">
+                  {coachInsight.message}
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="text-center p-3 bg-gray-50 rounded-xl">
-            <div className="text-xl font-bold text-green-500">{workoutAnalysis.tennisCount}</div>
-            <div className="text-xs text-gray-500 font-medium">Tenis</div>
-          </div>
-          <div className="text-center p-3 bg-gray-50 rounded-xl">
-            <div className="text-xl font-bold text-cyan-500">{workoutAnalysis.totalDuration}'</div>
-            <div className="text-xs text-gray-500 font-medium">Min</div>
+
+          {/* Total Workouts Card */}
+          <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+            <div className="text-center space-y-2">
+              <div className="flex items-center justify-center gap-2">
+                <Trophy className="w-5 h-5 text-amber-500" />
+              </div>
+              <div className="text-2xl font-bold text-gray-900">
+                {workoutAnalysis.gymCount + workoutAnalysis.tennisCount}
+              </div>
+              <p className="text-xs text-gray-500 font-medium">Entrenamientos</p>
+              <div className="text-xs text-gray-400">{workoutAnalysis.totalDuration}' total</div>
+            </div>
           </div>
         </div>
-        <div className="space-y-0.5">
-          {workoutAnalysis.analysis.map((line, i) => <p key={i} className="text-xs text-gray-300">{line}</p>)}
+
+        {/* Secondary Metrics Row */}
+        <div className="grid grid-cols-3 gap-2">
+          <div className="text-center p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
+            <div className="flex items-center justify-center mb-1">
+              <Dumbbell className="w-4 h-4 text-amber-600" />
+            </div>
+            <div className="text-xl font-bold text-amber-700">{workoutAnalysis.gymCount}</div>
+            <div className="text-xs text-amber-600 font-medium">Gym</div>
+          </div>
+          <div className="text-center p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100">
+            <div className="flex items-center justify-center mb-1">
+              <Target className="w-4 h-4 text-green-600" />
+            </div>
+            <div className="text-xl font-bold text-green-700">{workoutAnalysis.tennisCount}</div>
+            <div className="text-xs text-green-600 font-medium">Tenis</div>
+          </div>
+          <div className="text-center p-3 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl border border-cyan-100">
+            <div className="flex items-center justify-center mb-1">
+              <span className="text-cyan-600">⏱️</span>
+            </div>
+            <div className="text-xl font-bold text-cyan-700">{workoutAnalysis.totalDuration}'</div>
+            <div className="text-xs text-cyan-600 font-medium">Duración</div>
+          </div>
         </div>
       </div>
 
