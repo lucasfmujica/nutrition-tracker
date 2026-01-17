@@ -5,7 +5,7 @@ import { FoodFormModal } from '../../Modals/FoodFormModal';
 import { ImportModal } from '../../Modals/ImportModal';
 import { MigrationModal } from '../../Modals/MigrationModal';
 import { WorkoutFormModal } from '../../Modals/WorkoutFormModal';
-import { WeeklyReport } from '../../WeeklyReport';
+import { WeeklyReport } from './WeeklyReport';
 
 export const ModalsManager = () => {
   const {

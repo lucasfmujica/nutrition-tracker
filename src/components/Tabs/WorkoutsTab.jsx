@@ -1,5 +1,5 @@
 import { addDaysToDate, getArgentinaDateString, getMondayOfWeek } from '../../utils/dateUtils';
-import { SwipeableItem } from '../SwipeableItem';
+import { SwipeableItem } from '../ui/SwipeableItem';
 
 /**
  * WorkoutsTab - Workout tracking and history

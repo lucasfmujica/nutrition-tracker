@@ -30,9 +30,14 @@ export const TrackerProvider = ({ children }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [dashboardDate, setDashboardDate] = useState(getArgentinaDateString());
   const [selectedFoodDate, setSelectedFoodDate] = useState(getArgentinaDateString());
+  const [selectedWorkoutDate, setSelectedWorkoutDate] = useState(getArgentinaDateString());
+  const [stepsDate, setStepsDate] = useState(getArgentinaDateString());
 
   const [showImportFoodModal, setShowImportFoodModal] = useState(false);
   const [showImportWorkoutModal, setShowImportWorkoutModal] = useState(false);
+
+  // UI Visibility
+  const [showFab, setShowFab] = useState(true);
 
   // Note: importText, newWeight etc moved to local hooks
   // Note: importText, newWeight etc moved to local hooks
@@ -69,6 +74,22 @@ export const TrackerProvider = ({ children }) => {
     weightHistory: biometrics.weightHistory,
     profile: biometrics.profile
   });
+
+  // Wrapper for ConfigTab to update both profile and targets
+  const updateConfig = async (newProfile, newTargets) => {
+    // Optimistic update
+    biometrics.setProfile(newProfile);
+    biometrics.setCustomTargets(newTargets);
+
+    // Save to storage/cloud
+    try {
+      if (newProfile !== biometrics.profile) await biometrics.saveProfile(newProfile);
+      if (newTargets !== biometrics.customTargets) await biometrics.saveTargets(newTargets);
+    } catch (err) {
+      console.error('Error updating config:', err);
+      // Revert on error? For now just log
+    }
+  };
 
   // 3. Water Actions - Moved to wrapper to keep context clean
   // (We use simple wrappers here or move logic to useNutrition completely later)
@@ -125,7 +146,7 @@ export const TrackerProvider = ({ children }) => {
     getTargetsForDate: nutrition.getTargetsForDate,
     getStepsForDate: (date) => biometrics.stepsLog.find(s => s.date === date)?.steps || 0,
     getWorkoutsForDate: (date) => workouts.workoutLog.filter(entry => entry.date === date)
-  });
+  }, analytics); // Pass analytics as 2nd arg
 
   // 7. Food Entry
   const foodEntry = useFoodEntry({
@@ -186,11 +207,11 @@ export const TrackerProvider = ({ children }) => {
     // UI State
     activeTab, setActiveTab,
     dashboardDate, setDashboardDate,
-    selectedFoodDate, setSelectedFoodDate,
+    selectedWorkoutDate, setSelectedWorkoutDate,
+    stepsDate, setStepsDate, // Added stepsDate
     showImportFoodModal, setShowImportFoodModal,
     showImportWorkoutModal, setShowImportWorkoutModal,
-    showImportFoodModal, setShowImportFoodModal,
-    showImportWorkoutModal, setShowImportWorkoutModal,
+    showFab, setShowFab,
 
     // Delete Modal & Undo
     // Delete Modal & Undo
@@ -199,6 +220,7 @@ export const TrackerProvider = ({ children }) => {
     // Overrides
     addWaterGlass, // Wrapped version
     removeWaterGlass, // Wrapped version
+    updateConfig, // Wrapped version
 
     // Legacy hooks results
     ...dataOperations,
@@ -220,10 +242,12 @@ export const TrackerProvider = ({ children }) => {
   }), [
     trackerSync, nutrition, biometrics, workouts,
     activeTab, // Added dependency
-    dashboardDate, selectedFoodDate, showImportFoodModal, showImportWorkoutModal,
+    dashboardDate, selectedFoodDate, selectedWorkoutDate, stepsDate, // Added dependency
+    showImportFoodModal, showImportWorkoutModal,
     globalDelete,
     dataOperations, analytics, exportDoc, foodEntry, workoutEntry, mealTemplates, ouraEntry,
-    workoutAnalysis, supabase
+    workoutAnalysis, supabase,
+    showFab // Added dependency
   ]);
 
   return (

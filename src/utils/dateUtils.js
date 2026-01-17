@@ -2,14 +2,14 @@
 export const ARGENTINA_TZ = 'America/Argentina/Buenos_Aires';
 
 // Helper to format any date to YYYY-MM-DD in Argentina timezone
-export const toArgentinaDateString = (date = new Date()) => {
-  const formatter = new Intl.DateTimeFormat('en-CA', {
-    timeZone: ARGENTINA_TZ,
+export const toArgentinaDateString = (date) => {
+  if (!date) return ''; // Guard clause
+  return new Date(date).toLocaleDateString('es-AR', {
+    timeZone: 'America/Argentina/Buenos_Aires',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit'
-  });
-  return formatter.format(date); // Returns YYYY-MM-DD
+  }).split('/').reverse().join('-'); // Returns YYYY-MM-DD
 };
 
 // Helper to get current date in Argentina
