@@ -31,6 +31,7 @@ const NutritionTracker = () => {
     ouraLog,
     waterLog,
     useCloud,
+    storage,
     sortWeightHistory,
     getMostRecentWeight,
     isTrainingDay,
