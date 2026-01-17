@@ -58,6 +58,7 @@ const NutritionTracker = () => {
     addWaterGlass,
     removeWaterGlass,
     handleRefresh,
+    handleLogout,
     updateConfig,
     activeTab, setActiveTab,
     newWeight, setNewWeight,
@@ -1898,23 +1899,10 @@ const NutritionTracker = () => {
 
                 {/* Logout button - bigger and more visible */}
                 <button
-                  onClick={async (e) => {
+                  onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('[Logout] Button clicked');
-                    try {
-                      // Reset all local state first
-                      hasInitialized.current = false;
-                      setShowAuth(true);
-                      setOfflineMode(false);
-                      // Then sign out from Supabase
-                      const result = await supabase.signOut();
-                      console.log('[Logout] signOut result:', result);
-                    } catch (err) {
-                      console.error('[Logout] Error:', err);
-                      // Force show auth even on error
-                      setShowAuth(true);
-                    }
+                    handleLogout();
                   }}
                   className="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-xl bg-red-500/20 hover:bg-red-500/40 active:bg-red-500/60 text-red-400 hover:text-red-300 transition-all touch-manipulation"
                   title="Cerrar sesión"

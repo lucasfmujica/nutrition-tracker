@@ -550,6 +550,20 @@ export const useTrackerData = () => {
     setConfigDirty(true);
   };
 
+  const handleLogout = async () => {
+    console.log('[Logout] Handling logout in useTrackerData');
+    try {
+      hasInitialized.current = false;
+      setOfflineMode(false);
+      setShowAuth(true);
+      await supabase.signOut();
+    } catch (err) {
+      console.error('[Logout] Error during logout:', err);
+      // Force auth screen anyway
+      setShowAuth(true);
+    }
+  };
+
 
   return {
     supabase,
@@ -597,6 +611,7 @@ export const useTrackerData = () => {
     removeWaterGlass,
     handleRefresh,
     updateConfig,
+    handleLogout,
     activeTab, setActiveTab,
     newWeight, setNewWeight,
     newWeightTime, setNewWeightTime,
