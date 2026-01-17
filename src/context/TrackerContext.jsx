@@ -4,11 +4,8 @@ import { useDataOperations } from '../hooks/useDataOperations';
 import { useExport } from '../hooks/useExport';
 import { useFoodEntry } from '../hooks/useFoodEntry';
 import { useMealTemplates } from '../hooks/useMealTemplates';
-import { useOuraEntry } from '../hooks/useOuraEntry';
 import { useSupabase } from '../hooks/useSupabase';
 import { useWorkoutEntry } from '../hooks/useWorkoutEntry';
-
-// Micro-hooks
 import { useBiometrics } from '../hooks/useBiometrics';
 import { useGlobalDelete } from '../hooks/useGlobalDelete';
 import { useNutrition } from '../hooks/useNutrition';
@@ -118,12 +115,10 @@ export const TrackerProvider = ({ children }) => {
     saveFoodLog: nutrition.saveFoodLog,
     workoutLog: workouts.workoutLog,
     saveWorkoutLog: workouts.saveWorkoutLog,
-    saveFoodEntry: nutrition.saveFooEntry, // Note: typo in useNutrition? checked: saveFoodEntry
+    saveFoodEntry: nutrition.saveFoodEntry, // Note: typo in useNutrition? checked: saveFoodEntry
     saveWorkoutEntry: workouts.saveWorkoutEntry,
     supabase,
     useCloud, // ← CRITICAL FIX: Use unified useCloud from TrackerContext
-    showImportFoodModal, setShowImportFoodModal,
-    showImportWorkoutModal, setShowImportWorkoutModal,
     showImportFoodModal, setShowImportFoodModal,
     showImportWorkoutModal, setShowImportWorkoutModal,
     setSaveStatus: trackerSync.setSaveStatus,
@@ -190,12 +185,13 @@ export const TrackerProvider = ({ children }) => {
     saveFoodEntry: nutrition.saveFoodEntry
   });
 
-  // 10. Oura Entry
-  const ouraEntry = useOuraEntry({
-    ouraLog: biometrics.ouraLog,
-    saveOuraLog: biometrics.saveOuraLog,
-    saveOuraEntry: biometrics.saveOuraEntry
-  });
+  // 11. Steps (Activity)
+  const stepsEntry = useDataOperations({
+      log: biometrics.stepsLog,
+      saveLog: biometrics.setStepsLog,
+      saveEntry: biometrics.saveStepsEntry,
+      dateParam: stepsDate
+    });
 
   // 11. Global Delete Actions
   const globalDelete = useGlobalDelete(nutrition, workouts, biometrics, supabase, useCloud);
@@ -250,7 +246,7 @@ export const TrackerProvider = ({ children }) => {
     ...foodEntry,
     ...workoutEntry,
     ...mealTemplates,
-    ...ouraEntry,
+
     ...ouraSync, // Expose syncOuraData, isSyncing, syncStatus
 
     // Intelligence Engine
@@ -270,7 +266,7 @@ export const TrackerProvider = ({ children }) => {
     dashboardDate, selectedFoodDate, selectedWorkoutDate, stepsDate, // Added dependency
     showImportFoodModal, showImportWorkoutModal,
     globalDelete,
-    dataOperations, analytics, exportDoc, foodEntry, workoutEntry, mealTemplates, ouraEntry, ouraSync,
+    dataOperations, analytics, exportDoc, foodEntry, workoutEntry, mealTemplates, ouraSync,
     weightAnalytics, workoutAnalysis, supabase,
     showFab // Added dependency
   ]);

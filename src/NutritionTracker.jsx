@@ -45,7 +45,6 @@ const NutritionTrackerContent = () => {
     getWeightChartData, editingWeightId, setEditingWeightId, editingWeightValue, setEditingWeightValue,
     startEditWeight, saveEditWeight, cancelEditWeight,
     stepsDate, setStepsDate, newSteps, setNewSteps, addStepsEntry, getWeeklyData, getStepsForDate,
-    newOuraEntry, setNewOuraEntry, addOuraEntry,
     getTodayWater, addWaterGlass, weightProjection, formatTime
   } = useTracker();
 
@@ -143,7 +142,7 @@ const NutritionTrackerContent = () => {
               />
             )}
             {activeTab === 'oura' && (
-              <OuraTab newOuraEntry={newOuraEntry} setNewOuraEntry={setNewOuraEntry} addOuraEntry={addOuraEntry} ouraLog={ouraLog} />
+              <OuraTab ouraLog={ouraLog} />
             )}
             {activeTab === 'config' && (
               <ConfigTab
