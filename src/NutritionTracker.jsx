@@ -1715,34 +1715,36 @@ const NutritionTracker = () => {
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
             <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6 lg:items-start">
-              {/* Date Navigator - Premium Design */}
-              <div className="flex items-center justify-center gap-4 lg:gap-6">
-              <button
-                  onClick={() => setDashboardDate(changeDate(dashboardDate, -1))}
-                  className="group w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gray-800/80 backdrop-blur border border-gray-700 hover:border-blue-500/50 hover:bg-gray-700/80 transition-all duration-200 flex items-center justify-center"
-              >
-                  <svg className="w-5 h-5 lg:w-6 lg:h-6 text-gray-400 group-hover:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-              </button>
-                <div className="text-center px-6 py-3 lg:px-10 lg:py-4 bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-gray-700/50">
-                  <div className="flex items-center justify-center gap-3">
-                    <span className="text-lg lg:text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">{formatDateDisplay(dashboardDate)}</span>
-                    {isDayCompleted(dashboardDate) && <span className="text-blue-400 text-base lg:text-lg">✓</span>}
-                    {isTrainingDay(dashboardDate) && <span className="text-amber-400 text-base lg:text-lg">🏋️</span>}
-                  </div>
-                  <p className="text-xs lg:text-sm text-gray-500 mt-1">{dashboardDate}</p>
+              {/* Date Navigator - Clean Desktop Design */}
+              <div className="flex items-center lg:items-start lg:w-full lg:mb-8 justify-center lg:justify-between px-1">
+                <div className="hidden lg:block">
+                  <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+                  <p className="text-sm text-gray-500">Resumen diario</p>
                 </div>
-              <button
-                  onClick={() => setDashboardDate(changeDate(dashboardDate, 1))}
-                  disabled={dashboardDate >= getArgentinaDateString()}
-                  className={`group w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gray-800/80 backdrop-blur border border-gray-700 transition-all duration-200 flex items-center justify-center ${dashboardDate >= getArgentinaDateString() ? 'opacity-30 cursor-not-allowed' : 'hover:border-blue-500/50 hover:bg-gray-700/80'}`}
-              >
-                  <svg className={`w-5 h-5 lg:w-6 lg:h-6 transition-colors ${dashboardDate >= getArgentinaDateString() ? 'text-gray-600' : 'text-gray-400 group-hover:text-blue-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-              </button>
-            </div>
+
+                <div className="flex items-center gap-4 bg-white p-1 rounded-2xl shadow-sm border border-gray-100">
+                  <button
+                      onClick={() => setDashboardDate(changeDate(dashboardDate, -1))}
+                      className="w-10 h-10 rounded-xl hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors flex items-center justify-center"
+                  >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                  </button>
+                  <div className="text-center min-w-[120px]">
+                    <span className="block text-sm font-bold text-gray-900">{formatDateDisplay(dashboardDate)}</span>
+                  </div>
+                  <button
+                      onClick={() => setDashboardDate(changeDate(dashboardDate, 1))}
+                      disabled={dashboardDate >= getArgentinaDateString()}
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${dashboardDate >= getArgentinaDateString() ? 'text-gray-200 cursor-not-allowed' : 'hover:bg-gray-50 text-gray-400 hover:text-blue-500'}`}
+                  >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                  </button>
+                </div>
+              </div>
 
 
               {/* Left Column - Main Tracking */}
@@ -1819,7 +1821,7 @@ const NutritionTracker = () => {
                 type="date"
                 value={selectedFoodDate}
                 onChange={(e) => setSelectedFoodDate(e.target.value)}
-                className="bg-gray-800 border border-gray-600 rounded px-3 py-2.5 text-base flex-1 min-w-0"
+                className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-base flex-1 min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
               />
             </div>
 
@@ -1829,9 +1831,13 @@ const NutritionTracker = () => {
             )}
 
             {getFoodsForDate(selectedFoodDate).length === 0 ? (
-              <div className="bg-gray-800 rounded-lg p-6 text-center border border-gray-700">
-                <p className="text-gray-400 text-base">Sin comidas registradas.</p>
-                <p className="text-sm text-blue-400 mt-2">Usá el botón + abajo a la derecha</p>
+
+              <div className="bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm">
+                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">🍽️</span>
+                </div>
+                <h3 className="text-gray-900 font-bold text-lg mb-1">Sin comidas registradas</h3>
+                <p className="text-gray-500 text-sm">Registra tu primera comida del día.</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -1914,8 +1920,12 @@ const NutritionTracker = () => {
             )}
 
             {getFoodsForDate(selectedFoodDate).length > 0 && (
-              <div className="bg-gray-800 rounded-lg p-4 border border-blue-500/30">
-                <h3 className="text-sm font-bold text-blue-400 mb-3">TOTAL DEL DÍA</h3>
+
+              <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded bg-blue-50 text-blue-600 flex items-center justify-center text-xs">Σ</span>
+                  TOTAL DEL DÍA
+                </h3>
                 {(() => {
                   const t = getTotalsForDate(selectedFoodDate);
                   return (
@@ -1937,23 +1947,23 @@ const NutritionTracker = () => {
         {activeTab === 'entrenos' && (
           <div className="space-y-3">
             {/* Weekly Analysis */}
-            <div className="bg-gray-800 rounded-lg p-3 border border-blue-500/30">
-              <div className="flex justify-between items-center mb-2">
-                <h2 className="text-xs font-bold text-blue-400">📊 SEMANA</h2>
+            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-sm font-bold text-gray-900">Resumen Semanal</h2>
                 <span className="text-xs text-gray-500">desde {workoutAnalysis.weekStart}</span>
               </div>
               <div className="grid grid-cols-3 gap-2 mb-2">
-                <div className="text-center p-2 bg-gray-700/50 rounded">
-                  <div className="text-lg font-bold text-amber-400">{workoutAnalysis.gymCount}</div>
-                  <div className="text-xs text-gray-400">Gym</div>
+                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                  <div className="text-xl font-bold text-amber-500">{workoutAnalysis.gymCount}</div>
+                  <div className="text-xs text-gray-500 font-medium">Gym</div>
                 </div>
-                <div className="text-center p-2 bg-gray-700/50 rounded">
-                  <div className="text-lg font-bold text-green-400">{workoutAnalysis.tennisCount}</div>
-                  <div className="text-xs text-gray-400">Tenis</div>
+                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                  <div className="text-xl font-bold text-green-500">{workoutAnalysis.tennisCount}</div>
+                  <div className="text-xs text-gray-500 font-medium">Tenis</div>
                 </div>
-                <div className="text-center p-2 bg-gray-700/50 rounded">
-                  <div className="text-lg font-bold text-cyan-400">{workoutAnalysis.totalDuration}'</div>
-                  <div className="text-xs text-gray-400">Min</div>
+                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                  <div className="text-xl font-bold text-cyan-500">{workoutAnalysis.totalDuration}'</div>
+                  <div className="text-xs text-gray-500 font-medium">Min</div>
                 </div>
               </div>
               <div className="space-y-0.5">
@@ -2045,34 +2055,37 @@ const NutritionTracker = () => {
         {/* Peso Tab */}
         {activeTab === 'peso' && (
           <div className="space-y-4">
-            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h2 className="text-sm font-bold text-blue-400 mb-2">⚖️ NUEVO PESO</h2>
-              <div className="flex flex-col gap-2">
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">⚖️</span>
+                NUEVO PESO
+              </h2>
+              <div className="flex flex-col gap-3">
               <div className="flex gap-2">
-                  <input type="number" step="0.1" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} placeholder="84.5" className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2.5 text-lg min-w-0" />
-                  <span className="flex items-center text-gray-400 text-sm">kg</span>
+                  <input type="number" step="0.1" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} placeholder="84.5" className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-lg min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                  <span className="flex items-center text-gray-500 text-sm font-medium">kg</span>
                 </div>
                 <div className="flex gap-2">
-                  <input type="time" value={newWeightTime} onChange={(e) => setNewWeightTime(e.target.value)} className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2.5 text-sm min-w-0" />
-                  <button onClick={addWeightEntry} disabled={!newWeight} className="bg-blue-600 active:bg-blue-500 disabled:opacity-50 px-5 py-2.5 rounded font-bold text-sm flex-shrink-0">Guardar</button>
+                  <input type="time" value={newWeightTime} onChange={(e) => setNewWeightTime(e.target.value)} className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                  <button onClick={addWeightEntry} disabled={!newWeight} className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 px-6 py-3 rounded-xl font-bold text-white shadow-lg shadow-blue-500/30 transition-all">Guardar</button>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h2 className="text-base font-bold text-blue-400 mb-3">📍 PROGRESO</h2>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="p-2 bg-gray-700/50 rounded">
-                  <div className="text-xl font-bold text-white">{profile.currentWeight}</div>
-                  <div className="text-xs text-gray-400">actual</div>
+            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+              <h2 className="text-sm font-bold text-gray-900 mb-4">Progreso</h2>
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div className="p-3 bg-gray-50 rounded-xl">
+                  <div className="text-xl font-bold text-gray-900">{profile.currentWeight}</div>
+                  <div className="text-xs text-gray-400 font-medium mt-1">Actual</div>
                 </div>
-                <div className="p-2 bg-gray-700/50 rounded">
-                  <div className="text-xl font-bold text-blue-400">{profile.targetWeight}</div>
-                  <div className="text-xs text-gray-400">objetivo</div>
+                <div className="p-3 bg-gray-50 rounded-xl">
+                  <div className="text-xl font-bold text-blue-600">{profile.targetWeight}</div>
+                  <div className="text-xs text-gray-400 font-medium mt-1">Objetivo</div>
                 </div>
-                <div className="p-2 bg-gray-700/50 rounded">
-                  <div className="text-xl font-bold text-amber-400">{(profile.currentWeight - profile.targetWeight).toFixed(1)}</div>
-                  <div className="text-xs text-gray-400">faltan</div>
+                <div className="p-3 bg-gray-50 rounded-xl">
+                  <div className="text-xl font-bold text-amber-500">{(profile.currentWeight - profile.targetWeight).toFixed(1)}</div>
+                  <div className="text-xs text-gray-400 font-medium mt-1">Faltan</div>
                 </div>
               </div>
             </div>
@@ -2084,20 +2097,20 @@ const NutritionTracker = () => {
 
             {/* Projection */}
             {weightProjection && (
-              <div className="bg-gray-800 rounded-lg p-4 border border-amber-500/30">
-                <h2 className="text-sm font-bold text-amber-400 mb-3">🎯 PROYECCIÓN</h2>
-                <div className="grid grid-cols-2 gap-3 mb-3">
-                  <div className="text-center p-3 bg-gray-700/50 rounded">
-                    <div className="text-xl font-bold text-white">
-                      {weightProjection.weeklyRate > 0 ? '-' : '+'}{Math.abs(weightProjection.weeklyRate)} kg
+              <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+                <h2 className="text-sm font-bold text-gray-900 mb-4">Proyección</h2>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="text-center p-3 bg-gray-50 rounded-xl">
+                    <div className="text-xl font-bold text-gray-900">
+                      {weightProjection.weeklyRate > 0 ? '-' : '+'}{Math.abs(weightProjection.weeklyRate)} <span className="text-xs font-normal text-gray-500">kg</span>
                     </div>
-                    <div className="text-xs text-gray-400">por semana</div>
+                    <div className="text-xs text-gray-400 font-medium mt-1">Por semana</div>
                   </div>
-                  <div className="text-center p-3 bg-gray-700/50 rounded">
-                    <div className="text-xl font-bold text-blue-400">
+                  <div className="text-center p-3 bg-gray-50 rounded-xl">
+                    <div className="text-xl font-bold text-blue-600">
                       {weightProjection.weeksToGoal ? `${weightProjection.weeksToGoal} sem` : '-'}
                     </div>
-                    <div className="text-xs text-gray-400">para llegar a {profile.targetWeight}kg</div>
+                    <div className="text-xs text-gray-400 font-medium mt-1">Para llegar</div>
                   </div>
                 </div>
 
@@ -2167,12 +2180,15 @@ const NutritionTracker = () => {
         {/* Pasos Tab */}
         {activeTab === 'pasos' && (
           <div className="space-y-3">
-            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <h2 className="text-sm font-bold text-blue-400 mb-3">👟 REGISTRAR PASOS</h2>
-              <input type="date" value={stepsDate} onChange={(e) => setStepsDate(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm mb-2" />
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">👟</span>
+                REGISTRAR PASOS
+              </h2>
+              <input type="date" value={stepsDate} onChange={(e) => setStepsDate(e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm mb-3 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none transition-all" />
               <div className="flex gap-2">
-                <input type="number" value={newSteps} onChange={(e) => setNewSteps(e.target.value)} placeholder="ej: 8500" className="flex-1 bg-gray-700 border border-gray-600 rounded px-4 py-3 text-lg" />
-                <button onClick={addStepsEntry} className="bg-cyan-600 active:bg-cyan-500 px-6 py-3 rounded font-bold">OK</button>
+                <input type="number" value={newSteps} onChange={(e) => setNewSteps(e.target.value)} placeholder="ej: 8500" className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none transition-all" />
+                <button onClick={addStepsEntry} className="bg-orange-600 hover:bg-orange-700 active:bg-orange-800 px-8 py-3 rounded-xl font-bold text-white shadow-lg shadow-orange-500/30 transition-all">OK</button>
               </div>
             </div>
 
@@ -2197,60 +2213,63 @@ const NutritionTracker = () => {
         {/* Oura Tab */}
         {activeTab === 'oura' && (
               <div className="space-y-3">
-            <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-              <h2 className="text-sm font-bold text-purple-400 mb-2">💍 REGISTRAR DATOS OURA</h2>
-              <div className="space-y-2">
-                <input type="date" value={newOuraEntry.date} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, date: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+              <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">💍</span>
+                REGISTRAR DATOS OURA
+              </h2>
+              <div className="space-y-4">
+                <input type="date" value={newOuraEntry.date} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, date: e.target.value })} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
 
                 {/* Scores - 2 cols on mobile, 3 on larger */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">Sleep</label>
-                    <input type="number" value={newOuraEntry.sleepScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, sleepScore: e.target.value })} placeholder="85" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">Sleep</label>
+                    <input type="number" value={newOuraEntry.sleepScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, sleepScore: e.target.value })} placeholder="85" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">Ready</label>
-                    <input type="number" value={newOuraEntry.readinessScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, readinessScore: e.target.value })} placeholder="80" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">Ready</label>
+                    <input type="number" value={newOuraEntry.readinessScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, readinessScore: e.target.value })} placeholder="80" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">Activity</label>
-                    <input type="number" value={newOuraEntry.activityScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, activityScore: e.target.value })} placeholder="75" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">Activity</label>
+                    <input type="number" value={newOuraEntry.activityScore} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, activityScore: e.target.value })} placeholder="75" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">HRV</label>
-                    <input type="number" value={newOuraEntry.hrv} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, hrv: e.target.value })} placeholder="45" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
-                </div>
-                  <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">RHR</label>
-                    <input type="number" value={newOuraEntry.restingHr} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, restingHr: e.target.value })} placeholder="58" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">HRV</label>
+                    <input type="number" value={newOuraEntry.hrv} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, hrv: e.target.value })} placeholder="45" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">Horas</label>
-                    <input type="number" step="0.1" value={newOuraEntry.sleepHours} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, sleepHours: e.target.value })} placeholder="7.5" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">RHR</label>
+                    <input type="number" value={newOuraEntry.restingHr} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, restingHr: e.target.value })} placeholder="58" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 font-medium mb-1">Horas</label>
+                    <input type="number" step="0.1" value={newOuraEntry.sleepHours} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, sleepHours: e.target.value })} placeholder="7.5" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                 </div>
 
                 {/* Sleep details - compact 2x2 grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">Deep</label>
-                    <input type="number" value={newOuraEntry.deepSleepMins} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, deepSleepMins: e.target.value })} placeholder="90" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">Deep</label>
+                    <input type="number" value={newOuraEntry.deepSleepMins} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, deepSleepMins: e.target.value })} placeholder="90" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">REM</label>
-                    <input type="number" value={newOuraEntry.remSleepMins} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, remSleepMins: e.target.value })} placeholder="100" className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">REM</label>
+                    <input type="number" value={newOuraEntry.remSleepMins} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, remSleepMins: e.target.value })} placeholder="100" className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">Acostarse</label>
-                    <input type="time" value={newOuraEntry.bedtime} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, bedtime: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">Acostarse</label>
+                    <input type="time" value={newOuraEntry.bedtime} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, bedtime: e.target.value })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-0.5">Despertar</label>
-                    <input type="time" value={newOuraEntry.wakeTime} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, wakeTime: e.target.value })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm" />
+                    <label className="block text-xs text-gray-500 font-medium mb-1">Despertar</label>
+                    <input type="time" value={newOuraEntry.wakeTime} onChange={(e) => setNewOuraEntry({ ...newOuraEntry, wakeTime: e.target.value })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all" />
                   </div>
                 </div>
 
-                <button onClick={addOuraEntry} className="w-full bg-purple-600 hover:bg-purple-500 py-2.5 rounded font-bold text-sm">Guardar</button>
+                <button onClick={addOuraEntry} className="w-full bg-purple-600 hover:bg-purple-700 active:bg-purple-800 py-3 rounded-xl font-bold text-sm text-white shadow-lg shadow-purple-500/30 transition-all">Guardar Datos</button>
               </div>
             </div>
 
@@ -2295,68 +2314,77 @@ const NutritionTracker = () => {
 
         {/* Config Tab - with editable targets and debounced saving */}
         {activeTab === 'config' && (
-          <div className="space-y-3">
-            <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-              <h2 className="text-sm font-bold text-blue-400 mb-3">👤 PERFIL</h2>
-              <div className="grid grid-cols-2 gap-2">
+          <div className="space-y-4">
+            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+              <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                 <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">👤</span>
+                 PERFIL
+              </h2>
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Peso Actual</label>
-                  <input type="number" step="0.1" value={profile.currentWeight} onChange={(e) => updateConfig({ ...profile, currentWeight: parseFloat(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-xs text-gray-500 font-medium mb-1">Peso Actual</label>
+                  <input type="number" step="0.1" value={profile.currentWeight} onChange={(e) => updateConfig({ ...profile, currentWeight: parseFloat(e.target.value) || 0 }, customTargets)} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Peso Objetivo</label>
-                  <input type="number" step="0.1" value={profile.targetWeight} onChange={(e) => updateConfig({ ...profile, targetWeight: parseFloat(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-xs text-gray-500 font-medium mb-1">Peso Objetivo</label>
+                  <input type="number" step="0.1" value={profile.targetWeight} onChange={(e) => updateConfig({ ...profile, targetWeight: parseFloat(e.target.value) || 0 }, customTargets)} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Altura (cm)</label>
-                  <input type="number" value={profile.height} onChange={(e) => updateConfig({ ...profile, height: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-xs text-gray-500 font-medium mb-1">Altura (cm)</label>
+                  <input type="number" value={profile.height} onChange={(e) => updateConfig({ ...profile, height: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Edad</label>
-                  <input type="number" value={profile.age} onChange={(e) => updateConfig({ ...profile, age: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gray-800 rounded-lg p-3 border border-blue-500/30">
-              <h2 className="text-sm font-bold text-blue-400 mb-3">🎯 OBJETIVOS (Rest Day)</h2>
-              <div className="grid grid-cols-3 gap-2">
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">Calorías</label>
-                  <input type="number" value={customTargets.calories} onChange={(e) => updateConfig(profile, { ...customTargets, calories: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">Prot (g)</label>
-                  <input type="number" value={customTargets.protein} onChange={(e) => updateConfig(profile, { ...customTargets, protein: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">Carbs (g)</label>
-                  <input type="number" value={customTargets.carbs} onChange={(e) => updateConfig(profile, { ...customTargets, carbs: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">Grasas (g)</label>
-                  <input type="number" value={customTargets.fat} onChange={(e) => updateConfig(profile, { ...customTargets, fat: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">Fibra (g)</label>
-                  <input type="number" value={customTargets.fiber} onChange={(e) => updateConfig(profile, { ...customTargets, fiber: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-xs text-gray-500 font-medium mb-1">Edad</label>
+                  <input type="number" value={profile.age} onChange={(e) => updateConfig({ ...profile, age: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-800 rounded-lg p-3 border border-amber-500/30">
-              <h2 className="text-sm font-bold text-amber-400 mb-3">🏋️ TRAINING DAY</h2>
-              <div className="grid grid-cols-2 gap-2">
+            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+              <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">🎯</span>
+                  OBJETIVOS (Rest Day)
+              </h2>
+              <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Kcal extra</label>
-                  <input type="number" value={customTargets.trainingDayCaloriesBonus} onChange={(e) => updateConfig(profile, { ...customTargets, trainingDayCaloriesBonus: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-xs text-gray-500 font-medium mb-1">Calorías</label>
+                  <input type="number" value={customTargets.calories} onChange={(e) => updateConfig(profile, { ...customTargets, calories: parseInt(e.target.value) || 0 })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Carbs (g)</label>
-                  <input type="number" value={customTargets.trainingDayCarbs} onChange={(e) => updateConfig(profile, { ...customTargets, trainingDayCarbs: parseInt(e.target.value) || 0 })} className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-2 text-sm" />
+                  <label className="block text-xs text-gray-500 font-medium mb-1">Prot (g)</label>
+                  <input type="number" value={customTargets.protein} onChange={(e) => updateConfig(profile, { ...customTargets, protein: parseInt(e.target.value) || 0 })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 font-medium mb-1">Carbs (g)</label>
+                  <input type="number" value={customTargets.carbs} onChange={(e) => updateConfig(profile, { ...customTargets, carbs: parseInt(e.target.value) || 0 })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 font-medium mb-1">Grasas (g)</label>
+                  <input type="number" value={customTargets.fat} onChange={(e) => updateConfig(profile, { ...customTargets, fat: parseInt(e.target.value) || 0 })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 font-medium mb-1">Fibra (g)</label>
+                  <input type="number" value={customTargets.fiber} onChange={(e) => updateConfig(profile, { ...customTargets, fiber: parseInt(e.target.value) || 0 })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all" />
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mt-2">Training day: {customTargets.calories + customTargets.trainingDayCaloriesBonus} kcal, {customTargets.trainingDayCarbs}g carbs</p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+              <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                 <span className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">🏋️</span>
+                 TRAINING DAY
+              </h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-gray-500 font-medium mb-1">Kcal extra</label>
+                  <input type="number" value={customTargets.trainingDayCaloriesBonus} onChange={(e) => updateConfig(profile, { ...customTargets, trainingDayCaloriesBonus: parseInt(e.target.value) || 0 })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all" />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 font-medium mb-1">Carbs (g)</label>
+                  <input type="number" value={customTargets.trainingDayCarbs} onChange={(e) => updateConfig(profile, { ...customTargets, trainingDayCarbs: parseInt(e.target.value) || 0 })} className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all" />
+                </div>
+              </div>
+              <p className="text-xs text-gray-400 mt-2 font-medium">Training day: {customTargets.calories + customTargets.trainingDayCaloriesBonus} kcal, {customTargets.trainingDayCarbs}g carbs</p>
             </div>
 
             <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-2.5">
@@ -2364,54 +2392,57 @@ const NutritionTracker = () => {
             </div>
 
             {/* Export buttons - compact grid */}
-            <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-              <h2 className="text-sm font-bold text-gray-300 mb-3">📤 EXPORTAR</h2>
-              <div className="grid grid-cols-2 gap-2">
+            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+              <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+                 <span className="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 flex items-center justify-center">📤</span>
+                 EXPORTAR
+              </h2>
+              <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={exportForClaude}
-                  className="bg-cyan-600 active:bg-cyan-500 py-2.5 rounded font-medium text-sm flex items-center justify-center gap-1"
+                  className="bg-cyan-50 hover:bg-cyan-100 text-cyan-700 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors"
               >
                   🤖 Claude
               </button>
               <button
                 onClick={exportForNutritionist}
-                  className="bg-pink-600 active:bg-pink-500 py-2.5 rounded font-medium text-sm flex items-center justify-center gap-1"
+                  className="bg-pink-50 hover:bg-pink-100 text-pink-700 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors"
               >
                   🩺 Nutri
               </button>
                 <button
                   onClick={exportBackup}
-                  className="bg-amber-600 active:bg-amber-500 py-2.5 rounded font-medium text-sm flex items-center justify-center gap-1"
+                  className="bg-amber-50 hover:bg-amber-100 text-amber-700 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors"
                 >
                   📤 Backup
                 </button>
-                <label className="bg-gray-700 active:bg-gray-600 py-2.5 rounded font-medium text-sm flex items-center justify-center gap-1 cursor-pointer">
+                <label className="bg-gray-50 hover:bg-gray-100 text-gray-700 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-colors">
                   📥 Importar
                   <input type="file" accept=".json" onChange={importBackup} className="hidden" />
                 </label>
               </div>
 
               {/* Stats */}
-              <div className="mt-3 grid grid-cols-4 gap-1 text-center">
-                <div className="p-1.5 bg-gray-700/50 rounded">
-                  <div className="text-sm font-bold text-white">{weightHistory.length}</div>
-                  <div className="text-xs text-gray-500">Peso</div>
+              <div className="mt-4 grid grid-cols-4 gap-2 text-center">
+                <div className="p-2 bg-gray-50 rounded-xl">
+                  <div className="text-sm font-bold text-gray-900">{weightHistory.length}</div>
+                  <div className="text-xs text-gray-500 font-medium">Peso</div>
                   </div>
-                <div className="p-1.5 bg-gray-700/50 rounded">
-                  <div className="text-sm font-bold text-white">{foodLog.length}</div>
-                  <div className="text-xs text-gray-500">Comidas</div>
+                <div className="p-2 bg-gray-50 rounded-xl">
+                  <div className="text-sm font-bold text-gray-900">{foodLog.length}</div>
+                  <div className="text-xs text-gray-500 font-medium">Comidas</div>
                   </div>
-                <div className="p-1.5 bg-gray-700/50 rounded">
-                  <div className="text-sm font-bold text-white">{workoutLog.length}</div>
-                  <div className="text-xs text-gray-500">Entrenos</div>
+                <div className="p-2 bg-gray-50 rounded-xl">
+                  <div className="text-sm font-bold text-gray-900">{workoutLog.length}</div>
+                  <div className="text-xs text-gray-500 font-medium">Entrenos</div>
                   </div>
-                <div className="p-1.5 bg-gray-700/50 rounded">
-                  <div className="text-sm font-bold text-white">{stepsLog.length}</div>
-                  <div className="text-xs text-gray-500">Pasos</div>
+                <div className="p-2 bg-gray-50 rounded-xl">
+                  <div className="text-sm font-bold text-gray-900">{stepsLog.length}</div>
+                  <div className="text-xs text-gray-500 font-medium">Pasos</div>
                 </div>
               </div>
 
-              <p className="text-xs text-gray-500 mt-2 text-center">⚠️ Importar reemplaza TODOS los datos</p>
+              <p className="text-xs text-gray-400 mt-4 text-center">⚠️ Importar reemplaza TODOS los datos</p>
             </div>
           </div>
         )}
