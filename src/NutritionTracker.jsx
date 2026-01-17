@@ -1,1063 +1,63 @@
-import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
-import { useSupabase } from './hooks/useSupabase';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AuthUI } from './components/AuthUI';
+import { BottomNav } from './components/BottomNav';
+import { FloatingActionButton } from './components/FloatingActionButton';
 import { OnboardingWizard } from './components/OnboardingWizard';
+import { PullToRefresh } from './components/PullToRefresh';
+import { SwipeableItem } from './components/SwipeableItem';
 import { WeeklyReport } from './components/WeeklyReport';
-
-// =====================================================
-// SWIPEABLE ITEM COMPONENT - Swipe left to delete
-// =====================================================
-const SwipeableItem = ({ children, onDelete, deleteLabel = 'Eliminar' }) => {
-  const itemRef = useRef(null);
-  const [translateX, setTranslateX] = useState(0);
-  const [isSwiping, setIsSwiping] = useState(false);
-  const startXRef = useRef(0);
-  const currentXRef = useRef(0);
-  const DELETE_THRESHOLD = -80;
-
-  const handleTouchStart = (e) => {
-    startXRef.current = e.touches[0].clientX;
-    currentXRef.current = translateX;
-    setIsSwiping(true);
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isSwiping) return;
-    const diff = e.touches[0].clientX - startXRef.current;
-    const newX = Math.min(0, Math.max(-120, currentXRef.current + diff));
-    setTranslateX(newX);
-  };
-
-  const handleTouchEnd = () => {
-    setIsSwiping(false);
-    if (translateX < DELETE_THRESHOLD) {
-      setTranslateX(-120);
-    } else {
-      setTranslateX(0);
-    }
-  };
-
-  const handleDelete = () => {
-    setTranslateX(-300);
-    setTimeout(() => onDelete(), 200);
-  };
-
-  const resetSwipe = () => setTranslateX(0);
-
-  return (
-    <div className="relative overflow-hidden rounded-lg">
-      {/* Delete background */}
-      <div
-        className="absolute inset-y-0 right-0 flex items-center bg-red-500 transition-all"
-        style={{ width: Math.abs(translateX) + 'px' }}
-      >
-        <button
-          onClick={handleDelete}
-          className="w-full h-full flex items-center justify-center text-white font-medium px-4"
-        >
-          {Math.abs(translateX) > 50 && <span>🗑️ {deleteLabel}</span>}
-        </button>
-      </div>
-
-      {/* Main content */}
-      <div
-        ref={itemRef}
-        className={`swipe-item relative bg-gray-800 ${isSwiping ? 'swiping' : ''}`}
-        style={{ transform: `translateX(${translateX}px)` }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onClick={translateX < 0 ? resetSwipe : undefined}
-      >
-        {children}
-      </div>
-    </div>
-  );
-};
-
-// =====================================================
-// BOTTOM NAVIGATION COMPONENT
-// =====================================================
-const BottomNav = ({ activeTab, setActiveTab, onFabClick }) => {
-  const tabs = [
-    { id: 'dashboard', icon: '📊', label: 'Home' },
-    { id: 'comidas', icon: '🍽️', label: 'Comidas' },
-    { id: 'entrenos', icon: '🏋️', label: 'Entrenos' },
-    { id: 'peso', icon: '⚖️', label: 'Peso' },
-    { id: 'config', icon: '⚙️', label: 'Config' },
-  ];
-
-  return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 bottom-nav z-40">
-      <div className="max-w-lg mx-auto flex items-center justify-around h-16 px-2">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex flex-col items-center justify-center flex-1 h-full transition-colors ${
-              activeTab === tab.id
-                ? 'text-blue-400'
-                : 'text-gray-400 active:text-gray-200'
-            }`}
-          >
-            <span className="text-xl">{tab.icon}</span>
-            <span className="text-xs mt-0.5">{tab.label}</span>
-          </button>
-        ))}
-      </div>
-    </nav>
-  );
-};
-
-// =====================================================
-// FLOATING ACTION BUTTON COMPONENT
-// =====================================================
-const FloatingActionButton = ({ onAddFood, onAddWorkout, onImportFood, onImportWorkout, onQuickAdd }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const actions = [
-    { icon: '⭐', label: 'Favoritos', onClick: onQuickAdd, color: 'bg-purple-500' },
-    { icon: '📸', label: 'Importar Comida', onClick: onImportFood, color: 'bg-blue-500' },
-    { icon: '🏋️', label: 'Importar Entreno', onClick: onImportWorkout, color: 'bg-amber-500' },
-    { icon: '🍽️', label: 'Agregar Comida', onClick: onAddFood, color: 'bg-cyan-500' },
-    { icon: '💪', label: 'Agregar Entreno', onClick: onAddWorkout, color: 'bg-orange-500' },
-  ];
-
-  return (
-    <>
-      {/* Backdrop */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 transition-opacity backdrop-blur-sm"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-
-      {/* FAB Menu - only render when open */}
-      {isOpen && (
-        <div className="fixed right-4 bottom-40 z-50 flex flex-col items-end gap-2">
-          {actions.map((action, i) => (
-            <button
-              key={i}
-              onClick={() => { action.onClick(); setIsOpen(false); }}
-              className={`flex items-center gap-2 ${action.color} hover:brightness-110 text-white px-4 py-3 rounded-full whitespace-nowrap shadow-lg animate-fade-in`}
-              style={{ animationDelay: `${i * 30}ms` }}
-            >
-              <span className="text-lg">{action.icon}</span>
-              <span className="text-sm font-semibold">{action.label}</span>
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Main FAB - minimal footprint */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={`fixed right-4 bottom-24 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 text-white flex items-center justify-center shadow-xl shadow-blue-500/30 transition-all duration-300 ${isOpen ? 'rotate-45 scale-90' : 'scale-100'}`}
-      >
-        <span className="text-3xl font-light leading-none">+</span>
-      </button>
-    </>
-  );
-};
-
-// =====================================================
-// PULL TO REFRESH COMPONENT
-// =====================================================
-const PullToRefresh = ({ children, onRefresh, isRefreshing }) => {
-  const containerRef = useRef(null);
-  const [pullDistance, setPullDistance] = useState(0);
-  const [isPulling, setIsPulling] = useState(false);
-  const startYRef = useRef(0);
-  const PULL_THRESHOLD = 80;
-
-  const handleTouchStart = (e) => {
-    if (containerRef.current?.scrollTop === 0) {
-      startYRef.current = e.touches[0].clientY;
-      setIsPulling(true);
-    }
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isPulling || containerRef.current?.scrollTop > 0) return;
-    const diff = e.touches[0].clientY - startYRef.current;
-    if (diff > 0) {
-      setPullDistance(Math.min(diff * 0.5, 100));
-    }
-  };
-
-  const handleTouchEnd = async () => {
-    if (pullDistance >= PULL_THRESHOLD && !isRefreshing) {
-      await onRefresh();
-    }
-    setPullDistance(0);
-    setIsPulling(false);
-  };
-
-  return (
-    <div
-      ref={containerRef}
-      className="relative overflow-auto h-[100dvh] lg:h-[104vh]"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
-      {/* Pull indicator */}
-      {(pullDistance > 0 || isRefreshing) && (
-        <div
-          className="pull-indicator absolute top-0 left-0 right-0 flex items-center justify-center bg-gray-800/80 z-10"
-          style={{ height: isRefreshing ? 50 : pullDistance }}
-        >
-          {isRefreshing ? (
-            <svg className="animate-spin h-5 w-5 text-blue-400" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
-          ) : (
-            <span className={`text-sm ${pullDistance >= PULL_THRESHOLD ? 'text-blue-400' : 'text-gray-400'}`}>
-              {pullDistance >= PULL_THRESHOLD ? '↑ Soltar para actualizar' : '↓ Arrastra para actualizar'}
-            </span>
-          )}
-        </div>
-      )}
-
-      <div style={{ transform: `translateY(${isRefreshing ? 50 : pullDistance}px)`, transition: isPulling ? 'none' : 'transform 0.2s ease' }}>
-        {children}
-      </div>
-    </div>
-  );
-};
+import { useTrackerData } from './hooks/useTrackerData';
 
 const NutritionTracker = () => {
-  // Supabase auth and data hook
-  const supabase = useSupabase();
-  // Don't show auth until we know authentication status (null = checking)
-  const [showAuth, setShowAuth] = useState(null);
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const [offlineMode, setOfflineMode] = useState(false);
+  // Use custom hook for all data management
+  const {
+    supabase,
+    showAuth,
+    showOnboarding, setShowOnboarding,
+    offlineMode,
+    isLoading,
+    saveStatus,
+    showMigrationModal, setShowMigrationModal,
+    migrationData, setMigrationData,
+    profile,
+    customTargets,
+    weightHistory,
+    foodLog,
+    workoutLog,
+    stepsLog,
+    ouraLog,
+    waterLog,
+    useCloud,
+    sortWeightHistory,
+    getMostRecentWeight,
+    isTrainingDay,
+    getTargetsForDate,
+    getTotalsForDate,
+    isDayCompleted,
+    saveProfile,
+    saveTargets,
+    saveWeightHistory,
+    saveWeightEntry,
+    saveFoodLog,
+    saveFoodEntry,
+    deleteFoodEntry,
+    saveWorkoutLog,
+    saveWorkoutEntry,
+    deleteWorkoutEntry,
+    saveStepsLog,
+    saveStepsEntry,
+    saveOuraLog,
+    saveOuraEntry,
+    saveWaterLog,
+    saveWaterEntry,
+    getTodayWater,
+    addWaterGlass,
+    removeWaterGlass,
+    updateConfig
+  } = useTrackerData();
 
-  // Prompt 3: Migration modal state
-  const [showMigrationModal, setShowMigrationModal] = useState(false);
-  const [migrationData, setMigrationData] = useState(null);
-  const [isMigrating, setIsMigrating] = useState(false);
 
-  // Argentina timezone constant
-  const ARGENTINA_TZ = 'America/Argentina/Buenos_Aires';
 
-  // Helper to format any date to YYYY-MM-DD in Argentina timezone
-  const toArgentinaDateString = (date = new Date()) => {
-    const formatter = new Intl.DateTimeFormat('en-CA', {
-      timeZone: ARGENTINA_TZ,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
-    return formatter.format(date); // Returns YYYY-MM-DD
-  };
-
-  // Helper to get current date in Argentina
-  const getArgentinaDateString = () => toArgentinaDateString(new Date());
-
-  // Helper to get day of week in Argentina (0=Sun, 6=Sat)
-  const getArgentinaDay = (date = new Date()) => {
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: ARGENTINA_TZ,
-      weekday: 'short'
-    });
-    const dayName = formatter.format(date);
-    const days = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
-    return days[dayName];
-  };
-
-  // Helper to add/subtract days from a date string (returns YYYY-MM-DD in Argentina TZ)
-  const addDaysToDate = (dateStr, days) => {
-    const date = new Date(dateStr + 'T12:00:00');
-    date.setDate(date.getDate() + days);
-    return toArgentinaDateString(date);
-  };
-
-  // Helper to get Monday of the week for a given date
-  const getMondayOfWeek = (dateStr) => {
-    const date = new Date(dateStr + 'T12:00:00');
-    const dayOfWeek = getArgentinaDay(date);
-    const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    return addDaysToDate(dateStr, -daysToMonday);
-  };
-
-  // User profile state
-  const [profile, setProfile] = useState({
-    height: 173,
-    currentWeight: 84.9,
-    targetWeight: 75,
-    age: 27,
-    activityLevel: 'moderate',
-    goal: 'cut'
-  });
-
-  // Editable targets state
-  const [customTargets, setCustomTargets] = useState({
-    calories: 2100,
-    protein: 170,
-    carbs: 180,
-    fat: 70,
-    fiber: 30,
-    // Training day adjustments
-    trainingDayCaloriesBonus: 200,
-    trainingDayCarbs: 220
-  });
-
-  // Config state for nutrition targets (used by WeeklyReport)
-  const [config, setConfig] = useState({
-    targetCalories: 2100,
-    targetProtein: 170,
-    targetCarbs: 180,
-    targetFat: 70
-  });
-
-  // Local config state for debounced saving
-  const [localConfig, setLocalConfig] = useState(null);
-  const [configDirty, setConfigDirty] = useState(false);
-
-  // Weight history - initialized with Lucas's data
-  const [weightHistory, setWeightHistory] = useState([
-    { id: 'wh-1', date: '2026-01-16', weight: 84.9, timestamp: 1737025200000 }
-  ]);
-  const [editingWeightId, setEditingWeightId] = useState(null);
-  const [editingWeightValue, setEditingWeightValue] = useState('');
-
-  // Food log - with IA schema: source, reviewed, confidence, sourceId
-  const [foodLog, setFoodLog] = useState([
-    {
-      id: 'f-20260116-breakfast',
-      date: '2026-01-16',
-      time: '09:30',
-      meal: 'Desayuno',
-      name: 'Café con leche + Oat pancake + Queso',
-      description: 'Café Nescafé con leche descremada 200ml, oat banana pancake 69g, port salut light 54g',
-      calories: 345,
-      protein: 26,
-      carbs: 33,
-      fat: 12,
-      fiber: 2,
-      source: 'ai-photo',
-      reviewed: true,
-      confidence: 0.9,
-      sourceId: 'photo-20260116-breakfast-001'
-    },
-    {
-      id: 'f-20260116-lunch',
-      date: '2026-01-16',
-      time: '13:45',
-      meal: 'Almuerzo',
-      name: 'Bife de chorizo + Batata + Ensalada',
-      description: 'Bife de chorizo 170g, batata ~160g, ensalada (lechuga, zanahoria, tomates cherry) con 1 cda aceite oliva',
-      calories: 645,
-      protein: 55,
-      carbs: 42,
-      fat: 28,
-      fiber: 7,
-      source: 'ai-photo',
-      reviewed: true,
-      confidence: 0.9,
-      sourceId: 'photo-20260116-lunch-001'
-    },
-    {
-      id: 'f-20260116-merienda',
-      date: '2026-01-16',
-      time: '15:20',
-      meal: 'Merienda',
-      name: 'Latte con leche entera',
-      description: '',
-      calories: 135,
-      protein: 7,
-      carbs: 11,
-      fat: 7,
-      fiber: 0,
-      source: 'manual',
-      reviewed: true,
-      confidence: 1,
-      sourceId: 'manual-20260116-merienda-001'
-    }
-  ]);
-
-  // Workout log - with IA schema
-  const [workoutLog, setWorkoutLog] = useState([
-    {
-      id: 'w1',
-      date: '2026-01-11',
-      type: 'gym',
-      name: 'Push Day (Pecho/Hombros/Triceps)',
-      duration: 60,
-      calories: 258,
-      volume: 2438,
-      exercises: [
-        { name: 'Press banca inclinado mancuernas', sets: 4, reps: 10, weight: 5 },
-        { name: 'Press banca', sets: 4, reps: 11, weight: 20 },
-        { name: 'Press Arnold', sets: 3, reps: '7-12', weight: '4-5' },
-        { name: 'Vuelo lateral mancuerna', sets: 3, reps: 12, weight: 4 },
-        { name: 'Extensión tríceps agarre supino', sets: 4, reps: 11, weight: 10 },
-        { name: 'Extensión tríceps mancuerna', sets: 3, reps: 7, weight: 4 }
-      ],
-      notes: 'Primera sesión. Press banca 20kg x11 sólido.',
-      source: 'ai-text', reviewed: true, confidence: 0.95, sourceId: 'gravl-20260111-push'
-    },
-    {
-      id: 'w2',
-      date: '2026-01-12',
-      type: 'gym',
-      name: 'Pull Day (Espalda/Biceps/Traps)',
-      duration: 63,
-      calories: 270,
-      volume: 3814,
-      exercises: [
-        { name: 'Jalón al pecho agarre supino', sets: 4, reps: '9-12', weight: '25-30' },
-        { name: 'Remo con mancuerna', sets: 3, reps: 10, weight: '12-14' },
-        { name: 'Encogimiento hombros mancuerna', sets: 4, reps: '10-12', weight: '10-12' },
-        { name: 'Vuelo posterior parado', sets: 3, reps: 10, weight: 4 },
-        { name: 'Curl bíceps concentrado', sets: 4, reps: '6-10', weight: '6-8' },
-        { name: 'Curl martillo', sets: 4, reps: 8, weight: '5-6' }
-      ],
-      notes: 'Buen volumen. Jalón subió a 30kg en las últimas series.',
-      source: 'ai-text', reviewed: true, confidence: 0.95, sourceId: 'gravl-20260112-pull'
-    },
-    {
-      id: 'w3',
-      date: '2026-01-14',
-      type: 'tennis',
-      name: 'Clase de Tenis',
-      duration: 120,
-      calories: 600,
-      exercises: [],
-      notes: '2 horas: canastos + 30min partido.',
-      source: 'manual', reviewed: true, confidence: 1, sourceId: 'manual-20260114-tennis'
-    },
-    {
-      id: 'w4',
-      date: '2026-01-15',
-      type: 'gym',
-      name: 'Leg Day (Piernas/Glúteos/Core)',
-      duration: 57,
-      calories: 233,
-      volume: 2692,
-      exercises: [
-        { name: 'Estocada con mancuernas', sets: 4, reps: 10, weight: 8 },
-        { name: 'Sentadilla split mancuerna', sets: 3, reps: 12, weight: 8 },
-        { name: 'Peso muerto rumano mancuerna', sets: 3, reps: 10, weight: 10 },
-        { name: 'Elevación talón mancuernas', sets: 3, reps: 12, weight: 8 },
-        { name: 'Puente de glúteo mancuerna', sets: 3, reps: 10, weight: 10 },
-        { name: 'Crunch oblicuo', sets: 3, reps: 8, weight: 0 }
-      ],
-      notes: 'Día de piernas sólido.',
-      source: 'ai-text', reviewed: true, confidence: 0.95, sourceId: 'gravl-20260115-legs'
-    }
-  ]);
-
-  // Steps log - initialized with Lucas's data
-  const [stepsLog, setStepsLog] = useState([
-    { date: '2026-01-15', steps: 4154 },
-    { date: '2026-01-14', steps: 9868 },
-    { date: '2026-01-13', steps: 5422 },
-    { date: '2026-01-12', steps: 5973 },
-    { date: '2026-01-11', steps: 5573 },
-    { date: '2026-01-10', steps: 3111 },
-    { date: '2026-01-09', steps: 8820 }
-  ]);
-
-  // Oura Ring data log - daily wellness metrics
-  const [ouraLog, setOuraLog] = useState([
-    {
-      date: '2026-01-16',
-      sleepScore: 77,
-      readinessScore: 87,
-      activityScore: 76,
-      hrv: 40,
-      restingHr: 52,
-      sleepHours: 7.25,
-      deepSleepMins: null,
-      remSleepMins: null,
-      bedtime: '00:45',
-      wakeTime: '08:57'
-    }
-  ]);
-  const [newOuraEntry, setNewOuraEntry] = useState({
-    date: getArgentinaDateString(),
-    sleepScore: '',
-    readinessScore: '',
-    activityScore: '',
-    hrv: '',
-    restingHr: '',
-    sleepHours: '',
-    deepSleepMins: '',
-    remSleepMins: '',
-    bedtime: '',
-    wakeTime: ''
-  });
-
-  // Water tracking state
-  const [waterLog, setWaterLog] = useState([]);
-  const WATER_GOAL_GLASSES = 8; // 8 glasses = 2L daily goal
-
-  // UI state - SEPARATE dates for food and workout tabs
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [newWeight, setNewWeight] = useState('');
-  const [newWeightTime, setNewWeightTime] = useState('09:00');
-  const [newSteps, setNewSteps] = useState('');
-  const [stepsDate, setStepsDate] = useState(getArgentinaDateString());
-  const [selectedFoodDate, setSelectedFoodDate] = useState(getArgentinaDateString());
-  const [selectedWorkoutDate, setSelectedWorkoutDate] = useState(getArgentinaDateString());
-  const [dashboardDate, setDashboardDate] = useState(getArgentinaDateString());
-  const [isLoading, setIsLoading] = useState(true);
-  const [saveStatus, setSaveStatus] = useState('');
-
-  // Delete confirmation modal
-  const [deleteModal, setDeleteModal] = useState({ show: false, type: '', id: null, name: '' });
-
-  // Undo state
-  const [undoAction, setUndoAction] = useState(null);
-
-  // Pull to refresh state
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  // FAB menu state
-  const [showFab, setShowFab] = useState(true);
-
-  // Meal Templates/Favorites state
-  const [mealTemplates, setMealTemplates] = useState([
-    // Default templates - can be customized
-    { id: 'tpl-1', name: 'Desayuno típico', meal: 'Desayuno', description: 'Yogur + fruta + granola', calories: 350, protein: 15, carbs: 45, fat: 12, fiber: 5 },
-    { id: 'tpl-2', name: 'Almuerzo proteico', meal: 'Almuerzo', description: 'Pollo + arroz + verduras', calories: 550, protein: 45, carbs: 50, fat: 12, fiber: 6 },
-    { id: 'tpl-3', name: 'Merienda', meal: 'Merienda', description: 'Café + tostadas', calories: 200, protein: 8, carbs: 25, fat: 8, fiber: 2 },
-  ]);
-  const [showTemplatesModal, setShowTemplatesModal] = useState(false);
-  const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
-  const [templateToSave, setTemplateToSave] = useState(null);
-  const [showWeeklyReport, setShowWeeklyReport] = useState(false);
-
-  // Manual food entry form
-  const [showFoodForm, setShowFoodForm] = useState(false);
-  const [editingFoodId, setEditingFoodId] = useState(null); // null = new, id = editing
-  const [newFood, setNewFood] = useState({
-    date: getArgentinaDateString(),
-    time: '12:00',
-    meal: 'Almuerzo',
-    name: '',
-    description: '',
-    calories: '',
-    protein: '',
-    carbs: '',
-    fat: '',
-    fiber: ''
-  });
-
-  // Manual workout entry form
-  const [showWorkoutForm, setShowWorkoutForm] = useState(false);
-  const [newWorkout, setNewWorkout] = useState({
-    date: getArgentinaDateString(),
-    type: 'gym',
-    name: '',
-    duration: '',
-    calories: '',
-    volume: '',
-    notes: ''
-  });
-
-  // Import modals
-  const [showImportFoodModal, setShowImportFoodModal] = useState(false);
-  const [showImportWorkoutModal, setShowImportWorkoutModal] = useState(false);
-  const [importText, setImportText] = useState('');
-  const [importError, setImportError] = useState('');
-
-  // Check if date is a training day (gym or tennis)
-  const isTrainingDay = useCallback((date) => {
-    return workoutLog.some(w => w.date === date);
-  }, [workoutLog]);
-
-  // Get targets for specific date (adjusts for training days)
-  const getTargetsForDate = useCallback((date) => {
-    const training = isTrainingDay(date);
-    if (training) {
-      return {
-        ...customTargets,
-        calories: customTargets.calories + customTargets.trainingDayCaloriesBonus,
-        carbs: customTargets.trainingDayCarbs
-      };
-    }
-    return customTargets;
-  }, [customTargets, isTrainingDay]);
-
-  // Memoized totals by date - prevents recalculating on every render
-  const totalsByDate = useMemo(() => {
-    const totals = {};
-    foodLog.forEach(entry => {
-      if (!totals[entry.date]) {
-        totals[entry.date] = { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 };
-      }
-      totals[entry.date].calories += entry.calories || 0;
-      totals[entry.date].protein += entry.protein || 0;
-      totals[entry.date].carbs += entry.carbs || 0;
-      totals[entry.date].fat += entry.fat || 0;
-      totals[entry.date].fiber += entry.fiber || 0;
-    });
-    return totals;
-  }, [foodLog]);
-
-  const getTotalsForDate = useCallback((date) => {
-    return totalsByDate[date] || { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 };
-  }, [totalsByDate]);
-
-  // Check if day is "completed" (within targets)
-  const isDayCompleted = useCallback((date) => {
-    const totals = getTotalsForDate(date);
-    const targets = getTargetsForDate(date);
-    const calRange = 150; // ±150 kcal tolerance
-    const calOk = totals.calories >= targets.calories - calRange && totals.calories <= targets.calories + calRange;
-    const protOk = totals.protein >= targets.protein * 0.9; // 90% of protein target
-    return calOk && protOk;
-  }, [getTotalsForDate, getTargetsForDate]);
-
-  const dashboardTotals = getTotalsForDate(dashboardDate);
-  const dashboardTargets = getTargetsForDate(dashboardDate);
-
-  // Sort weight history by timestamp (most recent first)
-  const sortWeightHistory = (history) => {
-    return [...history].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-  };
-
-  // Get the most recent weight entry
-  const getMostRecentWeight = (history) => {
-    if (history.length === 0) return null;
-    return sortWeightHistory(history)[0];
-  };
-
-  // Storage helper with localStorage fallback (used in offline/unauthenticated mode)
-  const storage = {
-    async get(key) {
-      try {
-        if (window.storage) {
-          return await window.storage.get(key);
-        }
-        const val = localStorage.getItem(key);
-        return val ? { value: val } : null;
-      } catch {
-        const val = localStorage.getItem(key);
-        return val ? { value: val } : null;
-      }
-    },
-    async set(key, value) {
-      try {
-        if (window.storage) {
-          return await window.storage.set(key, value);
-        }
-        localStorage.setItem(key, value);
-        return { key, value };
-      } catch {
-        localStorage.setItem(key, value);
-        return { key, value };
-      }
-    }
-  };
-
-  // Check if using Supabase (authenticated) or localStorage (offline)
-  const useCloud = supabase.isAuthenticated && !offlineMode && supabase.isOnline;
-
-  // Track if we've already initialized to prevent loops
-  const hasInitialized = useRef(false);
-
-  // Handle auth state changes - separate from data loading to avoid loops
-  useEffect(() => {
-    if (supabase.loading) return;
-
-    if (supabase.isAuthenticated) {
-      console.log('[Auth] User authenticated, hiding auth screen');
-      setShowAuth(false);
-    } else {
-      console.log('[Auth] User not authenticated, showing auth screen');
-      setShowAuth(true);
-      // Reset initialization flag when user logs out so data will reload on next login
-      hasInitialized.current = false;
-    }
-  }, [supabase.loading, supabase.isAuthenticated]);
-
-  // Load data - runs once when authenticated
-  useEffect(() => {
-    // Wait for auth to settle
-    if (supabase.loading || showAuth === null) return;
-
-    // Don't load if showing auth screen (unless offline mode)
-    if (showAuth && !offlineMode) return;
-
-    // Prevent re-running on every render
-    if (hasInitialized.current) return;
-    hasInitialized.current = true;
-
-    console.log('[Data] Starting data load...');
-
-    // Check for onboarding and migration (only when authenticated)
-    if (supabase.isAuthenticated) {
-      // Check if user needs onboarding (new user)
-      supabase.checkNeedsOnboarding().then(needsOnboarding => {
-        if (needsOnboarding) {
-          setShowOnboarding(true);
-        }
-      });
-
-      // Check for localStorage data to migrate
-      const { hasData, localData } = supabase.checkLocalStorageForMigration();
-      if (hasData && supabase.isOnline) {
-        setMigrationData(localData);
-        setShowMigrationModal(true);
-      }
-    }
-
-    const loadData = async () => {
-      setIsLoading(true);
-      try {
-        // ALWAYS load localStorage first - this is our safety net
-        console.log('[Data] Loading localStorage...');
-        const [profileData, weightData, foodData, workoutData, stepsData, targetsData, ouraData, waterData] = await Promise.all([
-          storage.get('lucas-profile-v5').catch(() => null),
-          storage.get('lucas-weight-history-v5').catch(() => null),
-          storage.get('lucas-food-log-v5').catch(() => null),
-          storage.get('lucas-workout-log-v5').catch(() => null),
-          storage.get('lucas-steps-log-v5').catch(() => null),
-          storage.get('lucas-targets-v5').catch(() => null),
-          storage.get('lucas-oura-log-v5').catch(() => null),
-          storage.get('lucas-water-log-v5').catch(() => null)
-        ]);
-
-        // Parse localStorage data safely
-        const localProfile = profileData?.value ? JSON.parse(profileData.value) : null;
-        const localWeight = weightData?.value ? JSON.parse(weightData.value) : [];
-        const localFood = foodData?.value ? JSON.parse(foodData.value) : [];
-        const localWorkout = workoutData?.value ? JSON.parse(workoutData.value) : [];
-        const localSteps = stepsData?.value ? JSON.parse(stepsData.value) : [];
-        const localTargets = targetsData?.value ? JSON.parse(targetsData.value) : null;
-        const localOura = ouraData?.value ? JSON.parse(ouraData.value) : [];
-        const localWater = waterData?.value ? JSON.parse(waterData.value) : [];
-
-        console.log('[Data] localStorage loaded:', {
-          profile: !!localProfile,
-          weight: localWeight.length,
-          food: localFood.length,
-          workout: localWorkout.length,
-          steps: localSteps.length,
-          oura: localOura.length,
-          water: localWater.length
-        });
-
-        // FIRST: Set local data immediately so user sees something
-        if (localProfile) setProfile(localProfile);
-        if (localTargets) setCustomTargets(localTargets);
-        if (localWeight.length) setWeightHistory(localWeight);
-        if (localFood.length) setFoodLog(localFood);
-        if (localWorkout.length) setWorkoutLog(localWorkout);
-        if (localSteps.length) setStepsLog(localSteps);
-        if (localOura.length) setOuraLog(localOura);
-        if (localWater.length) setWaterLog(localWater);
-
-        // THEN: If online and authenticated, try to get Supabase data
-        if (supabase.isAuthenticated && supabase.isOnline && !offlineMode) {
-          console.log('[Data] Fetching from Supabase...');
-          try {
-            // Trust the hook's internal timeout - no need for nested timeout
-            const data = await supabase.fetchAllData();
-
-            if (data) {
-              console.log('[Data] Supabase data received:', {
-                profile: !!data?.profile,
-                weight: data?.weightHistory?.length || 0,
-                food: data?.foodLog?.length || 0,
-                workout: data?.workouts?.length || 0,
-                steps: data?.stepsLog?.length || 0,
-                oura: data?.ouraLog?.length || 0,
-                water: data?.waterLog?.length || 0
-              });
-
-              // Only update with Supabase data if it has data
-              if (data.profile) setProfile(data.profile);
-              if (data.targets) setCustomTargets(data.targets);
-
-              // For arrays: only use Supabase if it has data
-              if (data.weightHistory?.length > 0) setWeightHistory(data.weightHistory);
-              if (data.foodLog?.length > 0) setFoodLog(data.foodLog);
-              if (data.workouts?.length > 0) setWorkoutLog(data.workouts);
-              if (data.stepsLog?.length > 0) setStepsLog(data.stepsLog);
-              if (data.ouraLog?.length > 0) setOuraLog(data.ouraLog);
-              if (data.waterLog?.length > 0) setWaterLog(data.waterLog);
-            } else {
-              console.log('[Data] No data returned from Supabase, using localStorage');
-            }
-          } catch (supabaseErr) {
-            console.error('[Data] Supabase fetch failed, using localStorage:', supabaseErr);
-            // Continue with localStorage data - don't block the app
-          }
-        }
-      } catch (err) {
-        console.error('[Data] Error loading data:', err);
-      }
-      setIsLoading(false);
-    };
-
-    loadData();
-  }, [supabase.loading, showAuth, offlineMode, supabase.isAuthenticated, supabase.isOnline]);
-
-  // Debounced config save
-  useEffect(() => {
-    if (!configDirty || !localConfig) return;
-    const timer = setTimeout(() => {
-      saveProfile(localConfig.profile);
-      saveTargets(localConfig.targets);
-      setConfigDirty(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, [localConfig, configDirty]);
-
-  // Auto-hide undo after 5 seconds
-  useEffect(() => {
-    if (!undoAction) return;
-    const timer = setTimeout(() => setUndoAction(null), 5000);
-    return () => clearTimeout(timer);
-  }, [undoAction]);
-
-  // Save functions - save to both localStorage (backup) and Supabase (if authenticated)
-  const saveProfile = async (newProfile) => {
-    setProfile(newProfile);
-    try {
-      // Always save to localStorage as backup
-      await storage.set('lucas-profile-v5', JSON.stringify(newProfile));
-
-      // Save to Supabase if authenticated
-      if (useCloud) {
-        await supabase.saveProfile(newProfile, customTargets);
-      }
-
-      setSaveStatus('✓');
-      setTimeout(() => setSaveStatus(''), 2000);
-    } catch (err) {
-      console.error('Error saving profile:', err);
-      setSaveStatus('Error');
-    }
-  };
-
-  const saveTargets = async (newTargets) => {
-    setCustomTargets(newTargets);
-    try {
-      await storage.set('lucas-targets-v5', JSON.stringify(newTargets));
-
-      if (useCloud) {
-        await supabase.saveProfile(profile, newTargets);
-      }
-    } catch (err) {
-      console.error('Error saving targets:', err);
-    }
-  };
-
-  const saveWeightHistory = async (newHistory) => {
-    const sorted = sortWeightHistory(newHistory);
-    setWeightHistory(sorted);
-    // ALWAYS save to localStorage immediately
-    try {
-      await storage.set('lucas-weight-history-v5', JSON.stringify(sorted));
-      console.log('[Data] Weight history saved to localStorage:', sorted.length, 'entries');
-
-      // Update current weight to most recent
-      const mostRecent = getMostRecentWeight(sorted);
-      if (mostRecent) {
-        saveProfile({ ...profile, currentWeight: mostRecent.weight });
-      }
-    } catch (err) {
-      console.error('Error saving weight history:', err);
-    }
-  };
-
-  // Save single weight entry to Supabase (called when adding/updating weight)
-  const saveWeightEntry = async (entry) => {
-    if (useCloud) {
-      await supabase.saveWeight(entry);
-    }
-  };
-
-  const saveFoodLog = async (newLog) => {
-    setFoodLog(newLog);
-    // ALWAYS save to localStorage immediately as primary backup
-    try {
-      await storage.set('lucas-food-log-v5', JSON.stringify(newLog));
-      console.log('[Data] Food log saved to localStorage:', newLog.length, 'entries');
-    } catch (err) {
-      console.error('Error saving food log:', err);
-    }
-  };
-
-  // Save single food entry to Supabase
-  const saveFoodEntry = async (entry) => {
-    if (useCloud) {
-      try {
-        const result = await supabase.saveFood(entry);
-        return result.data; // Returns entry with Supabase-generated ID
-      } catch (err) {
-        console.error('Error saving to Supabase, using local entry:', err);
-        return entry;
-      }
-    }
-    return entry;
-  };
-
-  // Delete food entry from Supabase
-  const deleteFoodEntry = async (id) => {
-    if (useCloud) {
-      await supabase.deleteFood(id);
-    }
-  };
-
-  const saveWorkoutLog = async (newLog) => {
-    setWorkoutLog(newLog);
-    // ALWAYS save to localStorage immediately as primary backup
-    try {
-      await storage.set('lucas-workout-log-v5', JSON.stringify(newLog));
-      console.log('[Data] Workout log saved to localStorage:', newLog.length, 'entries');
-    } catch (err) {
-      console.error('Error saving workout log:', err);
-    }
-  };
-
-  // Save single workout to Supabase
-  const saveWorkoutEntry = async (entry) => {
-    if (useCloud) {
-      try {
-        const result = await supabase.saveWorkout(entry);
-        return result.data;
-      } catch (err) {
-        console.error('Error saving workout to Supabase:', err);
-        return entry;
-      }
-    }
-    return entry;
-  };
-
-  // Delete workout from Supabase
-  const deleteWorkoutEntry = async (id) => {
-    if (useCloud) {
-      await supabase.deleteWorkout(id);
-    }
-  };
-
-  const saveStepsLog = async (newLog) => {
-    setStepsLog(newLog);
-    // ALWAYS save to localStorage immediately
-    try {
-      await storage.set('lucas-steps-log-v5', JSON.stringify(newLog));
-      console.log('[Data] Steps log saved to localStorage:', newLog.length, 'entries');
-    } catch (err) {
-      console.error('Error saving steps log:', err);
-    }
-  };
-
-  // Save single steps entry to Supabase
-  const saveStepsEntry = async (entry) => {
-    if (useCloud) {
-      try {
-        await supabase.saveSteps(entry);
-      } catch (err) {
-        console.error('Error saving steps to Supabase:', err);
-      }
-    }
-  };
-
-  const saveWaterLog = async (newLog) => {
-    setWaterLog(newLog);
-    try {
-      await storage.set('lucas-water-log-v5', JSON.stringify(newLog));
-    } catch (err) {
-      console.error('Error saving water log:', err);
-    }
-  };
-
-  // Save single water entry to Supabase
-  const saveWaterEntry = async (entry) => {
-    if (useCloud) {
-      await supabase.saveWater(entry);
-    }
-  };
-
-  // Get today's water intake
-  const getTodayWater = () => {
-    const today = getArgentinaDateString();
-    return waterLog.find(e => e.date === today) || { date: today, glasses: 0, ml: 0 };
-  };
-
-  // Add a glass of water
-  const addWaterGlass = async () => {
-    const today = getArgentinaDateString();
-    const existingEntry = waterLog.find(e => e.date === today);
-
-    const newEntry = existingEntry
-      ? { ...existingEntry, glasses: existingEntry.glasses + 1, ml: (existingEntry.glasses + 1) * 250 }
-      : { date: today, glasses: 1, ml: 250 };
-
-    const newLog = existingEntry
-      ? waterLog.map(e => e.date === today ? newEntry : e)
-      : [...waterLog, newEntry];
-
-    saveWaterLog(newLog);
-    saveWaterEntry(newEntry);
-    setSaveStatus('💧 +1 vaso');
-    setTimeout(() => setSaveStatus(''), 1500);
-  };
-
-  // Remove a glass of water
-  const removeWaterGlass = async () => {
-    const today = getArgentinaDateString();
-    const existingEntry = waterLog.find(e => e.date === today);
-
-    if (!existingEntry || existingEntry.glasses <= 0) return;
-
-    const newEntry = { ...existingEntry, glasses: existingEntry.glasses - 1, ml: (existingEntry.glasses - 1) * 250 };
-
-    const newLog = waterLog.map(e => e.date === today ? newEntry : e);
-
-    saveWaterLog(newLog);
-    saveWaterEntry(newEntry);
-    setSaveStatus('💧 -1 vaso');
-    setTimeout(() => setSaveStatus(''), 1500);
-  };
-
-  // Pull to refresh handler - trust hook's internal timeout
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    try {
-      if (useCloud) {
-        const data = await supabase.fetchAllData();
-
-        if (data) {
-          if (data.profile) setProfile(data.profile);
-          if (data.targets) setCustomTargets(data.targets);
-          if (data.weightHistory?.length) setWeightHistory(data.weightHistory);
-          if (data.foodLog?.length) setFoodLog(data.foodLog);
-          if (data.workouts?.length) setWorkoutLog(data.workouts);
-          if (data.stepsLog?.length) setStepsLog(data.stepsLog);
-          if (data.ouraLog?.length) setOuraLog(data.ouraLog);
-          if (data.waterLog?.length) setWaterLog(data.waterLog);
-          setSaveStatus('✓ Actualizado');
-        } else {
-          setSaveStatus('Error al actualizar');
-        }
-      }
-    } catch (err) {
-      console.error('Refresh error:', err);
-      setSaveStatus('Error al actualizar');
-    } finally {
-      setIsRefreshing(false);
-      setTimeout(() => setSaveStatus(''), 2000);
-    }
-  };
-
-  // Update config with debounce
-  const updateConfig = (newProfile, newTargets) => {
-    setLocalConfig({ profile: newProfile, targets: newTargets });
-    setProfile(newProfile);
-    setCustomTargets(newTargets);
-    setConfigDirty(true);
-  };
 
   // Add weight entry with time
   const addWeightEntry = async () => {
@@ -1094,7 +94,7 @@ const NutritionTracker = () => {
       const item = foodLog.find(f => f.id === id);
       const newLog = foodLog.filter(f => f.id !== id);
       saveFoodLog(newLog);
-      
+
       // Sync deletion to Supabase
       if (useCloud) {
         try {
@@ -1104,10 +104,10 @@ const NutritionTracker = () => {
           console.error('[Sync] Failed to delete food from Supabase:', err);
         }
       }
-      
-      setUndoAction({ 
-        type: 'food', 
-        item, 
+
+      setUndoAction({
+        type: 'food',
+        item,
         restore: async () => {
           saveFoodLog([...newLog, item]);
           // Re-add to Supabase on undo
@@ -1120,7 +120,7 @@ const NutritionTracker = () => {
       const item = workoutLog.find(w => w.id === id);
       const newLog = workoutLog.filter(w => w.id !== id);
       saveWorkoutLog(newLog);
-      
+
       // Sync deletion to Supabase
       if (useCloud) {
         try {
@@ -1130,10 +130,10 @@ const NutritionTracker = () => {
           console.error('[Sync] Failed to delete workout from Supabase:', err);
         }
       }
-      
-      setUndoAction({ 
-        type: 'workout', 
-        item, 
+
+      setUndoAction({
+        type: 'workout',
+        item,
         restore: async () => {
           saveWorkoutLog([...newLog, item]);
           if (useCloud && item) {
@@ -1145,7 +145,7 @@ const NutritionTracker = () => {
       const item = weightHistory.find(w => w.id === id || weightHistory.indexOf(w) === id);
       const newHistory = weightHistory.filter(w => w.id !== id && weightHistory.indexOf(w) !== id);
       saveWeightHistory(newHistory);
-      
+
       // Sync deletion to Supabase
       if (useCloud && item) {
         try {
@@ -1155,10 +155,10 @@ const NutritionTracker = () => {
           console.error('[Sync] Failed to delete weight from Supabase:', err);
         }
       }
-      
-      setUndoAction({ 
-        type: 'weight', 
-        item, 
+
+      setUndoAction({
+        type: 'weight',
+        item,
         restore: async () => {
           saveWeightHistory([...newHistory, item]);
           if (useCloud && item) {
@@ -1616,22 +616,7 @@ const NutritionTracker = () => {
     event.target.value = ''; // Reset input
   };
 
-  // Save Oura log
-  const saveOuraLog = async (newLog) => {
-    setOuraLog(newLog);
-    try {
-      await storage.set('lucas-oura-log-v5', JSON.stringify(newLog));
-    } catch (err) {
-      console.error('Error saving oura log:', err);
-    }
-  };
 
-  // Save single Oura entry to Supabase
-  const saveOuraEntry = async (entry) => {
-    if (useCloud) {
-      await supabase.saveOura(entry);
-    }
-  };
 
   // Add Oura entry
   const addOuraEntry = async () => {

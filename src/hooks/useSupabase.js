@@ -121,6 +121,12 @@ export function useSupabase() {
         if (newUser && (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED')) {
           await ensureProfileExists(newUser.id);
         }
+
+        // Auto-recover from token errors
+        if (_event === 'SIGNED_OUT' && localStorage.getItem('lukenfit-auth')) {
+          console.warn('[Auth] Detected unexpected SIGNED_OUT with stored token. Clearing garbage.');
+          localStorage.removeItem('lukenfit-auth');
+        }
       }
     );
 
