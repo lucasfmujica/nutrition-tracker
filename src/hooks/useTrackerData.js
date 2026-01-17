@@ -773,6 +773,162 @@ export const useTrackerData = () => {
   };
 
 
+
+  // Add weight entry with time
+  const addWeightEntry = async () => {
+    if (!newWeight) return;
+    // Parse time input and use selected date to create timestamp
+    const [hours, minutes] = newWeightTime.split(':').map(Number);
+    const [year, month, day] = weightDate.split('-').map(Number);
+
+    // Create date in Argentina timezone
+    // Use the selected date and time
+    const dateObj = new Date(year, month - 1, day, hours, minutes, 0, 0);
+
+    const entry = {
+      id: `wh-${Date.now()}`,
+      date: weightDate,
+      weight: parseFloat(newWeight),
+      timestamp: dateObj.getTime()
+    };
+    saveWeightHistory([...weightHistory, entry]);
+    await saveWeightEntry(entry); // Save to Supabase
+    setNewWeight('');
+    setNewWeightTime('09:00');
+  };
+
+  // Show delete confirmation
+  const confirmDelete = (type, id, name) => {
+    setDeleteModal({ show: true, type, id, name });
+  };
+
+  // Execute delete with undo option - syncs to Supabase
+  const executeDelete = async () => {
+    const { type, id } = deleteModal;
+
+    if (type === 'food') {
+      const item = foodLog.find(f => f.id === id);
+      const newLog = foodLog.filter(f => f.id !== id);
+      saveFoodLog(newLog);
+
+      if (useCloud) {
+        try {
+          await supabase.deleteFood(id);
+          console.log('[Sync] Food deleted from Supabase:', id);
+        } catch (err) {
+          console.error('[Sync] Failed to delete food from Supabase:', err);
+        }
+      }
+
+      setUndoAction({
+        type: 'food',
+        item,
+        restore: async () => {
+          saveFoodLog([...newLog, item]);
+          if (useCloud && item) {
+            await supabase.saveFood(item);
+          }
+        }
+      });
+    } else if (type === 'workout') {
+      const item = workoutLog.find(w => w.id === id);
+      const newLog = workoutLog.filter(w => w.id !== id);
+      saveWorkoutLog(newLog);
+
+      if (useCloud) {
+        try {
+          await supabase.deleteWorkout(id);
+          console.log('[Sync] Workout deleted from Supabase:', id);
+        } catch (err) {
+          console.error('[Sync] Failed to delete workout from Supabase:', err);
+        }
+      }
+
+      setUndoAction({
+        type: 'workout',
+        item,
+        restore: async () => {
+          saveWorkoutLog([...newLog, item]);
+          if (useCloud && item) {
+            await supabase.saveWorkout(item);
+          }
+        }
+      });
+    } else if (type === 'weight') {
+      const item = weightHistory.find(w => w.id === id || weightHistory.indexOf(w) === id);
+      const newHistory = weightHistory.filter(w => w.id !== id && weightHistory.indexOf(w) !== id);
+      saveWeightHistory(newHistory);
+
+      if (useCloud && item) {
+        try {
+          await supabase.deleteWeight(item.id);
+          console.log('[Sync] Weight deleted from Supabase:', item.id);
+        } catch (err) {
+          console.error('[Sync] Failed to delete weight from Supabase:', err);
+        }
+      }
+
+      setUndoAction({
+        type: 'weight',
+        item,
+        restore: async () => {
+          saveWeightHistory([...newHistory, item]);
+          if (useCloud && item) {
+            await supabase.saveWeight(item);
+          }
+        }
+      });
+    }
+
+    setDeleteModal({ show: false, type: '', id: null, name: '' });
+  };
+
+  // Start editing weight by ID
+  const startEditWeight = (id) => {
+    const entry = weightHistory.find(w => w.id === id);
+    if (entry) {
+      setEditingWeightId(id);
+      setEditingWeightValue(entry.weight.toString());
+    }
+  };
+
+  // Save edited weight by ID
+  const saveEditWeight = () => {
+    if (!editingWeightId || !editingWeightValue) return;
+    const newHistory = weightHistory.map(entry =>
+      entry.id === editingWeightId
+        ? { ...entry, weight: parseFloat(editingWeightValue) }
+        : entry
+    );
+    saveWeightHistory(newHistory);
+    setEditingWeightId(null);
+    setEditingWeightValue('');
+  };
+
+  // Cancel weight edit
+  const cancelEditWeight = () => {
+    setEditingWeightId(null);
+    setEditingWeightValue('');
+  };
+
+  // Add steps entry
+  const addStepsEntry = async () => {
+    if (!newSteps) return;
+    const entry = { date: stepsDate, steps: parseInt(newSteps) };
+    const existingIndex = stepsLog.findIndex(s => s.date === stepsDate);
+    let newLog;
+    if (existingIndex >= 0) {
+      newLog = [...stepsLog];
+      newLog[existingIndex] = entry;
+    } else {
+      newLog = [...stepsLog, entry];
+    }
+    newLog.sort((a, b) => new Date(b.date) - new Date(a.date));
+    saveStepsLog(newLog);
+    await saveStepsEntry(entry); // Save to Supabase
+    setNewSteps('');
+  };
+
   return {
     supabase,
     showAuth, setShowAuth,
@@ -798,6 +954,13 @@ export const useTrackerData = () => {
     getTargetsForDate,
     getTotalsForDate,
     isDayCompleted,
+    addWeightEntry,
+    confirmDelete,
+    executeDelete,
+    startEditWeight,
+    saveEditWeight,
+    cancelEditWeight,
+    addStepsEntry,
     saveProfile,
     saveTargets,
     saveWeightHistory,

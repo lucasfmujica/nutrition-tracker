@@ -40,3 +40,18 @@ export const getMondayOfWeek = (dateStr) => {
   const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   return addDaysToDate(dateStr, -daysToMonday);
 };
+
+// Format date for display (Hoy, Ayer, or date)
+export const formatDateDisplay = (dateStr) => {
+  const today = getArgentinaDateString();
+  const yesterday = addDaysToDate(today, -1);
+  if (dateStr === today) return 'Hoy';
+  if (dateStr === yesterday) return 'Ayer';
+  const date = new Date(dateStr + 'T12:00:00');
+  return new Intl.DateTimeFormat('es-AR', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    timeZone: ARGENTINA_TZ
+  }).format(date);
+};
