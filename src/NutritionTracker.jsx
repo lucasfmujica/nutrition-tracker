@@ -88,7 +88,9 @@ const NutritionTracker = () => {
     showImportWorkoutModal, setShowImportWorkoutModal,
     importText, setImportText,
     importError, setImportError,
-    newOuraEntry, setNewOuraEntry
+    newOuraEntry, setNewOuraEntry,
+    isMigrating,
+    handleMigration
   } = useTrackerData();
 
   // Derived state for Dashboard
@@ -1609,26 +1611,7 @@ const NutritionTracker = () => {
 
             <div className="space-y-3">
               <button
-                onClick={async () => {
-                  setIsMigrating(true);
-                  const result = await supabase.migrateLocalStorageToSupabase(migrationData);
-                  if (result.success) {
-                    supabase.clearMigratedLocalStorage();
-                    // Reload data from Supabase
-                    const data = await supabase.fetchAllData();
-                    if (data) {
-                      if (data.profile) setProfile(data.profile);
-                      if (data.targets) setCustomTargets(data.targets);
-                      if (data.weightHistory?.length) setWeightHistory(data.weightHistory);
-                      if (data.foodLog?.length) setFoodLog(data.foodLog);
-                      if (data.workouts?.length) setWorkoutLog(data.workouts);
-                      if (data.stepsLog?.length) setStepsLog(data.stepsLog);
-                      if (data.ouraLog?.length) setOuraLog(data.ouraLog);
-                    }
-                  }
-                  setIsMigrating(false);
-                  setShowMigrationModal(false);
-                }}
+                onClick={handleMigration}
                 disabled={isMigrating}
                 className="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all disabled:opacity-50"
               >

@@ -13,6 +13,35 @@ export const useTrackerData = () => {
   // Migration state
   const [showMigrationModal, setShowMigrationModal] = useState(false);
   const [migrationData, setMigrationData] = useState(null);
+  const [isMigrating, setIsMigrating] = useState(false);
+
+  const handleMigration = async () => {
+    setIsMigrating(true);
+    try {
+      const result = await supabase.migrateLocalStorageToSupabase(migrationData);
+      if (result.success) {
+        supabase.clearMigratedLocalStorage();
+        // Reload data from Supabase
+        const data = await supabase.fetchAllData();
+        if (data) {
+          if (data.profile) setProfile(data.profile);
+          if (data.targets) setCustomTargets(data.targets);
+          if (data.weightHistory?.length) setWeightHistory(data.weightHistory);
+          if (data.foodLog?.length) setFoodLog(data.foodLog);
+          if (data.workouts?.length) setWorkoutLog(data.workouts);
+          if (data.stepsLog?.length) setStepsLog(data.stepsLog);
+          if (data.ouraLog?.length) setOuraLog(data.ouraLog);
+          if (data.waterLog?.length) setWaterLog(data.waterLog);
+        }
+        setShowMigrationModal(false);
+        setMigrationData(null);
+      }
+    } catch (err) {
+      console.error('Migration failed:', err);
+    } finally {
+      setIsMigrating(false);
+    }
+  };
 
   // Data states
   const [profile, setProfile] = useState({
@@ -647,6 +676,8 @@ export const useTrackerData = () => {
     showImportWorkoutModal, setShowImportWorkoutModal,
     importText, setImportText,
     importError, setImportError,
-    newOuraEntry, setNewOuraEntry
+    newOuraEntry, setNewOuraEntry,
+    isMigrating,
+    handleMigration
   };
 };
