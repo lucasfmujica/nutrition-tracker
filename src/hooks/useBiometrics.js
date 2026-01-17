@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { storage } from '../utils/storage';
+import { addPendingWrite } from '../utils/storageUtils';
 
 export const useBiometrics = (supabase, useCloud, profileData = null, targetsData = null) => {
   // Initial states aligned with useTrackerData defaults
@@ -110,6 +111,10 @@ export const useBiometrics = (supabase, useCloud, profileData = null, targetsDat
           stack: err.stack,
           userId: supabase?.user?.id
         });
+
+        // Add to The Vault for offline resilience
+        await addPendingWrite('weight_history', entry, supabase?.user?.id);
+
         throw err;
       }
     }
@@ -149,6 +154,10 @@ export const useBiometrics = (supabase, useCloud, profileData = null, targetsDat
           stack: err.stack,
           userId: supabase?.user?.id
         });
+
+        // Add to The Vault for offline resilience
+        await addPendingWrite('steps_log', entry, supabase?.user?.id);
+
         throw err;
       }
     }
@@ -190,6 +199,9 @@ export const useBiometrics = (supabase, useCloud, profileData = null, targetsDat
           stack: err.stack,
           userId: supabase?.user?.id
         });
+
+        // Add to The Vault for offline resilience
+        await addPendingWrite('oura_log', entry, supabase?.user?.id);
 
         // Propagate error for UI feedback
         throw err;

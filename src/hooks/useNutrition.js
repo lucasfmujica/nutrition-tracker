@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { getArgentinaDateString } from '../utils/dateUtils';
 import { storage } from '../utils/storage';
+import { addPendingWrite } from '../utils/storageUtils';
 
 export const useNutrition = (supabase, useCloud, customTargets, isTrainingDay) => {
   const [foodLog, setFoodLog] = useState([]);
@@ -100,6 +101,10 @@ export const useNutrition = (supabase, useCloud, customTargets, isTrainingDay) =
           error: err.message,
           stack: err.stack
         });
+
+        // Add to The Vault for offline resilience
+        await addPendingWrite('food_log', entry, supabase?.user?.id);
+
         // Return original entry for optimistic UI
         return entry;
       }
@@ -144,6 +149,10 @@ export const useNutrition = (supabase, useCloud, customTargets, isTrainingDay) =
           error: err.message,
           stack: err.stack
         });
+
+        // Add to The Vault for offline resilience
+        await addPendingWrite('water_log', entry, supabase?.user?.id);
+
         // Don't throw - allow optimistic UI to continue
       }
     }

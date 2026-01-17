@@ -1,6 +1,58 @@
 import { useCallback, useState } from 'react';
 
 /**
+ * Classifies errors to determine if retry is appropriate
+ * @param {Error} error - The error object
+ * @returns {boolean} - true if error is transient and retryable
+ */
+const isRetryableError = (error) => {
+  if (!error) return false;
+
+  const message = error.message?.toLowerCase() || '';
+
+  // Network/timeout errors - always retryable
+  if (message.includes('timeout') ||
+      message.includes('network') ||
+      message.includes('fetch failed') ||
+      message.includes('failed to fetch')) {
+    return true;
+  }
+
+  // HTTP status codes (if available in error)
+  const statusMatch = message.match(/\b(4\d{2}|5\d{2})\b/); // Match 4xx or 5xx
+  if (statusMatch) {
+    const status = parseInt(statusMatch[0]);
+
+    // Non-retryable client errors
+    if ([400, 401, 403, 404, 422].includes(status)) {
+      return false; // Bad request, auth issues, not found - won't fix with retry
+    }
+
+    // Retryable server errors
+    if ([500, 502, 503, 504].includes(status)) {
+      return true; // Server errors might be transient
+    }
+
+    // Rate limit - technically retryable but needs special handling (future: respect Retry-After)
+    if (status === 429) {
+      console.warn('[useSupabaseOperation] Rate limit hit - backing off');
+      return true;
+    }
+  }
+
+  // PostgreSQL/Supabase specific errors (non-retryable)
+  if (message.includes('unique constraint') ||
+      message.includes('foreign key') ||
+      message.includes('permission denied') ||
+      message.includes('invalid input')) {
+    return false;
+  }
+
+  // Default: retry unknown errors (conservative approach)
+  return true;
+};
+
+/**
  * Hook to manage Supabase async operations with Optimistic UI states.
  * Handles loading, error, success, and idle states automatically.
  */
@@ -82,10 +134,22 @@ export function useSupabaseOperation() {
       } catch (err) {
         lastError = err;
 
-        // If not last attempt, retry with exponential backoff
+        // Check if error is retryable (transient vs permanent)
+        const shouldRetry = isRetryableError(err);
+
+        if (!shouldRetry) {
+          // Fail fast on non-retryable errors (auth, validation, not found, etc.)
+          console.error(`[useSupabaseOperation] Non-retryable error detected, failing immediately:`, err.message);
+          break; // Exit retry loop
+        }
+
+        // If not last attempt, retry with exponential backoff + jitter
         if (attempt < retries) {
-          const backoffMs = Math.min(1000 * Math.pow(2, attempt - 1), 8000); // Max 8s
-          console.warn(`[useSupabaseOperation] Attempt ${attempt}/${retries} failed, retrying in ${backoffMs}ms:`, err.message);
+          // Jitter prevents "thundering herd" - multiple clients retrying simultaneously
+          // Formula: base_backoff * (0.5 + random[0,1)) = randomize by ±50%
+          const baseBackoff = 1000 * Math.pow(2, attempt - 1);
+          const backoffMs = Math.min(baseBackoff * (0.5 + Math.random()), 8000); // Max 8s
+          console.warn(`[useSupabaseOperation] Attempt ${attempt}/${retries} failed (retryable), retrying in ${Math.round(backoffMs)}ms:`, err.message);
           await new Promise(resolve => setTimeout(resolve, backoffMs));
         }
       }

@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { storage } from '../utils/storage';
+import { addPendingWrite } from '../utils/storageUtils';
 
 export const useWorkouts = (supabase, useCloud) => {
   const [workoutLog, setWorkoutLog] = useState([]);
@@ -40,6 +41,10 @@ export const useWorkouts = (supabase, useCloud) => {
           error: err.message,
           stack: err.stack
         });
+
+        // Add to The Vault for offline resilience
+        await addPendingWrite('workouts', entry, supabase?.user?.id);
+
         // Return original entry for optimistic UI
         return entry;
       }
