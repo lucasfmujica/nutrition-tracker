@@ -1807,12 +1807,12 @@ const NutritionTracker = () => {
                         }`}>
                         💡 {weightProjection.recommendation.text}
                       </div>
-                    )}
+                )}
                     <p className="text-[10px] text-gray-400 mt-3 text-center">Basado en {weightProjection.dataPoints} registros ({weightProjection.daysCovered} días)</p>
                   </div>
                 )}
               </div>
-
+            </div>
           </div>
         )}
 
@@ -1825,12 +1825,13 @@ const NutritionTracker = () => {
                 <p className="text-sm text-gray-500">Registro de alimentos</p>
               </div>
               <div className="flex items-center gap-2">
-              <input
-                type="date"
-                value={selectedFoodDate}
-                onChange={(e) => setSelectedFoodDate(e.target.value)}
-                className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-base flex-1 min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-              />
+                <input
+                  type="date"
+                  value={selectedFoodDate}
+                  onChange={(e) => setSelectedFoodDate(e.target.value)}
+                  className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-base flex-1 min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                />
+              </div>
             </div>
 
             {/* Swipe hint */}
