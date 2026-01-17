@@ -87,6 +87,10 @@ const NutritionTracker = () => {
     newOuraEntry, setNewOuraEntry
   } = useTrackerData();
 
+  // Derived state for Dashboard
+  const dashboardTotals = getTotalsForDate(dashboardDate);
+  const dashboardTargets = getTargetsForDate(dashboardDate);
+
 
 
 
