@@ -172,6 +172,7 @@ export const useTrackerData = () => {
     } else {
       console.log('[Auth] User not authenticated, showing auth screen');
       setShowAuth(true);
+      setIsLoading(false); // Stop loading so AuthUI can be shown
       hasInitialized.current = false;
     }
   }, [supabase.loading, supabase.isAuthenticated]);

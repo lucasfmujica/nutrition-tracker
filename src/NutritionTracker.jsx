@@ -1532,8 +1532,8 @@ const NutritionTracker = () => {
     );
   }
 
-  // Show loading only when loading data (after auth is confirmed)
-  if (isLoading && showAuth === false) {
+  // Show loading during initialization (showAuth is null) OR during data loading
+  if (showAuth === null || (isLoading && showAuth === false)) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
