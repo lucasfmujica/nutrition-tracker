@@ -347,8 +347,13 @@ export const useTrackerData = () => {
   };
 
   const getMostRecentWeight = (history) => {
-    if (history.length === 0) return null;
-    return sortWeightHistory(history)[0];
+    if (history.length === 0) {
+      console.log('[Weight] getMostRecentWeight: history is empty, returning null');
+      return null;
+    }
+    const sorted = sortWeightHistory(history);
+    console.log('[Weight] getMostRecentWeight: most recent =', sorted[0]?.weight, 'kg on', sorted[0]?.date);
+    return sorted[0];
   };
 
   const isTrainingDay = useCallback((date) => {

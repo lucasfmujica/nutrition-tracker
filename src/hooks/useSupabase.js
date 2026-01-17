@@ -306,6 +306,44 @@ export function useSupabase() {
     }
   };
 
+  const signInWithGoogle = async () => {
+    if (!isSupabaseConfigured()) {
+      setAuthError('Supabase not configured');
+      return { error: { message: 'Supabase not configured' } };
+    }
+
+    if (!isOnline) {
+      setAuthError('No hay conexión a internet');
+      return { error: { message: 'No hay conexión a internet' } };
+    }
+
+    setAuthError(null);
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+        }
+      });
+
+      if (error) {
+        setAuthError(error.message);
+        setLoading(false);
+        return { data, error };
+      }
+
+      // OAuth flow redirects, so we don't need to setLoading(false) here
+      return { data, error: null };
+    } catch (err) {
+      console.error('[useSupabase] signInWithGoogle error:', err);
+      setAuthError(err.message);
+      setLoading(false);
+      return { error: { message: err.message || 'Error de autenticación con Google' } };
+    }
+  };
+
   const signOut = async () => {
     console.log('[Auth] signOut called');
 
@@ -1134,6 +1172,7 @@ export function useSupabase() {
     // Auth methods
     signUp,
     signIn,
+    signInWithGoogle,
     signOut,
     resetPassword,
 
