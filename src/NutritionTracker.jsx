@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AuthUI } from './components/AuthUI';
 import { BottomNav } from './components/BottomNav';
+import { ActivityCards } from './components/Dashboard/ActivityCards';
+import { MacroCards } from './components/Dashboard/MacroCards';
+import { SummaryCard } from './components/Dashboard/SummaryCard';
+import { WeightChartCard } from './components/Dashboard/WeightChartCard';
 import { FloatingActionButton } from './components/FloatingActionButton';
+import { Layout } from './components/Layout';
 import { OnboardingWizard } from './components/OnboardingWizard';
 import { PullToRefresh } from './components/PullToRefresh';
 import { SwipeableItem } from './components/SwipeableItem';
@@ -1300,7 +1305,7 @@ const NutritionTracker = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 text-base md:text-lg">
+    <Layout activeTab={activeTab} setActiveTab={setActiveTab} showNav={!!profile.name && !showOnboarding}>
       {/* Google Font - Plus Jakarta Sans for modern fitness aesthetic */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -1739,194 +1744,27 @@ const NutritionTracker = () => {
               </button>
             </div>
 
-              {/* Desktop: 2-column layout / Mobile: single column */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-                {/* Left Column - Macros */}
-                <div className="space-y-4 lg:space-y-5">
-                  {/* Macro Card - Glass Effect */}
-                  <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm rounded-2xl p-4 lg:p-6 border border-gray-700/50 shadow-xl shadow-black/20 hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-300">
-                    <div className="flex justify-between items-center mb-4 lg:mb-6">
-                      <h2 className="text-base lg:text-lg font-bold text-white flex items-center gap-2">
-                        <span className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-lg lg:text-xl">📊</span>
-                        Macros
-                      </h2>
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm text-gray-400">{getFoodsForDate(dashboardDate).length} comidas</span>
-                        <button onClick={copyMealsFromYesterday} className="text-xs bg-gray-700/80 hover:bg-gray-600 px-3 py-1.5 rounded-lg transition-colors">📋 Copiar ayer</button>
-                </div>
-            </div>
+              {/* Summary Card */}
+              <SummaryCard totals={dashboardTotals} targets={dashboardTargets} />
 
-                    {/* Macro circles - Larger on desktop */}
-                    <div className="flex justify-around items-start mb-5 lg:mb-6">
-                      <CircularProgress current={dashboardTotals.calories} target={dashboardTargets.calories} label="Calorías" color="#3B82F6" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
-                      <CircularProgress current={dashboardTotals.protein} target={dashboardTargets.protein} label="Proteína" color="#06B6D4" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
-                      <CircularProgress current={dashboardTotals.carbs} target={dashboardTargets.carbs} label="Carbos" color="#f59e0b" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
-                      <CircularProgress current={dashboardTotals.fat} target={dashboardTargets.fat} label="Grasas" color="#ec4899" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
-                      <CircularProgress current={dashboardTotals.fiber} target={dashboardTargets.fiber} label="Fibra" color="#8b5cf6" size={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : 58} />
-              </div>
+              {/* Macro Cards */}
+              <MacroCards totals={dashboardTotals} targets={dashboardTargets} />
 
-                    <div className="space-y-2 pt-4 border-t border-gray-700/50">
-                      <ProgressBar current={dashboardTotals.calories} target={dashboardTargets.calories} label="Calorías" unit="kcal" color="bg-blue-500" />
-                      <ProgressBar current={dashboardTotals.protein} target={dashboardTargets.protein} label="Proteína" unit="g" color="bg-cyan-500" />
-                <ProgressBar current={dashboardTotals.carbs} target={dashboardTargets.carbs} label="Carbos" unit="g" color="bg-amber-500" />
-                <ProgressBar current={dashboardTotals.fat} target={dashboardTargets.fat} label="Grasas" unit="g" color="bg-pink-500" />
-                <ProgressBar current={dashboardTotals.fiber} target={dashboardTargets.fiber} label="Fibra" unit="g" color="bg-purple-500" />
-              </div>
-            </div>
+              {/* Weight Chart */}
+              <WeightChartCard
+                data={weightHistory}
+                currentWeight={getMostRecentWeight(weightHistory)?.weight || profile.currentWeight}
+                targetWeight={profile.targetWeight}
+              />
 
-                  {/* Remaining Card */}
-                  <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm rounded-2xl p-4 lg:p-5 border border-gray-700/50 shadow-xl shadow-black/20">
-                    <h3 className="text-sm lg:text-base font-bold text-white mb-3 flex items-center gap-2">
-                      <span className="w-7 h-7 lg:w-8 lg:h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">🎯</span>
-                      Te quedan
-                    </h3>
-                    <div className="grid grid-cols-5 gap-2 lg:gap-3">
-                      {[
-                        { val: dashboardTargets.calories - dashboardTotals.calories, label: 'kcal', color: '#3B82F6' },
-                        { val: dashboardTargets.protein - dashboardTotals.protein, label: 'prot', color: '#06B6D4', suffix: 'g' },
-                  { val: dashboardTargets.carbs - dashboardTotals.carbs, label: 'carbs', color: '#f59e0b', suffix: 'g' },
-                  { val: dashboardTargets.fat - dashboardTotals.fat, label: 'fat', color: '#ec4899', suffix: 'g' },
-                  { val: dashboardTargets.fiber - dashboardTotals.fiber, label: 'fibra', color: '#8b5cf6', suffix: 'g' }
-                ].map((item, i) => (
-                        <div key={i} className="text-center p-2 lg:p-3 bg-gray-700/40 rounded-xl hover:bg-gray-700/60 transition-colors">
-                          <div className="text-base lg:text-xl font-bold" style={{ color: item.val < 0 ? '#f87171' : item.color }}>{item.val}{item.suffix || ''}</div>
-                          <div className="text-xs lg:text-xs text-gray-400 mt-0.5">{item.label}</div>
-                  </div>
-                ))}
-                    </div>
-              </div>
-                </div>
-
-                {/* Right Column - Activity & Meals */}
-                <div className="space-y-4 lg:space-y-5">
-                  {/* Quick Access - Pasos & Oura */}
-                  <div className="grid grid-cols-2 gap-3 lg:gap-4">
-                    <button onClick={() => setActiveTab('pasos')} className="group bg-gradient-to-br from-cyan-500/10 to-cyan-600/5 backdrop-blur-sm border border-cyan-500/30 rounded-2xl p-4 lg:p-5 flex flex-col items-center gap-2 hover:border-cyan-400/50 hover:shadow-lg hover:shadow-cyan-500/10 transition-all duration-300">
-                      <span className="text-2xl lg:text-3xl group-hover:scale-110 transition-transform">👟</span>
-                      <span className="text-cyan-400 text-lg lg:text-xl font-bold">{getStepsForDate(dashboardDate).toLocaleString()}</span>
-                      <span className="text-cyan-400/60 text-xs lg:text-sm">pasos hoy</span>
-                    </button>
-                    <button onClick={() => setActiveTab('oura')} className="group bg-gradient-to-br from-purple-500/10 to-purple-600/5 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-4 lg:p-5 flex flex-col items-center gap-2 hover:border-purple-400/50 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
-                      <span className="text-2xl lg:text-3xl group-hover:scale-110 transition-transform">💍</span>
-                      <span className="text-purple-400 text-lg lg:text-xl font-bold">Oura</span>
-                      <span className="text-purple-400/60 text-xs lg:text-sm">biométricos</span>
-                    </button>
-                  </div>
-
-                  {/* Water Card */}
-                  <div className="bg-gradient-to-br from-cyan-500/10 to-gray-900/90 backdrop-blur-sm rounded-2xl p-4 lg:p-5 border border-cyan-500/30 shadow-xl shadow-black/20">
-                    <div className="flex justify-between items-center mb-3">
-                      <h3 className="text-sm lg:text-base font-bold text-white flex items-center gap-2">
-                        <span className="w-7 h-7 lg:w-8 lg:h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">💧</span>
-                        Agua
-                      </h3>
-                      <span className="text-lg lg:text-xl font-bold text-cyan-400">{getTodayWater().glasses}/{WATER_GOAL_GLASSES}</span>
-                    </div>
-
-                    <div className="flex justify-center gap-1 lg:gap-1.5 mb-4">
-                      {Array.from({ length: WATER_GOAL_GLASSES }).map((_, i) => (
-                        <div
-                          key={i}
-                          className={`w-5 h-7 lg:w-6 lg:h-8 rounded transition-all duration-300 ${
-                            i < getTodayWater().glasses
-                              ? 'bg-gradient-to-t from-cyan-500 to-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.5)]'
-                              : 'bg-gray-700/60'
-                          }`}
-                        />
-                      ))}
-                    </div>
-
-                    <div className="flex justify-center gap-3">
-                      <button
-                        onClick={removeWaterGlass}
-                        disabled={getTodayWater().glasses <= 0}
-                        className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gray-700/80 hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-xl transition-all"
-                      >
-                        −
-                      </button>
-                      <button
-                        onClick={addWaterGlass}
-                        className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 flex items-center justify-center text-xl font-bold text-white transition-all shadow-lg shadow-cyan-500/30"
-                      >
-                        +
-                      </button>
-                    </div>
-                    <p className="text-center text-xs lg:text-sm text-gray-400 mt-2">{getTodayWater().ml || 0} ml / {WATER_GOAL_GLASSES * 250} ml</p>
-            </div>
-
-            {/* Meals Summary */}
-            {getFoodsForDate(dashboardDate).length > 0 && (
-                    <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm rounded-2xl p-4 lg:p-5 border border-gray-700/50 shadow-xl shadow-black/20">
-                      <h3 className="text-sm lg:text-base font-bold text-white mb-3 flex items-center gap-2">
-                        <span className="w-7 h-7 lg:w-8 lg:h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">🍽️</span>
-                        Comidas de hoy
-                      </h3>
-                      <div className="space-y-2 max-h-48 lg:max-h-64 overflow-y-auto">
-                  {getFoodsForDate(dashboardDate).map(food => (
-                          <div key={food.id} className="flex justify-between items-center p-2 lg:p-3 bg-gray-700/30 rounded-xl hover:bg-gray-700/50 transition-colors">
-                      <div className="min-w-0 flex-1">
-                              <span className="text-xs lg:text-xs text-blue-400 uppercase font-medium">{food.meal}</span>
-                              <p className="text-sm lg:text-base text-gray-200 truncate">{food.name}</p>
-                      </div>
-                            <div className="flex gap-2 text-xs lg:text-sm flex-shrink-0 ml-3">
-                              <span className="text-blue-400 font-medium">{food.calories} kcal</span>
-                              <span className="text-cyan-400">{food.protein}p</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-              </div>
-            </div>
-
-            {/* Charts */}
-            <div className="grid grid-cols-2 gap-3">
-              <SimpleBarChart data={weeklyData} dataKey="calories" target={customTargets.calories} color="bg-blue-500" label="Calorías 7d" />
-              <SimpleBarChart data={weeklyData} dataKey="protein" target={customTargets.protein} color="bg-blue-500" label="Proteína 7d" />
-            </div>
-
-            {/* Weekly Adherence */}
-            <div className="grid grid-cols-2 gap-3">
-              <AdherenceCard data={weekComparison.thisWeek} label="📊 ESTA SEMANA" />
-              <AdherenceCard data={weekComparison.lastWeek} label="📊 SEMANA PASADA" />
-            </div>
-
-            {/* Week vs Week Comparison */}
-            <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-xs font-bold text-blue-400">📈 ESTA SEMANA VS ANTERIOR</h3>
-                <button
-                  onClick={() => setShowWeeklyReport(true)}
-                  className="text-xs text-blue-400 hover:text-cyan-400 px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg transition-colors"
-                >
-                  📊 Ver Reporte
-                </button>
-              </div>
-              <div className="grid grid-cols-3 gap-3 text-center">
-                <div>
-                  <div className="text-sm text-gray-400">Calorías/día</div>
-                  <div className="text-lg font-bold text-white">{weekComparison.thisWeek.avgCals || '-'}</div>
-                  <div className={`text-xs ${weekComparison.calsDiff < 0 ? 'text-blue-400' : weekComparison.calsDiff > 0 ? 'text-red-400' : 'text-gray-400'}`}>
-                    {weekComparison.calsDiff !== 0 && (weekComparison.calsDiff > 0 ? '+' : '')}{weekComparison.calsDiff || '='} vs anterior
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-400">Proteína/día</div>
-                  <div className="text-lg font-bold text-white">{weekComparison.thisWeek.avgProt || '-'}g</div>
-                  <div className={`text-xs ${weekComparison.protDiff > 0 ? 'text-blue-400' : weekComparison.protDiff < 0 ? 'text-red-400' : 'text-gray-400'}`}>
-                    {weekComparison.protDiff !== 0 && (weekComparison.protDiff > 0 ? '+' : '')}{weekComparison.protDiff || '='}g vs anterior
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-400">Pasos/día</div>
-                  <div className="text-lg font-bold text-white">{weekComparison.thisWeek.avgSteps?.toLocaleString() || '-'}</div>
-                  <div className={`text-xs ${weekComparison.stepsDiff > 0 ? 'text-blue-400' : weekComparison.stepsDiff < 0 ? 'text-red-400' : 'text-gray-400'}`}>
-                    {weekComparison.stepsDiff !== 0 && (weekComparison.stepsDiff > 0 ? '+' : '')}{weekComparison.stepsDiff?.toLocaleString() || '='} vs anterior
-                  </div>
-                </div>
-              </div>
-            </div>
+              {/* Activity Cards */}
+              <ActivityCards
+                steps={getStepsForDate(dashboardDate)}
+                stepsTarget={10000}
+                water={getTodayWater()}
+                waterTarget={WATER_GOAL_GLASSES}
+                onAddWater={addWaterGlass}
+              />
 
             {/* Weight Projection */}
             {weightProjection && (
@@ -2570,10 +2408,7 @@ const NutritionTracker = () => {
       </PullToRefresh>
 
       {/* Bottom Navigation */}
-      <BottomNav
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-      />
+
 
       {/* Floating Action Button - hide when any modal is open */}
       {showFab && ['dashboard', 'comidas', 'entrenos'].includes(activeTab) &&
@@ -2711,7 +2546,7 @@ const NutritionTracker = () => {
           onClose={() => setShowWeeklyReport(false)}
         />
       )}
-    </div>
+    </Layout>
   );
 };
 
