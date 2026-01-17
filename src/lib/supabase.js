@@ -11,7 +11,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('[Supabase] Credentials not found. Running in offline/localStorage mode.');
 }
 
-// Client with auth persistence enabled
+// Client with auth persistence enabled and better defaults
 export const supabase = supabaseUrl && supabaseAnonKey
   ? createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
@@ -20,6 +20,18 @@ export const supabase = supabaseUrl && supabaseAnonKey
         storage: window.localStorage,
         autoRefreshToken: true,
         detectSessionInUrl: true
+      },
+      global: {
+        headers: {
+          'x-client-info': 'nutrition-tracker-web'
+        }
+      },
+      db: {
+        schema: 'public'
+      },
+      // Add timeout for realtime connections
+      realtime: {
+        timeout: 10000
       }
     })
   : null;
