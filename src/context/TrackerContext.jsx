@@ -13,6 +13,7 @@ import { useBiometrics } from '../hooks/useBiometrics';
 import { useGlobalDelete } from '../hooks/useGlobalDelete';
 import { useNutrition } from '../hooks/useNutrition';
 import { useTrackerSync } from '../hooks/useTrackerSync';
+import { useWeightAnalytics } from '../hooks/useWeightAnalytics'; // Intelligence Engine
 import { useWorkoutAnalysis } from '../hooks/useWorkoutAnalysis'; // New import
 import { useWorkouts } from '../hooks/useWorkouts';
 
@@ -190,7 +191,13 @@ export const TrackerProvider = ({ children }) => {
   // 11. Global Delete Actions
   const globalDelete = useGlobalDelete(nutrition, workouts, biometrics, supabase, useCloud);
 
-
+  // 12. Intelligence Engine - Weight Analytics
+  const weightAnalytics = useWeightAnalytics(
+    biometrics.weightHistory,
+    nutrition.foodLog,
+    biometrics.customTargets,
+    biometrics.profile.currentWeight
+  );
 
   // Derived State
   const workoutAnalysis = useWorkoutAnalysis(workouts.workoutLog);
@@ -238,6 +245,9 @@ export const TrackerProvider = ({ children }) => {
     ...mealTemplates,
     ...ouraEntry,
 
+    // Intelligence Engine
+    ...weightAnalytics,
+
     // Helpers
     workoutAnalysis,
     getWorkoutsForDate,
@@ -253,7 +263,7 @@ export const TrackerProvider = ({ children }) => {
     showImportFoodModal, showImportWorkoutModal,
     globalDelete,
     dataOperations, analytics, exportDoc, foodEntry, workoutEntry, mealTemplates, ouraEntry,
-    workoutAnalysis, supabase,
+    weightAnalytics, workoutAnalysis, supabase,
     showFab // Added dependency
   ]);
 

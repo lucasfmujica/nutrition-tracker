@@ -1,5 +1,6 @@
 import { formatDateDisplay, getArgentinaDateString } from '../../utils/dateUtils';
 import { ActivityCards } from '../Dashboard/ActivityCards';
+import { GoalInsightsCard } from '../Dashboard/GoalInsightsCard';
 import { MacroCards } from '../Dashboard/MacroCards';
 import { SummaryCard } from '../Dashboard/SummaryCard';
 import { TrainingWidget } from '../Dashboard/TrainingWidget';
@@ -68,8 +69,11 @@ export const DashboardTab = ({
 
         {/* Left Column - Main Tracking (67%) */}
         <div className="w-full lg:w-8/12 space-y-4 lg:space-y-6">
-         {/* Summary Card */}
-        <SummaryCard totals={dashboardTotals} targets={dashboardTargets} />
+          {/* Strategic Insights - Long-term Progress */}
+          <GoalInsightsCard />
+
+          {/* Tactical Summary - Daily Calories */}
+         <SummaryCard totals={dashboardTotals} targets={dashboardTargets} />
 
         {/* Macro Cards */}
         <MacroCards totals={dashboardTotals} targets={dashboardTargets} />
