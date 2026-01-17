@@ -101,7 +101,7 @@ export function useSupabase() {
         const newUser = session?.user ?? null;
         console.log('[Auth] Auth state changed:', _event, newUser?.email);
         setUser(newUser);
-        
+
         // If we get a valid auth event, resolve loading immediately
         if (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED' || _event === 'INITIAL_SESSION') {
           resolveAuth(`onAuthStateChange-${_event}`);

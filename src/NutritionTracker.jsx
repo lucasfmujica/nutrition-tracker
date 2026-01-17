@@ -133,30 +133,30 @@ const FloatingActionButton = ({ onAddFood, onAddWorkout, onImportFood, onImportW
         />
       )}
 
-      <div className="fixed right-4 bottom-24 z-50 flex flex-col items-center gap-3">
-        {/* FAB Menu */}
-        <div className={`fab-menu flex flex-col items-end gap-2 ${isOpen ? 'open' : ''}`}>
+      {/* FAB Menu - only render when open */}
+      {isOpen && (
+        <div className="fixed right-4 bottom-40 z-50 flex flex-col items-end gap-2">
           {actions.map((action, i) => (
             <button
               key={i}
               onClick={() => { action.onClick(); setIsOpen(false); }}
-              className={`fab-item flex items-center gap-2 ${action.color} hover:brightness-110 text-white px-4 py-3 rounded-full whitespace-nowrap shadow-lg`}
-              style={{ transitionDelay: `${i * 30}ms` }}
+              className={`flex items-center gap-2 ${action.color} hover:brightness-110 text-white px-4 py-3 rounded-full whitespace-nowrap shadow-lg animate-fade-in`}
+              style={{ animationDelay: `${i * 30}ms` }}
             >
               <span className="text-lg">{action.icon}</span>
               <span className="text-sm font-semibold">{action.label}</span>
             </button>
           ))}
         </div>
+      )}
 
-        {/* Main FAB - centered + icon */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className={`fab w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 text-white flex items-center justify-center shadow-xl shadow-blue-500/30 transition-all duration-300 ${isOpen ? 'rotate-45 scale-90' : 'scale-100'}`}
-        >
-          <span className="text-3xl font-light leading-none">+</span>
-        </button>
-      </div>
+      {/* Main FAB - minimal footprint */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`fixed right-4 bottom-24 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 text-white flex items-center justify-center shadow-xl shadow-blue-500/30 transition-all duration-300 ${isOpen ? 'rotate-45 scale-90' : 'scale-100'}`}
+      >
+        <span className="text-3xl font-light leading-none">+</span>
+      </button>
     </>
   );
 };
