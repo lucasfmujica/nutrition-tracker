@@ -234,7 +234,12 @@ export const useTrackerData = () => {
         if (supabase.isAuthenticated && supabase.isOnline && !offlineMode) {
           console.log('[Data] Fetching from Supabase...');
           try {
-            const data = await supabase.fetchAllData();
+            // Safety timeout for supabase fetch
+            const fetchPromise = supabase.fetchAllData();
+            const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 8000));
+
+            const data = await Promise.race([fetchPromise, timeoutPromise]);
+
             if (data) {
               if (data.profile) setProfile(data.profile);
               if (data.targets) setCustomTargets(data.targets);
@@ -244,6 +249,8 @@ export const useTrackerData = () => {
               if (data.stepsLog?.length > 0) setStepsLog(data.stepsLog);
               if (data.ouraLog?.length > 0) setOuraLog(data.ouraLog);
               if (data.waterLog?.length > 0) setWaterLog(data.waterLog);
+            } else {
+              console.warn('[Data] Supabase fetch timed out or returned null - keeping local data');
             }
           } catch (supabaseErr) {
             console.error('[Data] Supabase fetch failed, using localStorage:', supabaseErr);
@@ -251,8 +258,10 @@ export const useTrackerData = () => {
         }
       } catch (err) {
         console.error('[Data] Error loading data:', err);
+      } finally {
+        // ALWAYS stop loading
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     loadData();

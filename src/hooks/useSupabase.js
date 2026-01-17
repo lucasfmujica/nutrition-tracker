@@ -916,7 +916,7 @@ export function useSupabase() {
     );
 
     try {
-      console.log('[Supabase] fetchAllData: starting...');
+      console.log('[Supabase] fetchAllData: starting for user:', user?.id);
 
       // Fetch with individual logging to identify which query is hanging
       const fetchPromise = (async () => {
