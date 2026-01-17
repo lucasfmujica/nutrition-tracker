@@ -1,5 +1,5 @@
 // Argentina timezone constant
-const ARGENTINA_TZ = 'America/Argentina/Buenos_Aires';
+export const ARGENTINA_TZ = 'America/Argentina/Buenos_Aires';
 
 // Helper to format any date to YYYY-MM-DD in Argentina timezone
 export const toArgentinaDateString = (date = new Date()) => {

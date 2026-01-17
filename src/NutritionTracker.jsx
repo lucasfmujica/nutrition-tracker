@@ -7,7 +7,7 @@ import { PullToRefresh } from './components/PullToRefresh';
 import { SwipeableItem } from './components/SwipeableItem';
 import { WeeklyReport } from './components/WeeklyReport';
 import { useTrackerData } from './hooks/useTrackerData';
-import { addDaysToDate, getArgentinaDateString, getArgentinaDay, getMondayOfWeek } from './utils/dateUtils';
+import { ARGENTINA_TZ, addDaysToDate, getArgentinaDateString, getArgentinaDay, getMondayOfWeek } from './utils/dateUtils';
 
 const NutritionTracker = () => {
   // Use custom hook for all data management
