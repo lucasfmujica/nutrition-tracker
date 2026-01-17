@@ -50,7 +50,9 @@ export const useTrackerData = () => {
     targetWeight: 75,
     age: 27,
     activityLevel: 'moderate',
-    goal: 'cut'
+    goal: 'cut',
+    avatar: '',
+    name: ''
   });
 
   const [customTargets, setCustomTargets] = useState({
@@ -313,10 +315,11 @@ export const useTrackerData = () => {
   useEffect(() => {
     if (!configDirty || !localConfig) return;
     const timer = setTimeout(() => {
+      console.log('[Config] Saving profile and targets...', localConfig.profile);
       saveProfile(localConfig.profile);
       saveTargets(localConfig.targets);
       setConfigDirty(false);
-    }, 800);
+    }, 500);
     return () => clearTimeout(timer);
   }, [localConfig, configDirty]);
 

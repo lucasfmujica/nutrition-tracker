@@ -1719,16 +1719,16 @@ const NutritionTracker = () => {
 
       {/* Secondary tabs for Pasos/Oura (accessible from Dashboard) */}
       {['pasos', 'oura'].includes(activeTab) && (
-        <nav className="bg-gray-800/50 border-b border-gray-700 px-4">
+        <nav className="bg-white border-b border-gray-200 px-4 shadow-sm">
           <div className="max-w-6xl mx-auto flex gap-1">
             {['pasos', 'oura'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 text-xs font-medium transition-colors ${
+                className={`px-4 py-3 text-sm font-bold transition-all ${
                   activeTab === tab
-                    ? 'text-blue-400 border-b-2 border-blue-400'
-                    : 'text-gray-400 active:text-gray-200'
+                    ? 'text-blue-600 border-b-2 border-blue-600'
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
                 }`}
               >
                 {tab === 'oura' ? '💍 Oura' : '👟 Pasos'}
@@ -2119,12 +2119,20 @@ const NutritionTracker = () => {
             <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
               <h3 className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest">Plan Semanal</h3>
               <div className="grid grid-cols-7 gap-2 text-center">
-                {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((day, i) => (
-                  <div key={day} className={`p-2 rounded-xl border ${[0, 3, 5].includes(i) ? 'bg-amber-50 border-amber-100 text-amber-700' : i === 2 ? 'bg-green-50 border-green-100 text-green-700' : 'bg-gray-50 border-gray-100 text-gray-400'}`}>
-                    <div className="font-bold text-xs">{day}</div>
-                    <div className="text-[10px] font-bold mt-1 tracking-tighter">{[0, 3, 5].includes(i) ? 'GYM' : i === 2 ? 'TEN' : 'OFF'}</div>
-                  </div>
-                ))}
+                {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((day, i) => {
+                  const mondayOfWeek = getMondayOfWeek(getArgentinaDateString());
+                  const dayDate = addDaysToDate(mondayOfWeek, i);
+                  return (
+                    <button
+                      key={day}
+                      onClick={() => setSelectedWorkoutDate(dayDate)}
+                      className={`p-2 rounded-xl border transition-all hover:scale-105 cursor-pointer ${[0, 3, 5].includes(i) ? 'bg-amber-50 border-amber-100 text-amber-700 hover:bg-amber-100' : i === 2 ? 'bg-green-50 border-green-100 text-green-700 hover:bg-green-100' : 'bg-gray-50 border-gray-100 text-gray-400 hover:bg-gray-100'}`}
+                    >
+                      <div className="font-bold text-xs">{day}</div>
+                      <div className="text-[10px] font-bold mt-1 tracking-tighter">{[0, 3, 5].includes(i) ? 'GYM' : i === 2 ? 'TEN' : 'OFF'}</div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
