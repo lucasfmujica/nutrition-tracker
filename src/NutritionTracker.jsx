@@ -6,8 +6,13 @@ import { OnboardingWizard } from './components/OnboardingWizard';
 import { PullToRefresh } from './components/PullToRefresh';
 import { SwipeableItem } from './components/SwipeableItem';
 import { WeeklyReport } from './components/WeeklyReport';
+import { useFoodEntry } from './hooks/useFoodEntry';
+import { useMealTemplates } from './hooks/useMealTemplates';
+import { useOuraEntry } from './hooks/useOuraEntry';
 import { useTrackerData } from './hooks/useTrackerData';
+import { useWorkoutEntry } from './hooks/useWorkoutEntry';
 import { ARGENTINA_TZ, addDaysToDate, getArgentinaDateString, getArgentinaDay, getMondayOfWeek } from './utils/dateUtils';
+import { downloadBackup, downloadFile, generateNutritionistReport, parseBackupFile } from './utils/exportUtils';
 
 const WATER_GOAL_GLASSES = 8;
 
@@ -73,26 +78,66 @@ const NutritionTracker = () => {
     undoAction, setUndoAction,
     isRefreshing, setIsRefreshing,
     showFab, setShowFab,
-    mealTemplates, setMealTemplates,
-    showTemplatesModal, setShowTemplatesModal,
-    showSaveTemplateModal, setShowSaveTemplateModal,
-    templateToSave, setTemplateToSave,
     showWeeklyReport, setShowWeeklyReport,
-    showFoodForm, setShowFoodForm,
-    editingFoodId, setEditingFoodId,
-    newFood, setNewFood,
-    showWorkoutForm, setShowWorkoutForm,
-    newWorkout, setNewWorkout,
+
+    handleMigration,
     editingWeightId, setEditingWeightId,
     editingWeightValue, setEditingWeightValue,
     showImportFoodModal, setShowImportFoodModal,
     showImportWorkoutModal, setShowImportWorkoutModal,
     importText, setImportText,
     importError, setImportError,
-    newOuraEntry, setNewOuraEntry,
-    isMigrating,
-    handleMigration
+    isMigrating
   } = useTrackerData();
+
+  const {
+    showFoodForm, setShowFoodForm,
+    editingFoodId, setEditingFoodId,
+    newFood, setNewFood,
+    addManualFood
+  } = useFoodEntry({
+    foodLog,
+    saveFoodLog,
+    saveFoodEntry,
+    setSaveStatus
+  });
+
+  const {
+    showWorkoutForm, setShowWorkoutForm,
+    newWorkout, setNewWorkout,
+    addManualWorkout
+  } = useWorkoutEntry({
+    workoutLog,
+    saveWorkoutLog,
+    saveWorkoutEntry
+  });
+
+  const {
+    mealTemplates,
+    showTemplatesModal, setShowTemplatesModal,
+    showSaveTemplateModal, setShowSaveTemplateModal,
+    templateToSave, setTemplateToSave,
+    saveAsTemplate,
+    confirmSaveTemplate,
+    deleteTemplate,
+    addFromTemplate
+  } = useMealTemplates({
+    storage,
+    setSaveStatus,
+    selectedFoodDate,
+    saveFoodLog,
+    foodLog,
+    saveFoodEntry
+  });
+
+  const {
+    newOuraEntry, setNewOuraEntry,
+    addOuraEntry
+  } = useOuraEntry({
+    ouraLog,
+    saveOuraLog,
+    saveOuraEntry
+  });
 
   // Derived state for Dashboard
   const dashboardTotals = getTotalsForDate(dashboardDate);
@@ -275,221 +320,11 @@ const NutritionTracker = () => {
     setNewSteps('');
   };
 
-  // Add manual food entry with IA schema
-  const addManualFood = async () => {
-    // Validate required fields
-    if (!newFood.name?.trim()) {
-      setSaveStatus('⚠️ Falta el nombre');
-      setTimeout(() => setSaveStatus(''), 2000);
-      return;
-    }
-    if (!newFood.calories || parseInt(newFood.calories) <= 0) {
-      setSaveStatus('⚠️ Faltan calorías');
-      setTimeout(() => setSaveStatus(''), 2000);
-      return;
-    }
 
-    const isEditing = !!editingFoodId;
 
-    try {
-    const sourceId = `manual-${newFood.date}-${Date.now()}`;
-    const entry = {
-        id: isEditing ? editingFoodId : `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        date: newFood.date || getArgentinaDateString(),
-      time: newFood.time || '',
-        meal: newFood.meal || 'Snack',
-        name: newFood.name.trim(),
-        description: newFood.description?.trim() || '',
-      calories: parseInt(newFood.calories) || 0,
-      protein: parseInt(newFood.protein) || 0,
-      carbs: parseInt(newFood.carbs) || 0,
-      fat: parseInt(newFood.fat) || 0,
-      fiber: parseInt(newFood.fiber) || 0,
-      source: 'manual',
-      reviewed: true,
-      confidence: 1,
-      sourceId
-    };
 
-      // Close form immediately for better UX
-      setShowFoodForm(false);
-      setEditingFoodId(null);
 
-      // Save to Supabase
-      let finalEntry = entry;
-      try {
-        const savedEntry = await saveFoodEntry(entry);
-        if (savedEntry?.id) {
-          finalEntry = savedEntry;
-        }
-      } catch (saveErr) {
-        console.error('Error saving to Supabase:', saveErr);
-        // Continue with local entry
-      }
 
-      // Update or add to local state
-      if (isEditing) {
-        saveFoodLog(foodLog.map(f => f.id === editingFoodId ? finalEntry : f));
-        setSaveStatus('✓ Comida actualizada');
-      } else {
-        saveFoodLog([...foodLog, finalEntry]);
-        setSaveStatus('✓ Comida agregada');
-      }
-      setTimeout(() => setSaveStatus(''), 2000);
-
-      // Reset form
-    setNewFood({
-      date: getArgentinaDateString(),
-      time: '12:00',
-      meal: 'Almuerzo',
-      name: '',
-      description: '',
-      calories: '',
-      protein: '',
-      carbs: '',
-      fat: '',
-      fiber: ''
-    });
-    } catch (err) {
-      console.error('Error adding food:', err);
-      setSaveStatus('❌ Error al guardar');
-      setTimeout(() => setSaveStatus(''), 3000);
-    }
-  };
-
-  // =====================================================
-  // MEAL TEMPLATES / FAVORITES
-  // =====================================================
-
-  // Load templates from localStorage on mount
-  useEffect(() => {
-    const loadTemplates = async () => {
-      try {
-        const stored = await storage.get('lucas-meal-templates-v1');
-        if (stored?.value) {
-          setMealTemplates(JSON.parse(stored.value));
-        }
-      } catch (err) {
-        console.log('Using default templates');
-      }
-    };
-    loadTemplates();
-  }, []);
-
-  // Save templates to localStorage when they change
-  const saveMealTemplates = async (templates) => {
-    setMealTemplates(templates);
-    try {
-      await storage.set('lucas-meal-templates-v1', JSON.stringify(templates));
-    } catch (err) {
-      console.error('Error saving templates:', err);
-    }
-  };
-
-  // Add food from template
-  const addFromTemplate = async (template) => {
-    const now = new Date();
-    const time = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: ARGENTINA_TZ });
-
-    const entry = {
-      id: `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      date: selectedFoodDate,
-      time,
-      meal: template.meal,
-      name: template.name,
-      description: template.description || '',
-      calories: template.calories,
-      protein: template.protein,
-      carbs: template.carbs,
-      fat: template.fat,
-      fiber: template.fiber || 0,
-      source: 'template',
-      reviewed: true,
-      confidence: 1,
-      sourceId: `tpl-${template.id}-${Date.now()}`
-    };
-
-    // Save to Supabase first
-    const savedEntry = await saveFoodEntry(entry);
-    const finalEntry = savedEntry?.id ? savedEntry : entry;
-
-    saveFoodLog([...foodLog, finalEntry]);
-    setShowTemplatesModal(false);
-    setSaveStatus(`✓ ${template.name}`);
-    setTimeout(() => setSaveStatus(''), 2000);
-  };
-
-  // Save current food as template
-  const saveAsTemplate = (food) => {
-    setTemplateToSave({
-      name: food.name,
-      meal: food.meal,
-      description: food.description || '',
-      calories: food.calories,
-      protein: food.protein,
-      carbs: food.carbs,
-      fat: food.fat,
-      fiber: food.fiber || 0
-    });
-    setShowSaveTemplateModal(true);
-  };
-
-  // Confirm save template
-  const confirmSaveTemplate = () => {
-    if (!templateToSave?.name) return;
-    const newTemplate = {
-      id: `tpl-${Date.now()}`,
-      ...templateToSave
-    };
-    saveMealTemplates([...mealTemplates, newTemplate]);
-    setShowSaveTemplateModal(false);
-    setTemplateToSave(null);
-    setSaveStatus('✓ Plantilla guardada');
-    setTimeout(() => setSaveStatus(''), 2000);
-  };
-
-  // Delete template
-  const deleteTemplate = (id) => {
-    saveMealTemplates(mealTemplates.filter(t => t.id !== id));
-  };
-
-  // Add manual workout entry with IA schema
-  const addManualWorkout = async () => {
-    if (!newWorkout.name) return;
-    const sourceId = `manual-${newWorkout.date}-${Date.now()}`;
-    const entry = {
-      id: `w-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      date: newWorkout.date,
-      type: newWorkout.type,
-      name: newWorkout.name,
-      duration: parseInt(newWorkout.duration) || 0,
-      calories: parseInt(newWorkout.calories) || 0,
-      volume: parseInt(newWorkout.volume) || 0,
-      exercises: [],
-      notes: newWorkout.notes || '',
-      // IA schema
-      source: 'manual',
-      reviewed: true,
-      confidence: 1,
-      sourceId
-    };
-
-    // Save to Supabase first to get the real ID
-    const savedEntry = await saveWorkoutEntry(entry);
-    const finalEntry = savedEntry?.id ? savedEntry : entry;
-
-    saveWorkoutLog([...workoutLog, finalEntry]);
-    setNewWorkout({
-      date: getArgentinaDateString(),
-      type: 'gym',
-      name: '',
-      duration: '',
-      calories: '',
-      volume: '',
-      notes: ''
-    });
-    setShowWorkoutForm(false);
-  };
 
   // Add or update food entry (for IA imports with deduplication)
   const upsertFood = async (entry) => {
@@ -666,206 +501,62 @@ const NutritionTracker = () => {
 
   // Export all data as JSON backup
   const exportBackup = () => {
-    const backup = {
-      exportDate: new Date().toISOString(),
-      version: 'v5',
-      profile,
-      customTargets,
-      weightHistory,
-      foodLog,
-      workoutLog,
-      stepsLog,
-      ouraLog
-    };
-
-    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `lucas-tracker-backup-${getArgentinaDateString()}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    try {
+      downloadBackup({
+        profile,
+        customTargets,
+        weightHistory,
+        foodLog,
+        workoutLog,
+        stepsLog,
+        ouraLog
+      });
+    } catch (err) {
+      console.error('Error exporting backup:', err);
+      alert('Error al exportar backup');
+    }
   };
 
   // Import backup from JSON file
-  const importBackup = (event) => {
+  const importBackup = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = JSON.parse(e.target.result);
+    try {
+      const data = await parseBackupFile(file);
 
-        if (data.profile) setProfile(data.profile);
-        if (data.customTargets) setCustomTargets(data.customTargets);
-        if (data.weightHistory) saveWeightHistory(data.weightHistory);
-        if (data.foodLog) saveFoodLog(data.foodLog);
-        if (data.workoutLog) saveWorkoutLog(data.workoutLog);
-        if (data.stepsLog) saveStepsLog(data.stepsLog);
-        if (data.ouraLog) saveOuraLog(data.ouraLog);
+      if (data.profile) setProfile(data.profile);
+      if (data.customTargets) setCustomTargets(data.customTargets);
+      if (data.weightHistory) saveWeightHistory(data.weightHistory);
+      if (data.foodLog) saveFoodLog(data.foodLog);
+      if (data.workoutLog) saveWorkoutLog(data.workoutLog);
+      if (data.stepsLog) saveStepsLog(data.stepsLog);
+      if (data.ouraLog) saveOuraLog(data.ouraLog);
 
-        alert('Backup restaurado correctamente!');
-      } catch (err) {
-        alert('Error al importar backup: archivo inválido');
-      }
-    };
-    reader.readAsText(file);
+      alert('Backup restaurado correctamente!');
+    } catch (err) {
+      console.error('Error importing backup:', err);
+      alert('Error al importar backup: archivo inválido');
+    }
     event.target.value = ''; // Reset input
   };
 
 
 
-  // Add Oura entry
-  const addOuraEntry = async () => {
-    if (!newOuraEntry.sleepScore && !newOuraEntry.readinessScore) return;
-    const existingIndex = ouraLog.findIndex(o => o.date === newOuraEntry.date);
-    const entry = {
-      date: newOuraEntry.date,
-      sleepScore: parseInt(newOuraEntry.sleepScore) || null,
-      readinessScore: parseInt(newOuraEntry.readinessScore) || null,
-      activityScore: parseInt(newOuraEntry.activityScore) || null,
-      hrv: parseInt(newOuraEntry.hrv) || null,
-      restingHr: parseInt(newOuraEntry.restingHr) || null,
-      sleepHours: parseFloat(newOuraEntry.sleepHours) || null,
-      deepSleepMins: parseInt(newOuraEntry.deepSleepMins) || null,
-      remSleepMins: parseInt(newOuraEntry.remSleepMins) || null,
-      bedtime: newOuraEntry.bedtime || null,
-      wakeTime: newOuraEntry.wakeTime || null
-    };
 
-    let newLog;
-    if (existingIndex >= 0) {
-      newLog = [...ouraLog];
-      newLog[existingIndex] = entry;
-    } else {
-      newLog = [...ouraLog, entry];
-    }
-    newLog.sort((a, b) => new Date(b.date) - new Date(a.date));
-    saveOuraLog(newLog);
-    await saveOuraEntry(entry); // Save to Supabase
-    setNewOuraEntry({
-      date: getArgentinaDateString(),
-      sleepScore: '', readinessScore: '', activityScore: '',
-      hrv: '', restingHr: '', sleepHours: '',
-      deepSleepMins: '', remSleepMins: '', bedtime: '', wakeTime: ''
-    });
-  };
 
   // Get Oura data for date
   const getOuraForDate = (date) => ouraLog.find(o => o.date === date);
 
   // Export food log for nutritionist as formatted TXT
   const exportForNutritionist = () => {
-    const today = getArgentinaDateString();
-    const startDate = addDaysToDate(today, -13);
-
-    // Get all dates in range
-    const dates = [];
-    for (let i = 0; i < 14; i++) {
-      dates.push(addDaysToDate(startDate, i));
+    try {
+      const report = generateNutritionistReport(foodLog, workoutLog, ouraLog, profile);
+      downloadFile(report, `registro-nutricionista-${getArgentinaDateString()}.txt`);
+    } catch (err) {
+      console.error('Error exporting for nutritionist:', err);
+      alert('Error al generar el reporte');
     }
-
-    // Format date range for title
-    const formatFullDate = (dateStr) => {
-      const date = new Date(dateStr + 'T12:00:00');
-      return new Intl.DateTimeFormat('es-AR', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        timeZone: ARGENTINA_TZ
-      }).format(date);
-    };
-
-    const capitalizeFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-
-    // Calculate average sleep times from Oura data
-    const ouraInRange = ouraLog.filter(o => o.date >= startDate && o.date <= today);
-    let avgBedtime = 'N/D';
-    let avgWakeTime = 'N/D';
-    if (ouraInRange.length > 0) {
-      const bedtimes = ouraInRange.filter(o => o.bedtime).map(o => o.bedtime);
-      const wakeTimes = ouraInRange.filter(o => o.wakeTime).map(o => o.wakeTime);
-      if (bedtimes.length > 0) avgBedtime = bedtimes[Math.floor(bedtimes.length / 2)];
-      if (wakeTimes.length > 0) avgWakeTime = wakeTimes[Math.floor(wakeTimes.length / 2)];
-    }
-
-    // Get workouts in range
-    const workoutsInRange = workoutLog.filter(w => w.date >= startDate && w.date <= today);
-
-    // Build TXT content
-    let txt = '';
-    txt += '═══════════════════════════════════════════════════════════════\n';
-    txt += '                    REGISTRO DE COMIDAS\n';
-    txt += '═══════════════════════════════════════════════════════════════\n\n';
-    txt += 'Nombre: Lucas Mujica\n';
-    txt += `Período: ${capitalizeFirst(formatFullDate(startDate))} → ${capitalizeFirst(formatFullDate(today))}\n\n`;
-
-    txt += '———————————————————————————————————————————————————————————————\n';
-    txt += 'HORARIO PROMEDIO\n';
-    txt += '———————————————————————————————————————————————————————————————\n';
-    txt += `Despertar: ${avgWakeTime}\n`;
-    txt += `Dormir: ${avgBedtime}\n\n`;
-
-    txt += '———————————————————————————————————————————————————————————————\n';
-    txt += 'ACTIVIDAD FÍSICA DURANTE EL PERÍODO\n';
-    txt += '———————————————————————————————————————————————————————————————\n';
-    if (workoutsInRange.length === 0) {
-      txt += 'Sin actividad registrada.\n';
-    } else {
-      workoutsInRange.forEach(w => {
-        const dayName = capitalizeFirst(formatFullDate(w.date).split(',')[0]);
-        const typeMap = { gym: 'Gym', tennis: 'Tenis', cardio: 'Cardio', other: 'Otro' };
-        txt += `${dayName}: ${typeMap[w.type] || w.type} ─ ${w.duration} min (${w.name})\n`;
-      });
-    }
-    txt += '\n';
-
-    txt += '═══════════════════════════════════════════════════════════════\n';
-    txt += '                    REGISTRO DIARIO\n';
-    txt += '═══════════════════════════════════════════════════════════════\n\n';
-
-    // Each day
-    dates.forEach(date => {
-      const foods = foodLog.filter(f => f.date === date).sort((a, b) => {
-        // Sort by time if available, otherwise by meal order
-        if (a.time && b.time) return a.time.localeCompare(b.time);
-        const mealOrder = { 'Desayuno': 1, 'Almuerzo': 2, 'Merienda': 3, 'Snack': 4, 'Cena': 5 };
-        return (mealOrder[a.meal] || 99) - (mealOrder[b.meal] || 99);
-      });
-
-      txt += `———————————————————————————————————————————————————————————————\n`;
-      txt += `${capitalizeFirst(formatFullDate(date))}\n`;
-      txt += `———————————————————————————————————————————————————————————————\n`;
-
-      if (foods.length === 0) {
-        txt += 'Sin registro.\n';
-      } else {
-        foods.forEach(f => {
-          const timeStr = f.time ? ` ─ ${f.time}` : '';
-          txt += `${f.meal}${timeStr}: ${f.name}`;
-          if (f.description) txt += ` (${f.description})`;
-          txt += '\n';
-        });
-      }
-      txt += '\n';
-    });
-
-    txt += '═══════════════════════════════════════════════════════════════\n';
-    txt += `Generado: ${new Date().toLocaleString('es-AR', { timeZone: ARGENTINA_TZ })}\n`;
-
-    // Download
-    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `registro-nutricionista-${today}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   // Export for Claude - generates a structured summary to paste in chat

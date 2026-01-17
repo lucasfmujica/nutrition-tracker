@@ -90,42 +90,13 @@ export const useTrackerData = () => {
   const [showFab, setShowFab] = useState(true);
 
   // Templates
-  const [mealTemplates, setMealTemplates] = useState([
-    { id: 'tpl-1', name: 'Desayuno típico', meal: 'Desayuno', description: 'Yogur + fruta + granola', calories: 350, protein: 15, carbs: 45, fat: 12, fiber: 5 },
-    { id: 'tpl-2', name: 'Almuerzo proteico', meal: 'Almuerzo', description: 'Pollo + arroz + verduras', calories: 550, protein: 45, carbs: 50, fat: 12, fiber: 6 },
-    { id: 'tpl-3', name: 'Merienda', meal: 'Merienda', description: 'Café + tostadas', calories: 200, protein: 8, carbs: 25, fat: 8, fiber: 2 },
-  ]);
-  const [showTemplatesModal, setShowTemplatesModal] = useState(false);
-  const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
-  const [templateToSave, setTemplateToSave] = useState(null);
+
   const [showWeeklyReport, setShowWeeklyReport] = useState(false);
 
   // Forms
-  const [showFoodForm, setShowFoodForm] = useState(false);
-  const [editingFoodId, setEditingFoodId] = useState(null);
-  const [newFood, setNewFood] = useState({
-    date: getArgentinaDateString(),
-    time: '12:00',
-    meal: 'Almuerzo',
-    name: '',
-    description: '',
-    calories: '',
-    protein: '',
-    carbs: '',
-    fat: '',
-    fiber: ''
-  });
 
-  const [showWorkoutForm, setShowWorkoutForm] = useState(false);
-  const [newWorkout, setNewWorkout] = useState({
-    date: getArgentinaDateString(),
-    type: 'gym',
-    name: '',
-    duration: '',
-    calories: '',
-    volume: '',
-    notes: ''
-  });
+
+
 
   const [editingWeightId, setEditingWeightId] = useState(null);
   const [editingWeightValue, setEditingWeightValue] = useState('');
@@ -136,19 +107,7 @@ export const useTrackerData = () => {
   const [importText, setImportText] = useState('');
   const [importError, setImportError] = useState('');
 
-  const [newOuraEntry, setNewOuraEntry] = useState({
-    date: getArgentinaDateString(),
-    sleepScore: '',
-    readinessScore: '',
-    activityScore: '',
-    hrv: '',
-    restingHr: '',
-    sleepHours: '',
-    deepSleepMins: '',
-    remSleepMins: '',
-    bedtime: '',
-    wakeTime: ''
-  });
+
 
   // Local config state for debounced saving
   const [localConfig, setLocalConfig] = useState(null);
@@ -847,23 +806,17 @@ export const useTrackerData = () => {
     undoAction, setUndoAction,
     isRefreshing, setIsRefreshing,
     showFab, setShowFab,
-    mealTemplates, setMealTemplates,
-    showTemplatesModal, setShowTemplatesModal,
-    showSaveTemplateModal, setShowSaveTemplateModal,
-    templateToSave, setTemplateToSave,
+
     showWeeklyReport, setShowWeeklyReport,
-    showFoodForm, setShowFoodForm,
-    editingFoodId, setEditingFoodId,
-    newFood, setNewFood,
-    showWorkoutForm, setShowWorkoutForm,
-    newWorkout, setNewWorkout,
+
+
     editingWeightId, setEditingWeightId,
     editingWeightValue, setEditingWeightValue,
     showImportFoodModal, setShowImportFoodModal,
     showImportWorkoutModal, setShowImportWorkoutModal,
     importText, setImportText,
     importError, setImportError,
-    newOuraEntry, setNewOuraEntry,
+
     isMigrating,
     handleMigration
   };
