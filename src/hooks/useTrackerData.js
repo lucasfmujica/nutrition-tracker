@@ -448,7 +448,10 @@ export const useTrackerData = () => {
     if (useCloud) {
       try {
         await supabase.saveSteps(entry);
-      } catch (err) { }
+        console.log('[Sync] Steps saved to Supabase');
+      } catch (err) {
+        console.error('[Sync] Error saving steps to Supabase:', err);
+      }
     }
   };
 
