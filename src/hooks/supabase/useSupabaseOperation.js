@@ -40,11 +40,15 @@ export function useSupabaseOperation() {
    * @param {boolean} options.canUseSupabase - Guard to check if operation should proceed
    * @param {string} options.errorMessage - Custom error message
    * @param {number} options.timeout - Timeout in ms (default 30000)
+   * @param {number} options.maxRetries - Maximum retry attempts (default 3)
+   * @param {boolean} options.enableRetry - Enable retry logic (default true)
    */
   const withSync = useCallback(async (operation, {
     canUseSupabase = true,
     errorMessage = 'Error de sincronización',
-    timeout = 30000
+    timeout = 30000,
+    maxRetries = 3,
+    enableRetry = true
   } = {}) => {
 
     if (!canUseSupabase) {
@@ -54,27 +58,48 @@ export function useSupabaseOperation() {
     setSyncStatus('syncing');
     setSyncError(null);
 
-    try {
-      // Execute operation with timeout protection
-      const result = await withTimeout(operation(), timeout, 'Sync Operation');
+    let lastError = null;
+    const retries = enableRetry ? maxRetries : 1;
 
-      setSyncStatus('success');
-      setLastSyncTime(new Date()); // Local time, display components handle formatting
+    // Retry loop with exponential backoff
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        // Execute operation with timeout protection
+        const result = await withTimeout(operation(), timeout, 'Sync Operation');
 
-      // Reset to idle for UI feedback duration
-      setTimeout(() => setSyncStatus('idle'), 1500);
+        // Success path
+        setSyncStatus('success');
+        setLastSyncTime(new Date()); // Local time, display components handle formatting
 
-      return result;
-    } catch (err) {
-      console.error(`[useSupabaseOperation] ${errorMessage}:`, err);
-      setSyncStatus('error');
-      setSyncError(err.message || errorMessage);
+        // Reset to idle for UI feedback duration
+        setTimeout(() => setSyncStatus('idle'), 1500);
 
-      // Prevent stuck error state
-      setTimeout(() => setSyncStatus('idle'), 2000);
+        if (attempt > 1) {
+          console.log(`[useSupabaseOperation] Success after ${attempt} attempts`);
+        }
 
-      return { data: null, error: err };
+        return result;
+      } catch (err) {
+        lastError = err;
+
+        // If not last attempt, retry with exponential backoff
+        if (attempt < retries) {
+          const backoffMs = Math.min(1000 * Math.pow(2, attempt - 1), 8000); // Max 8s
+          console.warn(`[useSupabaseOperation] Attempt ${attempt}/${retries} failed, retrying in ${backoffMs}ms:`, err.message);
+          await new Promise(resolve => setTimeout(resolve, backoffMs));
+        }
+      }
     }
+
+    // All retries exhausted
+    console.error(`[useSupabaseOperation] ${errorMessage} after ${retries} attempts:`, lastError);
+    setSyncStatus('error');
+    setSyncError(lastError.message || errorMessage);
+
+    // Prevent stuck error state
+    setTimeout(() => setSyncStatus('idle'), 2000);
+
+    return { data: null, error: lastError };
   }, []); // No dependencies needed as helper functions are internal or pure
 
   return {
@@ -84,5 +109,7 @@ export function useSupabaseOperation() {
     withSync,
     withTimeout,
     setSyncStatus, // Exposed for manual overrides if necessary (e.g. from composed hooks)
+    setSyncError, // Exposed for error state management
+    setLastSyncTime, // Exposed for manual sync time updates
   };
 }

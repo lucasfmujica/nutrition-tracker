@@ -71,3 +71,50 @@ export const formatTime = (timestamp) => {
   const date = new Date(timestamp);
   return date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' });
 };
+
+/**
+ * Format relative time in Spanish for Argentina timezone
+ * CRITICAL: Always respects Argentina timezone as per CLAUDE.md rules
+ * @param {string|Date|number} date - Date to format
+ * @returns {string} Relative time ("Ahora", "Hace 2 min", etc.)
+ * @example
+ * formatRelativeTime(new Date(Date.now() - 120000)) // "Hace 2 min"
+ */
+export const formatRelativeTime = (date) => {
+  if (!date) return '';
+
+  // CRITICAL FIX: Convert both dates to Argentina timezone for consistent comparison
+  const nowInArgentina = new Date().toLocaleString('en-US', {
+    timeZone: ARGENTINA_TZ
+  });
+  const now = new Date(nowInArgentina);
+
+  // Parse and validate input date
+  const parsedDate = new Date(date);
+  if (isNaN(parsedDate.getTime())) {
+    console.error('[dateUtils] Invalid date provided to formatRelativeTime:', date);
+    return '';
+  }
+
+  // Convert input date to Argentina timezone
+  const dateInArgentina = parsedDate.toLocaleString('en-US', {
+    timeZone: ARGENTINA_TZ
+  });
+  const dateInTz = new Date(dateInArgentina);
+
+  const diffMs = now - dateInTz;
+
+  // Handle future dates (shouldn't happen for lastSyncTime, but defensive)
+  if (diffMs < 0) return 'Ahora';
+
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHour = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHour / 24);
+
+  if (diffSec < 60) return 'Ahora';
+  if (diffMin < 60) return `Hace ${diffMin} min`;
+  if (diffHour < 24) return `Hace ${diffHour} h`; // FIXED: Consistent spacing
+  if (diffDay === 1) return 'Ayer';
+  return `Hace ${diffDay} días`;
+};

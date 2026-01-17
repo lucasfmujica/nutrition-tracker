@@ -129,7 +129,7 @@ export function useSupabase() {
     setRealtimeCallbacks(prev => ({ ...prev, [table]: callback }));
   }, []);
 
-  // Fetch All Data Orchestrator
+  // Fetch All Data Orchestrator (CRITICAL FIX: Resilient parallel fetch)
   const fetchAllData = useCallback(async () => {
     if (!canUseSupabase) {
       console.log('[Supabase] fetchAllData: cannot use Supabase');
@@ -146,20 +146,48 @@ export function useSupabase() {
     try {
       console.log('[Supabase] fetchAllData: starting for user:', user?.id);
 
-      const fetchPromise = Promise.all([
-        fetchProfile().catch(err => { console.warn('[Supabase] Profile fetch failed:', err.message); return null; }),
-        fetchWeightHistory().catch(err => { console.warn('[Supabase] Weight fetch failed:', err.message); return []; }),
-        fetchFoodLog().catch(err => { console.warn('[Supabase] Food fetch failed:', err.message); return []; }),
-        fetchWorkouts().catch(err => { console.warn('[Supabase] Workouts fetch failed:', err.message); return []; }),
-        fetchStepsLog().catch(err => { console.warn('[Supabase] Steps fetch failed:', err.message); return []; }),
-        fetchOuraLog().catch(err => { console.warn('[Supabase] Oura fetch failed:', err.message); return []; }),
-        fetchWaterLog().catch(err => { console.warn('[Supabase] Water fetch failed:', err.message); return []; }),
+      // CRITICAL FIX: Use Promise.allSettled instead of Promise.all
+      // This ensures that if one source fails (e.g., Oura), others still load
+      const fetchPromise = Promise.allSettled([
+        fetchProfile(),
+        fetchWeightHistory(),
+        fetchFoodLog(),
+        fetchWorkouts(),
+        fetchStepsLog(),
+        fetchOuraLog(),
+        fetchWaterLog(),
       ]);
 
-      const [profileData, weightHistory, foodLog, workouts, stepsLog, ouraLog, waterLog] =
-        await Promise.race([fetchPromise, timeoutPromise]);
+      const results = await Promise.race([fetchPromise, timeoutPromise]);
 
-      console.log('[Supabase] fetchAllData: completed successfully');
+      // Extract successful results and log failures
+      const [profileResult, weightResult, foodResult, workoutsResult, stepsResult, ouraResult, waterResult] = results;
+
+      // Helper to extract value or return fallback
+      const getValue = (result, fallback, name) => {
+        if (result.status === 'fulfilled') {
+          return result.value;
+        } else {
+          console.warn(`[Supabase] ${name} fetch failed:`, result.reason?.message || result.reason);
+          return fallback;
+        }
+      };
+
+      const profileData = getValue(profileResult, null, 'Profile');
+      const weightHistory = getValue(weightResult, [], 'Weight History');
+      const foodLog = getValue(foodResult, [], 'Food Log');
+      const workouts = getValue(workoutsResult, [], 'Workouts');
+      const stepsLog = getValue(stepsResult, [], 'Steps Log');
+      const ouraLog = getValue(ouraResult, [], 'Oura Log');
+      const waterLog = getValue(waterResult, [], 'Water Log');
+
+      // Count failures for logging
+      const failedCount = results.filter(r => r.status === 'rejected').length;
+      if (failedCount > 0) {
+        console.warn(`[Supabase] fetchAllData: ${failedCount}/${results.length} sources failed, but proceeding with partial data`);
+      }
+
+      console.log('[Supabase] fetchAllData: completed');
       setSyncStatus('success');
       setLastSyncTime(new Date());
       setTimeout(() => setSyncStatus('idle'), 1500);
