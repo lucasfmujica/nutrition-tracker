@@ -24,7 +24,7 @@ const NutritionTracker = () => {
     showOnboarding, setShowOnboarding,
     offlineMode, setOfflineMode,
     isLoading,
-    saveStatus,
+    saveStatus, setSaveStatus,
     showMigrationModal, setShowMigrationModal,
     migrationData, setMigrationData,
     profile,
