@@ -130,6 +130,17 @@ export const useBiometrics = (supabase, useCloud, profileData = null, targetsDat
   };
 
   const saveStepsEntry = async (entry) => {
+    // 1. Optimistic Update
+    setStepsLog(prev => {
+      const existingIndex = prev.findIndex(item => item.date === entry.date);
+      if (existingIndex >= 0) {
+        const newLog = [...prev];
+        newLog[existingIndex] = { ...newLog[existingIndex], ...entry };
+        return newLog;
+      }
+      return [...prev, entry].sort((a, b) => new Date(b.date) - new Date(a.date));
+    });
+
     if (useCloud) {
       try {
         const result = await supabase.saveSteps(entry);
@@ -173,6 +184,17 @@ export const useBiometrics = (supabase, useCloud, profileData = null, targetsDat
   };
 
   const saveOuraEntry = async (entry) => {
+    // 1. Optimistic Update
+    setOuraLog(prev => {
+      const existingIndex = prev.findIndex(item => item.date === entry.date);
+      if (existingIndex >= 0) {
+        const newLog = [...prev];
+        newLog[existingIndex] = { ...newLog[existingIndex], ...entry };
+        return newLog;
+      }
+      return [...prev, entry].sort((a, b) => new Date(b.date) - new Date(a.date));
+    });
+
     if (useCloud) {
       try {
         const result = await supabase.saveOura(entry);

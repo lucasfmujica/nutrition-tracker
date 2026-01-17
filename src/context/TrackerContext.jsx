@@ -12,6 +12,7 @@ import { useWorkoutEntry } from '../hooks/useWorkoutEntry';
 import { useBiometrics } from '../hooks/useBiometrics';
 import { useGlobalDelete } from '../hooks/useGlobalDelete';
 import { useNutrition } from '../hooks/useNutrition';
+import { useOuraSync } from '../hooks/useOuraSync'; // Oura Cloud Sync
 import { useTrackerSync } from '../hooks/useTrackerSync';
 import { useWeightAnalytics } from '../hooks/useWeightAnalytics'; // Intelligence Engine
 import { useWorkoutAnalysis } from '../hooks/useWorkoutAnalysis'; // New import
@@ -199,6 +200,12 @@ export const TrackerProvider = ({ children }) => {
   // 11. Global Delete Actions
   const globalDelete = useGlobalDelete(nutrition, workouts, biometrics, supabase, useCloud);
 
+  // 12. Oura Sync Service
+  const ouraSync = useOuraSync({
+    saveOuraEntry: biometrics.saveOuraEntry,
+    saveStepsEntry: biometrics.saveStepsEntry
+  });
+
   // Derived State
   const workoutAnalysis = useWorkoutAnalysis(workouts.workoutLog);
 
@@ -244,6 +251,7 @@ export const TrackerProvider = ({ children }) => {
     ...workoutEntry,
     ...mealTemplates,
     ...ouraEntry,
+    ...ouraSync, // Expose syncOuraData, isSyncing, syncStatus
 
     // Intelligence Engine
     ...weightAnalytics,
@@ -262,7 +270,7 @@ export const TrackerProvider = ({ children }) => {
     dashboardDate, selectedFoodDate, selectedWorkoutDate, stepsDate, // Added dependency
     showImportFoodModal, showImportWorkoutModal,
     globalDelete,
-    dataOperations, analytics, exportDoc, foodEntry, workoutEntry, mealTemplates, ouraEntry,
+    dataOperations, analytics, exportDoc, foodEntry, workoutEntry, mealTemplates, ouraEntry, ouraSync,
     weightAnalytics, workoutAnalysis, supabase,
     showFab // Added dependency
   ]);

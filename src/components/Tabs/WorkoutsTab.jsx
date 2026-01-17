@@ -1,4 +1,5 @@
-import { Dumbbell, Target, Trophy } from 'lucide-react';
+import { Activity, Dumbbell, Moon, RefreshCw, Target, Trophy, Zap } from 'lucide-react';
+import { useTracker } from '../../context/TrackerContext';
 import { useEffortAnalytics } from '../../hooks/useEffortAnalytics';
 import { addDaysToDate, getArgentinaDateString, getMondayOfWeek } from '../../utils/dateUtils';
 import { EffortRadar } from '../Workouts/EffortRadar';
@@ -25,16 +26,29 @@ export const WorkoutsTab = ({
   confirmWorkout
 }) => {
   const workoutsForSelectedDate = getWorkoutsForDate(selectedWorkoutDate);
+  const dailyOura = ouraLog.find(e => e.date === selectedWorkoutDate);
 
   // AES Intelligence Engine
   const effortAnalytics = useEffortAnalytics(workoutLog, ouraLog, weightAnalytics);
+  const { syncOuraData, isSyncing, syncStatus } = useTracker();
 
   return (
     <div className="space-y-3">
       {/* Weekly Summary - Bento Box Layout */}
       <div className="space-y-3">
         <div className="flex justify-between items-center">
-          <h2 className="text-sm font-bold text-gray-900">Resumen Semanal</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-sm font-bold text-gray-900">Resumen Semanal</h2>
+            <button
+              onClick={() => syncOuraData(true)}
+              disabled={isSyncing}
+              className={`p-1.5 rounded-lg transition-all ${isSyncing ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-100 text-gray-400 hover:text-gray-600'}`}
+              title="Sincronizar Oura Ring"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+            </button>
+            {isSyncing && <span className="text-[10px] text-blue-500 font-medium animate-pulse">Sincronizando...</span>}
+          </div>
           <span className="text-xs text-gray-500">desde {workoutAnalysis.weekStart}</span>
         </div>
 
@@ -84,6 +98,37 @@ export const WorkoutsTab = ({
             <div className="text-xs text-cyan-600 font-medium">Duración</div>
           </div>
         </div>
+
+        {/* Oura Recovery Metrics */}
+        {dailyOura && (
+          <div className="grid grid-cols-2 gap-3">
+             <div className="bg-white rounded-xl p-3 border border-gray-100 shadow-sm flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                   <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
+                      <Moon className="w-4 h-4" />
+                   </div>
+                   <div>
+                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Sueño</p>
+                      <p className="text-xl font-bold text-gray-900">{dailyOura.sleepScore}</p>
+                   </div>
+                </div>
+                <div className={`w-2 h-2 rounded-full ${dailyOura.sleepScore >= 85 ? 'bg-green-500' : dailyOura.sleepScore >= 70 ? 'bg-amber-500' : 'bg-red-500'}`} />
+             </div>
+
+             <div className="bg-white rounded-xl p-3 border border-gray-100 shadow-sm flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                   <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                      <Zap className="w-4 h-4" />
+                   </div>
+                   <div>
+                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Readiness</p>
+                      <p className="text-xl font-bold text-gray-900">{dailyOura.readinessScore}</p>
+                   </div>
+                </div>
+                <div className={`w-2 h-2 rounded-full ${dailyOura.readinessScore >= 85 ? 'bg-green-500' : dailyOura.readinessScore >= 70 ? 'bg-amber-500' : 'bg-red-500'}`} />
+             </div>
+          </div>
+        )}
       </div>
 
       {/* Header with date navigation */}
