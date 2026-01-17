@@ -652,35 +652,51 @@ const NutritionTracker = () => {
   // Check if using Supabase (authenticated) or localStorage (offline)
   const useCloud = supabase.isAuthenticated && !offlineMode && supabase.isOnline;
 
-  // Load data from Supabase or localStorage
+  // Track if we've already initialized to prevent loops
+  const hasInitialized = useRef(false);
+
+  // Handle auth state changes - separate from data loading to avoid loops
   useEffect(() => {
-    // Wait for auth to initialize
     if (supabase.loading) return;
 
-    // Set auth state based on authentication status
     if (supabase.isAuthenticated) {
       console.log('[Auth] User authenticated, hiding auth screen');
       setShowAuth(false);
+    } else {
+      console.log('[Auth] User not authenticated, showing auth screen');
+      setShowAuth(true);
+    }
+  }, [supabase.loading, supabase.isAuthenticated]);
 
+  // Load data - runs once when authenticated
+  useEffect(() => {
+    // Wait for auth to settle
+    if (supabase.loading || showAuth === null) return;
+    
+    // Don't load if showing auth screen (unless offline mode)
+    if (showAuth && !offlineMode) return;
+
+    // Prevent re-running on every render
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+
+    console.log('[Data] Starting data load...');
+
+    // Check for onboarding and migration (only when authenticated)
+    if (supabase.isAuthenticated) {
       // Check if user needs onboarding (new user)
-      const checkOnboarding = async () => {
-        const needsOnboarding = await supabase.checkNeedsOnboarding();
+      supabase.checkNeedsOnboarding().then(needsOnboarding => {
         if (needsOnboarding) {
           setShowOnboarding(true);
         }
-      };
-      checkOnboarding();
+      });
 
-      // Prompt 3: Check for localStorage data to migrate
+      // Check for localStorage data to migrate
       const { hasData, localData } = supabase.checkLocalStorageForMigration();
       if (hasData && supabase.isOnline) {
         setMigrationData(localData);
         setShowMigrationModal(true);
       }
-    } else {
-      // Not authenticated - show auth screen
-      console.log('[Auth] User not authenticated, showing auth screen');
-      setShowAuth(true);
     }
 
     const loadData = async () => {
@@ -729,8 +745,8 @@ const NutritionTracker = () => {
         if (localOura.length) setOuraLog(localOura);
         if (localWater.length) setWaterLog(localWater);
 
-        // THEN: If online, try to get Supabase data
-        if (useCloud) {
+        // THEN: If online and authenticated, try to get Supabase data
+        if (supabase.isAuthenticated && supabase.isOnline && !offlineMode) {
           console.log('[Data] Fetching from Supabase...');
           try {
             const data = await supabase.fetchAllData();
@@ -745,35 +761,20 @@ const NutritionTracker = () => {
             });
 
             if (data) {
-              // Only update with Supabase data if it has MORE data than local
-              // This prevents data loss when Supabase is empty
+              // Only update with Supabase data if it has data
               if (data.profile) setProfile(data.profile);
               if (data.targets) setCustomTargets(data.targets);
 
               // For arrays: only use Supabase if it has data
-              // Don't overwrite existing local data with empty arrays
-              if (data.weightHistory?.length > 0) {
-                setWeightHistory(data.weightHistory);
-              }
-              if (data.foodLog?.length > 0) {
-                setFoodLog(data.foodLog);
-              }
-              if (data.workouts?.length > 0) {
-                setWorkoutLog(data.workouts);
-              }
-              if (data.stepsLog?.length > 0) {
-                setStepsLog(data.stepsLog);
-              }
-              if (data.ouraLog?.length > 0) {
-                setOuraLog(data.ouraLog);
-              }
-              if (data.waterLog?.length > 0) {
-                setWaterLog(data.waterLog);
-              }
+              if (data.weightHistory?.length > 0) setWeightHistory(data.weightHistory);
+              if (data.foodLog?.length > 0) setFoodLog(data.foodLog);
+              if (data.workouts?.length > 0) setWorkoutLog(data.workouts);
+              if (data.stepsLog?.length > 0) setStepsLog(data.stepsLog);
+              if (data.ouraLog?.length > 0) setOuraLog(data.ouraLog);
+              if (data.waterLog?.length > 0) setWaterLog(data.waterLog);
             }
           } catch (supabaseErr) {
             console.error('[Data] Supabase fetch failed, using localStorage:', supabaseErr);
-            // Keep using localStorage data (already set above)
           }
         }
       } catch (err) {
@@ -782,11 +783,8 @@ const NutritionTracker = () => {
       setIsLoading(false);
     };
 
-    // Only load data if not showing auth screen or in offline mode
-    if (!showAuth || offlineMode) {
     loadData();
-    }
-  }, [supabase.loading, supabase.isAuthenticated, useCloud, showAuth, offlineMode, supabase.isOnline]);
+  }, [supabase.loading, showAuth, offlineMode, supabase.isAuthenticated, supabase.isOnline]);
 
   // Debounced config save
   useEffect(() => {
