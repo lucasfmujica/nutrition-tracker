@@ -197,7 +197,7 @@ const PullToRefresh = ({ children, onRefresh, isRefreshing }) => {
   return (
     <div
       ref={containerRef}
-      className="relative overflow-auto"
+      className="relative overflow-auto h-screen"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
