@@ -1,7 +1,7 @@
 import { Activity, Dumbbell, Home, Link, Scale, Settings, Utensils } from 'lucide-react';
 import React from 'react';
 
-export const Sidebar = ({ activeTab, setActiveTab }) => {
+export const Sidebar = ({ activeTab, setActiveTab, profile }) => {
   const menuItems = [
     { id: 'dashboard', icon: Home, label: 'Dashboard' },
     { id: 'comidas', icon: Utensils, label: 'Comidas' },
@@ -50,12 +50,15 @@ export const Sidebar = ({ activeTab, setActiveTab }) => {
       </nav>
 
       <div className="p-6 border-t border-gray-50">
-        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold">
-                LM
+        <div
+          onClick={() => setActiveTab('config')}
+          className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors active:scale-95"
+        >
+            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-sm">
+                {profile?.avatar || (profile?.name?.substring(0, 2).toUpperCase() || 'LM')}
             </div>
             <div className="overflow-hidden">
-                <p className="text-sm font-bold text-gray-900 truncate">Lucas Mujica</p>
+                <p className="text-sm font-bold text-gray-900 truncate">{profile?.name || 'Lucas Mujica'}</p>
                 <p className="text-xs text-gray-500 truncate">Premium Member</p>
             </div>
         </div>

@@ -1320,7 +1320,7 @@ const NutritionTracker = () => {
   }
 
   return (
-    <Layout activeTab={activeTab} setActiveTab={setActiveTab} showNav={!showOnboarding}>
+    <Layout activeTab={activeTab} setActiveTab={setActiveTab} profile={profile} showNav={!showOnboarding}>
       {/* Google Font - Plus Jakarta Sans for modern fitness aesthetic */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -2412,9 +2412,9 @@ const NutritionTracker = () => {
             </div>
 
             <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
-                <div className="flex items-center gap-4 mb-8">
+                <div className="flex items-center gap-4 mb-6">
                     <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-blue-500/20">
-                        {profile.name?.substring(0, 1) || 'L'}
+                        {profile.avatar || (profile.name?.substring(0, 1) || 'L')}
                     </div>
                     <div>
                         <h3 className="text-xl font-black text-gray-900 leading-tight">{profile.name || 'Usuario'}</h3>
@@ -2422,10 +2422,34 @@ const NutritionTracker = () => {
                     </div>
                 </div>
 
+                {/* Avatar Selection */}
+                <div className="mb-8">
+                  <label className="block text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Avatar</label>
+                  <div className="grid grid-cols-8 gap-2">
+                    {['💪', '🏋️', '🏃', '🚴', '⚡', '🔥', '🎯', '🏆', '⭐', '💎', '🦾', '🧠', '❤️', '🌟', '👑', '🎪'].map((emoji) => (
+                      <button
+                        key={emoji}
+                        onClick={() => updateConfig({ ...profile, avatar: emoji }, customTargets)}
+                        className={`w-full aspect-square rounded-xl flex items-center justify-center text-2xl transition-all hover:scale-110 ${
+                          profile.avatar === emoji
+                            ? 'bg-blue-100 ring-2 ring-blue-500 shadow-lg'
+                            : 'bg-gray-50 hover:bg-gray-100'
+                        }`}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
               <h2 className="text-xs font-black text-gray-400 mb-4 uppercase tracking-[0.2em] flex items-center gap-2">
                  PERFIL Y DATOS
               </h2>
               <div className="grid grid-cols-2 gap-6">
+                <div className="col-span-2">
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Nombre</label>
+                  <input type="text" value={profile.name || ''} onChange={(e) => updateConfig({ ...profile, name: e.target.value }, customTargets)} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all" placeholder="Tu nombre" />
+                </div>
                 <div>
                   <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Peso Actual (kg)</label>
                   <input type="number" step="0.1" value={profile.currentWeight} onChange={(e) => updateConfig({ ...profile, currentWeight: parseFloat(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all" />

@@ -329,7 +329,18 @@ export const useTrackerData = () => {
 
   // Helpers
   const sortWeightHistory = (history) => {
-    return [...history].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+    return [...history].sort((a, b) => {
+      // First try to sort by timestamp
+      const timestampDiff = (b.timestamp || 0) - (a.timestamp || 0);
+      if (timestampDiff !== 0) return timestampDiff;
+
+      // If timestamps are equal or both missing, sort by date string (most recent first)
+      if (a.date && b.date) {
+        return b.date.localeCompare(a.date);
+      }
+
+      return 0;
+    });
   };
 
   const getMostRecentWeight = (history) => {
@@ -528,7 +539,14 @@ export const useTrackerData = () => {
   };
 
   const saveWaterEntry = async (entry) => {
-    if (useCloud) await supabase.saveWater(entry);
+    if (useCloud) {
+      try {
+        await supabase.saveWater(entry);
+      } catch (err) {
+        console.error('Error guardando agua', err);
+        // Don't throw - water is already saved locally, cloud sync can fail silently
+      }
+    }
   };
 
   const getTodayWater = () => {
