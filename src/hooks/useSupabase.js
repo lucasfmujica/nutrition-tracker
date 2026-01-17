@@ -882,23 +882,6 @@ export function useSupabase() {
       return null;
     }
 
-    // Validate session before fetching
-    try {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error || !session) {
-        console.error('[Supabase] fetchAllData: invalid session, clearing auth');
-        // Clear corrupted session
-        await supabase.auth.signOut({ scope: 'local' });
-        setUser(null);
-        setSyncStatus('idle');
-        return null;
-      }
-    } catch (sessionErr) {
-      console.error('[Supabase] fetchAllData: session check failed:', sessionErr);
-      setSyncStatus('idle');
-      return null;
-    }
-
     // Only set syncing if not already syncing (prevent multiple spinners)
     setSyncStatus(prev => prev === 'syncing' ? prev : 'syncing');
 
