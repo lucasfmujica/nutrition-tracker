@@ -5,6 +5,8 @@ import { ActivityCards } from './components/Dashboard/ActivityCards';
 import { MacroCards } from './components/Dashboard/MacroCards';
 import { SummaryCard } from './components/Dashboard/SummaryCard';
 import { WeightChartCard } from './components/Dashboard/WeightChartCard';
+import { DaySummary } from './components/Diary/DaySummary';
+import { MealSection } from './components/Diary/MealSection';
 import { FloatingActionButton } from './components/FloatingActionButton';
 import { Layout } from './components/Layout';
 import { OnboardingWizard } from './components/OnboardingWizard';
@@ -1831,115 +1833,73 @@ const NutritionTracker = () => {
             )}
 
             {getFoodsForDate(selectedFoodDate).length === 0 ? (
-
               <div className="bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm">
                 <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-2xl">🍽️</span>
                 </div>
                 <h3 className="text-gray-900 font-bold text-lg mb-1">Sin comidas registradas</h3>
                 <p className="text-gray-500 text-sm">Registra tu primera comida del día.</p>
+                <button
+                  onClick={() => { setNewFood({ ...newFood, date: selectedFoodDate, meal: 'Desayuno' }); setShowFoodForm(true); }}
+                  className="mt-6 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-blue-600/20"
+                >
+                  Registrar Comida
+                </button>
               </div>
             ) : (
-              <div className="space-y-2">
-                {getFoodsForDate(selectedFoodDate).map(entry => {
-                  const needsReview = !entry.reviewed || (entry.confidence && entry.confidence < 0.7);
-                  // Format time to HH:MM (remove seconds if present)
-                  const displayTime = entry.time ? entry.time.substring(0, 5) : '';
+              <div className="space-y-6 pb-24">
+                {['Desayuno', 'Almuerzo', 'Cena', 'Snack'].map(mealType => {
+                  const mealFoods = getFoodsForDate(selectedFoodDate).filter(f =>
+                     // Normalize string comparison
+                     (f.meal || '').toLowerCase() === mealType.toLowerCase() ||
+                     // Fallback for old data or mismatches
+                     (mealType === 'Snack' && !['desayuno', 'almuerzo', 'cena'].includes((f.meal || '').toLowerCase()))
+                  );
+
+                  // Skip section if no foods (optional: keeping it clean)
+                 // if (mealFoods.length === 0) return null;
+
+                  // Calculate totals for this meal
+                  const mealTotals = mealFoods.reduce((acc, food) => ({
+                    calories: acc.calories + (parseInt(food.calories) || 0)
+                  }), { calories: 0 });
+
                   return (
-                    <SwipeableItem
-                      key={entry.id}
-                      onDelete={() => confirmDelete('food', entry.id, entry.name)}
-                    >
-                      <div className={`p-3 border-l-4 ${needsReview ? 'border-l-amber-500' : 'border-l-blue-500'}`}>
-                      <div className="flex justify-between items-start mb-1">
-                        <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-xs text-blue-400 uppercase font-medium">{entry.meal}</span>
-                              {displayTime && <span className="text-xs text-gray-500">{displayTime}</span>}
-                            {needsReview && (
-                                <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">⚠️</span>
-                            )}
-                          </div>
-                            <h3 className="font-medium text-base truncate">{entry.name}</h3>
-                        </div>
-                          {needsReview && (
-                            <button onClick={() => confirmFood(entry.id)} className="text-blue-400 active:text-cyan-300 px-2 py-1 text-sm font-medium bg-blue-500/20 rounded ml-2 flex-shrink-0">✓</button>
-                          )}
-                        </div>
-                        {entry.description && <p className="text-xs text-gray-400 mb-1.5 truncate-2">{entry.description}</p>}
-                        <div className="flex justify-between items-center">
-                          <div className="flex flex-wrap gap-2 text-xs">
-                            <span className="text-blue-400 font-medium">{entry.calories}kcal</span>
-                            <span className="text-blue-400">{entry.protein}P</span>
-                            <span className="text-amber-400">{entry.carbs}C</span>
-                            <span className="text-pink-400">{entry.fat}F</span>
-                            {entry.fiber > 0 && <span className="text-purple-400">{entry.fiber}Fib</span>}
-                      </div>
-                          {/* Action buttons */}
-                          <div className="flex items-center gap-1">
-                            <button
-                              onClick={() => {
-                                setNewFood({
-                                  ...entry,
-                                  time: displayTime,
-                                  calories: entry.calories.toString(),
-                                  protein: entry.protein.toString(),
-                                  carbs: entry.carbs.toString(),
-                                  fat: entry.fat.toString(),
-                                  fiber: entry.fiber?.toString() || '0'
-                                });
-                                setEditingFoodId(entry.id);
-                                setShowFoodForm(true);
-                              }}
-                              className="text-blue-400 hover:text-blue-300 text-sm px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 rounded transition-colors"
-                              title="Editar"
-                            >
-                              ✏️
-                            </button>
-                            <button
-                              onClick={() => confirmDelete('food', entry.id, entry.name)}
-                              className="text-red-400 hover:text-red-300 text-sm px-2 py-1 bg-red-500/10 hover:bg-red-500/20 rounded transition-colors"
-                              title="Eliminar"
-                            >
-                              🗑️
-                            </button>
-                            <button
-                              onClick={() => saveAsTemplate(entry)}
-                              className="text-purple-400 hover:text-purple-300 text-sm px-2 py-1 bg-purple-500/10 hover:bg-purple-500/20 rounded transition-colors"
-                              title="Guardar como favorito"
-                            >
-                              ⭐
-                            </button>
-                      </div>
-                    </div>
-                      </div>
-                    </SwipeableItem>
+                    <MealSection
+                      key={mealType}
+                      title={mealType}
+                      foods={mealFoods}
+                      totals={mealTotals}
+                      onAddFood={() => {
+                        setNewFood({ ...newFood, date: selectedFoodDate, meal: mealType });
+                        setShowFoodForm(true);
+                      }}
+                      onEditFood={(food) => {
+                        setNewFood({
+                            ...food,
+                            calories: food.calories.toString(),
+                            protein: food.protein.toString(),
+                            carbs: food.carbs.toString(),
+                            fat: food.fat.toString(),
+                            fiber: food.fiber?.toString() || '0'
+                        });
+                        setEditingFoodId(food.id);
+                        setShowFoodForm(true);
+                      }}
+                      onDeleteFood={(food) => confirmDelete('food', food.id, food.name)}
+                    />
                   );
                 })}
               </div>
             )}
 
-            {getFoodsForDate(selectedFoodDate).length > 0 && (
-
-              <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-                <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <span className="w-6 h-6 rounded bg-blue-50 text-blue-600 flex items-center justify-center text-xs">Σ</span>
-                  TOTAL DEL DÍA
-                </h3>
-                {(() => {
-                  const t = getTotalsForDate(selectedFoodDate);
-                  return (
-                    <div className="grid grid-cols-5 gap-2 text-center">
-                      <div><span className="text-base font-bold text-blue-400">{t.calories}</span><br /><span className="text-xs text-gray-400">kcal</span></div>
-                      <div><span className="text-base font-bold text-blue-400">{t.protein}g</span><br /><span className="text-xs text-gray-400">prot</span></div>
-                      <div><span className="text-base font-bold text-amber-400">{t.carbs}g</span><br /><span className="text-xs text-gray-400">carbs</span></div>
-                      <div><span className="text-base font-bold text-pink-400">{t.fat}g</span><br /><span className="text-xs text-gray-400">fat</span></div>
-                      <div><span className="text-base font-bold text-purple-400">{t.fiber}g</span><br /><span className="text-xs text-gray-400">fibra</span></div>
-                    </div>
-                  );
-                })()}
-              </div>
-            )}
+            {/* Sticky Day Summary Footer */}
+             {getFoodsForDate(selectedFoodDate).length > 0 && (
+                <DaySummary
+                  totals={getTotalsForDate(selectedFoodDate)}
+                  targets={getTargetsForDate(selectedFoodDate)}
+                />
+             )}
           </div>
         )}
 
