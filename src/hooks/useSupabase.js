@@ -309,17 +309,40 @@ export function useSupabase() {
   };
 
   const signOut = async () => {
-    if (!isSupabaseConfigured()) return { error: null };
+    console.log('[Auth] signOut called');
 
-    setLoading(true);
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      setAuthError(error.message);
-    }
-    setLoading(false);
+    // Immediately reset all state - don't wait for Supabase
+    setUser(null);
     setSyncStatus('idle');
     setLastSyncTime(null);
-    return { error };
+    setSyncError(null);
+    setAuthError(null);
+
+    if (!isSupabaseConfigured()) {
+      console.log('[Auth] Supabase not configured, signOut complete');
+      return { error: null };
+    }
+
+    try {
+      // Clear subscriptions first
+      subscriptionsRef.current.forEach(sub => {
+        try { supabase.removeChannel(sub); } catch (e) { /* ignore */ }
+      });
+      subscriptionsRef.current = [];
+
+      // Sign out from Supabase (this clears the localStorage token)
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('[Auth] signOut error:', error);
+        setAuthError(error.message);
+      } else {
+        console.log('[Auth] signOut successful');
+      }
+      return { error };
+    } catch (err) {
+      console.error('[Auth] signOut exception:', err);
+      return { error: err };
+    }
   };
 
   const resetPassword = async (email) => {
@@ -338,7 +361,7 @@ export function useSupabase() {
   };
 
   // =====================================================
-  // Prompt 3 & 4: Sync wrapper with optimistic updates
+  // Prompt 3 & 4: Sync wrapper with optimistic updates and timeout
   // =====================================================
   const withSync = async (operation, errorMessage = 'Error de sincronización') => {
     if (!canUseSupabase) {
@@ -348,8 +371,13 @@ export function useSupabase() {
     setSyncStatus('syncing');
     setSyncError(null);
 
+    // Timeout protection - never stay syncing more than 15 seconds
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Sync timeout')), 15000)
+    );
+
     try {
-      const result = await operation();
+      const result = await Promise.race([operation(), timeoutPromise]);
       setSyncStatus('success');
       setLastSyncTime(new Date());
       setTimeout(() => setSyncStatus('idle'), 1500);
@@ -359,7 +387,7 @@ export function useSupabase() {
       setSyncStatus('error');
       setSyncError(err.message || errorMessage);
       // Always reset to idle after error to prevent stuck spinner
-      setTimeout(() => setSyncStatus('idle'), 3000);
+      setTimeout(() => setSyncStatus('idle'), 2000);
       return { data: null, error: err };
     }
   };
@@ -775,15 +803,22 @@ export function useSupabase() {
   const fetchAllData = useCallback(async () => {
     if (!canUseSupabase) {
       console.log('[Supabase] fetchAllData: cannot use Supabase');
+      setSyncStatus('idle');
       return null;
     }
 
     // Only set syncing if not already syncing (prevent multiple spinners)
     setSyncStatus(prev => prev === 'syncing' ? prev : 'syncing');
 
+    // Timeout protection - max 12 seconds for all fetches
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Fetch timeout after 12s')), 12000)
+    );
+
     try {
       console.log('[Supabase] fetchAllData: starting...');
-      const [profileData, weightHistory, foodLog, workouts, stepsLog, ouraLog, waterLog] = await Promise.all([
+
+      const fetchPromise = Promise.all([
         fetchProfile(),
         fetchWeightHistory(),
         fetchFoodLog(),
@@ -792,6 +827,9 @@ export function useSupabase() {
         fetchOuraLog(),
         fetchWaterLog(),
       ]);
+
+      const [profileData, weightHistory, foodLog, workouts, stepsLog, ouraLog, waterLog] =
+        await Promise.race([fetchPromise, timeoutPromise]);
 
       console.log('[Supabase] fetchAllData: completed successfully');
       setSyncStatus('success');
@@ -813,8 +851,8 @@ export function useSupabase() {
       console.error('[Supabase] fetchAllData error:', err);
       setSyncStatus('error');
       setSyncError(err.message);
-      // Reset to idle after error so it doesn't stay stuck
-      setTimeout(() => setSyncStatus('idle'), 3000);
+      // Reset to idle quickly after error so it doesn't stay stuck
+      setTimeout(() => setSyncStatus('idle'), 2000);
       return null;
     }
   }, [canUseSupabase, fetchProfile, fetchWeightHistory, fetchFoodLog, fetchWorkouts, fetchStepsLog, fetchOuraLog, fetchWaterLog]);
