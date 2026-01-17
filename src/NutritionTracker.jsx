@@ -13,6 +13,7 @@ import { DaySummary } from './components/Diary/DaySummary';
 import { MealSection } from './components/Diary/MealSection';
 import { FloatingActionButton } from './components/FloatingActionButton';
 import { Layout } from './components/Layout';
+import { LoadingScreen } from './components/layout/Shell/LoadingScreen';
 import { DeleteConfirmModal } from './components/Modals/DeleteConfirmModal';
 import { FoodFormModal } from './components/Modals/FoodFormModal';
 import { ImportModal } from './components/Modals/ImportModal';
@@ -20,6 +21,7 @@ import { MigrationModal } from './components/Modals/MigrationModal';
 import { WorkoutFormModal } from './components/Modals/WorkoutFormModal';
 import { OnboardingWizard } from './components/OnboardingWizard';
 import { PullToRefresh } from './components/PullToRefresh';
+import { UndoToast } from './components/shared/UndoToast';
 import { SwipeableItem } from './components/SwipeableItem';
 import { ConfigTab } from './components/Tabs/ConfigTab';
 import { DashboardTab } from './components/Tabs/DashboardTab';
@@ -32,6 +34,9 @@ import { CircularProgress } from './components/UI/CircularProgress';
 import { MiniBar } from './components/UI/MiniBar';
 import { ProgressBar } from './components/UI/ProgressBar';
 import { WeeklyReport } from './components/WeeklyReport';
+import { useAnalytics } from './hooks/useAnalytics';
+import { useDataOperations } from './hooks/useDataOperations';
+import { useExport } from './hooks/useExport';
 import { useFoodEntry } from './hooks/useFoodEntry';
 import { useMealTemplates } from './hooks/useMealTemplates';
 import { useOuraEntry } from './hooks/useOuraEntry';
@@ -49,18 +54,18 @@ const NutritionTracker = () => {
     showAuth, setShowAuth,
     showOnboarding, setShowOnboarding,
     offlineMode, setOfflineMode,
-    isLoading,
+    isLoading, setIsLoading,
     saveStatus, setSaveStatus,
     showMigrationModal, setShowMigrationModal,
     migrationData, setMigrationData,
-    profile,
-    customTargets,
-    weightHistory,
-    foodLog,
-    workoutLog,
-    stepsLog,
-    ouraLog,
-    waterLog,
+    profile, setProfile,
+    customTargets, setCustomTargets,
+    weightHistory, setWeightHistory,
+    foodLog, setFoodLog,
+    workoutLog, setWorkoutLog,
+    stepsLog, setStepsLog,
+    ouraLog, setOuraLog,
+    waterLog, setWaterLog,
     useCloud,
     storage,
     sortWeightHistory,
@@ -69,6 +74,13 @@ const NutritionTracker = () => {
     getTargetsForDate,
     getTotalsForDate,
     isDayCompleted,
+    addWeightEntry,
+    confirmDelete,
+    executeDelete,
+    startEditWeight,
+    saveEditWeight,
+    cancelEditWeight,
+    addStepsEntry,
     saveProfile,
     saveTargets,
     saveWeightHistory,
@@ -81,17 +93,17 @@ const NutritionTracker = () => {
     deleteWorkoutEntry,
     saveStepsLog,
     saveStepsEntry,
-    saveOuraLog,
     saveOuraEntry,
+    saveOuraLog,
     saveWaterLog,
     saveWaterEntry,
     getTodayWater,
     addWaterGlass,
     removeWaterGlass,
     handleRefresh,
-    handleLogout,
     forceSyncToCloud,
     updateConfig,
+    handleLogout,
     activeTab, setActiveTab,
     newWeight, setNewWeight,
     newWeightTime, setNewWeightTime,
@@ -106,16 +118,72 @@ const NutritionTracker = () => {
     isRefreshing, setIsRefreshing,
     showFab, setShowFab,
     showWeeklyReport, setShowWeeklyReport,
-
-    handleMigration,
     editingWeightId, setEditingWeightId,
     editingWeightValue, setEditingWeightValue,
     showImportFoodModal, setShowImportFoodModal,
     showImportWorkoutModal, setShowImportWorkoutModal,
     importText, setImportText,
     importError, setImportError,
-    isMigrating
+    isMigrating,
+    handleMigration
   } = useTrackerData();
+
+  const {
+    upsertFood,
+    upsertWorkout,
+    confirmFood,
+    confirmWorkout,
+    copyMealsFromYesterday,
+    handleImportFood,
+    handleImportWorkout
+  } = useDataOperations({
+    foodLog, saveFoodLog,
+    workoutLog, saveWorkoutLog,
+    saveFoodEntry, saveWorkoutEntry,
+    supabase, useCloud,
+    showImportFoodModal, setShowImportFoodModal,
+    showImportWorkoutModal, setShowImportWorkoutModal,
+    importText, setImportText,
+    importError, setImportError,
+    setSaveStatus,
+    dashboardDate
+  });
+
+  const {
+    getWeightChartData,
+    getWeeklyAdherence,
+    getWeeklyWorkoutAnalysis,
+    getWeeklyData
+  } = useAnalytics({
+    weightHistory,
+    foodLog,
+    workoutLog,
+    stepsLog,
+    customTargets,
+    getTotalsForDate,
+    getTargetsForDate
+  });
+
+  const {
+    exportBackup,
+    importBackup,
+    exportForNutritionist,
+    exportForClaude
+  } = useExport({
+    profile, setProfile,
+    customTargets, setCustomTargets,
+    weightHistory, saveWeightHistory,
+    foodLog, saveFoodLog,
+    workoutLog, saveWorkoutLog,
+    stepsLog, saveStepsLog,
+    ouraLog, saveOuraLog,
+    getMostRecentWeight,
+    getTotalsForDate,
+    getTargetsForDate,
+    getStepsForDate: (date) => stepsLog.find(s => s.date === date)?.steps || 0,
+    getWorkoutsForDate: (date) => workoutLog.filter(entry => entry.date === date)
+  });
+
 
   const {
     showFoodForm, setShowFoodForm,
@@ -171,572 +239,55 @@ const NutritionTracker = () => {
   const dashboardTargets = getTargetsForDate(dashboardDate);
 
 
-
-
-  // Add weight entry with time
-  const addWeightEntry = async () => {
-    if (!newWeight) return;
-    // Parse time input and use selected date to create timestamp
-    const [hours, minutes] = newWeightTime.split(':').map(Number);
-    const [year, month, day] = weightDate.split('-').map(Number);
-
-    // Create date in Argentina timezone
-    const argDate = new Date();
-    // Use the selected date and time
-    const dateObj = new Date(year, month - 1, day, hours, minutes, 0, 0);
-
-    const entry = {
-      id: `wh-${Date.now()}`,
-      date: weightDate,
-      weight: parseFloat(newWeight),
-      timestamp: dateObj.getTime()
-    };
-    saveWeightHistory([...weightHistory, entry]);
-    await saveWeightEntry(entry); // Save to Supabase
-    setNewWeight('');
-    setNewWeightTime('09:00');
-    // Keep the weightDate as it might be useful for batch entry, or reset to today?
-    // User probably wants to stay on the chosen date if they have multiple entries to log.
-  };
-
-  // Show delete confirmation
-  const confirmDelete = (type, id, name) => {
-    setDeleteModal({ show: true, type, id, name });
-  };
-
-  // Execute delete with undo option - syncs to Supabase
-  const executeDelete = async () => {
-    const { type, id } = deleteModal;
-
-    if (type === 'food') {
-      const item = foodLog.find(f => f.id === id);
-      const newLog = foodLog.filter(f => f.id !== id);
-      saveFoodLog(newLog);
-
-      // Sync deletion to Supabase
-      if (useCloud) {
-        try {
-          await supabase.deleteFood(id);
-          console.log('[Sync] Food deleted from Supabase:', id);
-        } catch (err) {
-          console.error('[Sync] Failed to delete food from Supabase:', err);
-        }
-      }
-
-      setUndoAction({
-        type: 'food',
-        item,
-        restore: async () => {
-          saveFoodLog([...newLog, item]);
-          // Re-add to Supabase on undo
-          if (useCloud && item) {
-            await supabase.saveFood(item);
-          }
-        }
-      });
-    } else if (type === 'workout') {
-      const item = workoutLog.find(w => w.id === id);
-      const newLog = workoutLog.filter(w => w.id !== id);
-      saveWorkoutLog(newLog);
-
-      // Sync deletion to Supabase
-      if (useCloud) {
-        try {
-          await supabase.deleteWorkout(id);
-          console.log('[Sync] Workout deleted from Supabase:', id);
-        } catch (err) {
-          console.error('[Sync] Failed to delete workout from Supabase:', err);
-        }
-      }
-
-      setUndoAction({
-        type: 'workout',
-        item,
-        restore: async () => {
-          saveWorkoutLog([...newLog, item]);
-          if (useCloud && item) {
-            await supabase.saveWorkout(item);
-          }
-        }
-      });
-    } else if (type === 'weight') {
-      const item = weightHistory.find(w => w.id === id || weightHistory.indexOf(w) === id);
-      const newHistory = weightHistory.filter(w => w.id !== id && weightHistory.indexOf(w) !== id);
-      saveWeightHistory(newHistory);
-
-      // Sync deletion to Supabase
-      if (useCloud && item) {
-        try {
-          await supabase.deleteWeight(item.id);
-          console.log('[Sync] Weight deleted from Supabase:', item.id);
-        } catch (err) {
-          console.error('[Sync] Failed to delete weight from Supabase:', err);
-        }
-      }
-
-      setUndoAction({
-        type: 'weight',
-        item,
-        restore: async () => {
-          saveWeightHistory([...newHistory, item]);
-          if (useCloud && item) {
-            await supabase.saveWeight(item);
-          }
-        }
-      });
-    }
-
-    setDeleteModal({ show: false, type: '', id: null, name: '' });
-  };
-
-  // Copy meals from yesterday
-  const copyMealsFromYesterday = () => {
-    const yesterday = changeDate(dashboardDate, -1);
-    const yesterdayMeals = foodLog.filter(f => f.date === yesterday);
-    if (yesterdayMeals.length === 0) {
-      alert('No hay comidas de ayer para copiar');
-      return;
-    }
-    const newMeals = yesterdayMeals.map(meal => ({
-      ...meal,
-      id: `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      date: dashboardDate
-    }));
-    saveFoodLog([...foodLog, ...newMeals]);
-  };
-
-  // Start editing weight by ID
-  const startEditWeight = (id) => {
-    const entry = weightHistory.find(w => w.id === id);
-    if (entry) {
-      setEditingWeightId(id);
-      setEditingWeightValue(entry.weight.toString());
-    }
-  };
-
-  // Save edited weight by ID
-  const saveEditWeight = () => {
-    if (!editingWeightId || !editingWeightValue) return;
-    const newHistory = weightHistory.map(entry =>
-      entry.id === editingWeightId
-        ? { ...entry, weight: parseFloat(editingWeightValue) }
-        : entry
-    );
-    saveWeightHistory(newHistory);
-    setEditingWeightId(null);
-    setEditingWeightValue('');
-  };
-
-  // Cancel weight edit
-  const cancelEditWeight = () => {
-    setEditingWeightId(null);
-    setEditingWeightValue('');
-  };
-
-  // Add steps entry
-  const addStepsEntry = async () => {
-    if (!newSteps) return;
-    const entry = { date: stepsDate, steps: parseInt(newSteps) };
-    const existingIndex = stepsLog.findIndex(s => s.date === stepsDate);
-    let newLog;
-    if (existingIndex >= 0) {
-      newLog = [...stepsLog];
-      newLog[existingIndex] = entry;
-    } else {
-      newLog = [...stepsLog, entry];
-    }
-    newLog.sort((a, b) => new Date(b.date) - new Date(a.date));
-    saveStepsLog(newLog);
-    await saveStepsEntry(entry); // Save to Supabase
-    setNewSteps('');
-  };
-
-
-
-
-
-
-
-  // Add or update food entry (for IA imports with deduplication)
-  const upsertFood = async (entry) => {
-    const finalEntry = { ...entry, id: entry.id || `f-${Date.now()}` };
-
-    if (!entry.sourceId) {
-      // No sourceId, just add
-      saveFoodLog([...foodLog, finalEntry]);
-      // Sync to Supabase
-      if (useCloud) {
-        try {
-          await supabase.saveFood(finalEntry);
-          console.log('[Sync] Food synced to Supabase:', finalEntry.id);
-        } catch (err) {
-          console.error('[Sync] Failed to sync food:', err);
-        }
-      }
-      return;
-    }
-
-    // Check for existing entry with same sourceId
-    const existingIndex = foodLog.findIndex(f => f.sourceId === entry.sourceId);
-    if (existingIndex >= 0) {
-      // Update existing
-      const newLog = [...foodLog];
-      newLog[existingIndex] = { ...newLog[existingIndex], ...entry };
-      saveFoodLog(newLog);
-      // Sync update to Supabase
-      if (useCloud) {
-        try {
-          await supabase.saveFood(newLog[existingIndex]);
-        } catch (err) {
-          console.error('[Sync] Failed to sync food update:', err);
-        }
-      }
-    } else {
-      // Add new
-      saveFoodLog([...foodLog, finalEntry]);
-      // Sync new entry to Supabase
-      if (useCloud) {
-        try {
-          await supabase.saveFood(finalEntry);
-          console.log('[Sync] Food synced to Supabase:', finalEntry.id);
-        } catch (err) {
-          console.error('[Sync] Failed to sync food:', err);
-        }
-      }
-    }
-  };
-
-  // Add or update workout entry (for IA imports with deduplication)
-  const upsertWorkout = async (entry) => {
-    const finalEntry = { ...entry, id: entry.id || `w-${Date.now()}` };
-
-    if (!entry.sourceId) {
-      saveWorkoutLog([...workoutLog, finalEntry]);
-      // Sync to Supabase
-      if (useCloud) {
-        try {
-          await supabase.saveWorkout(finalEntry);
-          console.log('[Sync] Workout synced to Supabase:', finalEntry.id);
-        } catch (err) {
-          console.error('[Sync] Failed to sync workout:', err);
-        }
-      }
-      return;
-    }
-
-    const existingIndex = workoutLog.findIndex(w => w.sourceId === entry.sourceId);
-    if (existingIndex >= 0) {
-      const newLog = [...workoutLog];
-      newLog[existingIndex] = { ...newLog[existingIndex], ...entry };
-      saveWorkoutLog(newLog);
-      // Sync update to Supabase
-      if (useCloud) {
-        try {
-          await supabase.saveWorkout(newLog[existingIndex]);
-        } catch (err) {
-          console.error('[Sync] Failed to sync workout update:', err);
-        }
-      }
-    } else {
-      saveWorkoutLog([...workoutLog, finalEntry]);
-      // Sync new entry to Supabase
-      if (useCloud) {
-        try {
-          await supabase.saveWorkout(finalEntry);
-          console.log('[Sync] Workout synced to Supabase:', finalEntry.id);
-        } catch (err) {
-          console.error('[Sync] Failed to sync workout:', err);
-        }
-      }
-    }
-  };
-
-  // Confirm/review an entry
-  const confirmFood = (id) => {
-    const newLog = foodLog.map(f => f.id === id ? { ...f, reviewed: true } : f);
-    saveFoodLog(newLog);
-  };
-
-  const confirmWorkout = (id) => {
-    const newLog = workoutLog.map(w => w.id === id ? { ...w, reviewed: true } : w);
-    saveWorkoutLog(newLog);
-  };
-
-  // Import food from JSON text
-  const handleImportFood = () => {
-    setImportError('');
-    try {
-      const data = JSON.parse(importText);
-      const entries = Array.isArray(data) ? data : [data];
-
-      entries.forEach(entry => {
-        const foodEntry = {
-          id: entry.id || `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          date: entry.date || getArgentinaDateString(),
-          time: entry.time || '',
-          meal: entry.meal || 'Almuerzo',
-          name: entry.name || 'Comida importada',
-          description: entry.description || '',
-          calories: parseInt(entry.calories) || 0,
-          protein: parseInt(entry.protein) || 0,
-          carbs: parseInt(entry.carbs) || 0,
-          fat: parseInt(entry.fat) || 0,
-          fiber: parseInt(entry.fiber) || 0,
-          source: entry.source || 'ai-text',
-          reviewed: false,
-          confidence: entry.confidence || 0.8,
-          sourceId: entry.sourceId || `import-${Date.now()}`
-        };
-        upsertFood(foodEntry);
-      });
-
-      setShowImportFoodModal(false);
-      setImportText('');
-    } catch (e) {
-      setImportError('JSON inválido. Revisá el formato.');
-    }
-  };
-
-  // Import workout from JSON text
-  const handleImportWorkout = () => {
-    setImportError('');
-    try {
-      const data = JSON.parse(importText);
-      const entries = Array.isArray(data) ? data : [data];
-
-      entries.forEach(entry => {
-        const workoutEntry = {
-          id: entry.id || `w-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          date: entry.date || getArgentinaDateString(),
-          type: entry.type || 'gym',
-          name: entry.name || 'Entreno importado',
-          duration: parseInt(entry.duration) || 0,
-          calories: parseInt(entry.calories) || 0,
-          volume: parseInt(entry.volume) || 0,
-          exercises: entry.exercises || [],
-          notes: entry.notes || '',
-          source: entry.source || 'ai-text',
-          reviewed: false,
-          confidence: entry.confidence || 0.8,
-          sourceId: entry.sourceId || `import-${Date.now()}`
-        };
-        upsertWorkout(workoutEntry);
-      });
-
-      setShowImportWorkoutModal(false);
-      setImportText('');
-    } catch (e) {
-      setImportError('JSON inválido. Revisá el formato.');
-    }
-  };
-
-  // Export all data as JSON backup
-  const exportBackup = () => {
-    try {
-      downloadBackup({
-        profile,
-        customTargets,
-        weightHistory,
-        foodLog,
-        workoutLog,
-        stepsLog,
-        ouraLog
-      });
-    } catch (err) {
-      console.error('Error exporting backup:', err);
-      alert('Error al exportar backup');
-    }
-  };
-
-  // Import backup from JSON file
-  const importBackup = async (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    try {
-      const data = await parseBackupFile(file);
-
-      if (data.profile) setProfile(data.profile);
-      if (data.customTargets) setCustomTargets(data.customTargets);
-      if (data.weightHistory) saveWeightHistory(data.weightHistory);
-      if (data.foodLog) saveFoodLog(data.foodLog);
-      if (data.workoutLog) saveWorkoutLog(data.workoutLog);
-      if (data.stepsLog) saveStepsLog(data.stepsLog);
-      if (data.ouraLog) saveOuraLog(data.ouraLog);
-
-      alert('Backup restaurado correctamente!');
-    } catch (err) {
-      console.error('Error importing backup:', err);
-      alert('Error al importar backup: archivo inválido');
-    }
-    event.target.value = ''; // Reset input
-  };
-
-
-
-
-
-  // Get Oura data for date
-  const getOuraForDate = (date) => ouraLog.find(o => o.date === date);
-
-  // Export food log for nutritionist as formatted TXT
-  const exportForNutritionist = () => {
-    try {
-      const report = generateNutritionistReport(foodLog, workoutLog, ouraLog, profile);
-      downloadFile(report, `registro-nutricionista-${getArgentinaDateString()}.txt`);
-    } catch (err) {
-      console.error('Error exporting for nutritionist:', err);
-      alert('Error al generar el reporte');
-    }
-  };
-
-  // Export for Claude - generates a structured summary to paste in chat
-  const exportForClaude = () => {
+  // Re-implement derived state for workout analysis
+  const workoutAnalysis = useMemo(() => {
     const today = getArgentinaDateString();
-    const daysBack = 7; // Last 7 days of data
-    const startDate = addDaysToDate(today, -(daysBack - 1));
+    const monday = getMondayOfWeek(today);
+    const sunday = addDaysToDate(monday, 6);
 
-    // Get dates array
-    const dates = [];
-    for (let i = 0; i < daysBack; i++) {
-      dates.push(addDaysToDate(startDate, i));
-    }
+    // Filter workouts for current week
+    const currentWeekWorkouts = workoutLog.filter(w => w.date >= monday && w.date <= sunday);
 
-    // Current status
-    const currentWeight = getMostRecentWeight(weightHistory);
-    const todayTotals = getTotalsForDate(today);
-    const todayTargets = getTargetsForDate(today);
-    const todaySteps = getStepsForDate(today);
-    const todayOura = getOuraForDate(today);
-    const todayWorkouts = getWorkoutsForDate(today);
+    const gymCount = currentWeekWorkouts.filter(w => w.type === 'gym').length;
+    const tennisCount = currentWeekWorkouts.filter(w => w.type === 'tennis').length;
+    const totalDuration = currentWeekWorkouts.reduce((sum, w) => sum + (parseInt(w.duration) || 0), 0);
 
-    // Weekly stats
-    const weekStats = getWeeklyAdherence(0);
-    const lastWeekStats = getWeeklyAdherence(1);
+    // Simple analysis strings
+    const analysis = [];
+    if (gymCount >= 3) analysis.push('¡Excelente constancia en el gimnasio!');
+    if (tennisCount >= 2) analysis.push('Buen volumen de tenis esta semana.');
+    if (totalDuration > 300) analysis.push('Alta intensidad semanal 🔥');
+    if (analysis.length === 0 && currentWeekWorkouts.length > 0) analysis.push('¡Sigue sumando movimiento!');
+    if (currentWeekWorkouts.length === 0) analysis.push('Sin actividad registrada esta semana.');
 
-    // Build export text
-    let txt = '=== LUKENFIT - CONTEXTO PARA CLAUDE ===\n';
-    txt += `Fecha: ${today}\n\n`;
+    // Format week start date
+    const weekStartDate = new Date(monday + 'T12:00:00').toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
 
-    // Current profile
-    txt += '## PERFIL ACTUAL\n';
-    txt += `Peso actual: ${currentWeight?.weight || profile.currentWeight}kg (${currentWeight?.date || 'N/D'})\n`;
-    txt += `Peso objetivo: ${profile.targetWeight}kg\n`;
-    txt += `Faltan: ${((currentWeight?.weight || profile.currentWeight) - profile.targetWeight).toFixed(1)}kg\n`;
-    txt += `Altura: ${profile.height}cm | Edad: ${profile.age}\n\n`;
+    return {
+      weekStart: weekStartDate,
+      gymCount,
+      tennisCount,
+      totalDuration,
+      analysis
+    };
+  }, [workoutLog]);
 
-    // Targets
-    txt += '## OBJETIVOS DIARIOS\n';
-    txt += `Rest day: ${customTargets.calories}kcal | ${customTargets.protein}g prot | ${customTargets.carbs}g carbs | ${customTargets.fat}g fat | ${customTargets.fiber}g fibra\n`;
-    txt += `Training day: ${customTargets.calories + customTargets.trainingDayCaloriesBonus}kcal | ${customTargets.protein}g prot | ${customTargets.trainingDayCarbs}g carbs\n\n`;
+  const weightProjection = null; // To be implemented or restored if found
 
-    // Today's status
-    txt += '## HOY (' + today + ')\n';
-    txt += `Macros: ${todayTotals.calories}/${todayTargets.calories}kcal | ${todayTotals.protein}/${todayTargets.protein}g prot | ${todayTotals.carbs}/${todayTargets.carbs}g carbs | ${todayTotals.fat}/${todayTargets.fat}g fat\n`;
-    txt += `Restante: ${todayTargets.calories - todayTotals.calories}kcal | ${todayTargets.protein - todayTotals.protein}g prot\n`;
-    txt += `Pasos: ${todaySteps}\n`;
-    if (todayWorkouts.length > 0) {
-      txt += `Entreno: ${todayWorkouts.map(w => w.name).join(', ')}\n`;
-    }
-    if (todayOura) {
-      txt += `Oura: Sleep ${todayOura.sleepScore} | Readiness ${todayOura.readinessScore} | HRV ${todayOura.hrv}ms\n`;
-    }
-    txt += '\n';
 
-    // Today's meals
-    const todayFoods = getFoodsForDate(today);
-    if (todayFoods.length > 0) {
-      txt += '## COMIDAS DE HOY\n';
-      todayFoods.forEach(f => {
-        txt += `- ${f.meal}${f.time ? ' (' + f.time + ')' : ''}: ${f.name} → ${f.calories}kcal, ${f.protein}g prot\n`;
-      });
-      txt += '\n';
-    }
 
-    // Weekly adherence
-    txt += '## ADHERENCIA SEMANAL\n';
-    txt += `Esta semana: Score ${weekStats.score}/10 | Cal OK: ${weekStats.calOkDays}/${weekStats.daysTracked} | Prot OK: ${weekStats.protOkDays}/${weekStats.daysTracked} | Pasos OK: ${weekStats.stepsOkDays}/${weekStats.daysTracked}\n`;
-    txt += `Promedios: ${weekStats.avgCals}kcal/día | ${weekStats.avgProt}g prot/día | ${weekStats.avgSteps} pasos/día\n`;
-    txt += `Semana pasada: Score ${lastWeekStats.score}/10 | ${lastWeekStats.avgCals}kcal/día | ${lastWeekStats.avgProt}g prot/día\n\n`;
 
-    // Weight trend
-    if (weightHistory.length >= 2) {
-      const sorted = [...weightHistory].sort((a, b) => new Date(a.date) - new Date(b.date));
-      const recentWeights = sorted.slice(-7);
-      txt += '## PESO ÚLTIMOS 7 REGISTROS\n';
-      recentWeights.forEach(w => {
-        txt += `${w.date}: ${w.weight}kg\n`;
-      });
 
-      // Calculate trend
-      if (recentWeights.length >= 2) {
-        const oldest = recentWeights[0];
-        const newest = recentWeights[recentWeights.length - 1];
-        const daysDiff = Math.max(1, (new Date(newest.date) - new Date(oldest.date)) / (1000 * 60 * 60 * 24));
-        const weightDiff = oldest.weight - newest.weight;
-        const weeklyRate = (weightDiff / daysDiff) * 7;
-        txt += `Tendencia: ${weeklyRate > 0 ? '-' : '+'}${Math.abs(weeklyRate).toFixed(2)}kg/semana\n`;
-      }
-      txt += '\n';
-    }
 
-    // Recent workouts
-    const recentWorkouts = workoutLog
-      .filter(w => w.date >= startDate)
-      .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    if (recentWorkouts.length > 0) {
-      txt += '## ENTRENOS ÚLTIMOS 7 DÍAS\n';
-      recentWorkouts.forEach(w => {
-        txt += `${w.date}: ${w.type.toUpperCase()} - ${w.name} (${w.duration}min`;
-        if (w.volume) txt += `, ${w.volume}kg vol`;
-        txt += ')\n';
-        if (w.exercises && w.exercises.length > 0) {
-          w.exercises.slice(0, 3).forEach(ex => {
-            txt += `  - ${ex.name}: ${ex.sets}x${ex.reps}@${ex.weight}kg\n`;
-          });
-          if (w.exercises.length > 3) txt += `  ... y ${w.exercises.length - 3} ejercicios más\n`;
-        }
-      });
-      txt += '\n';
-    }
 
-    // Daily summary last 7 days
-    txt += '## RESUMEN DIARIO (ÚLTIMOS 7 DÍAS)\n';
-    dates.forEach(date => {
-      const totals = getTotalsForDate(date);
-      const targets = getTargetsForDate(date);
-      const steps = getStepsForDate(date);
-      const workouts = getWorkoutsForDate(date);
-      const isTraining = workouts.length > 0;
 
-      const calStatus = Math.abs(totals.calories - targets.calories) <= 150 ? '✓' : totals.calories > targets.calories ? '↑' : '↓';
-      const protStatus = totals.protein >= targets.protein * 0.9 ? '✓' : '↓';
 
-      txt += `${date}${isTraining ? ' 🏋️' : ''}: ${totals.calories}kcal${calStatus} | ${totals.protein}g prot${protStatus} | ${steps} pasos`;
-      if (workouts.length > 0) txt += ` | ${workouts.map(w => w.type).join('+')}`;
-      txt += '\n';
-    });
 
-    txt += '\n=== FIN EXPORT ===\n';
-    txt += 'Pegá esto en el chat con Claude para contexto completo.\n';
 
-    // Copy to clipboard
-    navigator.clipboard.writeText(txt).then(() => {
-      alert('✓ Copiado al portapapeles!\n\nPegalo en el chat con Claude.');
-    }).catch(() => {
-      // Fallback: download as file
-      const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `export-claude-${today}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    });
-  };
+
+
+
 
   // Format timestamp to time string
   const formatTime = (timestamp) => {
@@ -763,202 +314,13 @@ const NutritionTracker = () => {
   const getWorkoutsForDate = (date) => workoutLog.filter(entry => entry.date === date);
   const getStepsForDate = (date) => stepsLog.find(s => s.date === date)?.steps || 0;
 
-  // ============ ADVANCED ANALYTICS ============
 
-  // Get weight data with 7-day moving average
-  const getWeightChartData = useMemo(() => {
-    if (weightHistory.length === 0) return [];
-
-    const sorted = [...weightHistory].sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    return sorted.map((entry, idx) => {
-      const windowStart = Math.max(0, idx - 6);
-      const window = sorted.slice(windowStart, idx + 1);
-      const avg = window.reduce((sum, e) => sum + e.weight, 0) / window.length;
-
-      return {
-        date: entry.date,
-        weight: entry.weight,
-        avg7d: Math.round(avg * 10) / 10,
-        dayLabel: new Date(entry.date + 'T12:00:00').toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })
-      };
-    });
-  }, [weightHistory]);
-
-  // Calculate weekly adherence stats
-  const getWeeklyAdherence = useCallback((weeksAgo = 0) => {
-    const today = getArgentinaDateString();
-
-    // Get Monday of current week, then go back weeksAgo weeks
-    let mondayStr = getMondayOfWeek(today);
-    for (let i = 0; i < weeksAgo; i++) {
-      mondayStr = addDaysToDate(mondayStr, -7);
-    }
-
-    const weekDates = [];
-    for (let i = 0; i < 7; i++) {
-      const dateStr = addDaysToDate(mondayStr, i);
-      if (dateStr <= today) weekDates.push(dateStr);
-    }
-
-    let calOkDays = 0, protOkDays = 0, stepsOkDays = 0;
-    let totalCals = 0, totalProt = 0, totalSteps = 0, daysWithFood = 0;
-
-    weekDates.forEach(date => {
-      const totals = getTotalsForDate(date);
-      const targets = getTargetsForDate(date);
-      const steps = getStepsForDate(date);
-
-      if (totals.calories > 0) {
-        daysWithFood++;
-        totalCals += totals.calories;
-        totalProt += totals.protein;
-        if (Math.abs(totals.calories - targets.calories) <= 150) calOkDays++;
-        if (totals.protein >= targets.protein * 0.9) protOkDays++;
-      }
-
-      if (steps > 0) {
-        totalSteps += steps;
-        if (steps >= 8000) stepsOkDays++;
-      }
-    });
-
-    const daysTracked = weekDates.length;
-    const score = daysTracked > 0 ? Math.round(((calOkDays + protOkDays + stepsOkDays) / (daysTracked * 3)) * 100) / 10 : 0;
-
-    return {
-      weekStart: mondayStr,
-      daysTracked, daysWithFood, calOkDays, protOkDays, stepsOkDays,
-      avgCals: daysWithFood > 0 ? Math.round(totalCals / daysWithFood) : 0,
-      avgProt: daysWithFood > 0 ? Math.round(totalProt / daysWithFood) : 0,
-      avgSteps: daysTracked > 0 ? Math.round(totalSteps / daysTracked) : 0,
-      score
-    };
-  }, [getTotalsForDate, getTargetsForDate, getStepsForDate]);
-
-  // Compare current week vs last week
-  const weekComparison = useMemo(() => {
-    const thisWeek = getWeeklyAdherence(0);
-    const lastWeek = getWeeklyAdherence(1);
-    return {
-      thisWeek, lastWeek,
-      calsDiff: thisWeek.avgCals - lastWeek.avgCals,
-      protDiff: thisWeek.avgProt - lastWeek.avgProt,
-      stepsDiff: thisWeek.avgSteps - lastWeek.avgSteps
-    };
-  }, [getWeeklyAdherence]);
-
-  // Calculate weight loss rate and projection
-  const weightProjection = useMemo(() => {
-    if (weightHistory.length < 2) return null;
-
-    const sorted = [...weightHistory].sort((a, b) => new Date(a.date) - new Date(b.date));
-    const oldest = sorted[0];
-    const newest = sorted[sorted.length - 1];
-
-    const daysDiff = Math.max(1, (new Date(newest.date) - new Date(oldest.date)) / (1000 * 60 * 60 * 24));
-    const weightDiff = oldest.weight - newest.weight;
-    const weeklyRate = (weightDiff / daysDiff) * 7;
-
-    const kgToLose = profile.currentWeight - profile.targetWeight;
-    const weeksToGoal = weeklyRate > 0 ? Math.ceil(kgToLose / weeklyRate) : null;
-
-    const goalDate = weeksToGoal ? new Date() : null;
-    if (goalDate && weeksToGoal) goalDate.setDate(goalDate.getDate() + (weeksToGoal * 7));
-
-    let recommendation = null;
-    if (daysDiff >= 14) {
-      if (weeklyRate < 0.2) recommendation = { type: 'decrease', text: 'Bajando muy lento. Considerá reducir 150-200 kcal.' };
-      else if (weeklyRate > 1.0) recommendation = { type: 'increase', text: 'Bajando muy rápido. Considerá subir 100-150 kcal para preservar músculo.' };
-      else if (weeklyRate >= 0.3 && weeklyRate <= 0.7) recommendation = { type: 'good', text: 'Ritmo óptimo. Seguí así.' };
-    }
-
-    return {
-      weeklyRate: Math.round(weeklyRate * 100) / 100,
-      weeksToGoal,
-      goalDate: goalDate ? goalDate.toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' }) : null,
-      recommendation,
-      dataPoints: sorted.length,
-      daysCovered: Math.round(daysDiff)
-    };
-  }, [weightHistory, profile.currentWeight, profile.targetWeight]);
-
-  // ============ END ADVANCED ANALYTICS ============
-
-  // Weekly workout analysis
-  const getWeeklyWorkoutAnalysis = () => {
-    const todayStr = getArgentinaDateString();
-    const dayOfWeek = getArgentinaDay();
-    const mondayStr = getMondayOfWeek(todayStr);
-
-    const weekWorkouts = workoutLog.filter(w => w.date >= mondayStr && w.date <= todayStr);
-    const gymSessions = weekWorkouts.filter(w => w.type === 'gym');
-    const tennisSessions = weekWorkouts.filter(w =>
-      w.type === 'tennis' ||
-      (w.type === 'sport' && (w.name.toLowerCase().includes('tenis') || w.name.toLowerCase().includes('tennis')))
-    );
-
-    const totalVolume = gymSessions.reduce((sum, w) => sum + (w.volume || 0), 0);
-    const totalDuration = weekWorkouts.reduce((sum, w) => sum + (w.duration || 0), 0);
-    const totalCalsBurned = weekWorkouts.reduce((sum, w) => sum + (w.calories || 0), 0);
-
-    let analysis = [];
-    if (gymSessions.length === 0 && dayOfWeek > 1) {
-      analysis.push('⚠️ Sin gym esta semana.');
-    } else if (gymSessions.length > 0) {
-      analysis.push(`✅ ${gymSessions.length} sesión(es) de gym.`);
-      if (totalVolume > 0) analysis.push(`📊 Volumen: ${totalVolume.toLocaleString()} kg`);
-    }
-    if (tennisSessions.length > 0) {
-      analysis.push(`🎾 Tenis: ${tennisSessions.reduce((s, t) => s + t.duration, 0)} min.`);
-    } else if (dayOfWeek >= 3 || dayOfWeek === 0) {
-      analysis.push('📍 Falta: Tenis (miércoles)');
-    }
-    if (totalCalsBurned > 0) analysis.push(`🔥 ~${totalCalsBurned} kcal quemadas.`);
-
-    const types = gymSessions.map(g => g.name.toLowerCase());
-    const hasPush = types.some(t => t.includes('push') || t.includes('pecho'));
-    const hasPull = types.some(t => t.includes('pull') || t.includes('espalda'));
-    const hasLegs = types.some(t => t.includes('leg') || t.includes('pierna'));
-    if (gymSessions.length >= 1) {
-      const missing = [];
-      if (!hasPush) missing.push('Push');
-      if (!hasPull) missing.push('Pull');
-      if (!hasLegs) missing.push('Legs');
-      if (missing.length > 0 && missing.length < 3) analysis.push(`📍 Falta: ${missing.join(', ')}`);
-    }
-
-    return { gymCount: gymSessions.length, tennisCount: tennisSessions.length, totalVolume, totalDuration, totalCalsBurned, analysis, weekStart: mondayStr };
-  };
-
-  // Weekly data for charts
-  const getWeeklyData = () => {
-    const data = [];
-    const today = getArgentinaDateString();
-    for (let i = 6; i >= 0; i--) {
-      const dateStr = addDaysToDate(today, -i);
-      const totals = getTotalsForDate(dateStr);
-      const steps = getStepsForDate(dateStr);
-      const date = new Date(dateStr + 'T12:00:00');
-      const dayLabel = new Intl.DateTimeFormat('es-AR', { weekday: 'short', timeZone: ARGENTINA_TZ }).format(date).slice(0, 2);
-      data.push({
-        date: dateStr,
-        day: dayLabel,
-        calories: totals.calories,
-        protein: totals.protein,
-        steps,
-        completed: isDayCompleted(dateStr)
-      });
-    }
-    return data;
-  };
 
 
   // SimpleBarChart imported from ./components/Charts/
 
 
-  const weeklyData = getWeeklyData();
-  const workoutAnalysis = getWeeklyWorkoutAnalysis();
+
 
   // Safety timeout: never stay in loading state for more than 8 seconds
   // This runs only once on mount, as a last resort fallback
@@ -997,16 +359,7 @@ const NutritionTracker = () => {
 
   // Show loading while checking auth status (max 5 seconds)
   if (showAuth === null && supabase.loading) {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center animate-pulse">
-            <span className="text-2xl">💪</span>
-          </div>
-          <div className="text-blue-400 text-lg">Cargando LukenFit...</div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Cargando LukenFit..." />;
   }
 
   // Show Auth UI if not authenticated and not in offline mode
@@ -1094,16 +447,7 @@ const NutritionTracker = () => {
 
   // Show loading during initialization (showAuth is null) OR during data loading
   if (showAuth === null || (isLoading && showAuth === false)) {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center animate-pulse">
-            <span className="text-2xl">💪</span>
-          </div>
-          <div className="text-blue-400 text-lg">Cargando datos...</div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Cargando datos..." />;
   }
 
   return (
@@ -1321,12 +665,8 @@ const NutritionTracker = () => {
       )}
 
       {/* Undo Toast - positioned above bottom nav */}
-      {undoAction && (
-        <div className="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-gray-800 border border-gray-600 rounded-full px-4 py-2 flex items-center gap-3 z-50 shadow-lg">
-          <span className="text-sm text-gray-300">Eliminado</span>
-          <button onClick={() => { undoAction.restore(); setUndoAction(null); }} className="text-blue-400 font-bold text-sm active:text-cyan-300">DESHACER</button>
-        </div>
-      )}
+      {/* Undo Toast - positioned above bottom nav */}
+      <UndoToast undoAction={undoAction} setUndoAction={setUndoAction} />
 
       {/* Header - Premium LukenFit branding */}
       <header className="bg-white/90 backdrop-blur-md border-b border-slate-100 px-4 lg:px-8 py-4 lg:py-5 sticky top-0 z-30 shadow-sm">
@@ -1557,7 +897,7 @@ const NutritionTracker = () => {
             newSteps={newSteps}
             setNewSteps={setNewSteps}
             addStepsEntry={addStepsEntry}
-            weeklyData={weeklyData}
+            weeklyData={getWeeklyData}
             stepsLog={stepsLog}
           />
         )}
