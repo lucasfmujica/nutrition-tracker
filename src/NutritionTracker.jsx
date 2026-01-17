@@ -15,9 +15,9 @@ const NutritionTracker = () => {
   // Use custom hook for all data management
   const {
     supabase,
-    showAuth,
+    showAuth, setShowAuth,
     showOnboarding, setShowOnboarding,
-    offlineMode,
+    offlineMode, setOfflineMode,
     isLoading,
     saveStatus,
     showMigrationModal, setShowMigrationModal,
