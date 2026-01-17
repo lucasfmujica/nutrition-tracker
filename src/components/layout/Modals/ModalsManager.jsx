@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTracker } from '../../../context/TrackerContext';
 import { DeleteConfirmModal } from '../../Modals/DeleteConfirmModal';
 import { FoodFormModal } from '../../Modals/FoodFormModal';
 import { ImportModal } from '../../Modals/ImportModal';
@@ -6,71 +7,73 @@ import { MigrationModal } from '../../Modals/MigrationModal';
 import { WorkoutFormModal } from '../../Modals/WorkoutFormModal';
 import { WeeklyReport } from '../../WeeklyReport';
 
-export const ModalsManager = ({
-  // Delete Modal
-  deleteModal,
-  setDeleteModal,
-  executeDelete,
+export const ModalsManager = () => {
+  const {
+    // Delete Modal
+    deleteModal,
+    setDeleteModal,
+    executeDelete,
 
-  // Migration Modal
-  showMigrationModal,
-  setShowMigrationModal,
-  migrationData,
-  setMigrationData,
-  handleMigration,
-  isMigrating,
+    // Migration Modal
+    showMigrationModal,
+    setShowMigrationModal,
+    migrationData,
+    setMigrationData,
+    handleMigration,
+    isMigrating,
 
-  // Food Form Modal
-  showFoodForm,
-  setShowFoodForm,
-  newFood,
-  setNewFood,
-  editingFoodId,
-  setEditingFoodId,
-  addManualFood,
+    // Food Form Modal
+    showFoodForm,
+    setShowFoodForm,
+    newFood,
+    setNewFood,
+    editingFoodId,
+    setEditingFoodId,
+    addManualFood,
 
-  // Workout Form Modal
-  showWorkoutForm,
-  setShowWorkoutForm,
-  newWorkout,
-  setNewWorkout,
-  addManualWorkout,
+    // Workout Form Modal
+    showWorkoutForm,
+    setShowWorkoutForm,
+    newWorkout,
+    setNewWorkout,
+    addManualWorkout,
 
-  // Import Modals
-  showImportFoodModal,
-  setShowImportFoodModal,
-  showImportWorkoutModal,
-  setShowImportWorkoutModal,
-  importText,
-  setImportText,
-  importError,
-  setImportError,
-  handleImportFood,
-  handleImportWorkout,
+    // Import Modals
+    showImportFoodModal,
+    setShowImportFoodModal,
+    showImportWorkoutModal,
+    setShowImportWorkoutModal,
+    importText,
+    setImportText,
+    importError,
+    setImportError,
+    handleImportFood,
+    handleImportWorkout,
 
-  // Meal Templates Modal
-  showTemplatesModal,
-  setShowTemplatesModal,
-  mealTemplates,
-  addFromTemplate,
-  deleteTemplate,
+    // Meal Templates Modal
+    showTemplatesModal,
+    setShowTemplatesModal,
+    mealTemplates,
+    addFromTemplate,
+    deleteTemplate,
 
-  // Save Template Modal
-  showSaveTemplateModal,
-  setShowSaveTemplateModal,
-  templateToSave,
-  setTemplateToSave,
-  confirmSaveTemplate,
+    // Save Template Modal
+    showSaveTemplateModal,
+    setShowSaveTemplateModal,
+    templateToSave,
+    setTemplateToSave,
+    confirmSaveTemplate,
 
-  // Weekly Report
-  showWeeklyReport,
-  setShowWeeklyReport,
-  foodLog,
-  workoutLog,
-  weightHistory,
-  stepsLog,
-  customTargets
-}) => {
+    // Weekly Report
+    showWeeklyReport,
+    setShowWeeklyReport,
+    foodLog,
+    workoutLog,
+    weightHistory,
+    stepsLog,
+    customTargets
+  } = useTracker();
+
   return (
     <>
       {/* Delete Confirmation Modal */}
