@@ -369,9 +369,9 @@ export function useSupabase() {
     setSyncStatus('syncing');
     setSyncError(null);
 
-    // Timeout protection - never stay syncing more than 15 seconds
+    // Timeout protection - never stay syncing more than 30 seconds
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Sync timeout')), 15000)
+      setTimeout(() => reject(new Error('Sync timeout')), 30000)
     );
 
     try {
