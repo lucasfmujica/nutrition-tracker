@@ -1761,7 +1761,7 @@ const NutritionTracker = () => {
               <ActivityCards
                 steps={getStepsForDate(dashboardDate)}
                 stepsTarget={10000}
-                water={getTodayWater()}
+                water={getTodayWater().glasses}
                 waterTarget={WATER_GOAL_GLASSES}
                 onAddWater={addWaterGlass}
               />

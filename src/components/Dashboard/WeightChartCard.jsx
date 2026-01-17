@@ -1,7 +1,7 @@
 import React from 'react';
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
-export const WeightChartCard = ({ data, currentWeight, targetWeight }) => {
+export const WeightChartCard = ({ data = [], currentWeight, targetWeight }) => {
   // Format data for chart
   const chartData = data
     .slice(0, 7) // Last 7 entries
