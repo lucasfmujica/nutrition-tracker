@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 /**
  * Onboarding Wizard for new users
@@ -33,12 +33,12 @@ export function OnboardingWizard({ onComplete, userEmail }) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Calculate suggested macros based on stats
-  const calculateSuggestedMacros = () => {
-    const weight = parseFloat(formData.currentWeight) || 70;
-    const height = parseFloat(formData.height) || 170;
-    const age = parseFloat(formData.age) || 30;
-    const isMale = formData.gender === 'male';
+  // Calculate suggested macros based on stats - using useCallback to have stable reference
+  const calculateMacros = useCallback((data) => {
+    const weight = parseFloat(data.currentWeight) || 70;
+    const height = parseFloat(data.height) || 170;
+    const age = parseFloat(data.age) || 30;
+    const isMale = data.gender === 'male';
 
     // Mifflin-St Jeor equation for BMR
     let bmr;
@@ -57,13 +57,13 @@ export function OnboardingWizard({ onComplete, userEmail }) {
       very_active: 1.9
     };
 
-    const tdee = bmr * (activityMultipliers[formData.activityLevel] || 1.55);
+    const tdee = bmr * (activityMultipliers[data.activityLevel] || 1.55);
 
     // Adjust for goal
     let calories;
-    if (formData.primaryGoal === 'lose') {
+    if (data.primaryGoal === 'lose') {
       calories = tdee - 500; // 500 kcal deficit
-    } else if (formData.primaryGoal === 'gain') {
+    } else if (data.primaryGoal === 'gain') {
       calories = tdee + 300; // 300 kcal surplus
     } else {
       calories = tdee;
@@ -80,10 +80,25 @@ export function OnboardingWizard({ onComplete, userEmail }) {
       carbs,
       fat
     };
-  };
+  }, []);
+
+  // Auto-recalculate when relevant fields change (step 2 dependencies)
+  useEffect(() => {
+    // Only auto-calculate on step 2 and when we have basic data
+    if (step === 2 && formData.currentWeight && formData.height && formData.age) {
+      const suggested = calculateMacros(formData);
+      setFormData(prev => ({
+        ...prev,
+        calorieGoal: suggested.calories.toString(),
+        proteinGoal: suggested.protein.toString(),
+        carbsGoal: suggested.carbs.toString(),
+        fatGoal: suggested.fat.toString()
+      }));
+    }
+  }, [step, formData.currentWeight, formData.height, formData.age, formData.gender, formData.activityLevel, formData.primaryGoal, calculateMacros]);
 
   const handleAutoCalculate = () => {
-    const suggested = calculateSuggestedMacros();
+    const suggested = calculateMacros(formData);
     setFormData(prev => ({
       ...prev,
       calorieGoal: suggested.calories.toString(),
@@ -94,12 +109,7 @@ export function OnboardingWizard({ onComplete, userEmail }) {
   };
 
   const handleNext = () => {
-    if (step === 1) {
-      // Auto-calculate macros when moving to step 2
-      if (!formData.calorieGoal) {
-        handleAutoCalculate();
-      }
-    }
+    // The useEffect will auto-calculate macros when entering step 2
     setStep(prev => Math.min(prev + 1, totalSteps));
   };
 
@@ -277,10 +287,7 @@ export function OnboardingWizard({ onComplete, userEmail }) {
                   ].map(opt => (
                     <button
                       key={opt.value}
-                      onClick={() => {
-                        updateField('primaryGoal', opt.value);
-                        setTimeout(handleAutoCalculate, 100);
-                      }}
+                      onClick={() => updateField('primaryGoal', opt.value)}
                       className={`py-2.5 rounded-xl text-sm font-medium transition-all ${
                         formData.primaryGoal === opt.value
                           ? opt.color === 'green' ? 'bg-green-600 text-white'
@@ -299,10 +306,7 @@ export function OnboardingWizard({ onComplete, userEmail }) {
                 <label className="block text-sm text-gray-400 mb-2">Nivel de actividad</label>
                 <select
                   value={formData.activityLevel}
-                  onChange={(e) => {
-                    updateField('activityLevel', e.target.value);
-                    setTimeout(handleAutoCalculate, 100);
-                  }}
+                  onChange={(e) => updateField('activityLevel', e.target.value)}
                   className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white"
                 >
                   <option value="sedentary">Sedentario (poco ejercicio)</option>

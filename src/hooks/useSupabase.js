@@ -48,23 +48,48 @@ export function useSupabase() {
     };
   }, []);
 
-  // Initialize auth state
+  // Initialize auth state with timeout protection
   useEffect(() => {
     if (!isSupabaseConfigured()) {
+      console.log('[Auth] Supabase not configured, running offline');
       setLoading(false);
       return;
     }
 
+    let mounted = true;
+    let timeoutId;
+
+    // Timeout safety: never hang more than 5 seconds
+    timeoutId = setTimeout(() => {
+      if (mounted && loading) {
+        console.warn('[Auth] Session check timed out, proceeding without auth');
+        setLoading(false);
+      }
+    }, 5000);
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
+      if (mounted) {
+        clearTimeout(timeoutId);
+        console.log('[Auth] Session check complete, user:', session?.user?.email);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
+    }).catch((err) => {
+      if (mounted) {
+        clearTimeout(timeoutId);
+        console.error('[Auth] Session check failed:', err);
+        setLoading(false);
+      }
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
+        if (!mounted) return;
+        
         const newUser = session?.user ?? null;
+        console.log('[Auth] Auth state changed:', _event, newUser?.email);
         setUser(newUser);
 
         // If user just logged in, ensure profile exists
@@ -74,7 +99,11 @@ export function useSupabase() {
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      clearTimeout(timeoutId);
+      subscription.unsubscribe();
+    };
   }, []);
 
   // =====================================================

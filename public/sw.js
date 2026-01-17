@@ -1,27 +1,35 @@
 // Service Worker for LukenFit PWA
-// Minimal caching - only icons, always network-first for code
-const CACHE_NAME = 'lukenfit-v5';
+// v6: Minimal intervention - no caching, always network
+const SW_VERSION = 'v6';
 
 // Install - skip waiting immediately
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing v5...');
+  console.log(`[SW] Installing ${SW_VERSION}...`);
   self.skipWaiting();
 });
 
-// Activate - delete ALL old caches
+// Activate - delete ALL caches and claim clients immediately
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating v5...');
+  console.log(`[SW] Activating ${SW_VERSION}...`);
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
+    (async () => {
+      // Delete ALL caches
+      const cacheNames = await caches.keys();
+      await Promise.all(
         cacheNames.map((cacheName) => {
           console.log('[SW] Deleting cache:', cacheName);
           return caches.delete(cacheName);
         })
       );
-    })
+      // Claim all clients immediately
+      await self.clients.claim();
+      // Notify all clients to refresh
+      const clients = await self.clients.matchAll();
+      clients.forEach(client => {
+        client.postMessage({ type: 'SW_UPDATED', version: SW_VERSION });
+      });
+    })()
   );
-  self.clients.claim();
 });
 
 // Fetch - ALWAYS network first, minimal intervention

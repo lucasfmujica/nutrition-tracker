@@ -686,7 +686,8 @@ const NutritionTracker = () => {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        // Always load localStorage first as backup
+        // ALWAYS load localStorage first - this is our safety net
+        console.log('[Data] Loading localStorage...');
         const [profileData, weightData, foodData, workoutData, stepsData, targetsData, ouraData, waterData] = await Promise.all([
           storage.get('lucas-profile-v5').catch(() => null),
           storage.get('lucas-weight-history-v5').catch(() => null),
@@ -698,7 +699,7 @@ const NutritionTracker = () => {
           storage.get('lucas-water-log-v5').catch(() => null)
         ]);
 
-        // Parse localStorage data
+        // Parse localStorage data safely
         const localProfile = profileData?.value ? JSON.parse(profileData.value) : null;
         const localWeight = weightData?.value ? JSON.parse(weightData.value) : [];
         const localFood = foodData?.value ? JSON.parse(foodData.value) : [];
@@ -708,48 +709,75 @@ const NutritionTracker = () => {
         const localOura = ouraData?.value ? JSON.parse(ouraData.value) : [];
         const localWater = waterData?.value ? JSON.parse(waterData.value) : [];
 
+        console.log('[Data] localStorage loaded:', {
+          profile: !!localProfile,
+          weight: localWeight.length,
+          food: localFood.length,
+          workout: localWorkout.length,
+          steps: localSteps.length,
+          oura: localOura.length,
+          water: localWater.length
+        });
+
+        // FIRST: Set local data immediately so user sees something
+        if (localProfile) setProfile(localProfile);
+        if (localTargets) setCustomTargets(localTargets);
+        if (localWeight.length) setWeightHistory(localWeight);
+        if (localFood.length) setFoodLog(localFood);
+        if (localWorkout.length) setWorkoutLog(localWorkout);
+        if (localSteps.length) setStepsLog(localSteps);
+        if (localOura.length) setOuraLog(localOura);
+        if (localWater.length) setWaterLog(localWater);
+
+        // THEN: If online, try to get Supabase data
         if (useCloud) {
-          // Load from Supabase
-          const data = await supabase.fetchAllData();
-          if (data) {
-            // Use Supabase data if available, otherwise fall back to localStorage
-            if (data.profile) setProfile(data.profile);
-            else if (localProfile) setProfile(localProfile);
+          console.log('[Data] Fetching from Supabase...');
+          try {
+            const data = await supabase.fetchAllData();
+            console.log('[Data] Supabase data received:', {
+              profile: !!data?.profile,
+              weight: data?.weightHistory?.length || 0,
+              food: data?.foodLog?.length || 0,
+              workout: data?.workouts?.length || 0,
+              steps: data?.stepsLog?.length || 0,
+              oura: data?.ouraLog?.length || 0,
+              water: data?.waterLog?.length || 0
+            });
 
-            if (data.targets) setCustomTargets(data.targets);
-            else if (localTargets) setCustomTargets(localTargets);
-
-            // For arrays: use Supabase if it has data, otherwise localStorage
-            setWeightHistory(data.weightHistory?.length ? data.weightHistory : localWeight);
-            setFoodLog(data.foodLog?.length ? data.foodLog : localFood);
-            setWorkoutLog(data.workouts?.length ? data.workouts : localWorkout);
-            setStepsLog(data.stepsLog?.length ? data.stepsLog : localSteps);
-            setOuraLog(data.ouraLog?.length ? data.ouraLog : localOura);
-            setWaterLog(data.waterLog?.length ? data.waterLog : localWater);
-          } else {
-            // Supabase returned nothing, use localStorage
-            if (localProfile) setProfile(localProfile);
-            if (localTargets) setCustomTargets(localTargets);
-            setWeightHistory(localWeight);
-            setFoodLog(localFood);
-            setWorkoutLog(localWorkout);
-            setStepsLog(localSteps);
-            setOuraLog(localOura);
-            setWaterLog(localWater);
+            if (data) {
+              // Only update with Supabase data if it has MORE data than local
+              // This prevents data loss when Supabase is empty
+              if (data.profile) setProfile(data.profile);
+              if (data.targets) setCustomTargets(data.targets);
+              
+              // For arrays: only use Supabase if it has data
+              // Don't overwrite existing local data with empty arrays
+              if (data.weightHistory?.length > 0) {
+                setWeightHistory(data.weightHistory);
+              }
+              if (data.foodLog?.length > 0) {
+                setFoodLog(data.foodLog);
+              }
+              if (data.workouts?.length > 0) {
+                setWorkoutLog(data.workouts);
+              }
+              if (data.stepsLog?.length > 0) {
+                setStepsLog(data.stepsLog);
+              }
+              if (data.ouraLog?.length > 0) {
+                setOuraLog(data.ouraLog);
+              }
+              if (data.waterLog?.length > 0) {
+                setWaterLog(data.waterLog);
+              }
+            }
+          } catch (supabaseErr) {
+            console.error('[Data] Supabase fetch failed, using localStorage:', supabaseErr);
+            // Keep using localStorage data (already set above)
           }
-        } else {
-          // Offline mode - use localStorage only
-          if (localProfile) setProfile(localProfile);
-          if (localTargets) setCustomTargets(localTargets);
-          setWeightHistory(localWeight);
-          setFoodLog(localFood);
-          setWorkoutLog(localWorkout);
-          setStepsLog(localSteps);
-          setOuraLog(localOura);
-          setWaterLog(localWater);
         }
       } catch (err) {
-        console.log('Loading fresh state:', err);
+        console.error('[Data] Error loading data:', err);
       }
       setIsLoading(false);
     };
@@ -2273,8 +2301,19 @@ const NutritionTracker = () => {
   const weeklyData = getWeeklyData();
   const workoutAnalysis = getWeeklyWorkoutAnalysis();
 
-  // Show loading while checking auth status
-  if (showAuth === null || supabase.loading) {
+  // Safety timeout: never stay in loading state for more than 5 seconds
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (showAuth === null || supabase.loading) {
+        console.warn('[App] Loading timed out, defaulting to auth screen');
+        setShowAuth(true);
+      }
+    }, 5000);
+    return () => clearTimeout(timeout);
+  }, [showAuth, supabase.loading]);
+
+  // Show loading while checking auth status (max 5 seconds)
+  if (showAuth === null && supabase.loading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
