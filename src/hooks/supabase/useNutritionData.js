@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { mappers } from '../../lib/database.types';
 import { supabase } from '../../lib/supabase';
+import { addPendingWrite } from '../../utils/storageUtils';
 import { useSupabaseOperation } from './useSupabaseOperation';
 
 export function useNutritionData(user, isOnline) {
@@ -39,7 +40,7 @@ export function useNutritionData(user, isOnline) {
   }, [canUseSupabase, user?.id, withTimeout]);
 
   const saveFood = useCallback(async (entry) => {
-    return withSync(async () => {
+    const result = await withSync(async () => {
       const isUpdate = entry.id && !entry.id.startsWith('f-');
 
       if (isUpdate) {
@@ -64,6 +65,21 @@ export function useNutritionData(user, isOnline) {
         return { data: data ? mappers.foodFromDb(data) : null, error: null };
       }
     }, { canUseSupabase, errorMessage: 'Error guardando comida' });
+
+    // 🔒 CRITICAL: The Vault fallback - Zero Silent Failures
+    if (result.error && user?.id) {
+      console.error('[useNutritionData] saveFood failed, adding to pending writes:', {
+        table: 'food_log',
+        userId: user.id,
+        entryId: entry.id,
+        date: entry.date,
+        error: result.error
+      });
+      await addPendingWrite('food_log', entry, user.id);
+      console.log('[useNutritionData] Food entry queued for sync when connection recovers');
+    }
+
+    return result;
   }, [canUseSupabase, user?.id, withSync]);
 
   const deleteFood = useCallback(async (id) => {
@@ -110,7 +126,7 @@ export function useNutritionData(user, isOnline) {
   }, [canUseSupabase, user?.id, withTimeout]);
 
   const saveWater = useCallback(async (entry) => {
-    return withSync(async () => {
+    const result = await withSync(async () => {
       const { data, error } = await supabase
         .from('water_log')
         .upsert(mappers.waterToDb(entry, user.id), {
@@ -122,6 +138,21 @@ export function useNutritionData(user, isOnline) {
       if (error) throw error;
       return { data: data ? mappers.waterFromDb(data) : null, error: null };
     }, { canUseSupabase, errorMessage: 'Error guardando agua' });
+
+    // 🔒 CRITICAL: The Vault fallback - Zero Silent Failures
+    if (result.error && user?.id) {
+      console.error('[useNutritionData] saveWater failed, adding to pending writes:', {
+        table: 'water_log',
+        userId: user.id,
+        date: entry.date,
+        amount: entry.amount,
+        error: result.error
+      });
+      await addPendingWrite('water_log', entry, user.id);
+      console.log('[useNutritionData] Water entry queued for sync when connection recovers');
+    }
+
+    return result;
   }, [canUseSupabase, user?.id, withSync]);
 
   return {

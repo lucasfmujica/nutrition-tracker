@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { mappers } from '../../lib/database.types';
 import { supabase } from '../../lib/supabase';
+import { addPendingWrite } from '../../utils/storageUtils';
 import { useSupabaseOperation } from './useSupabaseOperation';
 
 export function useActivityData(user, isOnline) {
@@ -38,7 +39,7 @@ export function useActivityData(user, isOnline) {
   }, [canUseSupabase, user?.id, withTimeout]);
 
   const saveWorkout = useCallback(async (entry) => {
-    return withSync(async () => {
+    const result = await withSync(async () => {
       const isUpdate = entry.id && !entry.id.startsWith('w');
 
       if (isUpdate) {
@@ -63,6 +64,21 @@ export function useActivityData(user, isOnline) {
         return { data: data ? mappers.workoutFromDb(data) : null, error: null };
       }
     }, { canUseSupabase, errorMessage: 'Error guardando entreno' });
+
+    // 🔒 CRITICAL: The Vault fallback - Zero Silent Failures
+    if (result.error && user?.id) {
+      console.error('[useActivityData] saveWorkout failed, adding to pending writes:', {
+        table: 'workouts',
+        userId: user.id,
+        entryId: entry.id,
+        date: entry.date,
+        error: result.error
+      });
+      await addPendingWrite('workouts', entry, user.id);
+      console.log('[useActivityData] Workout entry queued for sync when connection recovers');
+    }
+
+    return result;
   }, [canUseSupabase, user?.id, withSync]);
 
   const deleteWorkout = useCallback(async (id) => {
@@ -109,7 +125,7 @@ export function useActivityData(user, isOnline) {
   }, [canUseSupabase, user?.id, withTimeout]);
 
   const saveSteps = useCallback(async (entry) => {
-    return withSync(async () => {
+    const result = await withSync(async () => {
       const { data, error } = await supabase
         .from('steps_log')
         .upsert(mappers.stepsToDb(entry, user.id), {
@@ -121,6 +137,21 @@ export function useActivityData(user, isOnline) {
       if (error) throw error;
       return { data: data ? mappers.stepsFromDb(data) : null, error: null };
     }, { canUseSupabase, errorMessage: 'Error guardando pasos' });
+
+    // 🔒 CRITICAL: The Vault fallback - Zero Silent Failures
+    if (result.error && user?.id) {
+      console.error('[useActivityData] saveSteps failed, adding to pending writes:', {
+        table: 'steps_log',
+        userId: user.id,
+        date: entry.date,
+        steps: entry.steps,
+        error: result.error
+      });
+      await addPendingWrite('steps_log', entry, user.id);
+      console.log('[useActivityData] Steps entry queued for sync when connection recovers');
+    }
+
+    return result;
   }, [canUseSupabase, user?.id, withSync]);
 
   // =====================================================
@@ -154,7 +185,7 @@ export function useActivityData(user, isOnline) {
   }, [canUseSupabase, user?.id, withTimeout]);
 
   const saveOura = useCallback(async (entry) => {
-    return withSync(async () => {
+    const result = await withSync(async () => {
       const { data, error } = await supabase
         .from('oura_log')
         .upsert(mappers.ouraToDb(entry, user.id), {
@@ -166,6 +197,20 @@ export function useActivityData(user, isOnline) {
       if (error) throw error;
       return { data: data ? mappers.ouraFromDb(data) : null, error: null };
     }, { canUseSupabase, errorMessage: 'Error guardando datos Oura' });
+
+    // 🔒 CRITICAL: The Vault fallback - Zero Silent Failures
+    if (result.error && user?.id) {
+      console.error('[useActivityData] saveOura failed, adding to pending writes:', {
+        table: 'oura_log',
+        userId: user.id,
+        date: entry.date,
+        error: result.error
+      });
+      await addPendingWrite('oura_log', entry, user.id);
+      console.log('[useActivityData] Oura entry queued for sync when connection recovers');
+    }
+
+    return result;
   }, [canUseSupabase, user?.id, withSync]);
 
   return {

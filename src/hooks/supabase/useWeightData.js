@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { mappers } from '../../lib/database.types';
 import { supabase } from '../../lib/supabase';
+import { addPendingWrite } from '../../utils/storageUtils';
 import { useSupabaseOperation } from './useSupabaseOperation';
 
 export function useWeightData(user, isOnline) {
@@ -34,7 +35,7 @@ export function useWeightData(user, isOnline) {
   }, [canUseSupabase, user?.id, withTimeout]);
 
   const saveWeight = useCallback(async (entry) => {
-    return withSync(async () => {
+    const result = await withSync(async () => {
       const { data, error } = await supabase
         .from('weight_history')
         .upsert(mappers.weightToDb(entry, user.id), {
@@ -46,6 +47,21 @@ export function useWeightData(user, isOnline) {
       if (error) throw error;
       return { data: data ? mappers.weightFromDb(data) : null, error: null };
     }, { canUseSupabase, errorMessage: 'Error guardando peso' });
+
+    // 🔒 CRITICAL: The Vault fallback - Zero Silent Failures
+    if (result.error && user?.id) {
+      console.error('[useWeightData] saveWeight failed, adding to pending writes:', {
+        table: 'weight_history',
+        userId: user.id,
+        date: entry.date,
+        weight: entry.weight,
+        error: result.error
+      });
+      await addPendingWrite('weight_history', entry, user.id);
+      console.log('[useWeightData] Weight entry queued for sync when connection recovers');
+    }
+
+    return result;
   }, [canUseSupabase, user?.id, withSync]);
 
   const deleteWeight = useCallback(async (id) => {
