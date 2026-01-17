@@ -1,161 +1,206 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 import { useAnalytics } from '../hooks/useAnalytics';
 import { useDataOperations } from '../hooks/useDataOperations';
 import { useExport } from '../hooks/useExport';
 import { useFoodEntry } from '../hooks/useFoodEntry';
 import { useMealTemplates } from '../hooks/useMealTemplates';
 import { useOuraEntry } from '../hooks/useOuraEntry';
-import { useTrackerData } from '../hooks/useTrackerData';
+import { useSupabase } from '../hooks/useSupabase';
 import { useWorkoutEntry } from '../hooks/useWorkoutEntry';
-import { addDaysToDate, getArgentinaDateString, getMondayOfWeek } from '../utils/dateUtils';
+
+// Micro-hooks
+import { useBiometrics } from '../hooks/useBiometrics';
+import { useGlobalDelete } from '../hooks/useGlobalDelete';
+import { useNutrition } from '../hooks/useNutrition';
+import { useTrackerSync } from '../hooks/useTrackerSync';
+import { useWorkoutAnalysis } from '../hooks/useWorkoutAnalysis'; // New import
+import { useWorkouts } from '../hooks/useWorkouts';
+
+import { addDaysToDate, formatTime, getArgentinaDateString } from '../utils/dateUtils'; // formatTime imported
+import { storage } from '../utils/storage';
 
 const TrackerContext = createContext(null);
 
 export const TrackerProvider = ({ children }) => {
-  // 1. Core Data
-  const trackerData = useTrackerData();
-  const {
-    supabase,
-    saveStatus, setSaveStatus,
-    foodLog, saveFoodLog, saveFoodEntry,
-    workoutLog, saveWorkoutLog, saveWorkoutEntry,
-    stepsLog, saveStepsLog,
-    weightHistory, saveWeightHistory,
-    ouraLog, saveOuraLog, saveOuraEntry,
-    customTargets, setCustomTargets,
-    profile, setProfile,
-    dashboardDate,
-    selectedFoodDate,
-    useCloud,
-    storage,
-    getTotalsForDate,
-    getTargetsForDate,
-    getMostRecentWeight
-  } = trackerData;
+  // Service Layer
+  const supabase = useSupabase();
+  const useCloud = supabase.isAuthenticated && supabase.isOnline; // Basic check, useTrackerSync refines this with offlineMode
 
-  // 2. Operations
+  // UI State that didn't fit into domain hooks
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [dashboardDate, setDashboardDate] = useState(getArgentinaDateString());
+  const [selectedFoodDate, setSelectedFoodDate] = useState(getArgentinaDateString());
+
+  const [showImportFoodModal, setShowImportFoodModal] = useState(false);
+  const [showImportWorkoutModal, setShowImportWorkoutModal] = useState(false);
+
+  // Note: importText, newWeight etc moved to local hooks
+  // Note: importText, newWeight etc moved to local hooks
+
+  // 1. Core Domains
+  const workouts = useWorkouts(supabase, useCloud);
+  const biometrics = useBiometrics(supabase, useCloud);
+
+  const nutrition = useNutrition(
+    supabase,
+    useCloud,
+    biometrics.customTargets,
+    workouts.isTrainingDay
+  );
+
+  // 2. Sync Orchestrator
+  const trackerSync = useTrackerSync({
+    supabase,
+    // Setters for initial load
+    setProfile: biometrics.setProfile,
+    setCustomTargets: biometrics.setCustomTargets,
+    setWeightHistory: biometrics.setWeightHistory,
+    setFoodLog: nutrition.setFoodLog,
+    setWorkoutLog: workouts.setWorkoutLog,
+    setStepsLog: biometrics.setStepsLog,
+    setOuraLog: biometrics.setOuraLog,
+    setWaterLog: nutrition.setWaterLog,
+    // Data for Force Sync
+    foodLog: nutrition.foodLog,
+    workoutLog: workouts.workoutLog,
+    stepsLog: biometrics.stepsLog,
+    ouraLog: biometrics.ouraLog,
+    waterLog: nutrition.waterLog,
+    weightHistory: biometrics.weightHistory,
+    profile: biometrics.profile
+  });
+
+  // 3. Water Actions - Moved to wrapper to keep context clean
+  // (We use simple wrappers here or move logic to useNutrition completely later)
+  const addWaterGlass = async () => {
+    const msg = await nutrition.addWaterGlass();
+    if (msg) trackerSync.setSaveStatus(msg); // Simplified
+  };
+
+  const removeWaterGlass = async () => {
+    const msg = await nutrition.removeWaterGlass();
+    if (msg) trackerSync.setSaveStatus(msg); // Simplified
+  };
+
+  // 4. Operations (Legacy hooks support)
   const dataOperations = useDataOperations({
-    foodLog, saveFoodLog,
-    workoutLog, saveWorkoutLog,
-    saveFoodEntry, saveWorkoutEntry,
-    supabase, useCloud,
-    showImportFoodModal: trackerData.showImportFoodModal,
-    setShowImportFoodModal: trackerData.setShowImportFoodModal,
-    showImportWorkoutModal: trackerData.showImportWorkoutModal,
-    setShowImportWorkoutModal: trackerData.setShowImportWorkoutModal,
-    importText: trackerData.importText,
-    setImportText: trackerData.setImportText,
-    importError: trackerData.importError,
-    setImportError: trackerData.setImportError,
-    setSaveStatus,
+    foodLog: nutrition.foodLog,
+    saveFoodLog: nutrition.saveFoodLog,
+    workoutLog: workouts.workoutLog,
+    saveWorkoutLog: workouts.saveWorkoutLog,
+    saveFoodEntry: nutrition.saveFooEntry, // Note: typo in useNutrition? checked: saveFoodEntry
+    saveWorkoutEntry: workouts.saveWorkoutEntry,
+    supabase,
+    useCloud: trackerSync.useCloud,
+    showImportFoodModal, setShowImportFoodModal,
+    showImportWorkoutModal, setShowImportWorkoutModal,
+    showImportFoodModal, setShowImportFoodModal,
+    showImportWorkoutModal, setShowImportWorkoutModal,
+    setSaveStatus: trackerSync.setSaveStatus,
     dashboardDate
   });
 
-  // 3. Analytics
+  // 5. Analytics
   const analytics = useAnalytics({
-    weightHistory,
-    foodLog,
-    workoutLog,
-    stepsLog,
-    customTargets,
-    getTotalsForDate,
-    getTargetsForDate
+    weightHistory: biometrics.weightHistory,
+    foodLog: nutrition.foodLog,
+    workoutLog: workouts.workoutLog,
+    stepsLog: biometrics.stepsLog,
+    customTargets: biometrics.customTargets,
+    getTotalsForDate: nutrition.getTotalsForDate,
+    getTargetsForDate: nutrition.getTargetsForDate
   });
 
-  // 4. Export
+  // 6. Export
   const exportDoc = useExport({
-    profile, setProfile,
-    customTargets, setCustomTargets,
-    weightHistory, saveWeightHistory,
-    foodLog, saveFoodLog,
-    workoutLog, saveWorkoutLog,
-    stepsLog, saveStepsLog,
-    ouraLog, saveOuraLog,
-    getMostRecentWeight,
-    getTotalsForDate,
-    getTargetsForDate,
-    getStepsForDate: (date) => stepsLog.find(s => s.date === date)?.steps || 0,
-    getWorkoutsForDate: (date) => workoutLog.filter(entry => entry.date === date)
+    profile: biometrics.profile, setProfile: biometrics.setProfile,
+    customTargets: biometrics.customTargets, setCustomTargets: biometrics.setCustomTargets,
+    weightHistory: biometrics.weightHistory, saveWeightHistory: biometrics.saveWeightHistory,
+    foodLog: nutrition.foodLog, saveFoodLog: nutrition.saveFoodLog,
+    workoutLog: workouts.workoutLog, saveWorkoutLog: workouts.saveWorkoutLog,
+    stepsLog: biometrics.stepsLog, saveStepsLog: biometrics.saveStepsLog,
+    ouraLog: biometrics.ouraLog, saveOuraLog: biometrics.saveOuraLog,
+    getMostRecentWeight: biometrics.getMostRecentWeight,
+    getTotalsForDate: nutrition.getTotalsForDate,
+    getTargetsForDate: nutrition.getTargetsForDate,
+    getStepsForDate: (date) => biometrics.stepsLog.find(s => s.date === date)?.steps || 0,
+    getWorkoutsForDate: (date) => workouts.workoutLog.filter(entry => entry.date === date)
   });
 
-  // 5. Food Entry
+  // 7. Food Entry
   const foodEntry = useFoodEntry({
-    foodLog,
-    saveFoodLog,
-    saveFoodEntry,
-    setSaveStatus
+    foodLog: nutrition.foodLog,
+    saveFoodLog: nutrition.saveFoodLog,
+    saveFoodEntry: nutrition.saveFoodEntry,
+    setSaveStatus: trackerSync.setSaveStatus
   });
 
-  // 6. Workout Entry
+  // 8. Workout Entry
   const workoutEntry = useWorkoutEntry({
-    workoutLog,
-    saveWorkoutLog,
-    saveWorkoutEntry
+    workoutLog: workouts.workoutLog,
+    saveWorkoutLog: workouts.saveWorkoutLog,
+    saveWorkoutEntry: workouts.saveWorkoutEntry
   });
 
-  // 7. Meal Templates
+  // 9. Meal Templates
   const mealTemplates = useMealTemplates({
     storage,
-    setSaveStatus,
+    setSaveStatus: trackerSync.setSaveStatus,
     selectedFoodDate,
-    saveFoodLog,
-    foodLog,
-    saveFoodEntry
+    saveFoodLog: nutrition.saveFoodLog,
+    foodLog: nutrition.foodLog,
+    saveFoodEntry: nutrition.saveFoodEntry
   });
 
-  // 8. Oura Entry
+  // 10. Oura Entry
   const ouraEntry = useOuraEntry({
-    ouraLog,
-    saveOuraLog,
-    saveOuraEntry
+    ouraLog: biometrics.ouraLog,
+    saveOuraLog: biometrics.saveOuraLog,
+    saveOuraEntry: biometrics.saveOuraEntry
   });
 
-  // Derived State (re-implemented from NutritionTracker to keep it available in context)
-  const workoutAnalysis = useMemo(() => {
-    const today = getArgentinaDateString();
-    const monday = getMondayOfWeek(today);
-    const sunday = addDaysToDate(monday, 6);
+  // 11. Global Delete Actions
+  const globalDelete = useGlobalDelete(nutrition, workouts, biometrics, supabase, useCloud);
 
-    const currentWeekWorkouts = workoutLog.filter(w => w.date >= monday && w.date <= sunday);
 
-    const gymCount = currentWeekWorkouts.filter(w => w.type === 'gym').length;
-    const tennisCount = currentWeekWorkouts.filter(w => w.type === 'tennis').length;
-    const totalDuration = currentWeekWorkouts.reduce((sum, w) => sum + (parseInt(w.duration) || 0), 0);
 
-    const analysis = [];
-    if (gymCount >= 3) analysis.push('¡Excelente constancia en el gimnasio!');
-    if (tennisCount >= 2) analysis.push('Buen volumen de tenis esta semana.');
-    if (totalDuration > 300) analysis.push('Alta intensidad semanal 🔥');
-    if (analysis.length === 0 && currentWeekWorkouts.length > 0) analysis.push('¡Sigue sumando movimiento!');
-    if (currentWeekWorkouts.length === 0) analysis.push('Sin actividad registrada esta semana.');
-
-    const weekStartDate = new Date(monday + 'T12:00:00').toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
-
-    return {
-      weekStart: weekStartDate,
-      gymCount,
-      tennisCount,
-      totalDuration,
-      analysis
-    };
-  }, [workoutLog]);
+  // Derived State
+  const workoutAnalysis = useWorkoutAnalysis(workouts.workoutLog);
 
   // Derived state helpers
-  const getFoodsForDate = (date) => foodLog.filter(entry => entry.date === date);
-  const getWorkoutsForDate = (date) => workoutLog.filter(entry => entry.date === date);
-  const getStepsForDate = (date) => stepsLog.find(s => s.date === date)?.steps || 0;
+
+  const getWorkoutsForDate = (date) => workouts.workoutLog.filter(entry => entry.date === date);
+  const getStepsForDate = (date) => biometrics.stepsLog.find(s => s.date === date)?.steps || 0;
   const changeDate = (dateStr, delta) => addDaysToDate(dateStr, delta);
 
-  // Format timestamp to time string
-  const formatTime = (timestamp) => {
-    if (!timestamp) return '';
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' });
-  };
+
 
   // Combine everything into value
   const value = useMemo(() => ({
-    ...trackerData,
+    // Inherit everything from hooks
+    ...trackerSync,
+    ...nutrition,
+    ...biometrics,
+    ...workouts,
+
+    // UI State
+    activeTab, setActiveTab,
+    dashboardDate, setDashboardDate,
+    selectedFoodDate, setSelectedFoodDate,
+    showImportFoodModal, setShowImportFoodModal,
+    showImportWorkoutModal, setShowImportWorkoutModal,
+    showImportFoodModal, setShowImportFoodModal,
+    showImportWorkoutModal, setShowImportWorkoutModal,
+
+    // Delete Modal & Undo
+    // Delete Modal & Undo
+    ...globalDelete,
+
+    // Overrides
+    addWaterGlass, // Wrapped version
+    removeWaterGlass, // Wrapped version
+
+    // Legacy hooks results
     ...dataOperations,
     ...analytics,
     ...exportDoc,
@@ -163,22 +208,22 @@ export const TrackerProvider = ({ children }) => {
     ...workoutEntry,
     ...mealTemplates,
     ...ouraEntry,
+
+    // Helpers
     workoutAnalysis,
-    getFoodsForDate,
     getWorkoutsForDate,
     getStepsForDate,
     changeDate,
     formatTime,
+    storage,
+    supabase
   }), [
-    trackerData,
-    dataOperations,
-    analytics,
-    exportDoc,
-    foodEntry,
-    workoutEntry,
-    mealTemplates,
-    ouraEntry,
-    workoutAnalysis
+    trackerSync, nutrition, biometrics, workouts,
+    activeTab, // Added dependency
+    dashboardDate, selectedFoodDate, showImportFoodModal, showImportWorkoutModal,
+    globalDelete,
+    dataOperations, analytics, exportDoc, foodEntry, workoutEntry, mealTemplates, ouraEntry,
+    workoutAnalysis, supabase
   ]);
 
   return (

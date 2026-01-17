@@ -1,3 +1,4 @@
+import { useWeightForm } from '../../hooks/ui/useWeightForm';
 import { WeightLineChart } from '../Charts/WeightLineChart';
 
 /**
@@ -5,14 +6,6 @@ import { WeightLineChart } from '../Charts/WeightLineChart';
  * Displays weight entry form, progress, chart, projections, and history
  */
 export const WeightTab = ({
-  // Entry form
-  weightDate,
-  setWeightDate,
-  newWeight,
-  setNewWeight,
-  newWeightTime,
-  setNewWeightTime,
-  addWeightEntry,
   // Data
   weightHistory,
   profile,
@@ -32,6 +25,14 @@ export const WeightTab = ({
   // Utilities
   formatTime
 }) => {
+  // Local form state
+  const {
+    weight, setWeight,
+    time, setTime,
+    date, setDate,
+    error,
+    handleSubmit
+  } = useWeightForm();
   const currentWeight = getMostRecentWeight(weightHistory)?.weight || profile.currentWeight;
   const remaining = (currentWeight - profile.targetWeight).toFixed(1);
 
@@ -52,15 +53,15 @@ export const WeightTab = ({
           <div className="flex gap-2">
             <input
               type="date"
-              value={weightDate}
-              onChange={(e) => setWeightDate(e.target.value)}
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
               className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
             />
             <input
               type="number"
               step="0.1"
-              value={newWeight}
-              onChange={(e) => setNewWeight(e.target.value)}
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
               placeholder="84.5"
               className="flex-[1.5] bg-white border border-gray-200 rounded-xl px-4 py-3 text-lg min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
             />
@@ -69,19 +70,20 @@ export const WeightTab = ({
           <div className="flex gap-2">
             <input
               type="time"
-              value={newWeightTime}
-              onChange={(e) => setNewWeightTime(e.target.value)}
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
               className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
             />
             <button
-              onClick={addWeightEntry}
-              disabled={!newWeight}
+              onClick={handleSubmit}
+              disabled={!weight}
               className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 px-6 py-3 rounded-xl font-bold text-white shadow-lg shadow-blue-500/30 transition-all"
             >
               Guardar
             </button>
           </div>
         </div>
+        {error && <p className="text-red-500 text-sm mt-2 px-1">{error}</p>}
       </div>
 
       {/* Progress Summary */}

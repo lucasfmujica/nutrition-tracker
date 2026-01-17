@@ -71,10 +71,7 @@ const NutritionTrackerContent = () => {
     getWorkoutsForDate,
     confirmWorkout,
 
-    weightDate, setWeightDate,
-    newWeight, setNewWeight,
-    newWeightTime, setNewWeightTime,
-    addWeightEntry,
+
     getWeightChartData,
     editingWeightId, setEditingWeightId,
     editingWeightValue, setEditingWeightValue,
@@ -314,14 +311,7 @@ const NutritionTrackerContent = () => {
         )}
 
         {activeTab === 'peso' && (
-          <WeightTab
-            weightDate={weightDate}
-            setWeightDate={setWeightDate}
-            newWeight={newWeight}
-            setNewWeight={setNewWeight}
-            newWeightTime={newWeightTime}
-            setNewWeightTime={setNewWeightTime}
-            addWeightEntry={addWeightEntry}
+            <WeightTab
             weightHistory={weightHistory}
             profile={profile}
             getMostRecentWeight={getMostRecentWeight}
