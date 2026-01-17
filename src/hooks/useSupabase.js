@@ -426,7 +426,7 @@ export function useSupabase() {
           .select('*')
           .eq('user_id', user.id)
           .maybeSingle(),
-        15000,
+        45000,
         'fetchProfile'
       );
 
@@ -441,7 +441,7 @@ export function useSupabase() {
               .select('*')
               .eq('user_id', user.id)
               .single(),
-            15000,
+            45000,
             'fetchProfile-retry'
           );
 
@@ -561,7 +561,7 @@ export function useSupabase() {
           .select('*')
           .eq('user_id', user.id)
           .order('date', { ascending: false }),
-        15000,
+        45000,
         'fetchWeightHistory'
       );
 
@@ -620,7 +620,7 @@ export function useSupabase() {
           .eq('user_id', user.id)
           .order('date', { ascending: false })
           .order('time', { ascending: true }),
-        15000,
+        45000,
         'fetchFoodLog'
       );
 
@@ -691,7 +691,7 @@ export function useSupabase() {
           .select('*')
           .eq('user_id', user.id)
           .order('date', { ascending: false }),
-        15000,
+        45000,
         'fetchWorkouts'
       );
 
@@ -762,7 +762,7 @@ export function useSupabase() {
           .select('*')
           .eq('user_id', user.id)
           .order('date', { ascending: false }),
-        15000,
+        45000,
         'fetchStepsLog'
       );
 
@@ -807,7 +807,7 @@ export function useSupabase() {
           .select('*')
           .eq('user_id', user.id)
           .order('date', { ascending: false }),
-        15000,
+        45000,
         'fetchOuraLog'
       );
 
@@ -852,7 +852,7 @@ export function useSupabase() {
           .select('*')
           .eq('user_id', user.id)
           .order('date', { ascending: false }),
-        15000,
+        45000,
         'fetchWaterLog'
       );
 
