@@ -50,7 +50,9 @@ export const useTrackerData = () => {
     targetWeight: 75,
     age: 27,
     activityLevel: 'moderate',
-    goal: 'cut'
+    goal: 'cut',
+    avatar: '',
+    name: ''
   });
 
   const [customTargets, setCustomTargets] = useState({
@@ -313,10 +315,11 @@ export const useTrackerData = () => {
   useEffect(() => {
     if (!configDirty || !localConfig) return;
     const timer = setTimeout(() => {
+      console.log('[Config] Saving profile and targets...', localConfig.profile);
       saveProfile(localConfig.profile);
       saveTargets(localConfig.targets);
       setConfigDirty(false);
-    }, 800);
+    }, 500);
     return () => clearTimeout(timer);
   }, [localConfig, configDirty]);
 
@@ -329,12 +332,28 @@ export const useTrackerData = () => {
 
   // Helpers
   const sortWeightHistory = (history) => {
-    return [...history].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+    return [...history].sort((a, b) => {
+      // First try to sort by timestamp
+      const timestampDiff = (b.timestamp || 0) - (a.timestamp || 0);
+      if (timestampDiff !== 0) return timestampDiff;
+
+      // If timestamps are equal or both missing, sort by date string (most recent first)
+      if (a.date && b.date) {
+        return b.date.localeCompare(a.date);
+      }
+
+      return 0;
+    });
   };
 
   const getMostRecentWeight = (history) => {
-    if (history.length === 0) return null;
-    return sortWeightHistory(history)[0];
+    if (history.length === 0) {
+      console.log('[Weight] getMostRecentWeight: history is empty, returning null');
+      return null;
+    }
+    const sorted = sortWeightHistory(history);
+    console.log('[Weight] getMostRecentWeight: most recent =', sorted[0]?.weight, 'kg on', sorted[0]?.date);
+    return sorted[0];
   };
 
   const isTrainingDay = useCallback((date) => {
@@ -528,7 +547,14 @@ export const useTrackerData = () => {
   };
 
   const saveWaterEntry = async (entry) => {
-    if (useCloud) await supabase.saveWater(entry);
+    if (useCloud) {
+      try {
+        await supabase.saveWater(entry);
+      } catch (err) {
+        console.error('Error guardando agua', err);
+        // Don't throw - water is already saved locally, cloud sync can fail silently
+      }
+    }
   };
 
   const getTodayWater = () => {

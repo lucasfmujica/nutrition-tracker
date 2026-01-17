@@ -2,11 +2,11 @@ import React from 'react';
 import { BottomNav } from './BottomNav';
 import { Sidebar } from './Sidebar';
 
-export const Layout = ({ children, activeTab, setActiveTab, showNav = true }) => {
+export const Layout = ({ children, activeTab, setActiveTab, profile, showNav = true }) => {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans flex text-base lg:text-sm">
       {/* Desktop Sidebar */}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} profile={profile} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-h-screen relative w-full">
