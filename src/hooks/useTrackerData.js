@@ -504,12 +504,42 @@ export const useTrackerData = () => {
     setTimeout(() => setSaveStatus(''), 1500);
   };
 
+  // Pull to refresh handler
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      if (useCloud) {
+        const data = await supabase.fetchAllData();
+        if (data) {
+          if (data.profile) setProfile(data.profile);
+          if (data.targets) setCustomTargets(data.targets);
+          if (data.weightHistory?.length) setWeightHistory(data.weightHistory);
+          if (data.foodLog?.length) setFoodLog(data.foodLog);
+          if (data.workouts?.length) setWorkoutLog(data.workouts);
+          if (data.stepsLog?.length) setStepsLog(data.stepsLog);
+          if (data.ouraLog?.length) setOuraLog(data.ouraLog);
+          if (data.waterLog?.length) setWaterLog(data.waterLog);
+          setSaveStatus('✓ Actualizado');
+        } else {
+          setSaveStatus('Error al actualizar');
+        }
+      }
+    } catch (err) {
+      console.error('Refresh error:', err);
+      setSaveStatus('Error al actualizar');
+    } finally {
+      setIsRefreshing(false);
+      setTimeout(() => setSaveStatus(''), 2000);
+    }
+  };
+
   const updateConfig = (newProfile, newTargets) => {
     setLocalConfig({ profile: newProfile, targets: newTargets });
     setProfile(newProfile);
     setCustomTargets(newTargets);
     setConfigDirty(true);
   };
+
 
   return {
     supabase,
@@ -555,7 +585,7 @@ export const useTrackerData = () => {
     getTodayWater,
     addWaterGlass,
     removeWaterGlass,
-    removeWaterGlass,
+    handleRefresh,
     updateConfig,
     activeTab, setActiveTab,
     newWeight, setNewWeight,

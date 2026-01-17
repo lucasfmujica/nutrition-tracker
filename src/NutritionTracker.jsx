@@ -54,6 +54,7 @@ const NutritionTracker = () => {
     getTodayWater,
     addWaterGlass,
     removeWaterGlass,
+    handleRefresh,
     updateConfig,
     activeTab, setActiveTab,
     newWeight, setNewWeight,
