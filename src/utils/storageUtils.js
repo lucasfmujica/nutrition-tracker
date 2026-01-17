@@ -57,19 +57,25 @@ export const loadCachedData = async () => {
 export const cacheData = async (data) => {
   try {
     const promises = [];
+
+    // Profile & Targets: only if they exist
     if (data.profile) promises.push(storage.set(CACHE_KEYS.PROFILE, JSON.stringify(data.profile)));
     if (data.targets) promises.push(storage.set(CACHE_KEYS.TARGETS, JSON.stringify(data.targets)));
-    if (data.weightHistory?.length > 0) promises.push(storage.set(CACHE_KEYS.WEIGHT, JSON.stringify(data.weightHistory)));
-    if (data.foodLog?.length > 0) promises.push(storage.set(CACHE_KEYS.FOOD, JSON.stringify(data.foodLog)));
-    if (data.workouts?.length > 0) promises.push(storage.set(CACHE_KEYS.WORKOUT, JSON.stringify(data.workouts)));
-    if (data.stepsLog?.length > 0) promises.push(storage.set(CACHE_KEYS.STEPS, JSON.stringify(data.stepsLog)));
-    if (data.ouraLog?.length > 0) promises.push(storage.set(CACHE_KEYS.OURA, JSON.stringify(data.ouraLog)));
-    if (data.waterLog?.length > 0) promises.push(storage.set(CACHE_KEYS.WATER, JSON.stringify(data.waterLog)));
+
+    // CRITICAL FIX: Arrays - ALWAYS update cache to reflect Supabase (even if empty)
+    // This ensures cache is a mirror of the cloud, not a competitor
+    if (data.weightHistory !== undefined) promises.push(storage.set(CACHE_KEYS.WEIGHT, JSON.stringify(data.weightHistory)));
+    if (data.foodLog !== undefined) promises.push(storage.set(CACHE_KEYS.FOOD, JSON.stringify(data.foodLog)));
+    if (data.workouts !== undefined) promises.push(storage.set(CACHE_KEYS.WORKOUT, JSON.stringify(data.workouts)));
+    if (data.stepsLog !== undefined) promises.push(storage.set(CACHE_KEYS.STEPS, JSON.stringify(data.stepsLog)));
+    if (data.ouraLog !== undefined) promises.push(storage.set(CACHE_KEYS.OURA, JSON.stringify(data.ouraLog)));  // ← FIX
+    if (data.waterLog !== undefined) promises.push(storage.set(CACHE_KEYS.WATER, JSON.stringify(data.waterLog)));
 
     await Promise.all(promises);
+    console.log('[Storage] Cache updated from Supabase');
     return true;
   } catch (err) {
-    console.warn('[Data] Failed to cache data:', err);
+    console.error('[Storage] Failed to cache data:', err);
     return false;
   }
 };

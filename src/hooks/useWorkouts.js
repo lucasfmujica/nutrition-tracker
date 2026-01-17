@@ -17,8 +17,30 @@ export const useWorkouts = (supabase, useCloud) => {
     if (useCloud) {
       try {
         const result = await supabase.saveWorkout(entry);
+
+        if (result?.error) {
+          console.error('[Workouts] saveWorkoutEntry failed:', {
+            function: 'saveWorkoutEntry',
+            date: entry.date,
+            name: entry.name,
+            type: entry.type,
+            error: result.error.message
+          });
+          throw new Error(result.error.message);
+        }
+
+        console.log('[Workouts] saveWorkoutEntry successful:', entry.date, entry.name);
         return result.data;
       } catch (err) {
+        console.error('[Workouts] saveWorkoutEntry FAILED:', {
+          function: 'saveWorkoutEntry',
+          date: entry.date,
+          name: entry.name,
+          type: entry.type,
+          error: err.message,
+          stack: err.stack
+        });
+        // Return original entry for optimistic UI
         return entry;
       }
     }

@@ -36,27 +36,63 @@ export const useSyncResolver = (supabase, useCloud, logs) => {
     try {
       // Workouts
       for (const w of workoutLog) {
-        try { await supabase.saveWorkout(w); synced.workouts++; } catch { synced.errors++; }
+        try {
+          await supabase.saveWorkout(w);
+          synced.workouts++;
+        } catch (err) {
+          console.error('[SyncResolver] Workout sync failed:', { date: w.date, name: w.name, error: err.message });
+          synced.errors++;
+        }
       }
       // Food
       for (const f of foodLog) {
-        try { await supabase.saveFood(f); synced.foods++; } catch { synced.errors++; }
+        try {
+          await supabase.saveFood(f);
+          synced.foods++;
+        } catch (err) {
+          console.error('[SyncResolver] Food sync failed:', { date: f.date, name: f.name, error: err.message });
+          synced.errors++;
+        }
       }
       // Steps
       for (const s of stepsLog) {
-        try { await supabase.saveSteps(s); synced.steps++; } catch { synced.errors++; }
+        try {
+          await supabase.saveSteps(s);
+          synced.steps++;
+        } catch (err) {
+          console.error('[SyncResolver] Steps sync failed:', { date: s.date, steps: s.steps, error: err.message });
+          synced.errors++;
+        }
       }
       // Oura
       for (const o of ouraLog) {
-        try { await supabase.saveOura(o); synced.oura++; } catch { synced.errors++; }
+        try {
+          await supabase.saveOura(o);
+          synced.oura++;
+        } catch (err) {
+          console.error('[SyncResolver] Oura sync failed:', { date: o.date, error: err.message });
+          synced.errors++;
+        }
       }
       // Water
       for (const w of waterLog) {
-        try { await supabase.saveWater(w); synced.water++; } catch { synced.errors++; }
+        try {
+          await supabase.saveWater(w);
+          synced.water++;
+        } catch (err) {
+          console.error('[SyncResolver] Water sync failed:', { date: w.date, glasses: w.glasses, error: err.message });
+          synced.errors++;
+        }
       }
       // Weight
       for (const w of weightHistory) {
-        try { await supabase.saveWeight(w); synced.weight++; } catch { synced.errors++; }
+        try {
+          await supabase.saveWeight(w);
+          synced.weight++;
+        } catch (err) {
+          console.error('[SyncResolver] Weight sync failed:', { date: w.date, weight: w.weight, error: err.message });
+          synced.errors++;
+        }
       }
 
       const total = Object.values(synced).reduce((a, b) => a + b, 0) - synced.errors;

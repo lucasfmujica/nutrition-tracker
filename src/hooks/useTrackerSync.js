@@ -4,6 +4,9 @@ import { useSyncResolver } from './supabase/useSyncResolver';
 
 export const useTrackerSync = ({
   supabase, // Dependency injected
+  useCloud, // ← CRITICAL FIX: Receive unified useCloud from parent
+  offlineMode,
+  setOfflineMode,
   setProfile,
   setCustomTargets,
   setWeightHistory,
@@ -22,7 +25,6 @@ export const useTrackerSync = ({
 }) => {
   const [showAuth, setShowAuth] = useState(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [offlineMode, setOfflineMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -33,8 +35,7 @@ export const useTrackerSync = ({
 
   const hasInitialized = useRef(false);
 
-  // Check if using Supabase (authenticated) or localStorage (offline)
-  const useCloud = supabase.isAuthenticated && !offlineMode && supabase.isOnline; // supabase.isOnline from useSupabase hook
+  // NOTE: useCloud is now passed from TrackerContext (single source of truth)
 
   const { isMigrating, handleMigration: resolveMigration, forceSyncToCloud: resolveForceSync } = useSyncResolver(
     supabase,
@@ -45,14 +46,15 @@ export const useTrackerSync = ({
   const handleMigration = async () => {
     const success = await resolveMigration(migrationData, {
       onSuccess: (data) => {
+        // Supabase is source of truth - always sync
         if (data.profile) setProfile(data.profile);
         if (data.targets) setCustomTargets(data.targets);
-        if (data.weightHistory?.length) setWeightHistory(data.weightHistory);
-        if (data.foodLog?.length) setFoodLog(data.foodLog);
-        if (data.workouts?.length) setWorkoutLog(data.workouts);
-        if (data.stepsLog?.length) setStepsLog(data.stepsLog);
-        if (data.ouraLog?.length) setOuraLog(data.ouraLog);
-        if (data.waterLog?.length) setWaterLog(data.waterLog);
+        if (data.weightHistory !== undefined) setWeightHistory(data.weightHistory);
+        if (data.foodLog !== undefined) setFoodLog(data.foodLog);
+        if (data.workouts !== undefined) setWorkoutLog(data.workouts);
+        if (data.stepsLog !== undefined) setStepsLog(data.stepsLog);
+        if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);
+        if (data.waterLog !== undefined) setWaterLog(data.waterLog);
         setShowMigrationModal(false);
         setMigrationData(null);
       }
@@ -137,14 +139,18 @@ export const useTrackerSync = ({
           }
 
           if (data) {
+            // CRITICAL FIX: Supabase is the single source of truth
+            // Always overwrite local state, even if cloud returns empty arrays
             if (data.profile) setProfile(data.profile);
             if (data.targets) setCustomTargets(data.targets);
-            if (data.weightHistory?.length > 0) setWeightHistory(data.weightHistory);
-            if (data.foodLog?.length > 0) setFoodLog(data.foodLog);
-            if (data.workouts?.length > 0) setWorkoutLog(data.workouts);
-            if (data.stepsLog?.length > 0) setStepsLog(data.stepsLog);
-            if (data.ouraLog?.length > 0) setOuraLog(data.ouraLog);
-            if (data.waterLog?.length > 0) setWaterLog(data.waterLog);
+
+            // Arrays: Always sync from cloud (even if empty)
+            if (data.weightHistory !== undefined) setWeightHistory(data.weightHistory);
+            if (data.foodLog !== undefined) setFoodLog(data.foodLog);
+            if (data.workouts !== undefined) setWorkoutLog(data.workouts);
+            if (data.stepsLog !== undefined) setStepsLog(data.stepsLog);
+            if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);  // ← FIX: Allows empty sync
+            if (data.waterLog !== undefined) setWaterLog(data.waterLog);
 
             await cacheData(data);
 
@@ -174,21 +180,22 @@ export const useTrackerSync = ({
       if (useCloud) {
         const data = await supabase.fetchAllData();
         if (data) {
+          // Supabase is source of truth - always sync (even empty arrays)
           if (data.profile) setProfile(data.profile);
           if (data.targets) setCustomTargets(data.targets);
-          if (data.weightHistory?.length) setWeightHistory(data.weightHistory);
-          if (data.foodLog?.length) setFoodLog(data.foodLog);
-          if (data.workouts?.length) setWorkoutLog(data.workouts);
-          if (data.stepsLog?.length) setStepsLog(data.stepsLog);
-          if (data.ouraLog?.length) setOuraLog(data.ouraLog);
-          if (data.waterLog?.length) setWaterLog(data.waterLog);
+          if (data.weightHistory !== undefined) setWeightHistory(data.weightHistory);
+          if (data.foodLog !== undefined) setFoodLog(data.foodLog);
+          if (data.workouts !== undefined) setWorkoutLog(data.workouts);
+          if (data.stepsLog !== undefined) setStepsLog(data.stepsLog);
+          if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);
+          if (data.waterLog !== undefined) setWaterLog(data.waterLog);
           setSaveStatus('✓ Actualizado');
         } else {
           setSaveStatus('Error al actualizar');
         }
       }
     } catch (err) {
-      console.error('Refresh error:', err);
+      console.error('[TrackerSync] Refresh error:', err);
       setSaveStatus('Error al actualizar');
     } finally {
       setIsRefreshing(false);
@@ -226,14 +233,14 @@ export const useTrackerSync = ({
   return {
     showAuth, setShowAuth,
     showOnboarding, setShowOnboarding,
-    offlineMode, setOfflineMode,
+    offlineMode, setOfflineMode, // Passed through from TrackerContext
     isLoading, setIsLoading,
     saveStatus, setSaveStatus,
     isRefreshing, handleRefresh,
     showMigrationModal, setShowMigrationModal,
     migrationData, setMigrationData,
     isMigrating, handleMigration,
-    useCloud,
+    // useCloud removed - now managed in TrackerContext as single source of truth
     forceSyncToCloud,
     handleLogout
   };

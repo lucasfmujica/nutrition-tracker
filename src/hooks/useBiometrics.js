@@ -84,7 +84,35 @@ export const useBiometrics = (supabase, useCloud, profileData = null, targetsDat
   };
 
   const saveWeightEntry = async (entry) => {
-    if (useCloud) await supabase.saveWeight(entry);
+    if (useCloud) {
+      try {
+        const result = await supabase.saveWeight(entry);
+
+        if (result?.error) {
+          console.error('[Biometrics] saveWeightEntry failed:', {
+            function: 'saveWeightEntry',
+            date: entry.date,
+            weight: entry.weight,
+            error: result.error.message,
+            userId: supabase?.user?.id
+          });
+          throw new Error(result.error.message);
+        }
+
+        console.log('[Biometrics] saveWeightEntry successful:', entry.date);
+        return result;
+      } catch (err) {
+        console.error('[Biometrics] saveWeightEntry FAILED:', {
+          function: 'saveWeightEntry',
+          date: entry.date,
+          weight: entry.weight,
+          error: err.message,
+          stack: err.stack,
+          userId: supabase?.user?.id
+        });
+        throw err;
+      }
+    }
   };
 
   const saveStepsLog = async (newLog) => {
@@ -99,9 +127,29 @@ export const useBiometrics = (supabase, useCloud, profileData = null, targetsDat
   const saveStepsEntry = async (entry) => {
     if (useCloud) {
       try {
-        await supabase.saveSteps(entry);
+        const result = await supabase.saveSteps(entry);
+
+        if (result?.error) {
+          console.error('[Biometrics] saveStepsEntry failed:', {
+            function: 'saveStepsEntry',
+            date: entry.date,
+            error: result.error.message,
+            userId: supabase?.user?.id
+          });
+          throw new Error(result.error.message);
+        }
+
+        console.log('[Biometrics] saveStepsEntry successful:', entry.date);
+        return result;
       } catch (err) {
-        console.error('[Sync] Error saving steps:', err);
+        console.error('[Biometrics] saveStepsEntry FAILED:', {
+          function: 'saveStepsEntry',
+          date: entry.date,
+          error: err.message,
+          stack: err.stack,
+          userId: supabase?.user?.id
+        });
+        throw err;
       }
     }
   };
@@ -118,8 +166,34 @@ export const useBiometrics = (supabase, useCloud, profileData = null, targetsDat
   const saveOuraEntry = async (entry) => {
     if (useCloud) {
       try {
-        await supabase.saveOura(entry);
-      } catch (err) { }
+        const result = await supabase.saveOura(entry);
+
+        // Validar que el save fue exitoso
+        if (result?.error) {
+          console.error('[Biometrics] saveOuraEntry failed:', {
+            function: 'saveOuraEntry',
+            date: entry.date,
+            error: result.error.message,
+            userId: supabase?.user?.id
+          });
+          throw new Error(result.error.message);
+        }
+
+        console.log('[Biometrics] saveOuraEntry successful:', entry.date);
+        return result;
+      } catch (err) {
+        // CRITICAL: Log error with full context
+        console.error('[Biometrics] saveOuraEntry FAILED:', {
+          function: 'saveOuraEntry',
+          date: entry.date,
+          error: err.message,
+          stack: err.stack,
+          userId: supabase?.user?.id
+        });
+
+        // Propagate error for UI feedback
+        throw err;
+      }
     }
   };
 

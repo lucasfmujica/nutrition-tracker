@@ -24,7 +24,11 @@ const TrackerContext = createContext(null);
 export const TrackerProvider = ({ children }) => {
   // Service Layer
   const supabase = useSupabase();
-  const useCloud = supabase.isAuthenticated && supabase.isOnline; // Basic check, useTrackerSync refines this with offlineMode
+
+  // CRITICAL FIX: Unified useCloud flag
+  // Single source of truth for cloud connectivity status
+  const [offlineMode, setOfflineMode] = useState(false);
+  const useCloud = supabase.isAuthenticated && !offlineMode && supabase.isOnline;
 
   // UI State that didn't fit into domain hooks
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -42,7 +46,7 @@ export const TrackerProvider = ({ children }) => {
   // Note: importText, newWeight etc moved to local hooks
   // Note: importText, newWeight etc moved to local hooks
 
-  // 1. Core Domains
+  // 1. Core Domains - all use the same useCloud
   const workouts = useWorkouts(supabase, useCloud);
   const biometrics = useBiometrics(supabase, useCloud);
 
@@ -56,6 +60,9 @@ export const TrackerProvider = ({ children }) => {
   // 2. Sync Orchestrator
   const trackerSync = useTrackerSync({
     supabase,
+    useCloud, // ← CRITICAL: Pass unified useCloud flag
+    offlineMode,
+    setOfflineMode,
     // Setters for initial load
     setProfile: biometrics.setProfile,
     setCustomTargets: biometrics.setCustomTargets,
@@ -112,7 +119,7 @@ export const TrackerProvider = ({ children }) => {
     saveFoodEntry: nutrition.saveFooEntry, // Note: typo in useNutrition? checked: saveFoodEntry
     saveWorkoutEntry: workouts.saveWorkoutEntry,
     supabase,
-    useCloud: trackerSync.useCloud,
+    useCloud, // ← CRITICAL FIX: Use unified useCloud from TrackerContext
     showImportFoodModal, setShowImportFoodModal,
     showImportWorkoutModal, setShowImportWorkoutModal,
     showImportFoodModal, setShowImportFoodModal,
