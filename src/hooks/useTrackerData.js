@@ -263,9 +263,9 @@ export const useTrackerData = () => {
         if (supabase.isAuthenticated && supabase.isOnline && !offlineMode) {
           console.log('[Data] Fetching from Supabase...');
           try {
-            // Safety timeout for supabase fetch
+            // Safety timeout for supabase fetch (25s to allow for slow connections)
             const fetchPromise = supabase.fetchAllData();
-            const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 8000));
+            const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 25000));
 
             const data = await Promise.race([fetchPromise, timeoutPromise]);
 

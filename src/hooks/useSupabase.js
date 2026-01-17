@@ -414,7 +414,7 @@ export function useSupabase() {
           .select('*')
           .eq('user_id', user.id)
           .maybeSingle(),
-        5000,
+        15000,
         'fetchProfile'
       );
 
@@ -429,7 +429,7 @@ export function useSupabase() {
               .select('*')
               .eq('user_id', user.id)
               .single(),
-            5000,
+            15000,
             'fetchProfile-retry'
           );
 
@@ -549,7 +549,7 @@ export function useSupabase() {
           .select('*')
           .eq('user_id', user.id)
           .order('date', { ascending: false }),
-        5000,
+        15000,
         'fetchWeightHistory'
       );
 
@@ -608,7 +608,7 @@ export function useSupabase() {
           .eq('user_id', user.id)
           .order('date', { ascending: false })
           .order('time', { ascending: true }),
-        5000,
+        15000,
         'fetchFoodLog'
       );
 
@@ -679,7 +679,7 @@ export function useSupabase() {
           .select('*')
           .eq('user_id', user.id)
           .order('date', { ascending: false }),
-        5000,
+        15000,
         'fetchWorkouts'
       );
 
@@ -750,7 +750,7 @@ export function useSupabase() {
           .select('*')
           .eq('user_id', user.id)
           .order('date', { ascending: false }),
-        5000,
+        15000,
         'fetchStepsLog'
       );
 
@@ -795,7 +795,7 @@ export function useSupabase() {
           .select('*')
           .eq('user_id', user.id)
           .order('date', { ascending: false }),
-        5000,
+        15000,
         'fetchOuraLog'
       );
 
@@ -840,7 +840,7 @@ export function useSupabase() {
           .select('*')
           .eq('user_id', user.id)
           .order('date', { ascending: false }),
-        5000,
+        15000,
         'fetchWaterLog'
       );
 
@@ -885,46 +885,24 @@ export function useSupabase() {
     // Only set syncing if not already syncing (prevent multiple spinners)
     setSyncStatus(prev => prev === 'syncing' ? prev : 'syncing');
 
-    // Timeout protection - max 8 seconds for all fetches (reasonable for most connections)
+    // Timeout protection - 20 seconds for all fetches (handles slow connections)
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Fetch timeout after 8s')), 8000)
+      setTimeout(() => reject(new Error('Fetch timeout after 20s')), 20000)
     );
 
     try {
       console.log('[Supabase] fetchAllData: starting for user:', user?.id);
 
-      // Fetch with individual logging to identify which query is hanging
-      const fetchPromise = (async () => {
-        console.log('[Supabase] Fetching profile...');
-        const profileData = await fetchProfile();
-        console.log('[Supabase] Profile fetched');
-
-        console.log('[Supabase] Fetching weight history...');
-        const weightHistory = await fetchWeightHistory();
-        console.log('[Supabase] Weight history fetched');
-
-        console.log('[Supabase] Fetching food log...');
-        const foodLog = await fetchFoodLog();
-        console.log('[Supabase] Food log fetched');
-
-        console.log('[Supabase] Fetching workouts...');
-        const workouts = await fetchWorkouts();
-        console.log('[Supabase] Workouts fetched');
-
-        console.log('[Supabase] Fetching steps...');
-        const stepsLog = await fetchStepsLog();
-        console.log('[Supabase] Steps fetched');
-
-        console.log('[Supabase] Fetching oura...');
-        const ouraLog = await fetchOuraLog();
-        console.log('[Supabase] Oura fetched');
-
-        console.log('[Supabase] Fetching water...');
-        const waterLog = await fetchWaterLog();
-        console.log('[Supabase] Water fetched');
-
-        return [profileData, weightHistory, foodLog, workouts, stepsLog, ouraLog, waterLog];
-      })();
+      // Fetch ALL tables in PARALLEL for much faster loading
+      const fetchPromise = Promise.all([
+        fetchProfile().catch(err => { console.warn('[Supabase] Profile fetch failed:', err.message); return null; }),
+        fetchWeightHistory().catch(err => { console.warn('[Supabase] Weight fetch failed:', err.message); return []; }),
+        fetchFoodLog().catch(err => { console.warn('[Supabase] Food fetch failed:', err.message); return []; }),
+        fetchWorkouts().catch(err => { console.warn('[Supabase] Workouts fetch failed:', err.message); return []; }),
+        fetchStepsLog().catch(err => { console.warn('[Supabase] Steps fetch failed:', err.message); return []; }),
+        fetchOuraLog().catch(err => { console.warn('[Supabase] Oura fetch failed:', err.message); return []; }),
+        fetchWaterLog().catch(err => { console.warn('[Supabase] Water fetch failed:', err.message); return []; }),
+      ]);
 
       const [profileData, weightHistory, foodLog, workouts, stepsLog, ouraLog, waterLog] =
         await Promise.race([fetchPromise, timeoutPromise]);
