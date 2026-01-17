@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AuthUI } from './components/AuthUI';
 import { BottomNav } from './components/BottomNav';
+import { SimpleBarChart } from './components/Charts/SimpleBarChart';
+import { WeightLineChart } from './components/Charts/WeightLineChart';
 import { ActivityCards } from './components/Dashboard/ActivityCards';
+import { AdherenceCard } from './components/Dashboard/AdherenceCard';
 import { MacroCards } from './components/Dashboard/MacroCards';
 import { SummaryCard } from './components/Dashboard/SummaryCard';
 import { TrainingWidget } from './components/Dashboard/TrainingWidget';
@@ -13,6 +16,9 @@ import { Layout } from './components/Layout';
 import { OnboardingWizard } from './components/OnboardingWizard';
 import { PullToRefresh } from './components/PullToRefresh';
 import { SwipeableItem } from './components/SwipeableItem';
+import { CircularProgress } from './components/UI/CircularProgress';
+import { MiniBar } from './components/UI/MiniBar';
+import { ProgressBar } from './components/UI/ProgressBar';
 import { WeeklyReport } from './components/WeeklyReport';
 import { useFoodEntry } from './hooks/useFoodEntry';
 import { useMealTemplates } from './hooks/useMealTemplates';
@@ -744,208 +750,13 @@ const NutritionTracker = () => {
     }).format(date);
   };
 
-  // Circular progress component - responsive with better fonts
-  const CircularProgress = ({ current, target, label, color, size = 80 }) => {
-    const percentage = Math.min((current / target) * 100, 100);
-    const isOver = current > target;
-    const strokeWidth = size < 60 ? 5 : size < 80 ? 6 : 8;
-    const radius = (size - strokeWidth) / 2;
-    const circumference = radius * 2 * Math.PI;
-    const offset = circumference - (percentage / 100) * circumference;
-    // Better font sizes for readability - scale with size
-    const fontSize = size < 60 ? 'text-xs' : size < 80 ? 'text-sm' : 'text-base';
-    const subFontSize = size < 60 ? 'text-xs' : size < 80 ? 'text-xs' : 'text-xs';
-    const labelSize = size < 60 ? 'text-xs' : size < 80 ? 'text-xs' : 'text-sm';
 
-    return (
-      <div className="flex flex-col items-center min-w-0">
-        <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
-          <svg className="transform -rotate-90 drop-shadow-lg" width={size} height={size}>
-            <circle cx={size / 2} cy={size / 2} r={radius} stroke="#1f2937" strokeWidth={strokeWidth} fill="none" />
-            <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
-              stroke={isOver ? '#f87171' : color}
-              strokeWidth={strokeWidth}
-              fill="none"
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              strokeDashoffset={offset}
-              className="transition-all duration-700 ease-out"
-              style={{ filter: `drop-shadow(0 0 ${size / 10}px ${isOver ? '#f87171' : color}40)` }}
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center leading-tight">
-            <span className={`${fontSize} font-bold ${isOver ? 'text-red-400' : 'text-white'}`}>{current}</span>
-            <span className={`${subFontSize} text-gray-400`}>/{target}</span>
-          </div>
-        </div>
-        <span className={`${labelSize} font-medium text-gray-300 mt-1`}>{label}</span>
-      </div>
-    );
-  };
+  // UI components imported from ./components/UI/
 
-  // Progress bar component
-  const ProgressBar = ({ current, target, label, unit, color }) => {
-    const percentage = Math.min((current / target) * 100, 100);
-    const isOver = current > target;
-    return (
-      <div className="mb-2 lg:mb-3">
-        <div className="flex justify-between mb-1 lg:mb-1.5">
-          <span className="text-xs lg:text-sm font-medium text-gray-300">{label}</span>
-          <span className={`text-xs lg:text-sm font-bold ${isOver ? 'text-red-400' : 'text-gray-200'}`}>{current}/{target}{unit}</span>
-        </div>
-        <div className="w-full bg-gray-700/50 rounded-full h-2 lg:h-2.5 overflow-hidden">
-          <div
-            className={`h-full rounded-full transition-all duration-700 ease-out ${isOver ? 'bg-red-500' : color}`}
-            style={{
-              width: `${percentage}%`,
-              boxShadow: percentage > 0 ? `0 0 10px ${isOver ? '#f87171' : 'currentColor'}50` : 'none'
-            }}
-          />
-        </div>
-      </div>
-    );
-  };
 
-  // Mini bar
-  const MiniBar = ({ current, target, color }) => {
-    const percentage = Math.min((current / target) * 100, 100);
-    return (
-      <div className="w-full bg-gray-700 rounded-full h-1.5 mt-1">
-        <div className={`h-1.5 rounded-full ${color}`} style={{ width: `${percentage}%` }} />
-      </div>
-    );
-  };
 
-  // Weight Line Chart with 7-day moving average
-  const WeightLineChart = ({ data }) => {
-    if (data.length === 0) return null;
+  // Charts/UI components imported from ./components/Charts/ and ./components/Dashboard/
 
-    const weights = data.map(d => d.weight);
-    const minWeight = Math.min(...weights) - 0.5;
-    const maxWeight = Math.max(...weights) + 0.5;
-    const range = maxWeight - minWeight;
-
-    const chartHeight = 120;
-    const chartWidth = 100; // percentage
-    const padding = 10;
-
-    const getY = (weight) => {
-      return chartHeight - padding - ((weight - minWeight) / range) * (chartHeight - padding * 2);
-    };
-
-    // Create path for actual weight
-    const weightPath = data.map((d, i) => {
-      const x = (i / (data.length - 1)) * 100;
-      const y = getY(d.weight);
-      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-    }).join(' ');
-
-    // Create path for 7-day average
-    const avgPath = data.map((d, i) => {
-      const x = (i / (data.length - 1)) * 100;
-      const y = getY(d.avg7d);
-      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-    }).join(' ');
-
-    // Target line
-    const targetY = getY(profile.targetWeight);
-
-    return (
-      <div className="bg-[#2C3E50] rounded-lg p-4 border border-gray-600/30">
-        <div className="flex justify-between items-center mb-3">
-          <h3 className="text-sm font-bold text-white">📈 PESO</h3>
-          <div className="flex gap-3 text-xs text-gray-300">
-            <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-blue-400 inline-block"></span> Peso</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-amber-400 inline-block"></span> Media 7d</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-0.5 bg-gray-400 inline-block border-dashed"></span> Objetivo</span>
-          </div>
-        </div>
-
-        <div className="relative" style={{ height: chartHeight }}>
-          <svg viewBox={`0 0 100 ${chartHeight}`} preserveAspectRatio="none" className="w-full h-full">
-            {/* Target line */}
-            {profile.targetWeight >= minWeight && profile.targetWeight <= maxWeight && (
-              <line x1="0" y1={targetY} x2="100" y2={targetY} stroke="#9CA3AF" strokeWidth="0.5" strokeDasharray="2,2" />
-            )}
-
-            {/* 7-day average line */}
-            <path d={avgPath} fill="none" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-
-            {/* Actual weight line */}
-            <path d={weightPath} fill="none" stroke="#60A5FA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-
-            {/* Data points */}
-            {data.map((d, i) => (
-              <circle key={i} cx={(i / (data.length - 1)) * 100} cy={getY(d.weight)} r="2" fill="#60A5FA" />
-            ))}
-          </svg>
-
-          {/* Y-axis labels */}
-          <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400 -ml-1">
-            <span>{maxWeight.toFixed(1)}</span>
-            <span>{minWeight.toFixed(1)}</span>
-          </div>
-        </div>
-
-        {/* X-axis labels */}
-        <div className="flex justify-between mt-1 text-xs text-gray-400">
-          {data.length > 0 && <span>{data[0].dayLabel}</span>}
-          {data.length > 1 && <span>{data[data.length - 1].dayLabel}</span>}
-        </div>
-
-        {/* Current stats */}
-        <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-gray-600/30">
-          <div className="text-center">
-            <div className="text-lg font-bold text-white">{data[data.length - 1]?.weight || '-'}</div>
-            <div className="text-xs text-gray-300">Último</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-bold text-amber-400">{data[data.length - 1]?.avg7d || '-'}</div>
-            <div className="text-xs text-gray-300">Media 7d</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-bold text-blue-400">{profile.targetWeight}</div>
-            <div className="text-xs text-gray-300">Objetivo</div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Adherence Card Component
-  const AdherenceCard = ({ data, label }) => {
-    const getScoreColor = (score) => {
-      if (score >= 8) return 'text-blue-400';
-      if (score >= 6) return 'text-amber-400';
-      return 'text-red-400';
-    };
-
-    return (
-      <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-        <div className="flex justify-between items-center mb-2">
-          <h4 className="text-xs font-bold text-gray-400">{label}</h4>
-          <span className={`text-lg font-bold ${getScoreColor(data.score)}`}>{data.score}/10</span>
-        </div>
-        <div className="grid grid-cols-3 gap-2 text-center text-xs">
-          <div>
-            <div className="text-blue-400 font-bold">{data.calOkDays}/{data.daysTracked}</div>
-            <div className="text-gray-500">Cal OK</div>
-          </div>
-          <div>
-            <div className="text-blue-400 font-bold">{data.protOkDays}/{data.daysTracked}</div>
-            <div className="text-gray-500">Prot OK</div>
-          </div>
-          <div>
-            <div className="text-cyan-400 font-bold">{data.stepsOkDays}/{data.daysTracked}</div>
-            <div className="text-gray-500">Pasos OK</div>
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   // Get data for date
   const getFoodsForDate = (date) => foodLog.filter(entry => entry.date === date);
@@ -1142,34 +953,9 @@ const NutritionTracker = () => {
     return data;
   };
 
-  // Simple bar chart
-  const SimpleBarChart = ({ data, dataKey, target, color, label }) => {
-    const maxVal = Math.max(...data.map(d => d[dataKey]), target) * 1.1 || target * 1.1;
-    return (
-      <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">{label}</span>
-          <span className="text-xs font-bold text-slate-400">Meta: {target}</span>
-        </div>
-        <div className="flex items-end justify-between h-20 gap-1">
-          {data.map((d, i) => (
-            <div key={i} className="flex flex-col items-center flex-1 min-w-0">
-              <div className="w-full bg-slate-50 rounded-t-lg relative group" style={{ height: '56px' }}>
-                <div className={`absolute bottom-0 w-full rounded-t-lg transition-all duration-500 ${color} ${d[dataKey] > target ? 'opacity-80' : ''}`} style={{ height: `${Math.min((d[dataKey] / maxVal) * 100, 100)}%` }}>
-                  <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] py-1 px-2 rounded-lg pointer-events-none transition-opacity font-bold z-10 whitespace-nowrap">
-                    {d[dataKey].toLocaleString()}
-                  </div>
-                </div>
-                <div className="absolute w-full border-t border-dashed border-slate-200" style={{ bottom: `${(target / maxVal) * 100}%` }} />
-                {d.completed && <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 text-[10px] bg-white rounded-full shadow-sm w-4 h-4 flex items-center justify-center">✓</div>}
-              </div>
-              <span className="text-[10px] font-bold text-slate-400 mt-1.5 uppercase">{d.day}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
+
+  // SimpleBarChart imported from ./components/Charts/
+
 
   const weeklyData = getWeeklyData();
   const workoutAnalysis = getWeeklyWorkoutAnalysis();
