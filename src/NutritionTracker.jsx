@@ -22,6 +22,7 @@ import { OnboardingWizard } from './components/OnboardingWizard';
 import { PullToRefresh } from './components/PullToRefresh';
 import { SwipeableItem } from './components/SwipeableItem';
 import { ConfigTab } from './components/Tabs/ConfigTab';
+import { DashboardTab } from './components/Tabs/DashboardTab';
 import { OuraTab } from './components/Tabs/OuraTab';
 import { StepsTab } from './components/Tabs/StepsTab';
 import { WeightTab } from './components/Tabs/WeightTab';
@@ -746,19 +747,7 @@ const NutritionTracker = () => {
   // Navigation helpers - use Argentina timezone
   const changeDate = (dateStr, delta) => addDaysToDate(dateStr, delta);
 
-  const formatDateDisplay = (dateStr) => {
-    const today = getArgentinaDateString();
-    const yesterday = changeDate(today, -1);
-    if (dateStr === today) return 'Hoy';
-    if (dateStr === yesterday) return 'Ayer';
-    const date = new Date(dateStr + 'T12:00:00');
-    return new Intl.DateTimeFormat('es-AR', {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-      timeZone: ARGENTINA_TZ
-    }).format(date);
-  };
+
 
 
   // UI components imported from ./components/UI/
@@ -1477,115 +1466,28 @@ const NutritionTracker = () => {
       <PullToRefresh onRefresh={handleRefresh} isRefreshing={isRefreshing}>
         <main className="p-4 lg:p-6 xl:p-8 pb-32 md:pb-36 w-full max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto">
         {/* Dashboard Tab */}
+        {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
-            <div className="space-y-6">
-              {/* Date Navigator - Clean Desktop Design */}
-              <div className="flex items-center lg:items-start lg:w-full lg:mb-8 justify-center lg:justify-between px-1">
-                <div className="hidden lg:block">
-                  <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-                  <p className="text-sm text-gray-500">Resumen diario</p>
-                </div>
-
-                <div className="flex items-center gap-4 bg-white p-1 rounded-2xl shadow-sm border border-gray-100">
-                  <button
-                      onClick={() => setDashboardDate(changeDate(dashboardDate, -1))}
-                      className="w-10 h-10 rounded-xl hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors flex items-center justify-center"
-                  >
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
-                  </button>
-                  <div className="text-center min-w-[120px]">
-                    <span className="block text-sm font-bold text-gray-900">{formatDateDisplay(dashboardDate)}</span>
-                  </div>
-                  <button
-                      onClick={() => setDashboardDate(changeDate(dashboardDate, 1))}
-                      disabled={dashboardDate >= getArgentinaDateString()}
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${dashboardDate >= getArgentinaDateString() ? 'text-gray-200 cursor-not-allowed' : 'hover:bg-gray-50 text-gray-400 hover:text-blue-500'}`}
-                  >
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                  </button>
-                </div>
-              </div>
-
-              {/* Dashboard Content - Flex Desktop Layout */}
-              <div className="flex flex-col lg:flex-row gap-6 items-start">
-
-                {/* Left Column - Main Tracking (67%) */}
-                <div className="w-full lg:w-8/12 space-y-4 lg:space-y-6">
-                 {/* Summary Card */}
-                <SummaryCard totals={dashboardTotals} targets={dashboardTargets} />
-
-                {/* Macro Cards */}
-                <MacroCards totals={dashboardTotals} targets={dashboardTargets} />
-
-                  <ActivityCards
-                    steps={getStepsForDate(dashboardDate)}
-                    stepsTarget={10000}
-                    water={getTodayWater().glasses}
-                    waterTarget={WATER_GOAL_GLASSES}
-                    onAddWater={addWaterGlass}
-                  />
-
-                  {/* Training Widget */}
-                  <TrainingWidget
-                    gymCount={workoutAnalysis.gymCount}
-                    tennisCount={workoutAnalysis.tennisCount}
-                    totalDuration={workoutAnalysis.totalDuration}
-                    analysis={workoutAnalysis.analysis}
-                  />
-                </div>
-
-              {/* Right Column - Analytics & Weight (33%) */}
-              <div className="lg:w-4/12 space-y-4 lg:space-y-6">
-                {/* Weight Chart */}
-                <WeightChartCard
-                  data={weightHistory}
-                  currentWeight={getMostRecentWeight(weightHistory)?.weight || profile.currentWeight}
-                  targetWeight={profile.targetWeight}
-                />
-
-                {/* Weight Projection */}
-                {weightProjection && (
-                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50">
-                    <h3 className="text-gray-900 font-bold text-lg mb-4">Proyección</h3>
-                    <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div className="text-center p-3 bg-gray-50 rounded-xl">
-                        <div className="text-xl font-bold text-gray-900">{weightProjection.weeklyRate > 0 ? '-' : '+'}{Math.abs(weightProjection.weeklyRate)} <span className="text-xs font-normal text-gray-500">kg/sem</span></div>
-                        <div className="text-xs text-gray-400 mt-1">Ritmo actual</div>
-                      </div>
-                      <div className="text-center p-3 bg-gray-50 rounded-xl">
-                        <div className="text-xl font-bold text-blue-600">
-                          {weightProjection.weeksToGoal ? `~${weightProjection.weeksToGoal}` : '-'} <span className="text-xs font-normal text-gray-500">sem</span>
-                        </div>
-                        <div className="text-xs text-gray-400 mt-1">Para objetivo</div>
-                      </div>
-                    </div>
-                    {weightProjection.goalDate && (
-                      <div className="mb-4 text-center">
-                         <span className="text-xs text-gray-400">Fecha estimada: </span>
-                         <span className="text-sm font-semibold text-gray-900">{weightProjection.goalDate}</span>
-                      </div>
-                    )}
-                    {weightProjection.recommendation && (
-                      <div className={`p-3 rounded-xl text-xs leading-relaxed ${weightProjection.recommendation.type === 'good' ? 'bg-blue-50 text-blue-700' :
-                        weightProjection.recommendation.type === 'decrease' ? 'bg-amber-50 text-amber-700' :
-                          'bg-red-50 text-red-700'
-                        }`}>
-                        💡 {weightProjection.recommendation.text}
-                      </div>
-                )}
-                    <p className="text-[10px] text-gray-400 mt-3 text-center">Basado en {weightProjection.dataPoints} registros ({weightProjection.daysCovered} días)</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+          <DashboardTab
+            dashboardDate={dashboardDate}
+            setDashboardDate={setDashboardDate}
+            changeDate={changeDate}
+            dashboardTotals={dashboardTotals}
+            dashboardTargets={dashboardTargets}
+            getStepsForDate={getStepsForDate}
+            getTodayWater={getTodayWater}
+            addWaterGlass={addWaterGlass}
+            WATER_GOAL_GLASSES={WATER_GOAL_GLASSES}
+            workoutAnalysis={workoutAnalysis}
+            weightHistory={weightHistory}
+            getMostRecentWeight={getMostRecentWeight}
+            profile={profile}
+            weightProjection={weightProjection}
+          />
         )}
 
         {/* Comidas Tab - uses selectedFoodDate */}
+
         {activeTab === 'comidas' && (
           <div className="max-w-4xl mx-auto space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
