@@ -2301,16 +2301,19 @@ const NutritionTracker = () => {
   const weeklyData = getWeeklyData();
   const workoutAnalysis = getWeeklyWorkoutAnalysis();
 
-  // Safety timeout: never stay in loading state for more than 5 seconds
+  // Safety timeout: never stay in loading state for more than 6 seconds
+  // This runs only once on mount, as a last resort fallback
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (showAuth === null || supabase.loading) {
-        console.warn('[App] Loading timed out, defaulting to auth screen');
+      // Only force auth screen if still stuck in initial loading state
+      if (showAuth === null) {
+        console.warn('[App] Loading timed out (6s), defaulting to auth screen');
         setShowAuth(true);
       }
-    }, 5000);
+    }, 6000); // Slightly longer than useSupabase timeout to avoid race
     return () => clearTimeout(timeout);
-  }, [showAuth, supabase.loading]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run only once on mount
 
   // Show loading while checking auth status (max 5 seconds)
   if (showAuth === null && supabase.loading) {
@@ -3699,7 +3702,7 @@ const NutritionTracker = () => {
       />
 
       {/* Floating Action Button - hide when any modal is open */}
-      {showFab && ['dashboard', 'comidas', 'entrenos'].includes(activeTab) && 
+      {showFab && ['dashboard', 'comidas', 'entrenos'].includes(activeTab) &&
        !showFoodForm && !showWorkoutForm && !showImportFoodModal && !showImportWorkoutModal && !showTemplatesModal && (
         <FloatingActionButton
           onAddFood={() => { setNewFood({ ...newFood, date: dashboardDate }); setShowFoodForm(true); }}

@@ -57,33 +57,43 @@ export function useSupabase() {
     }
 
     let mounted = true;
-    let timeoutId;
+    let timeoutId = null;
+    let authResolved = false; // Track if we already resolved auth
+
+    const resolveAuth = (source) => {
+      if (authResolved) return;
+      authResolved = true;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+      console.log(`[Auth] Auth resolved via: ${source}`);
+      setLoading(false);
+    };
 
     // Timeout safety: never hang more than 5 seconds
     timeoutId = setTimeout(() => {
-      if (mounted && loading) {
+      if (mounted && !authResolved) {
         console.warn('[Auth] Session check timed out, proceeding without auth');
-        setLoading(false);
+        resolveAuth('timeout');
       }
     }, 5000);
 
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (mounted) {
-        clearTimeout(timeoutId);
         console.log('[Auth] Session check complete, user:', session?.user?.email);
         setUser(session?.user ?? null);
-        setLoading(false);
+        resolveAuth('getSession');
       }
     }).catch((err) => {
       if (mounted) {
-        clearTimeout(timeoutId);
         console.error('[Auth] Session check failed:', err);
-        setLoading(false);
+        resolveAuth('getSession-error');
       }
     });
 
-    // Listen for auth changes
+    // Listen for auth changes - this can fire BEFORE getSession completes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         if (!mounted) return;
@@ -91,6 +101,11 @@ export function useSupabase() {
         const newUser = session?.user ?? null;
         console.log('[Auth] Auth state changed:', _event, newUser?.email);
         setUser(newUser);
+        
+        // If we get a valid auth event, resolve loading immediately
+        if (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED' || _event === 'INITIAL_SESSION') {
+          resolveAuth(`onAuthStateChange-${_event}`);
+        }
 
         // If user just logged in, ensure profile exists
         if (newUser && (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED')) {
@@ -101,7 +116,7 @@ export function useSupabase() {
 
     return () => {
       mounted = false;
-      clearTimeout(timeoutId);
+      if (timeoutId) clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
   }, []);
