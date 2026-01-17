@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { getArgentinaDateString } from '../utils/dateUtils';
 import { storage } from '../utils/storage';
+import { addPendingWrite } from '../utils/storageUtils';
 
 export const useNutrition = (supabase, useCloud, customTargets, isTrainingDay) => {
   const [foodLog, setFoodLog] = useState([]);
@@ -79,8 +80,32 @@ export const useNutrition = (supabase, useCloud, customTargets, isTrainingDay) =
     if (useCloud) {
       try {
         const result = await supabase.saveFood(entry);
+
+        if (result?.error) {
+          console.error('[Nutrition] saveFoodEntry failed:', {
+            function: 'saveFoodEntry',
+            date: entry.date,
+            name: entry.name,
+            error: result.error.message
+          });
+          throw new Error(result.error.message);
+        }
+
+        console.log('[Nutrition] saveFoodEntry successful:', entry.date, entry.name);
         return result.data;
       } catch (err) {
+        console.error('[Nutrition] saveFoodEntry FAILED:', {
+          function: 'saveFoodEntry',
+          date: entry.date,
+          name: entry.name,
+          error: err.message,
+          stack: err.stack
+        });
+
+        // Add to The Vault for offline resilience
+        await addPendingWrite('food_log', entry, supabase?.user?.id);
+
+        // Return original entry for optimistic UI
         return entry;
       }
     }
@@ -103,9 +128,32 @@ export const useNutrition = (supabase, useCloud, customTargets, isTrainingDay) =
   const saveWaterEntry = async (entry) => {
     if (useCloud) {
       try {
-        await supabase.saveWater(entry);
+        const result = await supabase.saveWater(entry);
+
+        if (result?.error) {
+          console.error('[Nutrition] saveWaterEntry failed:', {
+            function: 'saveWaterEntry',
+            date: entry.date,
+            glasses: entry.glasses,
+            error: result.error.message
+          });
+          throw new Error(result.error.message);
+        }
+
+        console.log('[Nutrition] saveWaterEntry successful:', entry.date, entry.glasses);
       } catch (err) {
-        console.error('Error guardando agua', err);
+        console.error('[Nutrition] saveWaterEntry FAILED:', {
+          function: 'saveWaterEntry',
+          date: entry.date,
+          glasses: entry.glasses,
+          error: err.message,
+          stack: err.stack
+        });
+
+        // Add to The Vault for offline resilience
+        await addPendingWrite('water_log', entry, supabase?.user?.id);
+
+        // Don't throw - allow optimistic UI to continue
       }
     }
   };

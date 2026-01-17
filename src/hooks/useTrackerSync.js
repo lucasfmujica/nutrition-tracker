@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { cacheData, clearCache, loadCachedData } from '../utils/storageUtils';
+import { cacheData, clearCache, loadCachedData, getPendingWrites, removePendingWrite, incrementRetryCount, removePendingWritesBatch, incrementRetryCountsBatch, clearPendingWrites } from '../utils/storageUtils';
 import { useSyncResolver } from './supabase/useSyncResolver';
 
 export const useTrackerSync = ({
   supabase, // Dependency injected
+  useCloud, // ← CRITICAL FIX: Receive unified useCloud from parent
+  offlineMode,
+  setOfflineMode,
   setProfile,
   setCustomTargets,
   setWeightHistory,
@@ -22,7 +25,6 @@ export const useTrackerSync = ({
 }) => {
   const [showAuth, setShowAuth] = useState(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [offlineMode, setOfflineMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -32,9 +34,9 @@ export const useTrackerSync = ({
   const [migrationData, setMigrationData] = useState(null);
 
   const hasInitialized = useRef(false);
+  const isProcessingQueue = useRef(false); // CRITICAL: Prevent concurrent queue processing
 
-  // Check if using Supabase (authenticated) or localStorage (offline)
-  const useCloud = supabase.isAuthenticated && !offlineMode && supabase.isOnline; // supabase.isOnline from useSupabase hook
+  // NOTE: useCloud is now passed from TrackerContext (single source of truth)
 
   const { isMigrating, handleMigration: resolveMigration, forceSyncToCloud: resolveForceSync } = useSyncResolver(
     supabase,
@@ -45,14 +47,15 @@ export const useTrackerSync = ({
   const handleMigration = async () => {
     const success = await resolveMigration(migrationData, {
       onSuccess: (data) => {
+        // Supabase is source of truth - always sync
         if (data.profile) setProfile(data.profile);
         if (data.targets) setCustomTargets(data.targets);
-        if (data.weightHistory?.length) setWeightHistory(data.weightHistory);
-        if (data.foodLog?.length) setFoodLog(data.foodLog);
-        if (data.workouts?.length) setWorkoutLog(data.workouts);
-        if (data.stepsLog?.length) setStepsLog(data.stepsLog);
-        if (data.ouraLog?.length) setOuraLog(data.ouraLog);
-        if (data.waterLog?.length) setWaterLog(data.waterLog);
+        if (data.weightHistory !== undefined) setWeightHistory(data.weightHistory);
+        if (data.foodLog !== undefined) setFoodLog(data.foodLog);
+        if (data.workouts !== undefined) setWorkoutLog(data.workouts);
+        if (data.stepsLog !== undefined) setStepsLog(data.stepsLog);
+        if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);
+        if (data.waterLog !== undefined) setWaterLog(data.waterLog);
         setShowMigrationModal(false);
         setMigrationData(null);
       }
@@ -60,6 +63,132 @@ export const useTrackerSync = ({
   };
 
   const forceSyncToCloud = () => resolveForceSync(setSaveStatus);
+
+  /**
+   * Process a single pending write item
+   * Helper function for batch processing
+   * CRITICAL: Validates userId to prevent cross-user data corruption
+   * @param {object} item - Pending write item
+   * @returns {Promise<{success: boolean, id: string, error?: string}>}
+   */
+  const processSingleWrite = async (item) => {
+    try {
+      // CRITICAL: Verify userId matches current user (prevent cross-user corruption)
+      const currentUserId = supabase?.user?.id;
+      if (item.userId !== currentUserId) {
+        console.warn(`[Vault] SECURITY: Skipping item from different user. Queue userId: ${item.userId}, Current: ${currentUserId}`);
+        return { success: true, id: item.id }; // Remove from queue without processing
+      }
+
+      let result;
+      switch (item.table) {
+        case 'oura_log':
+          result = await supabase.saveOura(item.data);
+          break;
+        case 'steps_log':
+          result = await supabase.saveSteps(item.data);
+          break;
+        case 'weight_history':
+          result = await supabase.saveWeight(item.data);
+          break;
+        case 'food_log':
+          result = await supabase.saveFood(item.data);
+          break;
+        case 'water_log':
+          result = await supabase.saveWater(item.data);
+          break;
+        case 'workouts':
+          result = await supabase.saveWorkout(item.data);
+          break;
+        default:
+          console.warn(`[Vault] Unknown table: ${item.table}`);
+          return { success: true, id: item.id }; // Remove unknown entries
+      }
+
+      if (result?.error) {
+        throw new Error(result.error.message);
+      }
+
+      console.log(`[Vault] ✓ Synced ${item.table} for date ${item.data.date}`);
+      return { success: true, id: item.id };
+    } catch (err) {
+      console.error(`[Vault] ✗ Failed to sync ${item.table} for date ${item.data.date}:`, err.message);
+      return { success: false, id: item.id, error: err.message };
+    }
+  };
+
+  /**
+   * Process pending writes from The Vault (offline resilience queue)
+   * CRITICAL: Uses batch processing with requestIdleCallback to prevent UI blocking
+   * @returns {Promise<{success: boolean, synced: number, failed: number}>}
+   */
+  const processPendingQueue = async () => {
+    if (!useCloud) {
+      console.log('[Vault] Cannot process queue - not connected to cloud');
+      return { success: false, synced: 0, failed: 0 };
+    }
+
+    const queue = await getPendingWrites();
+    if (queue.length === 0) {
+      console.log('[Vault] Queue is empty, nothing to process');
+      return { success: true, synced: 0, failed: 0 };
+    }
+
+    console.log(`[Vault] Processing ${queue.length} pending writes in batches...`);
+
+    const BATCH_SIZE = 3; // Process 3 items at a time to prevent UI blocking
+    let synced = 0;
+    let failed = 0;
+
+    // Process in batches for UI performance
+    for (let i = 0; i < queue.length; i += BATCH_SIZE) {
+      const batch = queue.slice(i, i + BATCH_SIZE);
+
+      // Wait for idle time before processing batch (prevents UI blocking)
+      await new Promise(resolve => {
+        if (typeof requestIdleCallback !== 'undefined') {
+          requestIdleCallback(() => resolve(), { timeout: 2000 });
+        } else {
+          setTimeout(resolve, 0); // Fallback for older browsers
+        }
+      });
+
+      // Process batch in parallel
+      const results = await Promise.allSettled(
+        batch.map(item => processSingleWrite(item))
+      );
+
+      // Accumulate IDs for batch localStorage updates
+      const successIds = [];
+      const failedIds = [];
+
+      results.forEach((result, idx) => {
+        if (result.status === 'fulfilled' && result.value.success) {
+          successIds.push(batch[idx].id);
+          synced++;
+        } else {
+          failedIds.push(batch[idx].id);
+          failed++;
+        }
+      });
+
+      // CRITICAL: Batch update localStorage to prevent multiple blocking setItem() calls
+      if (successIds.length > 0) {
+        await removePendingWritesBatch(successIds);
+      }
+      if (failedIds.length > 0) {
+        await incrementRetryCountsBatch(failedIds);
+      }
+
+      // Yield to browser between batches
+      await new Promise(resolve => setTimeout(resolve, 10));
+    }
+
+    const message = `[Vault] Queue processed: ${synced} synced, ${failed} failed`;
+    console.log(message);
+
+    return { success: true, synced, failed };
+  };
 
   // Handle auth state changes
   useEffect(() => {
@@ -137,14 +266,18 @@ export const useTrackerSync = ({
           }
 
           if (data) {
+            // CRITICAL FIX: Supabase is the single source of truth
+            // Always overwrite local state, even if cloud returns empty arrays
             if (data.profile) setProfile(data.profile);
             if (data.targets) setCustomTargets(data.targets);
-            if (data.weightHistory?.length > 0) setWeightHistory(data.weightHistory);
-            if (data.foodLog?.length > 0) setFoodLog(data.foodLog);
-            if (data.workouts?.length > 0) setWorkoutLog(data.workouts);
-            if (data.stepsLog?.length > 0) setStepsLog(data.stepsLog);
-            if (data.ouraLog?.length > 0) setOuraLog(data.ouraLog);
-            if (data.waterLog?.length > 0) setWaterLog(data.waterLog);
+
+            // Arrays: Always sync from cloud (even if empty)
+            if (data.weightHistory !== undefined) setWeightHistory(data.weightHistory);
+            if (data.foodLog !== undefined) setFoodLog(data.foodLog);
+            if (data.workouts !== undefined) setWorkoutLog(data.workouts);
+            if (data.stepsLog !== undefined) setStepsLog(data.stepsLog);
+            if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);  // ← FIX: Allows empty sync
+            if (data.waterLog !== undefined) setWaterLog(data.waterLog);
 
             await cacheData(data);
 
@@ -167,6 +300,49 @@ export const useTrackerSync = ({
     loadData();
   }, [supabase.loading, showAuth, offlineMode, supabase.isAuthenticated, supabase.isOnline]);
 
+  // Auto-trigger pending queue processing when coming back online
+  // CRITICAL: Uses debouncing and lock to prevent concurrent processing
+  useEffect(() => {
+    if (!supabase.isAuthenticated || !supabase.isOnline || offlineMode) return;
+
+    // Check if already processing
+    if (isProcessingQueue.current) {
+      console.log('[Vault] Queue processing already in progress, skipping');
+      return;
+    }
+
+    // Debounce: wait 5s for stable connection (prevents network flapping)
+    const timeoutId = setTimeout(async () => {
+      isProcessingQueue.current = true;
+      try {
+        console.log('[Vault] Network stable, checking pending queue...');
+        const result = await processPendingQueue();
+
+        if (result.synced > 0) {
+          // Delay refresh to allow UI to recover from queue processing
+          setTimeout(async () => {
+            console.log('[Vault] Queue processed successfully, refreshing data in background...');
+            const data = await supabase.fetchAllData();
+            if (data) {
+              if (data.profile) setProfile(data.profile);
+              if (data.targets) setCustomTargets(data.targets);
+              if (data.weightHistory !== undefined) setWeightHistory(data.weightHistory);
+              if (data.foodLog !== undefined) setFoodLog(data.foodLog);
+              if (data.workouts !== undefined) setWorkoutLog(data.workouts);
+              if (data.stepsLog !== undefined) setStepsLog(data.stepsLog);
+              if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);
+              if (data.waterLog !== undefined) setWaterLog(data.waterLog);
+              await cacheData(data);
+            }
+          }, 1000); // 1s delay allows UI to breathe
+        }
+      } finally {
+        isProcessingQueue.current = false;
+      }
+    }, 5000); // Increased from 2s to 5s for connection stability
+
+    return () => clearTimeout(timeoutId);
+  }, [supabase.isOnline, supabase.isAuthenticated, offlineMode]);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -174,21 +350,22 @@ export const useTrackerSync = ({
       if (useCloud) {
         const data = await supabase.fetchAllData();
         if (data) {
+          // Supabase is source of truth - always sync (even empty arrays)
           if (data.profile) setProfile(data.profile);
           if (data.targets) setCustomTargets(data.targets);
-          if (data.weightHistory?.length) setWeightHistory(data.weightHistory);
-          if (data.foodLog?.length) setFoodLog(data.foodLog);
-          if (data.workouts?.length) setWorkoutLog(data.workouts);
-          if (data.stepsLog?.length) setStepsLog(data.stepsLog);
-          if (data.ouraLog?.length) setOuraLog(data.ouraLog);
-          if (data.waterLog?.length) setWaterLog(data.waterLog);
+          if (data.weightHistory !== undefined) setWeightHistory(data.weightHistory);
+          if (data.foodLog !== undefined) setFoodLog(data.foodLog);
+          if (data.workouts !== undefined) setWorkoutLog(data.workouts);
+          if (data.stepsLog !== undefined) setStepsLog(data.stepsLog);
+          if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);
+          if (data.waterLog !== undefined) setWaterLog(data.waterLog);
           setSaveStatus('✓ Actualizado');
         } else {
           setSaveStatus('Error al actualizar');
         }
       }
     } catch (err) {
-      console.error('Refresh error:', err);
+      console.error('[TrackerSync] Refresh error:', err);
       setSaveStatus('Error al actualizar');
     } finally {
       setIsRefreshing(false);
@@ -204,6 +381,7 @@ export const useTrackerSync = ({
       setIsLoading(false);
 
       await clearCache();
+      await clearPendingWrites(); // CRITICAL: Prevent cross-user data corruption
 
       // Reset state (setters)
       setProfile({ height: 173, currentWeight: 84.9, targetWeight: 75, age: 27, activityLevel: 'moderate', goal: 'cut' });
@@ -226,15 +404,16 @@ export const useTrackerSync = ({
   return {
     showAuth, setShowAuth,
     showOnboarding, setShowOnboarding,
-    offlineMode, setOfflineMode,
+    offlineMode, setOfflineMode, // Passed through from TrackerContext
     isLoading, setIsLoading,
     saveStatus, setSaveStatus,
     isRefreshing, handleRefresh,
     showMigrationModal, setShowMigrationModal,
     migrationData, setMigrationData,
     isMigrating, handleMigration,
-    useCloud,
+    // useCloud removed - now managed in TrackerContext as single source of truth
     forceSyncToCloud,
+    processPendingQueue, // The Vault auto-recovery worker
     handleLogout
   };
 };

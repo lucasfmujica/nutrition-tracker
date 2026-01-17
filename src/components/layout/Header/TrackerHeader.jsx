@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTracker } from '../../../context/TrackerContext';
+import { SyncStatusIndicator } from '../SyncStatusIndicator';
 
 export const TrackerHeader = () => {
   const {
@@ -46,30 +47,17 @@ export const TrackerHeader = () => {
           </div>
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
-          {saveStatus && (
-            <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full animate-pulse border border-blue-100">{saveStatus}</span>
-          )}
-
           {supabase.isAuthenticated ? (
             <div className="flex items-center gap-2">
-              {!supabase.isOnline && (
+              {/* New SyncStatusIndicator replaces old saveStatus + sync icon */}
+              {supabase.isOnline ? (
+                <SyncStatusIndicator
+                  syncStatus={supabase.syncStatus}
+                  syncError={supabase.syncError}
+                  lastSyncTime={supabase.lastSyncTime}
+                />
+              ) : (
                 <span className="text-xs font-bold bg-amber-50 text-amber-600 px-3 py-1.5 rounded-full border border-amber-100">📴 Offline</span>
-              )}
-
-              {supabase.isOnline && (
-                <span className={`w-10 h-10 lg:w-11 lg:h-11 rounded-2xl flex items-center justify-center text-xl shadow-sm border transition-all ${
-                  supabase.syncStatus === 'syncing' ? 'bg-blue-50 text-blue-600 border-blue-100' :
-                  supabase.syncStatus === 'success' ? 'bg-green-50 text-green-600 border-green-100' :
-                  supabase.syncStatus === 'error' ? 'bg-red-50 text-red-600 border-red-100' :
-                  'bg-slate-50 text-slate-400 border-slate-100'
-                }`}>
-                  {supabase.syncStatus === 'syncing' ? (
-                    <svg className="animate-spin h-6 w-6" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                  ) : supabase.syncStatus === 'success' ? '✓' : supabase.syncStatus === 'error' ? '⚠' : '☁️'}
-                </span>
               )}
 
               <button
