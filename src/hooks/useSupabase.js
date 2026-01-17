@@ -80,15 +80,25 @@ export function useSupabase() {
     }, 5000);
 
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (mounted) {
-        console.log('[Auth] Session check complete, user:', session?.user?.email);
-        setUser(session?.user ?? null);
+        if (error) {
+          console.error('[Auth] Session retrieval error:', error);
+          // Clear potentially corrupted session
+          supabase.auth.signOut({ scope: 'local' });
+          setUser(null);
+        } else {
+          console.log('[Auth] Session check complete, user:', session?.user?.email);
+          setUser(session?.user ?? null);
+        }
         resolveAuth('getSession');
       }
     }).catch((err) => {
       if (mounted) {
         console.error('[Auth] Session check failed:', err);
+        // Clear potentially corrupted session
+        supabase.auth.signOut({ scope: 'local' });
+        setUser(null);
         resolveAuth('getSession-error');
       }
     });
@@ -103,7 +113,7 @@ export function useSupabase() {
         setUser(newUser);
 
         // If we get a valid auth event, resolve loading immediately
-        if (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED' || _event === 'INITIAL_SESSION') {
+        if (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED' || _event === 'INITIAL_SESSION' || _event === 'SIGNED_OUT') {
           resolveAuth(`onAuthStateChange-${_event}`);
         }
 
