@@ -2371,20 +2371,37 @@ const NutritionTracker = () => {
   const weeklyData = getWeeklyData();
   const workoutAnalysis = getWeeklyWorkoutAnalysis();
 
-  // Safety timeout: never stay in loading state for more than 6 seconds
+  // Safety timeout: never stay in loading state for more than 8 seconds
   // This runs only once on mount, as a last resort fallback
+  // Uses refs to access current values instead of captured closure values
+  const showAuthRef = useRef(showAuth);
+  const isAuthenticatedRef = useRef(supabase.isAuthenticated);
+
+  useEffect(() => {
+    showAuthRef.current = showAuth;
+    isAuthenticatedRef.current = supabase.isAuthenticated;
+  }, [showAuth, supabase.isAuthenticated]);
+
   useEffect(() => {
     const timeout = setTimeout(() => {
-      // Only force auth screen if still stuck in initial loading state AND not authenticated
-      // If user IS authenticated but data is loading, let it continue (don't show auth screen)
-      if (showAuth === null && !supabase.isAuthenticated) {
-        console.warn('[App] Loading timed out (6s), defaulting to auth screen');
-        setShowAuth(true);
-      } else if (showAuth === null && supabase.isAuthenticated) {
-        console.log('[App] Loading timed out but user is authenticated, hiding auth screen');
-        setShowAuth(false);
+      const currentShowAuth = showAuthRef.current;
+      const currentIsAuthenticated = isAuthenticatedRef.current;
+
+      // Only intervene if STILL stuck in initial loading (showAuth === null)
+      if (currentShowAuth === null) {
+        if (currentIsAuthenticated) {
+          // User is authenticated but UI stuck in loading - hide auth screen
+          console.log('[App] Safety timeout: User authenticated, hiding auth screen');
+          setShowAuth(false);
+        } else {
+          // Not authenticated and stuck - show auth screen
+          console.warn('[App] Safety timeout: Not authenticated, showing auth screen');
+          setShowAuth(true);
+        }
       }
-    }, 6000); // Slightly longer than useSupabase timeout to avoid race
+      // If showAuth is already true or false, auth flow has resolved - do nothing
+    }, 8000); // 8 seconds: longer than useSupabase (5s) + fetchAllData timeout (10s) buffer
+
     return () => clearTimeout(timeout);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run only once on mount
