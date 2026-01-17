@@ -84,8 +84,7 @@ export function useSupabase() {
       if (mounted) {
         if (error) {
           console.error('[Auth] Session retrieval error:', error);
-          // Clear potentially corrupted session
-          supabase.auth.signOut({ scope: 'local' });
+          // Do not sign out here - let the session persist if possible, or fail gracefully
           setUser(null);
         } else {
           console.log('[Auth] Session check complete, user:', session?.user?.email);
@@ -96,8 +95,7 @@ export function useSupabase() {
     }).catch((err) => {
       if (mounted) {
         console.error('[Auth] Session check failed:', err);
-        // Clear potentially corrupted session
-        supabase.auth.signOut({ scope: 'local' });
+        // Do not sign out here either
         setUser(null);
         resolveAuth('getSession-error');
       }
@@ -120,12 +118,6 @@ export function useSupabase() {
         // If user just logged in, ensure profile exists
         if (newUser && (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED')) {
           await ensureProfileExists(newUser.id);
-        }
-
-        // Auto-recover from token errors
-        if (_event === 'SIGNED_OUT' && localStorage.getItem('lukenfit-auth')) {
-          console.warn('[Auth] Detected unexpected SIGNED_OUT with stored token. Clearing garbage.');
-          localStorage.removeItem('lukenfit-auth');
         }
       }
     );
