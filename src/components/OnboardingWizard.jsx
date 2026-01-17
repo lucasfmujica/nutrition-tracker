@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 /**
  * Onboarding Wizard for new users
@@ -175,9 +175,8 @@ export function OnboardingWizard({ onComplete, userEmail }) {
           {[1, 2, 3].map(s => (
             <div
               key={s}
-              className={`flex-1 h-2 rounded-full transition-all ${
-                s <= step ? 'bg-gradient-to-r from-blue-500 to-cyan-500' : 'bg-gray-700'
-              }`}
+              className={`flex-1 h-2 rounded-full transition-all ${s <= step ? 'bg-gradient-to-r from-blue-500 to-cyan-500' : 'bg-gray-700'
+                }`}
             />
           ))}
         </div>
@@ -245,21 +244,19 @@ export function OnboardingWizard({ onComplete, userEmail }) {
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => updateField('gender', 'male')}
-                    className={`py-3 rounded-xl font-medium transition-all ${
-                      formData.gender === 'male'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-700/50 text-gray-400 hover:bg-gray-600/50'
-                    }`}
+                    className={`py-3 rounded-xl font-medium transition-all ${formData.gender === 'male'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-700/50 text-gray-400 hover:bg-gray-600/50'
+                      }`}
                   >
                     👨 Masculino
                   </button>
                   <button
                     onClick={() => updateField('gender', 'female')}
-                    className={`py-3 rounded-xl font-medium transition-all ${
-                      formData.gender === 'female'
-                        ? 'bg-pink-600 text-white'
-                        : 'bg-gray-700/50 text-gray-400 hover:bg-gray-600/50'
-                    }`}
+                    className={`py-3 rounded-xl font-medium transition-all ${formData.gender === 'female'
+                      ? 'bg-pink-600 text-white'
+                      : 'bg-gray-700/50 text-gray-400 hover:bg-gray-600/50'
+                      }`}
                   >
                     👩 Femenino
                   </button>
@@ -288,13 +285,12 @@ export function OnboardingWizard({ onComplete, userEmail }) {
                     <button
                       key={opt.value}
                       onClick={() => updateField('primaryGoal', opt.value)}
-                      className={`py-2.5 rounded-xl text-sm font-medium transition-all ${
-                        formData.primaryGoal === opt.value
-                          ? opt.color === 'green' ? 'bg-green-600 text-white'
+                      className={`py-2.5 rounded-xl text-sm font-medium transition-all ${formData.primaryGoal === opt.value
+                        ? opt.color === 'green' ? 'bg-green-600 text-white'
                           : opt.color === 'orange' ? 'bg-orange-600 text-white'
-                          : 'bg-blue-600 text-white'
-                          : 'bg-gray-700/50 text-gray-400 hover:bg-gray-600/50'
-                      }`}
+                            : 'bg-blue-600 text-white'
+                        : 'bg-gray-700/50 text-gray-400 hover:bg-gray-600/50'
+                        }`}
                     >
                       {opt.label}
                     </button>
@@ -385,11 +381,10 @@ export function OnboardingWizard({ onComplete, userEmail }) {
                     <button
                       key={day}
                       onClick={() => updateField('trainingDaysPerWeek', day)}
-                      className={`w-10 h-10 rounded-xl font-bold transition-all ${
-                        formData.trainingDaysPerWeek === day
-                          ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white'
-                          : 'bg-gray-700/50 text-gray-400 hover:bg-gray-600/50'
-                      }`}
+                      className={`w-10 h-10 rounded-xl font-bold transition-all ${formData.trainingDaysPerWeek === day
+                        ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white'
+                        : 'bg-gray-700/50 text-gray-400 hover:bg-gray-600/50'
+                        }`}
                     >
                       {day}
                     </button>
@@ -430,11 +425,10 @@ export function OnboardingWizard({ onComplete, userEmail }) {
               <button
                 onClick={handleNext}
                 disabled={!canProceed()}
-                className={`flex-1 py-3 rounded-xl font-bold transition-all ${
-                  canProceed()
-                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white'
-                    : 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                }`}
+                className={`flex-1 py-3 rounded-xl font-bold transition-all ${canProceed()
+                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white'
+                  : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                  }`}
               >
                 Siguiente →
               </button>

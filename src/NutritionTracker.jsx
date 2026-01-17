@@ -749,7 +749,7 @@ const NutritionTracker = () => {
               // This prevents data loss when Supabase is empty
               if (data.profile) setProfile(data.profile);
               if (data.targets) setCustomTargets(data.targets);
-              
+
               // For arrays: only use Supabase if it has data
               // Don't overwrite existing local data with empty arrays
               if (data.weightHistory?.length > 0) {
@@ -3698,8 +3698,9 @@ const NutritionTracker = () => {
         setActiveTab={setActiveTab}
       />
 
-      {/* Floating Action Button */}
-      {showFab && ['dashboard', 'comidas', 'entrenos'].includes(activeTab) && (
+      {/* Floating Action Button - hide when any modal is open */}
+      {showFab && ['dashboard', 'comidas', 'entrenos'].includes(activeTab) && 
+       !showFoodForm && !showWorkoutForm && !showImportFoodModal && !showImportWorkoutModal && !showTemplatesModal && (
         <FloatingActionButton
           onAddFood={() => { setNewFood({ ...newFood, date: dashboardDate }); setShowFoodForm(true); }}
           onAddWorkout={() => { setNewWorkout({ ...newWorkout, date: dashboardDate }); setShowWorkoutForm(true); }}

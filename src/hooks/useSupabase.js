@@ -87,7 +87,7 @@ export function useSupabase() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         if (!mounted) return;
-        
+
         const newUser = session?.user ?? null;
         console.log('[Auth] Auth state changed:', _event, newUser?.email);
         setUser(newUser);
@@ -327,12 +327,14 @@ export function useSupabase() {
       const result = await operation();
       setSyncStatus('success');
       setLastSyncTime(new Date());
-      setTimeout(() => setSyncStatus('idle'), 2000);
+      setTimeout(() => setSyncStatus('idle'), 1500);
       return result;
     } catch (err) {
       console.error(errorMessage, err);
       setSyncStatus('error');
       setSyncError(err.message || errorMessage);
+      // Always reset to idle after error to prevent stuck spinner
+      setTimeout(() => setSyncStatus('idle'), 3000);
       return { data: null, error: err };
     }
   };
@@ -746,11 +748,16 @@ export function useSupabase() {
   // =====================================================
 
   const fetchAllData = useCallback(async () => {
-    if (!canUseSupabase) return null;
+    if (!canUseSupabase) {
+      console.log('[Supabase] fetchAllData: cannot use Supabase');
+      return null;
+    }
 
-    setSyncStatus('syncing');
+    // Only set syncing if not already syncing (prevent multiple spinners)
+    setSyncStatus(prev => prev === 'syncing' ? prev : 'syncing');
 
     try {
+      console.log('[Supabase] fetchAllData: starting...');
       const [profileData, weightHistory, foodLog, workouts, stepsLog, ouraLog, waterLog] = await Promise.all([
         fetchProfile(),
         fetchWeightHistory(),
@@ -761,9 +768,11 @@ export function useSupabase() {
         fetchWaterLog(),
       ]);
 
+      console.log('[Supabase] fetchAllData: completed successfully');
       setSyncStatus('success');
       setLastSyncTime(new Date());
-      setTimeout(() => setSyncStatus('idle'), 2000);
+      // Reset to idle after 1.5 seconds
+      setTimeout(() => setSyncStatus('idle'), 1500);
 
       return {
         profile: profileData?.profile,
@@ -776,9 +785,11 @@ export function useSupabase() {
         waterLog,
       };
     } catch (err) {
-      console.error('Error fetching all data:', err);
+      console.error('[Supabase] fetchAllData error:', err);
       setSyncStatus('error');
       setSyncError(err.message);
+      // Reset to idle after error so it doesn't stay stuck
+      setTimeout(() => setSyncStatus('idle'), 3000);
       return null;
     }
   }, [canUseSupabase, fetchProfile, fetchWeightHistory, fetchFoodLog, fetchWorkouts, fetchStepsLog, fetchOuraLog, fetchWaterLog]);
@@ -877,6 +888,7 @@ export function useSupabase() {
 
       setSyncStatus('success');
       setLastSyncTime(new Date());
+      setTimeout(() => setSyncStatus('idle'), 1500);
 
       if (errors.length > 0) {
         console.warn('Some items failed to migrate:', errors);
@@ -888,6 +900,8 @@ export function useSupabase() {
       console.error('Migration error:', err);
       setSyncStatus('error');
       setSyncError(err.message);
+      // Reset to idle after error
+      setTimeout(() => setSyncStatus('idle'), 3000);
       return { success: false, error: err.message };
     }
   }, [canUseSupabase, user?.id, saveProfile]);

@@ -56,17 +56,25 @@
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', async () => {
                     try {
-                        const registration = await navigator.serviceWorker.register('/sw.js');
+                        const registration = await navigator.serviceWorker.register(
+                            '/sw.js'
+                        );
                         console.log('SW registered:', registration.scope);
 
                         // Listen for SW messages (like SW_UPDATED)
-                        navigator.serviceWorker.addEventListener('message', (event) => {
-                            if (event.data?.type === 'SW_UPDATED') {
-                                console.log('SW updated to:', event.data.version);
-                                // Auto reload without prompt to get latest version
-                                window.location.reload();
+                        navigator.serviceWorker.addEventListener(
+                            'message',
+                            (event) => {
+                                if (event.data?.type === 'SW_UPDATED') {
+                                    console.log(
+                                        'SW updated to:',
+                                        event.data.version
+                                    );
+                                    // Auto reload without prompt to get latest version
+                                    window.location.reload();
+                                }
                             }
-                        });
+                        );
 
                         // Check for updates immediately and every 5 minutes
                         registration.update();
@@ -76,7 +84,10 @@
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
                             newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                if (
+                                    newWorker.state === 'installed' &&
+                                    navigator.serviceWorker.controller
+                                ) {
                                     // New SW is ready, skip waiting
                                     newWorker.postMessage('skipWaiting');
                                 }
