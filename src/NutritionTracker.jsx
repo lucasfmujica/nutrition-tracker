@@ -751,7 +751,15 @@ const NutritionTracker = () => {
         if (supabase.isAuthenticated && supabase.isOnline && !offlineMode) {
           console.log('[Data] Fetching from Supabase...');
           try {
-            const data = await supabase.fetchAllData();
+            // Add timeout protection to prevent hanging indefinitely
+            const fetchWithTimeout = Promise.race([
+              supabase.fetchAllData(),
+              new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Supabase fetch timeout after 10s')), 10000)
+              )
+            ]);
+
+            const data = await fetchWithTimeout;
             console.log('[Data] Supabase data received:', {
               profile: !!data?.profile,
               weight: data?.weightHistory?.length || 0,
@@ -777,6 +785,7 @@ const NutritionTracker = () => {
             }
           } catch (supabaseErr) {
             console.error('[Data] Supabase fetch failed, using localStorage:', supabaseErr);
+            // Continue with localStorage data - don't block the app
           }
         }
       } catch (err) {
@@ -2366,10 +2375,14 @@ const NutritionTracker = () => {
   // This runs only once on mount, as a last resort fallback
   useEffect(() => {
     const timeout = setTimeout(() => {
-      // Only force auth screen if still stuck in initial loading state
-      if (showAuth === null) {
+      // Only force auth screen if still stuck in initial loading state AND not authenticated
+      // If user IS authenticated but data is loading, let it continue (don't show auth screen)
+      if (showAuth === null && !supabase.isAuthenticated) {
         console.warn('[App] Loading timed out (6s), defaulting to auth screen');
         setShowAuth(true);
+      } else if (showAuth === null && supabase.isAuthenticated) {
+        console.log('[App] Loading timed out but user is authenticated, hiding auth screen');
+        setShowAuth(false);
       }
     }, 6000); // Slightly longer than useSupabase timeout to avoid race
     return () => clearTimeout(timeout);
