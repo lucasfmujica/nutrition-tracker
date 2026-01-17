@@ -231,7 +231,8 @@ const PullToRefresh = ({ children, onRefresh, isRefreshing }) => {
 const NutritionTracker = () => {
   // Supabase auth and data hook
   const supabase = useSupabase();
-  const [showAuth, setShowAuth] = useState(true);
+  // Don't show auth until we know authentication status (null = checking)
+  const [showAuth, setShowAuth] = useState(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [offlineMode, setOfflineMode] = useState(false);
 
@@ -656,8 +657,9 @@ const NutritionTracker = () => {
     // Wait for auth to initialize
     if (supabase.loading) return;
 
-    // If authenticated, hide auth screen and check onboarding
+    // Set auth state based on authentication status
     if (supabase.isAuthenticated) {
+      console.log('[Auth] User authenticated, hiding auth screen');
       setShowAuth(false);
 
       // Check if user needs onboarding (new user)
@@ -675,6 +677,10 @@ const NutritionTracker = () => {
         setMigrationData(localData);
         setShowMigrationModal(true);
       }
+    } else {
+      // Not authenticated - show auth screen
+      console.log('[Auth] User not authenticated, showing auth screen');
+      setShowAuth(true);
     }
 
     const loadData = async () => {
@@ -808,8 +814,10 @@ const NutritionTracker = () => {
   const saveWeightHistory = async (newHistory) => {
     const sorted = sortWeightHistory(newHistory);
     setWeightHistory(sorted);
+    // ALWAYS save to localStorage immediately
     try {
       await storage.set('lucas-weight-history-v5', JSON.stringify(sorted));
+      console.log('[Data] Weight history saved to localStorage:', sorted.length, 'entries');
 
       // Update current weight to most recent
       const mostRecent = getMostRecentWeight(sorted);
@@ -830,8 +838,10 @@ const NutritionTracker = () => {
 
   const saveFoodLog = async (newLog) => {
     setFoodLog(newLog);
+    // ALWAYS save to localStorage immediately as primary backup
     try {
       await storage.set('lucas-food-log-v5', JSON.stringify(newLog));
+      console.log('[Data] Food log saved to localStorage:', newLog.length, 'entries');
     } catch (err) {
       console.error('Error saving food log:', err);
     }
@@ -840,8 +850,13 @@ const NutritionTracker = () => {
   // Save single food entry to Supabase
   const saveFoodEntry = async (entry) => {
     if (useCloud) {
-      const result = await supabase.saveFood(entry);
-      return result.data; // Returns entry with Supabase-generated ID
+      try {
+        const result = await supabase.saveFood(entry);
+        return result.data; // Returns entry with Supabase-generated ID
+      } catch (err) {
+        console.error('Error saving to Supabase, using local entry:', err);
+        return entry;
+      }
     }
     return entry;
   };
@@ -855,8 +870,10 @@ const NutritionTracker = () => {
 
   const saveWorkoutLog = async (newLog) => {
     setWorkoutLog(newLog);
+    // ALWAYS save to localStorage immediately as primary backup
     try {
       await storage.set('lucas-workout-log-v5', JSON.stringify(newLog));
+      console.log('[Data] Workout log saved to localStorage:', newLog.length, 'entries');
     } catch (err) {
       console.error('Error saving workout log:', err);
     }
@@ -865,8 +882,13 @@ const NutritionTracker = () => {
   // Save single workout to Supabase
   const saveWorkoutEntry = async (entry) => {
     if (useCloud) {
-      const result = await supabase.saveWorkout(entry);
-      return result.data;
+      try {
+        const result = await supabase.saveWorkout(entry);
+        return result.data;
+      } catch (err) {
+        console.error('Error saving workout to Supabase:', err);
+        return entry;
+      }
     }
     return entry;
   };
@@ -880,8 +902,10 @@ const NutritionTracker = () => {
 
   const saveStepsLog = async (newLog) => {
     setStepsLog(newLog);
+    // ALWAYS save to localStorage immediately
     try {
       await storage.set('lucas-steps-log-v5', JSON.stringify(newLog));
+      console.log('[Data] Steps log saved to localStorage:', newLog.length, 'entries');
     } catch (err) {
       console.error('Error saving steps log:', err);
     }
@@ -890,7 +914,11 @@ const NutritionTracker = () => {
   // Save single steps entry to Supabase
   const saveStepsEntry = async (entry) => {
     if (useCloud) {
-      await supabase.saveSteps(entry);
+      try {
+        await supabase.saveSteps(entry);
+      } catch (err) {
+        console.error('Error saving steps to Supabase:', err);
+      }
     }
   };
 
@@ -2245,9 +2273,22 @@ const NutritionTracker = () => {
   const weeklyData = getWeeklyData();
   const workoutAnalysis = getWeeklyWorkoutAnalysis();
 
+  // Show loading while checking auth status
+  if (showAuth === null || supabase.loading) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center animate-pulse">
+            <span className="text-2xl">💪</span>
+          </div>
+          <div className="text-blue-400 text-lg">Cargando LukenFit...</div>
+        </div>
+      </div>
+    );
+  }
+
   // Show Auth UI if not authenticated and not in offline mode
-  // Priority: AuthUI should show even during loading states after logout
-  if (showAuth && !offlineMode) {
+  if (showAuth === true && !offlineMode) {
     // Wrap signIn to update showAuth immediately on success
     const handleSignIn = async (email, password) => {
       try {
@@ -2328,9 +2369,18 @@ const NutritionTracker = () => {
     );
   }
 
-  // Show loading only when actually loading data (not during auth flows)
-  if ((isLoading || supabase.loading) && !showAuth) {
-    return <div className="min-h-screen bg-gray-900 flex items-center justify-center"><div className="text-blue-400 text-xl">Cargando...</div></div>;
+  // Show loading only when loading data (after auth is confirmed)
+  if (isLoading && showAuth === false) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center animate-pulse">
+            <span className="text-2xl">💪</span>
+          </div>
+          <div className="text-blue-400 text-lg">Cargando datos...</div>
+        </div>
+      </div>
+    );
   }
 
   return (
