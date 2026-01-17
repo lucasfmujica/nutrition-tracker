@@ -395,13 +395,25 @@ export function useSupabase() {
   // =====================================================
 
   // Helper: Add timeout to any async operation
-  const withTimeout = (promise, timeoutMs, operation) => {
-    return Promise.race([
-      promise,
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error(`${operation} timeout after ${timeoutMs}ms`)), timeoutMs)
-      )
-    ]);
+  const withTimeout = async (promise, timeoutMs, operation) => {
+    console.log(`[Supabase] Starting ${operation}...`);
+    const start = Date.now();
+
+    try {
+      const result = await Promise.race([
+        promise.then(res => {
+          console.log(`[Supabase] ${operation} completed in ${Date.now() - start}ms`, res?.error ? `Error: ${res.error.message}` : 'Success');
+          return res;
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(`${operation} timeout after ${timeoutMs}ms`)), timeoutMs)
+        )
+      ]);
+      return result;
+    } catch (err) {
+      console.error(`[Supabase] ${operation} failed after ${Date.now() - start}ms:`, err.message);
+      throw err;
+    }
   };
 
   const fetchProfile = useCallback(async () => {
