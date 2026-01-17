@@ -396,45 +396,68 @@ export function useSupabase() {
   // PROFILE OPERATIONS
   // =====================================================
 
+  // Helper: Add timeout to any async operation
+  const withTimeout = (promise, timeoutMs, operation) => {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`${operation} timeout after ${timeoutMs}ms`)), timeoutMs)
+      )
+    ]);
+  };
+
   const fetchProfile = useCallback(async () => {
     if (!canUseSupabase) return null;
 
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-    if (!data) {
-      // Profile doesn't exist, create it
-      const result = await ensureProfileExists(user.id);
-      if (result.success) {
-        // Retry fetch
-        const { data: retryData } = await supabase
+    try {
+      const { data, error } = await withTimeout(
+        supabase
           .from('profiles')
           .select('*')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle(),
+        5000,
+        'fetchProfile'
+      );
 
-        if (retryData) {
-          return {
-            profile: mappers.profileFromDb(retryData),
-            targets: mappers.targetsFromDb(retryData),
-          };
+      if (!data) {
+        // Profile doesn't exist, create it
+        const result = await ensureProfileExists(user.id);
+        if (result.success) {
+          // Retry fetch
+          const { data: retryData } = await withTimeout(
+            supabase
+              .from('profiles')
+              .select('*')
+              .eq('user_id', user.id)
+              .single(),
+            5000,
+            'fetchProfile-retry'
+          );
+
+          if (retryData) {
+            return {
+              profile: mappers.profileFromDb(retryData),
+              targets: mappers.targetsFromDb(retryData),
+            };
+          }
         }
+        return null;
       }
+
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return null;
+      }
+
+      return {
+        profile: mappers.profileFromDb(data),
+        targets: mappers.targetsFromDb(data),
+      };
+    } catch (err) {
+      console.error('fetchProfile failed:', err);
       return null;
     }
-
-    if (error) {
-      console.error('Error fetching profile:', error);
-      return null;
-    }
-
-    return {
-      profile: mappers.profileFromDb(data),
-      targets: mappers.targetsFromDb(data),
-    };
   }, [canUseSupabase, user?.id]);
 
   const saveProfile = useCallback(async (profile, targets) => {
@@ -521,18 +544,27 @@ export function useSupabase() {
   const fetchWeightHistory = useCallback(async () => {
     if (!canUseSupabase) return [];
 
-    const { data, error } = await supabase
-      .from('weight_history')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('date', { ascending: false });
+    try {
+      const { data, error } = await withTimeout(
+        supabase
+          .from('weight_history')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('date', { ascending: false }),
+        5000,
+        'fetchWeightHistory'
+      );
 
-    if (error) {
-      console.error('Error fetching weight history:', error);
+      if (error) {
+        console.error('Error fetching weight history:', error);
+        return [];
+      }
+
+      return data.map(mappers.weightFromDb);
+    } catch (err) {
+      console.error('fetchWeightHistory failed:', err);
       return [];
     }
-
-    return data.map(mappers.weightFromDb);
   }, [canUseSupabase, user?.id]);
 
   const saveWeight = useCallback(async (entry) => {
@@ -570,19 +602,28 @@ export function useSupabase() {
   const fetchFoodLog = useCallback(async () => {
     if (!canUseSupabase) return [];
 
-    const { data, error } = await supabase
-      .from('food_log')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('date', { ascending: false })
-      .order('time', { ascending: true });
+    try {
+      const { data, error } = await withTimeout(
+        supabase
+          .from('food_log')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('date', { ascending: false })
+          .order('time', { ascending: true }),
+        5000,
+        'fetchFoodLog'
+      );
 
-    if (error) {
-      console.error('Error fetching food log:', error);
+      if (error) {
+        console.error('Error fetching food log:', error);
+        return [];
+      }
+
+      return data.map(mappers.foodFromDb);
+    } catch (err) {
+      console.error('fetchFoodLog failed:', err);
       return [];
     }
-
-    return data.map(mappers.foodFromDb);
   }, [canUseSupabase, user?.id]);
 
   const saveFood = useCallback(async (entry) => {
@@ -633,18 +674,27 @@ export function useSupabase() {
   const fetchWorkouts = useCallback(async () => {
     if (!canUseSupabase) return [];
 
-    const { data, error } = await supabase
-      .from('workouts')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('date', { ascending: false });
+    try {
+      const { data, error } = await withTimeout(
+        supabase
+          .from('workouts')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('date', { ascending: false }),
+        5000,
+        'fetchWorkouts'
+      );
 
-    if (error) {
-      console.error('Error fetching workouts:', error);
+      if (error) {
+        console.error('Error fetching workouts:', error);
+        return [];
+      }
+
+      return data.map(mappers.workoutFromDb);
+    } catch (err) {
+      console.error('fetchWorkouts failed:', err);
       return [];
     }
-
-    return data.map(mappers.workoutFromDb);
   }, [canUseSupabase, user?.id]);
 
   const saveWorkout = useCallback(async (entry) => {
@@ -695,18 +745,27 @@ export function useSupabase() {
   const fetchStepsLog = useCallback(async () => {
     if (!canUseSupabase) return [];
 
-    const { data, error } = await supabase
-      .from('steps_log')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('date', { ascending: false });
+    try {
+      const { data, error } = await withTimeout(
+        supabase
+          .from('steps_log')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('date', { ascending: false }),
+        5000,
+        'fetchStepsLog'
+      );
 
-    if (error) {
-      console.error('Error fetching steps:', error);
+      if (error) {
+        console.error('Error fetching steps:', error);
+        return [];
+      }
+
+      return data.map(mappers.stepsFromDb);
+    } catch (err) {
+      console.error('fetchStepsLog failed:', err);
       return [];
     }
-
-    return data.map(mappers.stepsFromDb);
   }, [canUseSupabase, user?.id]);
 
   const saveSteps = useCallback(async (entry) => {
@@ -731,18 +790,27 @@ export function useSupabase() {
   const fetchOuraLog = useCallback(async () => {
     if (!canUseSupabase) return [];
 
-    const { data, error } = await supabase
-      .from('oura_log')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('date', { ascending: false });
+    try {
+      const { data, error } = await withTimeout(
+        supabase
+          .from('oura_log')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('date', { ascending: false }),
+        5000,
+        'fetchOuraLog'
+      );
 
-    if (error) {
-      console.error('Error fetching oura log:', error);
+      if (error) {
+        console.error('Error fetching oura log:', error);
+        return [];
+      }
+
+      return data.map(mappers.ouraFromDb);
+    } catch (err) {
+      console.error('fetchOuraLog failed:', err);
       return [];
     }
-
-    return data.map(mappers.ouraFromDb);
   }, [canUseSupabase, user?.id]);
 
   const saveOura = useCallback(async (entry) => {
@@ -767,18 +835,27 @@ export function useSupabase() {
   const fetchWaterLog = useCallback(async () => {
     if (!canUseSupabase) return [];
 
-    const { data, error } = await supabase
-      .from('water_log')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('date', { ascending: false });
+    try {
+      const { data, error } = await withTimeout(
+        supabase
+          .from('water_log')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('date', { ascending: false }),
+        5000,
+        'fetchWaterLog'
+      );
 
-    if (error) {
-      console.error('Error fetching water log:', error);
+      if (error) {
+        console.error('Error fetching water log:', error);
+        return [];
+      }
+
+      return data.map(mappers.waterFromDb);
+    } catch (err) {
+      console.error('fetchWaterLog failed:', err);
       return [];
     }
-
-    return data.map(mappers.waterFromDb);
   }, [canUseSupabase, user?.id]);
 
   const saveWater = useCallback(async (entry) => {
@@ -807,26 +884,66 @@ export function useSupabase() {
       return null;
     }
 
+    // Validate session before fetching
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error || !session) {
+        console.error('[Supabase] fetchAllData: invalid session, clearing auth');
+        // Clear corrupted session
+        await supabase.auth.signOut({ scope: 'local' });
+        setUser(null);
+        setSyncStatus('idle');
+        return null;
+      }
+    } catch (sessionErr) {
+      console.error('[Supabase] fetchAllData: session check failed:', sessionErr);
+      setSyncStatus('idle');
+      return null;
+    }
+
     // Only set syncing if not already syncing (prevent multiple spinners)
     setSyncStatus(prev => prev === 'syncing' ? prev : 'syncing');
 
-    // Timeout protection - max 12 seconds for all fetches
+    // Timeout protection - max 8 seconds for all fetches (reasonable for most connections)
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Fetch timeout after 12s')), 12000)
+      setTimeout(() => reject(new Error('Fetch timeout after 8s')), 8000)
     );
 
     try {
       console.log('[Supabase] fetchAllData: starting...');
 
-      const fetchPromise = Promise.all([
-        fetchProfile(),
-        fetchWeightHistory(),
-        fetchFoodLog(),
-        fetchWorkouts(),
-        fetchStepsLog(),
-        fetchOuraLog(),
-        fetchWaterLog(),
-      ]);
+      // Fetch with individual logging to identify which query is hanging
+      const fetchPromise = (async () => {
+        console.log('[Supabase] Fetching profile...');
+        const profileData = await fetchProfile();
+        console.log('[Supabase] Profile fetched');
+
+        console.log('[Supabase] Fetching weight history...');
+        const weightHistory = await fetchWeightHistory();
+        console.log('[Supabase] Weight history fetched');
+
+        console.log('[Supabase] Fetching food log...');
+        const foodLog = await fetchFoodLog();
+        console.log('[Supabase] Food log fetched');
+
+        console.log('[Supabase] Fetching workouts...');
+        const workouts = await fetchWorkouts();
+        console.log('[Supabase] Workouts fetched');
+
+        console.log('[Supabase] Fetching steps...');
+        const stepsLog = await fetchStepsLog();
+        console.log('[Supabase] Steps fetched');
+
+        console.log('[Supabase] Fetching oura...');
+        const ouraLog = await fetchOuraLog();
+        console.log('[Supabase] Oura fetched');
+
+        console.log('[Supabase] Fetching water...');
+        const waterLog = await fetchWaterLog();
+        console.log('[Supabase] Water fetched');
+
+        return [profileData, weightHistory, foodLog, workouts, stepsLog, ouraLog, waterLog];
+      })();
 
       const [profileData, weightHistory, foodLog, workouts, stepsLog, ouraLog, waterLog] =
         await Promise.race([fetchPromise, timeoutPromise]);

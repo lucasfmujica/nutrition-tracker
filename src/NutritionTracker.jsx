@@ -759,26 +759,20 @@ const NutritionTracker = () => {
         if (supabase.isAuthenticated && supabase.isOnline && !offlineMode) {
           console.log('[Data] Fetching from Supabase...');
           try {
-            // Add timeout protection to prevent hanging indefinitely
-            const fetchWithTimeout = Promise.race([
-              supabase.fetchAllData(),
-              new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Supabase fetch timeout after 10s')), 10000)
-              )
-            ]);
-
-            const data = await fetchWithTimeout;
-            console.log('[Data] Supabase data received:', {
-              profile: !!data?.profile,
-              weight: data?.weightHistory?.length || 0,
-              food: data?.foodLog?.length || 0,
-              workout: data?.workouts?.length || 0,
-              steps: data?.stepsLog?.length || 0,
-              oura: data?.ouraLog?.length || 0,
-              water: data?.waterLog?.length || 0
-            });
+            // Trust the hook's internal timeout - no need for nested timeout
+            const data = await supabase.fetchAllData();
 
             if (data) {
+              console.log('[Data] Supabase data received:', {
+                profile: !!data?.profile,
+                weight: data?.weightHistory?.length || 0,
+                food: data?.foodLog?.length || 0,
+                workout: data?.workouts?.length || 0,
+                steps: data?.stepsLog?.length || 0,
+                oura: data?.ouraLog?.length || 0,
+                water: data?.waterLog?.length || 0
+              });
+
               // Only update with Supabase data if it has data
               if (data.profile) setProfile(data.profile);
               if (data.targets) setCustomTargets(data.targets);
@@ -790,6 +784,8 @@ const NutritionTracker = () => {
               if (data.stepsLog?.length > 0) setStepsLog(data.stepsLog);
               if (data.ouraLog?.length > 0) setOuraLog(data.ouraLog);
               if (data.waterLog?.length > 0) setWaterLog(data.waterLog);
+            } else {
+              console.log('[Data] No data returned from Supabase, using localStorage');
             }
           } catch (supabaseErr) {
             console.error('[Data] Supabase fetch failed, using localStorage:', supabaseErr);
@@ -1025,20 +1021,12 @@ const NutritionTracker = () => {
     setTimeout(() => setSaveStatus(''), 1500);
   };
 
-  // Pull to refresh handler with timeout protection
+  // Pull to refresh handler - trust hook's internal timeout
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
       if (useCloud) {
-        // Add timeout protection - max 10 seconds
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Refresh timeout')), 10000)
-        );
-
-        const data = await Promise.race([
-          supabase.fetchAllData(),
-          timeoutPromise
-        ]);
+        const data = await supabase.fetchAllData();
 
         if (data) {
           if (data.profile) setProfile(data.profile);
@@ -1049,8 +1037,10 @@ const NutritionTracker = () => {
           if (data.stepsLog?.length) setStepsLog(data.stepsLog);
           if (data.ouraLog?.length) setOuraLog(data.ouraLog);
           if (data.waterLog?.length) setWaterLog(data.waterLog);
+          setSaveStatus('✓ Actualizado');
+        } else {
+          setSaveStatus('Error al actualizar');
         }
-        setSaveStatus('✓ Actualizado');
       }
     } catch (err) {
       console.error('Refresh error:', err);
