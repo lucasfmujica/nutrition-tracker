@@ -101,12 +101,24 @@ export const WeeklyReportModal = ({
             <>
               <WeeklyReportCard
                 ref={cardRef}
+                // Activity
                 workouts={stats.workouts}
                 gymCount={stats.gymCount}
                 tennisCount={stats.tennisCount}
-                proteinAdherence={stats.proteinAdherence}
+
+                // Nutrition
                 proteinAvg={stats.proteinAvg}
+                avgDeficit={stats.avgDeficit}
+                consistencyStreak={stats.consistencyStreak}
+                daysTracked={stats.daysTracked}
+
+                // Weight
                 weightDelta={stats.weightDelta}
+                totalLost={stats.totalLost}
+                percentToGoal={stats.percentToGoal}
+                currentWeight={stats.currentWeight}
+
+                // Meta
                 weekRange={stats.weekRange}
               />
 
@@ -114,7 +126,7 @@ export const WeeklyReportModal = ({
               <button
                 onClick={handleDownload}
                 disabled={isDownloading}
-                style={{ width: '22rem' }}
+                style={{ width: '24rem' }}
                 className="py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-bold shadow-lg shadow-purple-300/40 hover:shadow-xl transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2"
               >
                 {isDownloading ? (

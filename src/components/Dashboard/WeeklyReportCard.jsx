@@ -1,150 +1,211 @@
-// ... imports
-import { Activity, Dumbbell, Scale, Utensils } from 'lucide-react';
+import { Activity, CalendarDays, Dumbbell, Flame, Scale, Trophy, Utensils } from 'lucide-react';
 import React from 'react';
 
 /**
  * WeeklyReportCard - Premium shareable card for Social Accountability Reports
- * ...
+ * Refactored for minimalist, insightful design.
  */
 export const WeeklyReportCard = React.forwardRef(({
-  workouts = 0, // Fallback total
+  // Activity
+  workouts = 0,
   gymCount = 0,
   tennisCount = 0,
-  proteinAdherence = 0,
+
+  // Nutrition
   proteinAvg = 0,
+  avgDeficit = 0,
+  consistencyStreak = 0,
+  daysTracked = 0,
+
+  // Weight
   weightDelta = null,
+  totalLost = null,
+  percentToGoal = null,
+  currentWeight = null,
+
+  // Meta
   weekRange = ''
 }, ref) => {
-  // Format weight delta for display
-  const formatWeightDelta = () => {
-    if (weightDelta === null || weightDelta === undefined) return '-';
-    const sign = weightDelta > 0 ? '+' : '';
-    return `${sign}${weightDelta.toFixed(1)}`;
+
+  // 1. Helper: Generate Insight Logic
+  const generateWeeklyFeedback = () => {
+    // Priority 1: Weight Loss
+    if (weightDelta !== null && weightDelta < 0) {
+      if (avgDeficit > 300) return "¡Gran semana! Estás quemando grasa y manteniendo el ritmo.";
+      return "El peso baja, la disciplina sube. ¡Sigue así!";
+    }
+
+    // Priority 2: Muscle Gain / Protection
+    if (proteinAvg >= 150) { // Assuming ~150g is a good baseline or checking against target if passed
+       return "Proteína perfecta. Estás protegiendo tu masa muscular.";
+    }
+
+    // Priority 3: Workout Volume
+    if (workouts >= 4) {
+      return "MVP de la semana por tu consistencia en el gym.";
+    }
+
+    // Fallback
+    return "La constancia es la clave. ¡Vamos por la próxima semana!";
   };
 
-  // Determine weight delta color
-  const getWeightDeltaColor = () => {
-    if (weightDelta === null || weightDelta === undefined) return 'text-gray-400';
-    if (weightDelta < 0) return 'text-emerald-500'; // Losing weight (goal)
-    if (weightDelta > 0) return 'text-amber-500'; // Gaining weight
-    return 'text-gray-600'; // No change
-  };
-
-  // Stat item component for visual consistency
-  const StatItem = ({ icon: Icon, iconBg, iconColor, label, value, unit, subtext }) => (
-    <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white border border-gray-50 shadow-sm">
-      <div className={`w-10 h-10 ${iconBg} rounded-xl flex items-center justify-center mb-2`}>
-        <Icon className={`w-5 h-5 ${iconColor}`} strokeWidth={2} />
-      </div>
-      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">
-        {label}
-      </p>
-      <div className="flex items-baseline gap-1">
-        <span className={`text-2xl font-bold ${typeof value === 'string' && value.includes('-') || typeof value === 'string' && value.includes('+') ? getWeightDeltaColor() : 'text-gray-900'}`}>
-          {value}
-        </span>
-        {unit && <span className="text-[10px] text-gray-400 font-bold">{unit}</span>}
-      </div>
-      {subtext && <span className="text-[9px] text-gray-400">{subtext}</span>}
-    </div>
-  );
+  const insight = generateWeeklyFeedback();
 
   return (
     <div
       ref={ref}
-      className="relative overflow-hidden"
+      className="relative overflow-hidden flex flex-col"
       style={{
-        width: '22rem',
-        height: '28rem',
+        width: '24rem', // Slightly wider for better spacing
+        minHeight: '36rem', // Taller for new sections
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-        background: 'linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%)',
+        background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)',
         borderRadius: '2rem',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)'
       }}
     >
-      {/* Background Decor */}
+      {/* Decorative Background */}
       <div
-        className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-[0.03] translate-x-1/3 -translate-y-1/3"
-        style={{ background: 'radial-gradient(circle, #8B5CF6 0%, transparent 70%)' }}
+        className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-[0.03]"
+        style={{ background: 'radial-gradient(circle, #3B82F6 0%, transparent 70%)', transform: 'translate(30%, -30%)' }}
       />
       <div
-        className="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-[0.03] -translate-x-1/3 translate-y-1/3"
-        style={{ background: 'radial-gradient(circle, #3B82F6 0%, transparent 70%)' }}
+        className="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-[0.03]"
+        style={{ background: 'radial-gradient(circle, #8B5CF6 0%, transparent 70%)', transform: 'translate(-30%, 30%)' }}
       />
 
-      {/* Content Container */}
-      <div className="relative h-full flex flex-col px-8 py-8">
+      {/* Main Container */}
+      <div className="relative z-10 flex-1 flex flex-col p-8">
 
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100/80 backdrop-blur-sm rounded-full mb-3 border border-gray-100">
-            <span className="flex h-1.5 w-1.5 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500"></span>
-            </span>
-            <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">
-              LUKENFIT REPORT
-            </span>
+        <div className="flex justify-between items-center mb-10">
+          <div>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-1">REPORTE SEMANAL</p>
+            <h1 className="text-xl font-black text-gray-900">{weekRange || 'Esta Semana'}</h1>
           </div>
-          <h1 className="text-xl font-black text-gray-900 tracking-tight leading-tight">
-            {weekRange || 'Esta Semana'}
-          </h1>
+          <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center">
+             <Trophy className="w-5 h-5 text-yellow-500" strokeWidth={1.5} />
+          </div>
         </div>
 
-        {/* Stats Grid - 2x2 Layout */}
-        <div className="flex-1 grid grid-cols-2 gap-4 place-content-center">
-            {/* 1. Bodybuilding/Gym */}
-            <StatItem
-              icon={Dumbbell}
-              iconBg="bg-blue-50"
-              iconColor="text-blue-600"
-              label="Fuerza"
-              value={gymCount}
-              unit="sesiones"
-            />
+        {/* 1. Hero Section: Weight */}
+        <div className="mb-8 text-center relative py-6">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 rounded-3xl -z-10" />
 
-            {/* 2. Tennis/Sport */}
-            <StatItem
-              icon={Activity}
-              iconBg="bg-orange-50"
-              iconColor="text-orange-500"
-              label="Tenis"
-              value={tennisCount}
-              unit="partidos"
-            />
+          <div className="inline-flex items-center gap-2 mb-2">
+             <Scale className="w-4 h-4 text-slate-400" />
+             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Peso Corporal</span>
+          </div>
 
-            {/* 3. Protein */}
-            <StatItem
-              icon={Utensils}
-              iconBg="bg-emerald-50"
-              iconColor="text-emerald-500"
-              label="Proteína"
-              value={proteinAvg || 0}
-              unit="g/día"
-              subtext={`${proteinAdherence}% adherencia`}
-            />
+          <div className="flex items-baseline justify-center gap-1 mb-2">
+            <span className="text-6xl font-black text-slate-900 tracking-tighter">
+              {currentWeight ? currentWeight.toFixed(1) : '--'}
+            </span>
+            <span className="text-xl font-medium text-slate-400">kg</span>
+          </div>
 
-            {/* 4. Weight */}
-            <StatItem
-              icon={Scale}
-              iconBg="bg-indigo-50"
-              iconColor="text-indigo-500"
-              label="Peso"
-              value={formatWeightDelta()}
-              unit="kg"
-            />
+          {/* Cumulative Progress Pill */}
+          {(totalLost !== null && totalLost > 0) && (
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white rounded-full shadow-sm border border-slate-100">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <p className="text-[11px] font-medium text-slate-600">
+                Total perdido: <span className="font-bold text-slate-900">{totalLost} kg</span>
+                {percentToGoal && <span className="text-slate-400 mx-1">/</span>}
+                {percentToGoal && <span>{percentToGoal}% meta</span>}
+              </p>
+            </div>
+          )}
+
+          {/* Fallback if no total loss/gain data yet */}
+          {(totalLost === null || totalLost <= 0) && weightDelta !== null && (
+             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white rounded-full shadow-sm border border-slate-100">
+               <span className={`w-2 h-2 rounded-full ${weightDelta <= 0 ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+               <p className="text-[11px] font-medium text-slate-600">
+                 Variación: <span className="font-bold text-slate-900">{weightDelta > 0 ? '+' : ''}{weightDelta} kg</span>
+               </p>
+             </div>
+          )}
         </div>
 
-        {/* Footer */}
-        <div className="pt-6 flex flex-col items-center justify-center gap-1">
-          <div className="h-0.5 w-8 bg-gray-200 rounded-full mb-2"></div>
-          <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase">
-            Semana Finalizada
-          </span>
+        {/* 2. Key Metrics Grid */}
+        <div className="grid grid-cols-2 gap-4 mb-8">
+           {/* Average Deficit */}
+           <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)] flex flex-col items-center">
+              <div className="mb-2 p-2 bg-rose-50 rounded-xl">
+                <Flame className="w-5 h-5 text-rose-500" strokeWidth={2} />
+              </div>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Déficit Prom.</p>
+              <p className="text-2xl font-bold text-slate-900">{avgDeficit > 0 ? avgDeficit : '-'}</p>
+              <p className="text-[10px] text-slate-400 font-medium">kcal/día</p>
+           </div>
+
+           {/* Consistency Streak */}
+           <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)] flex flex-col items-center">
+              <div className="mb-2 p-2 bg-emerald-50 rounded-xl">
+                <CalendarDays className="w-5 h-5 text-emerald-500" strokeWidth={2} />
+              </div>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Consistencia</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {consistencyStreak}<span className="text-lg text-slate-300">/{daysTracked || 7}</span>
+              </p>
+              <p className="text-[10px] text-slate-400 font-medium">días on track</p>
+           </div>
         </div>
+
+        {/* 3. Activity Breakdown */}
+        <div className="mb-8">
+           <div className="flex items-center gap-2 mb-3 px-1">
+             <Activity className="w-4 h-4 text-slate-400" />
+             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Actividad Total</h3>
+           </div>
+
+           <div className="bg-white rounded-2xl border border-slate-100 p-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)]">
+             <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                   <div className="p-2 bg-blue-50 rounded-lg">
+                      <Dumbbell className="w-4 h-4 text-blue-600" />
+                   </div>
+                   <span className="text-sm font-semibold text-slate-700">Fuerza</span>
+                </div>
+                <span className="text-sm font-bold text-slate-900">{gymCount} <span className="text-xs font-normal text-slate-400">sesiones</span></span>
+             </div>
+
+             <div className="w-full h-px bg-slate-50 mb-4" />
+
+             <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                   <div className="p-2 bg-orange-50 rounded-lg">
+                      <Activity className="w-4 h-4 text-orange-600" />
+                   </div>
+                   <span className="text-sm font-semibold text-slate-700">Tenis</span>
+                </div>
+                <span className="text-sm font-bold text-slate-900">{tennisCount} <span className="text-xs font-normal text-slate-400">partidos</span></span>
+             </div>
+           </div>
+        </div>
+
+        {/* 4. LukenFit Insights */}
+        <div className="mt-auto bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-5 text-white relative overflow-hidden">
+           <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10" />
+
+           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">LUKENFIT INSIGHTS</p>
+           <p className="text-sm font-medium leading-relaxed opacity-90">
+             "{insight}"
+           </p>
+        </div>
+
       </div>
+
+      {/* Footer Branding */}
+      <div className="bg-white py-3 border-t border-slate-50 flex items-center justify-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-slate-900" />
+          <span className="text-[10px] font-bold text-slate-900 tracking-[0.2em]">LUKENFIT REPORT</span>
+      </div>
+
     </div>
   );
 });
+
+WeeklyReportCard.displayName = 'WeeklyReportCard';
 
 WeeklyReportCard.displayName = 'WeeklyReportCard';

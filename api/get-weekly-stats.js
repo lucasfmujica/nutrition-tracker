@@ -120,60 +120,85 @@ export default async function handler(req, res) {
       // Continue with 0
     }
 
-    // 5. Calculate Protein Stats (Adherence & Average)
-    let proteinAdherence = 0;
-    let proteinAvg = 0;
+    // 5. Calculate Nutrition Stats (Deficit & Protein Streak)
+    let nutritionStats = {
+      avgDeficit: 0,
+      consistencyStreak: 0,
+      daysTracked: 0,
+      proteinAvg: 0
+    };
+
     try {
-      // Get user's protein target
+      // Get user's profile targets
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('target_protein')
+        .select('target_calories, target_protein, target_weight, start_weight, current_weight')
         .eq('user_id', userId)
         .single();
 
+      const targetCalories = profileData?.target_calories || 2000;
       const targetProtein = profileData?.target_protein || 170;
 
       // Get food logs grouped by date
       const { data: foodLogs } = await supabase
         .from('food_log')
-        .select('date, protein')
+        .select('date, calories, protein')
         .eq('user_id', userId)
         .gte('date', monday)
         .lte('date', todayArgentina);
 
       if (foodLogs && foodLogs.length > 0) {
-        // Group by date and sum protein
-        const dailyProtein = {};
+        // Group by date
+        const dailyLogs = {};
         for (const log of foodLogs) {
-          if (!dailyProtein[log.date]) {
-            dailyProtein[log.date] = 0;
+          if (!dailyLogs[log.date]) {
+            dailyLogs[log.date] = { calories: 0, protein: 0 };
           }
-          dailyProtein[log.date] += parseFloat(log.protein) || 0;
+          dailyLogs[log.date].calories += log.calories || 0;
+          dailyLogs[log.date].protein += parseFloat(log.protein) || 0;
         }
 
-        // Calculate metrics
-        const days = Object.keys(dailyProtein);
+        const days = Object.keys(dailyLogs);
+        nutritionStats.daysTracked = days.length;
+
         if (days.length > 0) {
-          const totalProtein = days.reduce((sum, day) => sum + dailyProtein[day], 0);
+          // 1. Protein Avg
+          const totalProtein = days.reduce((sum, day) => sum + dailyLogs[day].protein, 0);
+          nutritionStats.proteinAvg = Math.round(totalProtein / days.length);
 
-          // Average (Integer)
-          proteinAvg = Math.round(totalProtein / days.length);
+          // 2. Consistency Streak (Protein Adherence Days)
+          // Count days where protein >= 90% of target
+          nutritionStats.consistencyStreak = days.filter(day => dailyLogs[day].protein >= (targetProtein * 0.9)).length;
 
-          // Adherence (%)
-          const totalAdherence = days.reduce((sum, day) => {
-            const adherence = Math.min((dailyProtein[day] / targetProtein) * 100, 100);
-            return sum + adherence;
-          }, 0);
-          proteinAdherence = Math.round(totalAdherence / days.length);
+          // 3. Average Caloric Deficit
+          // Only considers days with logs. Deficit = Target - Consumed.
+          // If Consumed > Target, deficit is negative (surplus).
+          let totalDeficit = 0;
+          days.forEach(day => {
+            const consumed = dailyLogs[day].calories;
+            // Ignore days with very low calories (likely incomplete logs, e.g. < 500)
+            if (consumed > 500) {
+              totalDeficit += (targetCalories - consumed);
+            }
+          });
+          // Avoid division by zero if all days were < 500
+          const validDays = days.filter(d => dailyLogs[d].calories > 500).length;
+          nutritionStats.avgDeficit = validDays > 0 ? Math.round(totalDeficit / validDays) : 0;
         }
       }
     } catch (err) {
-      console.error('[WeeklyStats] Error calculating protein adherence:', err);
-      // Continue with 0
+      console.error('[WeeklyStats] Error calculating nutrition stats:', err);
     }
 
-    // 6. Calculate Weight Delta
-    let weightDelta = null;
+    // 6. Calculate Weight Delta (Weekly) & Total Progress
+    let weightStats = {
+      weeklyDelta: null,
+      totalLost: null,
+      percentToGoal: null,
+      startWeight: null,
+      currentWeight: null
+    };
+
     try {
       // Get Monday's weight (or closest to Monday)
       const { data: mondayWeight } = await supabase
@@ -195,12 +220,53 @@ export default async function handler(req, res) {
         .limit(1)
         .single();
 
-      if (mondayWeight && latestWeight && mondayWeight.date !== latestWeight.date) {
-        weightDelta = parseFloat((latestWeight.weight - mondayWeight.weight).toFixed(1));
+      if (latestWeight) {
+        weightStats.currentWeight = latestWeight.weight;
+
+        // Weekly Delta
+        if (mondayWeight) {
+          weightStats.weeklyDelta = parseFloat((latestWeight.weight - mondayWeight.weight).toFixed(1));
+        }
+
+        // Total Progress
+        // Try to get start_weight from profile, or find oldest weight entry
+        let startWeight = null;
+
+        // Fetch profile again if needed (optimized to do one fetch earlier but for safety/clarity here)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('start_weight, target_weight')
+          .eq('user_id', userId)
+          .single();
+
+        if (profile?.start_weight) {
+          startWeight = profile.start_weight;
+        } else {
+          // Find oldest weight
+          const { data: oldest } = await supabase
+            .from('weight_history')
+            .select('weight')
+            .eq('user_id', userId)
+            .order('date', { ascending: true })
+            .limit(1)
+            .single();
+          if (oldest) startWeight = oldest.weight;
+        }
+
+        weightStats.startWeight = startWeight;
+
+        if (startWeight && profile?.target_weight) {
+          const totalToLose = startWeight - profile.target_weight;
+          const currentLost = startWeight - latestWeight.weight;
+          weightStats.totalLost = parseFloat(currentLost.toFixed(1));
+
+          if (totalToLose > 0) {
+            weightStats.percentToGoal = Math.round((currentLost / totalToLose) * 100);
+          }
+        }
       }
     } catch (err) {
-      console.error('[WeeklyStats] Error calculating weight delta:', err);
-      // Continue with null
+      console.error('[WeeklyStats] Error calculating weight stats:', err);
     }
 
     // 7. Format Week Range in Spanish
@@ -211,16 +277,27 @@ export default async function handler(req, res) {
 
     // 8. Build Response
     const response = {
-      workouts: gymCount + tennisCount, // Total for backward compatibility
+      // Activity
+      workouts: gymCount + tennisCount,
       gymCount,
       tennisCount,
-      proteinAdherence,
-      proteinAvg,
-      weightDelta,
+
+      // Nutrition
+      proteinAvg: nutritionStats.proteinAvg,
+      avgDeficit: nutritionStats.avgDeficit,
+      consistencyStreak: nutritionStats.consistencyStreak,
+      daysTracked: nutritionStats.daysTracked,
+
+      // Weight
+      weightDelta: weightStats.weeklyDelta,
+      totalLost: weightStats.totalLost,
+      percentToGoal: weightStats.percentToGoal,
+      currentWeight: weightStats.currentWeight,
+
+      // Meta
       weekRange
     };
 
-    console.log('[WeeklyStats] Response:', response);
     return res.status(200).json(response);
 
   } catch (error) {

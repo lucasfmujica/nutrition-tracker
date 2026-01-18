@@ -44,7 +44,6 @@ export const useWeeklyReport = () => {
       }
 
       const data = await response.json();
-      console.log('[useWeeklyReport] Stats received:', data);
 
       setStats(data);
       return data;
