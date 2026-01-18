@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { addDaysToDate, getArgentinaDateString, getArgentinaTime } from '../utils/dateUtils';
+import { addDaysToDate, getArgentinaDateString } from '../utils/dateUtils';
 
 /**
  * usePerformanceForecast - Predicts tomorrow's training capacity.
@@ -157,12 +157,6 @@ export const usePerformanceForecast = (ouraLog, workoutLog) => {
     // Check time for "Tomorrow" context
     // Prompt: "Update at night (22:00)... so user can plan next day"
     // The copy "Mañana es tu día..." implies we are looking ahead.
-    // If it's morning, maybe it says "Hoy es tu día...".
-    // For simplicity, let's stick to the prompt's "Outlook" style.
-    // We can check `getArgentinaTime()` hour.
-    const currentHour = new Date().getHours(); // This might be server time if SSR, but hook runs on client usually.
-    // Wait, `getArgentinaTime` returns string/obj? `utils/dateUtils` usually has methods.
-    // Let's assume standard client time for UI copy adjustments if we wanted to be fancy.
     // For now, prompt asked for "Tomorrow's Outlook" card explicitly.
     // So the copy "Mañana..." is safe generic if we assume user checks daily.
 
