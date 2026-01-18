@@ -13,7 +13,7 @@ import { OuraTab } from './components/Tabs/OuraTab';
 import { StepsTab } from './components/Tabs/StepsTab';
 import { WeightTab } from './components/Tabs/WeightTab';
 import { WorkoutsTab } from './components/Tabs/WorkoutsTab';
-import { PullToRefresh } from './components/ui/PullToRefresh';
+import { PullToRefresh } from './components/UI/PullToRefresh';
 import { TrackerProvider, useTracker } from './context/TrackerContext';
 
 const WATER_GOAL_GLASSES = 8;
