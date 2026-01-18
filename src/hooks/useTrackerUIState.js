@@ -18,6 +18,7 @@ export const useTrackerUIState = () => {
 
   const [showImportFoodModal, setShowImportFoodModal] = useState(false);
   const [showImportWorkoutModal, setShowImportWorkoutModal] = useState(false);
+  const [showFoodScanModal, setShowFoodScanModal] = useState(false); // New state for AI Scanner Modal
 
   const [showFab, setShowFab] = useState(true);
 
@@ -36,6 +37,8 @@ export const useTrackerUIState = () => {
     setShowImportFoodModal,
     showImportWorkoutModal,
     setShowImportWorkoutModal,
+    showFoodScanModal,
+    setShowFoodScanModal, // Return new state
     showFab,
     setShowFab
   };

@@ -13,7 +13,8 @@ export const TrackerFAB = () => {
     showTemplatesModal, setShowTemplatesModal,
     newFood, setNewFood,
     newWorkout, setNewWorkout,
-    dashboardDate
+    dashboardDate,
+    setShowFoodScanModal // New Setter
   } = useTracker();
 
   if (!showFab || !['dashboard', 'comidas', 'entrenos'].includes(activeTab)) return null;
@@ -34,6 +35,7 @@ export const TrackerFAB = () => {
       onImportFood={() => setShowImportFoodModal(true)}
       onImportWorkout={() => setShowImportWorkoutModal(true)}
       onQuickAdd={() => setShowTemplatesModal(true)}
+      onScanFood={() => setShowFoodScanModal(true)}
     />
   );
 };

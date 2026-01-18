@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTracker } from '../../../context/TrackerContext';
 import { DeleteConfirmModal } from '../../Modals/DeleteConfirmModal';
+import { FoodCameraModal } from '../../Modals/FoodCameraModal';
 import { FoodFormModal } from '../../Modals/FoodFormModal';
 import { ImportModal } from '../../Modals/ImportModal';
 import { MondayBriefingModal } from '../../Modals/MondayBriefingModal';
@@ -44,6 +45,8 @@ export const ModalsManager = () => {
     setImportError,
     handleImportFood,
     handleImportWorkout,
+    showFoodScanModal,
+    setShowFoodScanModal,
 
     // Meal Templates Modal
     showTemplatesModal,
@@ -132,6 +135,12 @@ export const ModalsManager = () => {
         onImport={handleImportWorkout}
         error={importError}
         accentColor="amber"
+      />
+
+      {/* AI Meal Scanner Modal */}
+      <FoodCameraModal
+        isOpen={showFoodScanModal}
+        onClose={() => setShowFoodScanModal(false)}
       />
 
       {/* Meal Templates Modal - Inline implementation as in original */}

@@ -4,14 +4,14 @@ import { useState } from 'react';
 // =====================================================
 // FLOATING ACTION BUTTON COMPONENT
 // =====================================================
-export const FloatingActionButton = ({ onAddFood, onAddWorkout, onImportFood, onImportWorkout, onQuickAdd }) => {
+export const FloatingActionButton = ({ onAddFood, onAddWorkout, onImportFood, onImportWorkout, onQuickAdd, onScanFood }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const actions = [
     { icon: <Utensils size={24} />, label: 'Comida', sublabel: 'Agregar manual', onClick: onAddFood, color: 'text-cyan-500', bg: 'bg-cyan-50' },
     { icon: <Dumbbell size={24} />, label: 'Entreno', sublabel: 'Agregar manual', onClick: onAddWorkout, color: 'text-orange-500', bg: 'bg-orange-50' },
     { icon: <Star size={24} />, label: 'Favoritos', sublabel: 'Plantillas rápidas', onClick: onQuickAdd, color: 'text-purple-500', bg: 'bg-purple-50' },
-    { icon: <Camera size={20} />, label: 'IA Food', sublabel: 'Importar JSON', onClick: onImportFood, color: 'text-blue-500', bg: 'bg-blue-50' },
+    { icon: <Camera size={20} />, label: 'Escanear', sublabel: 'Foto con IA', onClick: onScanFood, color: 'text-blue-500', bg: 'bg-blue-50' },
     { icon: <Import size={20} />, label: 'IA Work', sublabel: 'Importar JSON', onClick: onImportWorkout, color: 'text-amber-500', bg: 'bg-amber-50' },
   ];
 

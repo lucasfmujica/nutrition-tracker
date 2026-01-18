@@ -9,6 +9,7 @@ import { DaySummary } from '../Diary/DaySummary';
 import { MealCompassCard } from '../Diary/MealCompassCard';
 import { MealSection } from '../Diary/MealSection';
 import { ProteinTimeline } from '../Diary/ProteinTimeline';
+import { FoodCameraInput } from '../Food/FoodCameraInput';
 import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
 // Internal Wrapper to safeguard hook usage (conditional rendering in parent)
@@ -156,6 +157,9 @@ export const DiaryTab = ({
           />
         </div>
       </div>
+
+      {/* AI Meal Scanner - Quick Log */}
+      <FoodCameraInput />
 
       {!hasFoods ? (
         <div className="bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm">
