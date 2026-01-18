@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getSmartTargets } from '../utils/caloriePeriodization';
 import { getArgentinaDateString } from '../utils/dateUtils';
 import { storage } from '../utils/storage';
@@ -79,14 +79,21 @@ export const useNutrition = (
     return calOk && protOk;
   }, [getTotalsForDate, getTargetsForDate]);
 
+  // Persistence: Auto-save to local storage on change
+  // This ensures that any state update (including optimistic ones) is persisted
+  useEffect(() => {
+    if (foodLog?.length > 0) {
+      storage.set('lucas-food-log-v5', JSON.stringify(foodLog)).catch(err =>
+        console.error('Error auto-saving food log:', err)
+      );
+    }
+  }, [foodLog]);
+
   // Actions
   const saveFoodLog = async (newLog) => {
     setFoodLog(newLog);
-    try {
-      await storage.set('lucas-food-log-v5', JSON.stringify(newLog));
-    } catch (err) {
-      console.error('Error saving food log:', err);
-    }
+    // Storage is handled by useEffect now, but for immediate consistency in some flows we keep explicit set if needed.
+    // However, allowing useEffect is cleaner.
   };
 
   const saveFoodEntry = async (entry) => {
@@ -95,6 +102,18 @@ export const useNutrition = (
       ...entry,
       is_safety_net_day: shouldTagAsSafetyNetDay ? shouldTagAsSafetyNetDay(entry.date) : false
     };
+
+    // Optimistic Update: Immediately update UI state
+    setFoodLog(prevLog => {
+      const newLog = [...prevLog];
+      const index = newLog.findIndex(e => e.id === taggedEntry.id);
+      if (index >= 0) {
+        newLog[index] = taggedEntry;
+      } else {
+        newLog.push(taggedEntry);
+      }
+      return newLog;
+    });
 
     if (useCloud) {
       try {

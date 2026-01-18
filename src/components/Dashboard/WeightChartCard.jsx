@@ -57,6 +57,7 @@ export const WeightChartCard = ({ data = [], currentWeight, targetWeight }) => {
             <Area
               type="monotone"
               dataKey="weight"
+              name="Peso"
               stroke="#0066EE"
               strokeWidth={3}
               fillOpacity={1}

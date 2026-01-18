@@ -120,17 +120,31 @@ export const useQuickLog = (foodLog, saveFoodEntry) => {
       hour12: false
     });
 
+    // Helper: Smart Meal Guessing for Argentina Time
+    const getSmartMealType = (timeStr) => {
+      const hour = parseInt(timeStr.split(':')[0], 10);
+
+      if (hour >= 5 && hour < 12) return 'Desayuno';
+      if (hour >= 12 && hour < 16) return 'Almuerzo';
+      if (hour >= 16 && hour < 20) return 'Merienda';
+      return 'Cena'; // 20:00 - 05:00
+    };
+
     const itemsToLog = itemOrCombo.items ? itemOrCombo.items : [itemOrCombo];
     let successCount = 0;
 
     for (const item of itemsToLog) {
+      // Smart Guess: Use current time to contextually place the meal
+      // If the historical item has a meal type, we could respect it,
+      // BUT for "Fast Log" current context usually overrides historical context.
+      // (e.g. Eating Leftover Pizza at 9am is Breakfast, not Dinner)
+      const smartMeal = getSmartMealType(timeString);
+
       const entry = {
         id: `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         date: today,
         time: timeString,
-        meal: item.meal || 'Snack', // Default to last used meal type? Or current time based?
-        // Logic: If it's 8am -> Breakfast? Too complex for now? Use Saved Preferences?
-        // Let's stick to the item's stored default for now.
+        meal: smartMeal, // Use Smart Guess
         name: item.name,
         description: '⚡ Fast-Log',
         calories: item.calories || 0,

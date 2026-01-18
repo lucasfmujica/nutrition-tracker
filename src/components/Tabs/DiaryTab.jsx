@@ -30,7 +30,7 @@ export const DiaryTab = ({
   getFoodsForDate,
   getTotalsForDate,
   getTargetsForDate,
-  getTodayWater,
+  getWaterForDate,
   hydrationTarget,
   addWaterGlass,
 
@@ -94,7 +94,10 @@ export const DiaryTab = ({
   // 1. Smart Compass Logic
   const compassData = useMemo(() => {
     const totals = getTotalsForDate(selectedFoodDate);
-    const targets = getTargetsForDate(selectedFoodDate);
+    const rawTargets = getTargetsForDate(selectedFoodDate);
+    // Safety fallback to prevent crash if targets are missing
+    const targets = rawTargets || { calories: 2000, protein: 150, carbs: 200, fat: 70 };
+
     const textRemaining = {
       calories: targets.calories - totals.calories,
       protein: targets.protein - totals.protein,
@@ -241,7 +244,7 @@ export const DiaryTab = ({
        {hasFoods && (
           <DaySummary
             totals={getTotalsForDate(selectedFoodDate)}
-            targets={getTargetsForDate(selectedFoodDate)}
+            targets={getTargetsForDate(selectedFoodDate) || { calories: 2000, protein: 150, carbs: 200, fat: 70 }}
           />
        )}
     </div>

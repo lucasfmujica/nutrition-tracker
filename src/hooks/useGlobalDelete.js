@@ -11,66 +11,71 @@ export const useGlobalDelete = (nutrition, workouts, biometrics, supabase, useCl
   const executeDelete = async () => {
     const { type, id } = deleteModal;
 
-    if (type === 'food') {
-      const item = nutrition.foodLog.find(f => f.id === id);
-      const newLog = nutrition.foodLog.filter(f => f.id !== id);
-      nutrition.saveFoodLog(newLog);
+    try {
+      if (type === 'food') {
+        const item = nutrition.foodLog.find(f => f.id === id);
+        const newLog = nutrition.foodLog.filter(f => f.id !== id);
+        nutrition.saveFoodLog(newLog);
 
-      if (useCloud) {
-        try {
-          await supabase.deleteFood(id);
-        } catch (err) { console.error(err); }
-      }
-
-      setUndoAction({
-        type: 'food',
-        item,
-        restore: async () => {
-          nutrition.saveFoodLog([...newLog, item]);
-          if (useCloud && item) await supabase.saveFood(item);
+        if (useCloud) {
+          try {
+            await supabase.deleteFood(id);
+          } catch (err) { console.error(err); }
         }
-      });
-    } else if (type === 'workout') {
-      const item = workouts.workoutLog.find(w => w.id === id);
-      const newLog = workouts.workoutLog.filter(w => w.id !== id);
-      workouts.saveWorkoutLog(newLog);
 
-      if (useCloud) {
-        try {
-          await supabase.deleteWorkout(id);
-        } catch (err) { console.error(err); }
-      }
+        setUndoAction({
+          type: 'food',
+          item,
+          restore: async () => {
+            nutrition.saveFoodLog([...newLog, item]);
+            if (useCloud && item) await supabase.saveFood(item);
+          }
+        });
+      } else if (type === 'workout') {
+        const item = workouts.workoutLog.find(w => w.id === id);
+        const newLog = workouts.workoutLog.filter(w => w.id !== id);
+        workouts.saveWorkoutLog(newLog);
 
-      setUndoAction({
-        type: 'workout',
-        item,
-        restore: async () => {
-          workouts.saveWorkoutLog([...newLog, item]);
-          if (useCloud && item) await supabase.saveWorkout(item);
+        if (useCloud) {
+          try {
+            await supabase.deleteWorkout(id);
+          } catch (err) { console.error(err); }
         }
-      });
-    } else if (type === 'weight') {
-      const item = biometrics.weightHistory.find(w => w.id === id || biometrics.weightHistory.indexOf(w) === id);
-      const newHistory = biometrics.weightHistory.filter(w => w.id !== id && biometrics.weightHistory.indexOf(w) !== id);
-      biometrics.saveWeightHistory(newHistory);
 
-      if (useCloud && item) {
-        try {
-          await supabase.deleteWeight(item.id);
-        } catch (err) { console.error(err); }
-      }
+        setUndoAction({
+          type: 'workout',
+          item,
+          restore: async () => {
+            workouts.saveWorkoutLog([...newLog, item]);
+            if (useCloud && item) await supabase.saveWorkout(item);
+          }
+        });
+      } else if (type === 'weight') {
+        const item = biometrics.weightHistory.find(w => w.id === id || biometrics.weightHistory.indexOf(w) === id);
+        const newHistory = biometrics.weightHistory.filter(w => w.id !== id && biometrics.weightHistory.indexOf(w) !== id);
+        biometrics.saveWeightHistory(newHistory);
 
-      setUndoAction({
-        type: 'weight',
-        item,
-        restore: async () => {
-          biometrics.saveWeightHistory([...newHistory, item]);
-          if (useCloud && item) await supabase.saveWeight(item);
+        if (useCloud && item) {
+          try {
+            await supabase.deleteWeight(item.id);
+          } catch (err) { console.error(err); }
         }
-      });
+
+        setUndoAction({
+          type: 'weight',
+          item,
+          restore: async () => {
+            biometrics.saveWeightHistory([...newHistory, item]);
+            if (useCloud && item) await supabase.saveWeight(item);
+          }
+        });
+      }
+    } catch (e) {
+      console.error('Delete execution failed:', e);
+    } finally {
+      // ALWAYS close the modal
+      setDeleteModal({ show: false, type: '', id: null, name: '' });
     }
-
-    setDeleteModal({ show: false, type: '', id: null, name: '' });
   };
 
   // Auto-hide undo
