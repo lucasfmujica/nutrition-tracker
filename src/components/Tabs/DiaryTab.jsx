@@ -196,7 +196,7 @@ export const DiaryTab = ({
 
       {/* Hydration Intelligence Module */}
       <HydrationGuard
-        currentIntake={getTodayWater().ml || 0}
+        currentIntake={getWaterForDate(selectedFoodDate).ml || 0}
         hydrationTarget={hydrationTarget}
         onAddWater={addWaterGlass}
       />

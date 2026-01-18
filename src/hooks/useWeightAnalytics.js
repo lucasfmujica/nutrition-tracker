@@ -72,7 +72,15 @@ export const useWeightAnalytics = (weightHistory, foodLog, customTargets, curren
     }
 
     // Calculate weight difference
-    const weightDiff = newestEntry.weight - oldestEntry.weight;
+    const w1 = Number(String(newestEntry.weight).replace(',', '.'));
+    const w2 = Number(String(oldestEntry.weight).replace(',', '.'));
+
+    if (isNaN(w1) || isNaN(w2)) {
+      console.log('[Analytics] Invalid weight values');
+      return null;
+    }
+
+    const weightDiff = w1 - w2;
 
     // Convert to kg/week: (weightDiff / daysDiff) * 7
     // Note: Negative value = losing weight, Positive = gaining weight

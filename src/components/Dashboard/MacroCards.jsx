@@ -33,6 +33,8 @@ const MacroCard = ({ label, current, target, unit = 'g', colorVar }) => {
 };
 
 export const MacroCards = ({ totals, targets }) => {
+  if (!targets || !totals) return null; // Safety check
+
   return (
     <div className="flex gap-3 mb-6">
       <MacroCard

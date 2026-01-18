@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { getSmartTargets } from '../utils/caloriePeriodization';
 import { getArgentinaDateString } from '../utils/dateUtils';
 import { storage } from '../utils/storage';
 import { addPendingWrite } from '../utils/storageUtils';
@@ -7,9 +8,10 @@ export const useNutrition = (
   supabase,
   useCloud,
   customTargets,
-  isTrainingDay,
-  safetyNetGetTargets = null, // Safety Net: Override targets function
-  shouldTagAsSafetyNetDay = null // Safety Net: Day tagging function
+  isTrainingDay, // Deprecated/Legacy, kept for interface compatibility if needed, but logic replaced
+  safetyNetGetTargets = null,
+  shouldTagAsSafetyNetDay = null,
+  workoutLog = [] // New prop for smart targeting
 ) => {
   const [foodLog, setFoodLog] = useState([]);
   const [waterLog, setWaterLog] = useState([]);
@@ -56,25 +58,17 @@ export const useNutrition = (
     // Priority 1: Check Safety Net mode (overrides everything)
     if (safetyNetGetTargets) {
       const safetyNetTargets = safetyNetGetTargets(date);
-      // If safety net returned different targets, use them
-      if (safetyNetTargets !== customTargets) {
+      // If safety net is active (returns non-null), use it
+      if (safetyNetTargets) {
         return safetyNetTargets;
       }
     }
 
-    // Priority 2: Training day adjustments (normal flow)
-    const training = isTrainingDay(date);
-    if (training) {
-      return {
-        ...customTargets,
-        calories: customTargets.calories + customTargets.trainingDayCaloriesBonus,
-        carbs: customTargets.trainingDayCarbs
-      };
-    }
+    // Priority 2: Smart Periodization (replaces simple Training Day logic)
+    // Uses workout intensity to determine specific calorie bonus
+    return getSmartTargets(date, workoutLog, customTargets);
 
-    // Priority 3: Base targets
-    return customTargets;
-  }, [customTargets, isTrainingDay, safetyNetGetTargets]);
+  }, [customTargets, workoutLog, safetyNetGetTargets]);
 
   const isDayCompleted = useCallback((date) => {
     const totals = getTotalsForDate(date);
@@ -183,13 +177,24 @@ export const useNutrition = (
     }
   };
 
-  const getTodayWater = () => {
-    const today = getArgentinaDateString();
-    return waterLog.find(e => e.date === today) || { date: today, glasses: 0, ml: 0 };
-  };
+  const getWaterForDate = useCallback((date) => {
+    return waterLog.find(e => e.date === date) || { date: date, glasses: 0, ml: 0 };
+  }, [waterLog]);
 
   const addWaterGlass = async () => {
     const today = getArgentinaDateString();
+    // ... logic remains for ADDING (always adds to today for now, or should it add to selected date? Usually adding is for today. But viewing is for history.)
+    // Let's assume user wants to add to TODAY unless we want to support backfilling water.
+    // For now, let's keep adding to TODAY to be safe/simple, but viewing relies on getWaterForDate.
+    // actually, if they are on a past date, adding water there implies backfilling.
+    // BUT the requirement was just "update if I change the day".
+    // I will stick to fixing the VIEW first.
+
+    // Wait, the previous code for addWaterGlass was:
+    // const today = getArgentinaDateString();
+    // This implies we ONLY support tracking water for today.
+    // If the user wants to see past water, we use getWaterForDate.
+
     const existingEntry = waterLog.find(e => e.date === today);
     const newEntry = existingEntry
       ? { ...existingEntry, glasses: existingEntry.glasses + 1, ml: (existingEntry.glasses + 1) * 250 }
@@ -215,7 +220,7 @@ export const useNutrition = (
 
   return {
     foodLog, setFoodLog, saveFoodLog, saveFoodEntry, deleteFoodEntry,
-    waterLog, setWaterLog, saveWaterLog, saveWaterEntry, getTodayWater, addWaterGlass, removeWaterGlass,
+    waterLog, setWaterLog, saveWaterLog, saveWaterEntry, getWaterForDate, addWaterGlass, removeWaterGlass,
     getTotalsForDate, getTargetsForDate, getFoodsForDate, isDayCompleted
   };
 };

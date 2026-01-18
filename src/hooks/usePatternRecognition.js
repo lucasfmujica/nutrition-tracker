@@ -48,7 +48,9 @@ export const usePatternRecognition = (ouraLog, getTotalsForDate, getTargetsForDa
       const totals = getTotalsForDate(date);
       const targets = getTargetsForDate(date);
 
-      const proteinAdherence = targets.protein > 0 ? (totals.protein / targets.protein) : 1;
+      if (!targets) return; // Verify targets exists
+
+      const proteinAdherence = (targets.protein > 0) ? (totals.protein / targets.protein) : 1;
 
       // Define "Protein Drop" as < 80% adherence (or < 20% drop as requested)
       if (proteinAdherence < 0.8) {

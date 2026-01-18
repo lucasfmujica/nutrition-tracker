@@ -1,7 +1,9 @@
 import { Shield } from 'lucide-react';
 import React from 'react';
 
-export const SummaryCard = ({ totals, targets, safetyNetActive = false }) => {
+export const SummaryCard = ({ totals, targets, safetyNetActive = false, periodizationState }) => {
+  if (!targets || !totals) return null; // Safety check
+
   const caloriesRemaining = targets.calories - totals.calories;
   const progress = Math.min((totals.calories / targets.calories) * 100, 100);
 
@@ -29,11 +31,32 @@ export const SummaryCard = ({ totals, targets, safetyNetActive = false }) => {
           <h2 className="text-gray-500 text-sm font-medium uppercase tracking-wide">
             Calorías Restantes
           </h2>
-          {safetyNetActive && (
+          {safetyNetActive ? (
             <div className="flex items-center gap-1 bg-blue-100 px-2 py-0.5 rounded-full">
               <Shield className="w-3 h-3 text-blue-600" fill="currentColor" />
               <span className="text-[10px] font-semibold text-blue-600">ESCUDO</span>
             </div>
+          ) : (
+            <>
+              {periodizationState === 'high' && (
+                <div className="flex items-center gap-1 bg-orange-100 px-2 py-0.5 rounded-full">
+                   <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
+                  <span className="text-[10px] font-bold text-orange-600 tracking-wide">ENTRENAMIENTO</span>
+                </div>
+              )}
+              {periodizationState === 'recovery' && (
+                <div className="flex items-center gap-1 bg-green-100 px-2 py-0.5 rounded-full">
+                   <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                  <span className="text-[10px] font-bold text-green-600 tracking-wide">RECUPERACIÓN</span>
+                </div>
+              )}
+              {(periodizationState === 'moderate' || !periodizationState) && (
+                <div className="flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-full">
+                   <div className="w-2 h-2 rounded-full bg-slate-400"></div>
+                  <span className="text-[10px] font-bold text-slate-500 tracking-wide">ESTÁNDAR</span>
+                </div>
+              )}
+            </>
           )}
         </div>
 

@@ -68,11 +68,11 @@ export const useWeightProjection = (
 
     if (daysDiff === 0) return 0;
 
-    const w1 = Number(newest.weight);
-    const w2 = Number(oldest.weight);
+    const w1 = Number(String(newest.weight).replace(',', '.'));
+    const w2 = Number(String(oldest.weight).replace(',', '.'));
 
     if (isNaN(w1) || isNaN(w2)) {
-      console.warn('Invalid weight values for trend calculation');
+      console.warn('Invalid weight values for trend calculation', { w1, w2 });
       return null;
     }
 

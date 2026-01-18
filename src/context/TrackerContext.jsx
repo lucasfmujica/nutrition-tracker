@@ -70,7 +70,8 @@ export const TrackerProvider = ({ children }) => {
     biometrics.customTargets,
     workouts.isTrainingDay,
     safetyNet.getTargetsForDate, // Override targets when safety net is active
-    safetyNet.shouldTagAsSafetyNetDay // Tag food entries appropriately
+    safetyNet.shouldTagAsSafetyNetDay, // Tag food entries appropriately
+    workouts.workoutLog // Smart Targeting: Periodization
   );
 
   // Weight Editing Logic

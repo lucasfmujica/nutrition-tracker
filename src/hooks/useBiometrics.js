@@ -58,10 +58,15 @@ export const useBiometrics = (supabase, useCloud, profileData = null, targetsDat
 
   const sortWeightHistory = (history) => {
     return [...history].sort((a, b) => {
+      // 1. Primary sort by Date (Desc)
+      if (a.date && b.date) {
+        const dateDiff = b.date.localeCompare(a.date);
+        if (dateDiff !== 0) return dateDiff;
+      }
+
+      // 2. Secondary sort by Timestamp (Desc) - only for same day
       const timestampDiff = (b.timestamp || 0) - (a.timestamp || 0);
-      if (timestampDiff !== 0) return timestampDiff;
-      if (a.date && b.date) return b.date.localeCompare(a.date);
-      return 0;
+      return timestampDiff;
     });
   };
 

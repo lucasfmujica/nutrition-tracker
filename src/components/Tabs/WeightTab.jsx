@@ -124,7 +124,11 @@ export const WeightTab = ({
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="text-center p-3 bg-gray-50 rounded-xl">
               <div className="text-xl font-bold text-gray-900">
-                {weightProjection.weeklyRate > 0 ? '-' : '+'}{Math.abs(weightProjection.weeklyRate)} <span className="text-xs font-normal text-gray-500">kg</span>
+                {Number.isFinite(weightProjection.adjustedTrend) ? (
+                  <>
+                    {weightProjection.adjustedTrend > 0 ? '+' : ''}{weightProjection.adjustedTrend.toFixed(1)}
+                  </>
+                ) : '—'} <span className="text-xs font-normal text-gray-500">kg</span>
               </div>
               <div className="text-xs text-gray-400 font-medium mt-1">Por semana</div>
             </div>
@@ -136,29 +140,24 @@ export const WeightTab = ({
             </div>
           </div>
 
-          {weightProjection.goalDate && (
+          {weightProjection.formattedGoalDate && (
             <div className="text-center p-2 bg-blue-900/20 rounded mb-3">
               <span className="text-sm text-gray-300">Fecha estimada: </span>
-              <span className="text-sm font-bold text-blue-400">{weightProjection.goalDate}</span>
+              <span className="text-sm font-bold text-blue-400">{weightProjection.formattedGoalDate}</span>
             </div>
           )}
 
-          {weightProjection.recommendation && (
-            <div className={`p-3 rounded ${weightProjection.recommendation.type === 'good' ? 'bg-blue-900/30 border border-blue-500/30' :
-              weightProjection.recommendation.type === 'decrease' ? 'bg-amber-900/30 border border-amber-500/30' :
-                'bg-red-900/30 border border-red-500/30'
-              }`}>
-              <p className={`text-sm ${weightProjection.recommendation.type === 'good' ? 'text-blue-400' :
-                weightProjection.recommendation.type === 'decrease' ? 'text-amber-400' :
-                  'text-red-400'
-                }`}>
-                💡 {weightProjection.recommendation.text}
+          {weightProjection.coachMessage && (
+            <div className="p-3 rounded bg-blue-50 border border-blue-100">
+              <p className="text-sm text-blue-800 flex items-center justify-center gap-2">
+                <span className="text-lg">{weightProjection.coachMessage.emoji}</span>
+                {weightProjection.coachMessage.text}
               </p>
             </div>
           )}
 
           <p className="text-xs text-gray-500 mt-3 text-center">
-            Análisis basado en {weightProjection.dataPoints} registros durante {weightProjection.daysCovered} días
+             Basado en tu tendencia real de los últimos 14 días
           </p>
         </div>
       )}

@@ -51,8 +51,8 @@ export const useSafetyNet = (profile, customTargets, saveProfile) => {
       return getSafetyNetTargets(profile, customTargets);
     }
 
-    // Return base targets (training day logic handled by caller)
-    return baseTargets;
+    // Return null to indicate no override (allow Smart Periodization to work)
+    return null;
   }, [profile, customTargets, safetyNetActive]);
 
   /**

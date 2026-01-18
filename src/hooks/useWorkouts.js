@@ -57,7 +57,8 @@ export const useWorkouts = (supabase, useCloud) => {
   };
 
   const isTrainingDay = useCallback((date) => {
-    return workoutLog.some(w => w.date === date);
+    // Exact string match for "YYYY-MM-DD"
+    return workoutLog.some(w => w.date && w.date.trim() === date.trim());
   }, [workoutLog]);
 
   return {

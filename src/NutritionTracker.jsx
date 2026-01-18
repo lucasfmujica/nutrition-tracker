@@ -45,36 +45,8 @@ const NutritionTrackerContent = () => {
     getWeightChartData, editingWeightId, setEditingWeightId, editingWeightValue, setEditingWeightValue,
     startEditWeight, saveEditWeight, cancelEditWeight,
     stepsDate, setStepsDate, newSteps, setNewSteps, addStepsEntry, getWeeklyData, getStepsForDate,
-    getTodayWater, addWaterGlass, weightProjection, formatTime, hydrationTarget
+    getWaterForDate, addWaterGlass, weightProjection, formatTime, hydrationTarget
   } = useTracker();
-
-  // Safety timeout: never stay in loading state for more than 8 seconds
-  // This logic is mostly visual now as AuthShell handles the actual rendering,
-  // but we keep this effect to ensure state eventually corrects itself.
-  const showAuthRef = useRef(showAuth);
-  const isAuthenticatedRef = useRef(supabase.isAuthenticated);
-
-  useEffect(() => {
-    showAuthRef.current = showAuth;
-    isAuthenticatedRef.current = supabase.isAuthenticated;
-  }, [showAuth, supabase.isAuthenticated]);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      const currentShowAuth = showAuthRef.current;
-      const currentIsAuthenticated = isAuthenticatedRef.current;
-      if (currentShowAuth === null) {
-        if (currentIsAuthenticated) {
-          console.log('[App] Safety timeout: User authenticated, hiding auth screen');
-          setShowAuth(false);
-        } else {
-          console.warn('[App] Safety timeout: Not authenticated, showing auth screen');
-          setShowAuth(true);
-        }
-      }
-    }, 8000);
-    return () => clearTimeout(timeout);
-  }, []);
 
   // Derived state for Dashboard
   const dashboardTotals = getTotalsForDate(dashboardDate);
@@ -101,7 +73,7 @@ const NutritionTrackerContent = () => {
               <DashboardTab
                 dashboardDate={dashboardDate} setDashboardDate={setDashboardDate} changeDate={changeDate}
                 dashboardTotals={dashboardTotals} dashboardTargets={dashboardTargets}
-                getStepsForDate={getStepsForDate} getTodayWater={getTodayWater} addWaterGlass={addWaterGlass}
+                getStepsForDate={getStepsForDate} getWaterForDate={getWaterForDate} addWaterGlass={addWaterGlass}
                 WATER_GOAL_GLASSES={WATER_GOAL_GLASSES} workoutAnalysis={workoutAnalysis}
                 weightHistory={weightHistory} getMostRecentWeight={getMostRecentWeight}
                 profile={profile} weightProjection={weightProjection}
@@ -115,7 +87,7 @@ const NutritionTrackerContent = () => {
               <DiaryTab
                 selectedFoodDate={selectedFoodDate} setSelectedFoodDate={setSelectedFoodDate} changeDate={changeDate}
                 getFoodsForDate={getFoodsForDate} getTotalsForDate={getTotalsForDate} getTargetsForDate={getTargetsForDate}
-                getTodayWater={getTodayWater} hydrationTarget={hydrationTarget} addWaterGlass={addWaterGlass}
+                getWaterForDate={getWaterForDate} hydrationTarget={hydrationTarget} addWaterGlass={addWaterGlass}
                 confirmDelete={confirmDelete} setNewFood={setNewFood} setShowFoodForm={setShowFoodForm}
                 setEditingFoodId={setEditingFoodId}
               />

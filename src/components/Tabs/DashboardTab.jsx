@@ -36,7 +36,7 @@ export const DashboardTab = ({
   dashboardTotals,
   dashboardTargets,
   getStepsForDate,
-  getTodayWater,
+  getWaterForDate,
   addWaterGlass,
   WATER_GOAL_GLASSES,
   workoutAnalysis,
@@ -48,7 +48,7 @@ export const DashboardTab = ({
   getTotalsForDate,
   getTargetsForDate
 }) => {
-  const waterData = getTodayWater();
+  const waterData = getWaterForDate(dashboardDate);
   const { foodLog, workoutLog, customTargets, weightProjection, safetyNetActive, toggleSafetyNet, getStatusMessage } = useTracker(); // Access full logs for analytics
 
   // Pattern Recognition Engine
@@ -158,7 +158,34 @@ export const DashboardTab = ({
           <CorrelationSection analytics={correlationAnalytics} />
 
           {/* Tactical Summary - Daily Calories */}
-         <SummaryCard totals={dashboardTotals} targets={dashboardTargets} safetyNetActive={safetyNetActive} />
+          {/* Tactical Summary - Daily Calories */}
+          {/* Tactical Summary - Daily Calories */}
+          <SummaryCard
+            totals={dashboardTotals}
+            targets={(() => {
+              // Priority 1: Safety Net (Maintenance Override)
+              if (safetyNetActive) {
+                return {
+                  ...dashboardTargets,
+                  calories: profile?.tdee || 2500 // Fallback to 2500 if TDEE not set
+                };
+              }
+
+              // Priority 2: Smart Periodization (If available for this date)
+              const periodizedDay = weeklyPeriodization?.weekDays?.find(d => d.date === dashboardDate);
+              if (periodizedDay) {
+                return {
+                  ...dashboardTargets,
+                  calories: periodizedDay.calories
+                };
+              }
+
+              // Priority 3: Default Targets
+              return dashboardTargets;
+            })()}
+            safetyNetActive={safetyNetActive}
+            periodizationState={weeklyPeriodization?.weekDays?.find(d => d.date === dashboardDate)?.intensity}
+          />
 
         {/* Macro Cards */}
         <MacroCards totals={dashboardTotals} targets={dashboardTargets} />
