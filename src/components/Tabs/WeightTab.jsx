@@ -1,4 +1,7 @@
+import { useState } from 'react';
 import { useWeightForm } from '../../hooks/ui/useWeightForm';
+import { supabase } from '../../lib/supabase';
+import { getArgentinaDateString } from '../../utils/dateUtils';
 import { WeightLineChart } from '../Charts/WeightLineChart';
 
 /**
@@ -33,9 +36,142 @@ export const WeightTab = ({
     error,
     handleSubmit
   } = useWeightForm();
+
+  // Renpho State
+  const [showRenphoModal, setShowRenphoModal] = useState(false);
+  const [renphoEmail, setRenphoEmail] = useState('');
+  const [renphoPassword, setRenphoPassword] = useState('');
+  const [renphoLoading, setRenphoLoading] = useState(false);
+  const [renphoError, setRenphoError] = useState('');
+
   const currentWeight = getMostRecentWeight(weightHistory)?.weight || profile.currentWeight;
   const remaining = (currentWeight - profile.targetWeight).toFixed(1);
 
+  // Renpho Logic
+  const handleRenphoSync = async () => {
+    // Check if connected
+    if (!profile.renpho_token) {
+      setShowRenphoModal(true);
+      return;
+    }
+
+    // Have token, fetch data
+    await fetchRenphoData(profile.renpho_token, profile.renpho_user_id);
+  };
+
+  const fetchRenphoData = async (token, userId) => {
+    setRenphoLoading(true);
+    setRenphoError('');
+    try {
+      const res = await fetch('/api/renpho-weight', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, userId })
+      });
+
+      if (!res.ok) {
+        // If auth failed (401?), maybe token expired.
+        // For now, just show error.
+        throw new Error('Error al conectar con Renpho');
+      }
+
+      const data = await res.json();
+
+      // Date Guard
+      const dataDate = new Date(data.timestamp); // ms
+      const today = new Date();
+      const yesterday = new Date();
+      yesterday.setDate(today.getDate() - 1);
+
+      const isToday = dataDate.toDateString() === today.toDateString();
+      const isYesterday = dataDate.toDateString() === yesterday.toDateString();
+
+      const timeString = dataDate.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+
+      if (!isToday && !isYesterday) {
+        // Warning
+        const dateString = dataDate.toLocaleDateString('es-AR');
+        const confirmOld = window.confirm(`Atención: La última medición es del ${dateString}. ¿Querés usarla de todas formas?`);
+        if (!confirmOld) {
+          setRenphoLoading(false);
+          return;
+        }
+      }
+
+      // Auto-fill
+      setWeight(data.weight);
+      // If we want to capture bodyfat/muscle, we might need to store them in a 'notes' field or separate state
+      // since the current form only has 'weight'.
+      // For now, we just sync weight as requested for the form.
+
+      // Update Date/Time to match the measurement?
+      // "Auto-Fill: If accepted, pre-fill the weight input field..."
+      // Usually users want to log it for "Now" if it's today, or the actual date if it's old.
+      // IF it's old data, we probably should update the Date field too.
+      // Let's safe-guard: if it's NOT today, update the date picker.
+      const isoDate = dataDate.toISOString().split('T')[0];
+      setDate(isoDate);
+      setTime(timeString);
+
+    } catch (err) {
+      console.error(err);
+      setRenphoError(err.message || 'Error en la sincronización');
+    } finally {
+      setRenphoLoading(false);
+    }
+  };
+
+  const handleRenphoLogin = async (e) => {
+    e.preventDefault();
+    setRenphoLoading(true);
+    setRenphoError('');
+
+    try {
+      // If input is empty, backend might use fallback if configured,
+      // but strictly we should send what we have.
+      // However, if the user explicitly WANTS internal testing with Env vars as per prompt,
+      // let's allow sending empty values if the state is empty?
+      // No, let's keep it clean: The UI requests credentials.
+
+      const res = await fetch('/api/renpho-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            email: renphoEmail, // If empty, backend might pick up Env var fallback
+            password: renphoPassword
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (data.renphoCode) {
+             throw new Error(`Renpho Rechazó: ${data.renphoCode}`);
+        }
+        throw new Error(data.error || 'Login falló. Revisá tus datos.');
+      }
+
+      // Save to Supabase
+      const { error: supError } = await supabase
+        .from('profiles')
+        .update({
+          renpho_token: data.terminal_user_session_key,
+          renpho_user_id: data.id,
+          renpho_last_sync: new Date().toISOString()
+        })
+        .eq('user_id', profile.user_id);
+
+      if (supError) throw supError;
+
+      // Close modal and fetch
+      setShowRenphoModal(false);
+      // We manually update local profile prop reference effectively for the call
+      profile.renpho_token = data.terminal_user_session_key;
+      profile.renpho_user_id = data.id;
+
+      await fetchRenphoData(data.terminal_user_session_key, data.id);
+
+    } catch (err) {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="mb-2 px-1">

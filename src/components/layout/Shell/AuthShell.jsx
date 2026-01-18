@@ -67,7 +67,7 @@ export const AuthShell = ({ children }) => {
 
   // State Checks
   if (showAuth === null && supabase.loading) {
-    return <LoadingScreen message="Cargando LukenFit..." />;
+    return <LoadingScreen message="Sincronizando con tu anillo Oura..." />;
   }
 
   if (showAuth === true && !offlineMode) {
@@ -100,7 +100,7 @@ export const AuthShell = ({ children }) => {
   }
 
   if (showAuth === null || (isLoading && showAuth === false)) {
-    return <LoadingScreen message="Cargando datos..." />;
+    return <LoadingScreen message="Calculando tu pronóstico de rendimiento..." />;
   }
 
   return children;

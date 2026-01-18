@@ -8,7 +8,7 @@ export const BottomNav = ({ activeTab, setActiveTab }) => {
     { id: 'entrenos', icon: Dumbbell, label: 'Entrenos' },
     { id: 'add', icon: PlusCircle, label: '', isFab: true },
     { id: 'peso', icon: BarChart2, label: 'Peso' },
-    { id: 'peso', icon: BarChart2, label: 'Peso' },
+
     { id: 'pasos', icon: Footprints, label: 'Pasos' },
     { id: 'oura', icon: Moon, label: 'Oura' }
   ];
