@@ -5,123 +5,144 @@ import { addDaysToDate, getArgentinaDateString } from '../utils/dateUtils';
  * useEffortAnalytics - Adaptive Effort Score (AES)
  *
  * Correlates workout volume with recovery data to optimize effort and prevent overtraining.
+ * Now with DYNAMIC scoring that produces meaningful visual variance.
  *
  * @param {Array} workoutLog - List of workout entries
  * @param {Array} ouraLog - List of Oura readiness/sleep entries
  * @param {Object} weightAnalytics - Contains currentTrend (kg/week)
+ * @param {string} [selectedDate] - Optional date to check (defaults to today in Argentina TZ)
  */
-export const useEffortAnalytics = (workoutLog, ouraLog, weightAnalytics) => {
+export const useEffortAnalytics = (workoutLog, ouraLog, weightAnalytics, selectedDate) => {
 
   return useMemo(() => {
     // 0. Base Data Checks
     if (!workoutLog || !ouraLog || !weightAnalytics) {
-      return { status: 'Unknown', insight: 'Need more data.', score: 0 };
+      return { status: 'Unknown', insight: 'Need more data.', score: 50 };
     }
 
-    const today = getArgentinaDateString();
+    const targetDate = selectedDate || getArgentinaDateString();
 
-    // 1. Calculate Volume Logic
-    // Limit to Gym workouts for Volume Load calculation (sets * reps * weight)
-    // For Tennis/Other, we might just track duration, but prompt specifies "workout volume (sets/reps/load)"
-
-    // Helper to calculate daily volume
+    // Helper to calculate daily volume (gym only)
     const getDailyVolume = (date, log) => {
       const entries = log.filter(w => w.date === date && w.type === 'gym');
       return entries.reduce((total, w) => {
-        if (w.exercises) {
+        if (w.exercises && Array.isArray(w.exercises)) {
           return total + w.exercises.reduce((exTotal, ex) => {
-            return exTotal + (ex.sets * ex.reps * ex.weight);
+            return exTotal + ((ex.sets || 0) * (ex.reps || 0) * (ex.weight || 0));
           }, 0);
         }
-        return total + (w.volume || 0); // Fallback if volume stored directly
+        return total + (w.volume || 0);
       }, 0);
     };
 
-    // Calculate last 7 days volume (including TODAY)
+    // Helper to check if any workout exists for a date (gym or tennis/cardio)
+    const hasAnyWorkout = (date, log) => {
+      return log.some(w => w.date === date);
+    };
+
+    // 1. Volume Calculations
+    const todayVolume = getDailyVolume(targetDate, workoutLog);
+    const hasTrainedToday = hasAnyWorkout(targetDate, workoutLog);
+    const hasGymToday = todayVolume > 0;
+
+    // Calculate 7-day average
     let last7DaysVolume = 0;
-    // Fix: Loop should go from 0 to 6 to count 7 days including today
     for (let i = 0; i < 7; i++) {
-      // i=0 is today
-      const d = addDaysToDate(today, -i);
-      last7DaysVolume += getDailyVolume(d, workoutLog);
+      last7DaysVolume += getDailyVolume(addDaysToDate(targetDate, -i), workoutLog);
     }
     const avg7DayVolume = last7DaysVolume / 7;
 
-    // Check if user ALREADY trained today with significant volume
-    const todayVolume = getDailyVolume(today, workoutLog);
-    const hasTrainedToday = todayVolume > 500; // Threshold for "significant" workout
-
-    // Calculate last 30 days volume (Monthly Average)
+    // Calculate 30-day average for comparison
     let last30DaysVolume = 0;
     for (let i = 0; i < 30; i++) {
-      const d = addDaysToDate(today, -i);
-      last30DaysVolume += getDailyVolume(d, workoutLog);
+      last30DaysVolume += getDailyVolume(addDaysToDate(targetDate, -i), workoutLog);
     }
     const avg30DayVolume = last30DaysVolume / 30;
 
-    // Volume Status
-    // Avoid division by zero
     const volumeRatio = avg30DayVolume > 0 ? avg7DayVolume / avg30DayVolume : 1;
-    const isHighVolume = volumeRatio > 1.2; // > 20% increase
 
-    // 2. Recovery Logic (Oura)
-    // Get latest valid Oura entry (today or yesterday)
-    // We prioritize today, but if sync hasn't happened, check yesterday
-    const recentOura = ouraLog
-      .filter(e => e.date <= today)
+    // 2. Recovery Data (Oura) - Get entry for the target date or closest prior
+    const targetOura = ouraLog
+      .filter(e => e.date <= targetDate)
       .sort((a, b) => b.date.localeCompare(a.date))[0];
 
-    const readiness = recentOura?.readiness_score || recentOura?.readinessScore || 80; // Default to good if missing
-    const sleepScore = recentOura?.sleep_score || recentOura?.sleepScore || 80;
+    const readiness = targetOura?.readiness_score || targetOura?.readinessScore || 75;
+    const sleepScore = targetOura?.sleep_score || targetOura?.sleepScore || 75;
 
-    // 3. Weight Correlation
+    // 3. Weight Trend
     const { currentTrend } = weightAnalytics;
-    // trend is negative for weight loss. "Loss of > 1.5kg/week" means trend < -1.5
-    const isAggressiveLoss = currentTrend && currentTrend < -1.5;
+    const isAggressiveLoss = currentTrend && currentTrend < -1.0;
 
-    // 4. Decision Matrix (AES)
+    // ===========================================================
+    // DYNAMIC SCORE CALCULATION
+    // ===========================================================
+    // Score 0-100 where:
+    // 0-33: Recovery zone (blue/left) - Go easy or rest
+    // 34-66: Optimal zone (green/center) - Normal training
+    // 67-100: Push zone (orange/right) - Can push hard OR warning
+
+    // Base score from readiness (inverted: high readiness = lower score = more capacity)
+    // Readiness 100 -> Score 20 (prime), Readiness 50 -> Score 80 (needs rest)
+    let baseScore = 100 - readiness;
+
+    // Adjust for sleep quality
+    if (sleepScore < 60) baseScore += 15;
+    else if (sleepScore < 70) baseScore += 8;
+    else if (sleepScore > 85) baseScore -= 10;
+
+    // Adjust for volume ratio (high recent volume = needs more recovery)
+    if (volumeRatio > 1.3) baseScore += 15;
+    else if (volumeRatio > 1.1) baseScore += 5;
+    else if (volumeRatio < 0.8) baseScore -= 10;
+
+    // Adjust for weight loss rate
+    if (isAggressiveLoss) baseScore += 10;
+
+    // Clamp to valid range
+    let score = Math.max(5, Math.min(95, baseScore));
+
+    // 4. Determine Status and Insight Based on Score and Context
     let status = 'Optimal';
-    let insight = 'Your body is recovering well. Today is a great day for a high-intensity session.';
-    let score = 50; // 0-100 scale, 50 is balanced
+    let insight = 'Tu cuerpo está recuperado. Buen día para entrenar con intensidad normal.';
 
-    // Logic Tree
-
-    // Scenario Pre-check: Already Trained Today
+    // Override if trained today
     if (hasTrainedToday) {
       status = 'Done';
-      insight = 'Great work today! Your volume is banked. Focus on nutrition and recovery now.';
-      score = 40; // Neutral/Recovery zone
+      insight = hasGymToday
+        ? `¡Gran trabajo! ${todayVolume.toLocaleString()} kg de volumen registrado. Enfócate en nutrición y recuperación.`
+        : '¡Entreno registrado! Ahora prioriza la recuperación.';
+      // Score stays where recovery metrics put it, but shifts slightly left
+      score = Math.max(15, score - 15);
     }
-    // Scenario A: High Fatigue Warning
-    // readiness < 70 AND volume > 20% above monthly avg
-    else if (readiness < 70 && isHighVolume) {
-      status = 'Overreaching';
-      insight = 'Fatigue is high and volume is spiking. Consider a shorter session or active recovery to protect your progress.';
-      score = 90;
+    // High fatigue indicators
+    else if (score > 75) {
+      if (readiness < 60) {
+        status = 'Recuperación';
+        insight = 'Tu readiness está baja. Considera un día de movilidad o descanso activo.';
+      } else if (volumeRatio > 1.3) {
+        status = 'Overreaching';
+        insight = 'Volumen elevado esta semana. Reduce intensidad para evitar fatiga acumulada.';
+      } else {
+        status = 'Cuidado';
+        insight = 'Señales de fatiga detectadas. Modera la intensidad hoy.';
+      }
     }
-    // Scenario B: Aggressive Cut Warning
-    // Weight loss > 1.5kg/week AND sleep < 65
-    else if (isAggressiveLoss && sleepScore < 65) {
-      status = 'Deload Needed';
-      insight = 'Rapid weight loss combined with poor sleep increases injury risk. Recommended: Immediate Deload Day (Low Intensity/Yoga).';
-      score = 80;
-    }
-    // Scenario C: Recovery Mode
-    // Just poor readiness independent of volume
-    else if (readiness < 60) {
-      status = 'Recovering';
-      insight = 'Readiness is low. Focus on technique and mobility rather than heavy loads today.';
-      score = 75;
-    }
-    // Scenario D: Prime Time
-    // Good readiness and moderate/high volume usually means adaptation
-    else if (readiness > 85 && !isHighVolume) {
+    // Prime condition
+    else if (score < 30 && readiness > 80) {
       status = 'Prime';
-      insight = 'Systems are go! You are primed for a PR attempt or high-volume session.';
-      score = 20;
+      insight = '¡Estás en tu mejor momento! Día ideal para intensidad alta o PR.';
+    }
+    // Good condition
+    else if (score < 45) {
+      status = 'Óptimo';
+      insight = 'Buena recuperación. Puedes entrenar fuerte hoy.';
+    }
+    // Normal condition (middle range)
+    else {
+      status = 'Normal';
+      insight = 'Capacidad de entrenamiento normal. Mantén el ritmo planificado.';
     }
 
-    // 5. Structure for UI
     return {
       status,
       insight,
@@ -129,10 +150,11 @@ export const useEffortAnalytics = (workoutLog, ouraLog, weightAnalytics) => {
         volumeRatio: volumeRatio.toFixed(2),
         readiness,
         sleepScore,
-        trend: currentTrend
+        trend: currentTrend,
+        todayVolume
       },
-      score // For gauge position
+      score
     };
 
-  }, [workoutLog, ouraLog, weightAnalytics]);
+  }, [workoutLog, ouraLog, weightAnalytics, selectedDate]);
 };

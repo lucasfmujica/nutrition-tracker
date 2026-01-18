@@ -28,8 +28,8 @@ export const WorkoutsTab = ({
   const workoutsForSelectedDate = getWorkoutsForDate(selectedWorkoutDate);
   const dailyOura = ouraLog.find(e => e.date === selectedWorkoutDate);
 
-  // AES Intelligence Engine
-  const effortAnalytics = useEffortAnalytics(workoutLog, ouraLog, weightAnalytics);
+  // AES Intelligence Engine - Now date-aware!
+  const effortAnalytics = useEffortAnalytics(workoutLog, ouraLog, weightAnalytics, selectedWorkoutDate);
   const { syncOuraData, isSyncing, syncStatus, handleEditWorkout } = useTracker();
 
   return (
