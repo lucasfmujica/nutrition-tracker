@@ -30,9 +30,11 @@ export default async function handler(req, res) {
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
-    const { apiKey, userId, data } = req.body;
+    // Parse Input
+    // Support new polymorphic (type/value) and legacy (data object) for backward compat
+    let { apiKey, userId, type, value, date, data } = req.body;
 
-    console.log(`[SyncHealth] Request received. apiKey present: ${!!apiKey}, userId: ${userId}`);
+    console.log(`[SyncHealth] Request received. apiKey present: ${!!apiKey}, userId: ${userId}, type: ${type}`);
 
     // 1. Security Check
     if (!apiKey || apiKey !== process.env.SYNC_API_KEY) {
@@ -40,54 +42,75 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Unauthorized: Invalid API Key' });
     }
 
-    // 2. Data Validation
-    if (!userId || !data || !data.weight || !data.date) {
-      console.warn('[SyncHealth] Missing required fields:', { userId, data });
-      return res.status(400).json({ error: 'Bad Request: Missing userId, weight, or date' });
+    // 2. Normalize Payload (Backward Compatibility Layer)
+    // If 'data' exists (old weight shortcut), map it to new format
+    if (data && data.weight && data.date) {
+      type = 'weight';
+      value = data.weight;
+      date = data.date;
     }
 
-    console.log(`[SyncHealth] Processing sync for User: ${userId}, Date: ${data.date}, Weight: ${data.weight}`);
+    // 3. Validation
+    if (!userId || !type || value === undefined || !date) {
+      console.warn('[SyncHealth] Missing required fields:', { userId, type, value, date });
+      return res.status(400).json({ error: 'Bad Request: Missing userId, type, value, or date' });
+    }
 
-    // 3. Date Formatting (Argentina Timezone)
-    // Incoming date is ISO string (e.g., 2024-01-18T08:00:00Z) or iOS localized string
+    console.log(`[SyncHealth] Processing ${type} sync for User: ${userId}, Date: ${date}, Value: ${value}`);
+
+    // 4. Date Formatting (Argentina Timezone)
     let argentinaDate;
     try {
-      argentinaDate = new Date(data.date).toLocaleDateString('es-AR', {
+      // Force Timezone to Argentina (UTC-3) to treat the input date as local to that region
+      // or respect the ISO string provided.
+      // We want to ensure it locks to YYYY-MM-DD in Argentina.
+      argentinaDate = new Date(date).toLocaleDateString('es-AR', {
         timeZone: 'America/Argentina/Buenos_Aires',
         year: 'numeric',
         month: '2-digit',
         day: '2-digit'
-      }).split('/').reverse().join('-'); // Convert DD/MM/YYYY to YYYY-MM-DD
+      }).split('/').reverse().join('-'); // YYYY-MM-DD
     } catch (dateError) {
       console.error('[SyncHealth] Date parsing error:', dateError);
-      return res.status(400).json({ error: 'Invalid Date Format from iOS' });
+      return res.status(400).json({ error: 'Invalid Date Format' });
     }
 
-    // 4. Construct Payload
-    const payload = {
-      user_id: userId,
-      date: argentinaDate,
-      weight: parseFloat(data.weight),
-    };
+    // 5. Database Operations
+    let table, payload, conflictTarget;
 
-    if (data.bodyFat) {
-      console.log(`[SyncHealth] Received bodyFat (${data.bodyFat}%) but column missing in schema. Skipping save.`);
+    if (type === 'weight') {
+      table = 'weight_history';
+      payload = {
+        user_id: userId,
+        date: argentinaDate,
+        weight: parseFloat(value)
+      };
+      conflictTarget = 'user_id, date';
+    } else if (type === 'steps') {
+      table = 'steps_log';
+      payload = {
+        user_id: userId,
+        date: argentinaDate,
+        steps: parseInt(value, 10)
+      };
+      conflictTarget = 'user_id, date';
+    } else {
+      return res.status(400).json({ error: `Unsupported type: ${type}` });
     }
 
-    // 5. Upsert to Supabase
+    // 6. Upsert to Supabase
     const { data: inserted, error } = await supabase
-      .from('weight_history')
-      .upsert(payload, { onConflict: 'user_id, date' })
+      .from(table)
+      .upsert(payload, { onConflict: conflictTarget })
       .select();
 
     if (error) {
-      console.error('[SyncHealth] Supabase Upsert Error:', error);
+      console.error(`[SyncHealth] Supabase Error (${table}):`, error);
       return res.status(500).json({ error: 'Database Error', details: error.message });
     }
 
-    console.log('[SyncHealth] Success:', inserted);
-    return res.status(200).json({ success: true, message: 'Data synced successfully', data: inserted });
-
+    console.log(`[SyncHealth] Success (${table}):`, inserted);
+    return res.status(200).json({ success: true, message: `${type} synced successfully`, data: inserted });
   } catch (error) {
     console.error('[SyncHealth] Internal Critical Error:', error);
     return res.status(500).json({ error: 'Internal Server Error', details: error.message });
