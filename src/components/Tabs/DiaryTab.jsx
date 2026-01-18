@@ -2,13 +2,14 @@ import { useMemo } from 'react';
 import { useTracker } from '../../context/TrackerContext';
 import { useProteinPacing } from '../../hooks/useProteinPacing';
 import { useSmartMealCompass } from '../../hooks/useSmartMealCompass';
-import { formatDateDisplay, getArgentinaDateString } from '../../utils/dateUtils';
+// Date utils removed as they are now handled internally by LukenFitDatePicker
 import { FastLogCarousel } from '../Dashboard/FastLogCarousel';
 import { HydrationGuard } from '../Dashboard/HydrationGuard';
 import { DaySummary } from '../Diary/DaySummary';
 import { MealCompassCard } from '../Diary/MealCompassCard';
 import { MealSection } from '../Diary/MealSection';
 import { ProteinTimeline } from '../Diary/ProteinTimeline';
+import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
 // Internal Wrapper to safeguard hook usage (conditional rendering in parent)
 const MealCompassWrapper = ({ foodLog, remaining, onAdd }) => {
@@ -147,30 +148,12 @@ export const DiaryTab = ({
           <h1 className="text-2xl font-bold text-gray-900">Diario</h1>
           <p className="text-sm text-gray-500">Registro de alimentos</p>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setSelectedFoodDate(changeDate(selectedFoodDate, -1))}
-            className="w-10 h-10 rounded-xl hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors flex items-center justify-center"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <input
-            type="date"
-            value={selectedFoodDate}
-            onChange={(e) => setSelectedFoodDate(e.target.value)}
-            className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-900 text-base flex-1 min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+        <div className="w-full md:w-auto">
+          <LukenFitDatePicker
+            selectedDate={selectedFoodDate}
+            onChange={setSelectedFoodDate}
+            label="Fecha"
           />
-          <button
-            onClick={() => setSelectedFoodDate(changeDate(selectedFoodDate, 1))}
-            disabled={selectedFoodDate >= getArgentinaDateString()}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${selectedFoodDate >= getArgentinaDateString() ? 'text-gray-200 cursor-not-allowed' : 'hover:bg-gray-50 text-gray-400 hover:text-blue-500'}`}
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
         </div>
       </div>
 

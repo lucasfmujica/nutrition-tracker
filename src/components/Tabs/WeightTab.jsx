@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useWeightForm } from '../../hooks/ui/useWeightForm';
 import { supabase } from '../../lib/supabase';
-import { getArgentinaDateString } from '../../utils/dateUtils';
 import { WeightLineChart } from '../Charts/WeightLineChart';
+import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
 /**
  * WeightTab - Weight tracking and history
@@ -58,12 +58,13 @@ export const WeightTab = ({
         </h2>
         <div className="flex flex-col gap-3">
           <div className="flex gap-2">
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-            />
+            <div className="flex-1 min-w-[140px]">
+              <LukenFitDatePicker
+                selectedDate={date}
+                onChange={setDate}
+                label="Fecha"
+              />
+            </div>
             <input
               type="number"
               step="0.1"

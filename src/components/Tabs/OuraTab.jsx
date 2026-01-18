@@ -1,8 +1,9 @@
-import { Calendar, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTracker } from '../../context/TrackerContext';
-import { addDaysToDate, getArgentinaDateString } from '../../utils/dateUtils';
+import { getArgentinaDateString } from '../../utils/dateUtils';
 import { OuraBentoGrid } from '../Oura/OuraBentoGrid';
+import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
 /**
  * OuraTab - Automated Oura Ring Dashboard
@@ -47,32 +48,20 @@ export const OuraTab = ({
            <p className="text-sm text-gray-500">Recuperación y métricas de sueño</p>
         </div>
 
-        <div className="flex items-center gap-3 bg-white p-1.5 rounded-xl border border-gray-100 shadow-sm mx-auto md:mx-0">
+        <div className="flex flex-wrap items-center gap-3 bg-white p-1.5 rounded-xl border border-gray-100 shadow-sm mx-auto md:mx-0">
            {/* Date Nav */}
-           <div className="flex items-center bg-gray-50 rounded-lg">
-              <button
-                onClick={() => handleDateChange(-1)}
-                className="p-2 text-gray-400 hover:text-purple-600 transition-colors"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <div className="flex items-center gap-2 px-2">
-                <Calendar className="w-3.5 h-3.5 text-gray-400" />
-                <span className="text-sm font-bold text-gray-700 w-24 text-center">{selectedDate}</span>
-              </div>
-              <button
-                onClick={() => handleDateChange(1)}
-                className="p-2 text-gray-400 hover:text-purple-600 transition-colors"
-                disabled={selectedDate >= getArgentinaDateString()}
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
+           <div className="w-[200px]">
+             <LukenFitDatePicker
+                 selectedDate={selectedDate}
+                 onChange={setSelectedDate}
+                 label="Fecha"
+             />
            </div>
 
-           <div className="w-px h-8 bg-gray-100 mx-1" />
+           <div className="w-px h-8 bg-gray-100 mx-1 hidden sm:block" />
 
            {/* Sync Button */}
-           <div className="flex items-center gap-2 pr-2">
+           <div className="flex items-center gap-2 pr-2 ml-auto sm:ml-0">
               <div className="text-right hidden sm:block">
                  <p className="text-[10px] mobile-label text-gray-400 font-bold uppercase tracking-wider">Última sinc.</p>
                  <p className="text-xs font-bold text-gray-700">{lastSyncTime || '--:--'}</p>
