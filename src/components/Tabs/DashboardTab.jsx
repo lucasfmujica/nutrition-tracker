@@ -20,6 +20,7 @@ import { TrainingWidget } from '../Dashboard/TrainingWidget';
 import { WeeklyPlanningCard } from '../Dashboard/WeeklyPlanningCard';
 import { WeightChartCard } from '../Dashboard/WeightChartCard';
 import { WeightProjectionCard } from '../Dashboard/WeightProjectionCard';
+import { FoodCameraInput } from '../Food/FoodCameraInput';
 import { WeeklyReportModal } from '../Modals/WeeklyReportModal';
 import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
@@ -171,6 +172,9 @@ export const DashboardTab = ({
             safetyNetActive={safetyNetActive}
             periodizationState={weeklyPeriodization?.weekDays?.find(d => d.date === dashboardDate)?.intensity}
           />
+
+        {/* AI Meal Scanner - Quick Log */}
+        <FoodCameraInput />
 
         {/* Macro Cards */}
         <MacroCards totals={dashboardTotals} targets={dashboardTargets} />
