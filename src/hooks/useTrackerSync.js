@@ -11,7 +11,7 @@ import { useVaultWorker } from './supabase/useVaultWorker';
  * - Manages auth state and UI visibility
  * - Delegates queue processing to useVaultWorker
  * - Delegates data loading to useInitialHydration
- * - Handles migration, refresh, and logout flows
+ * - Handles refresh and logout flows
  *
  * This hook has been refactored from 420 lines to ~180 lines by extracting:
  * - Queue processing → useVaultWorker
@@ -44,15 +44,11 @@ export const useTrackerSync = ({
   const [saveStatus, setSaveStatus] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Migration state
-  const [showMigrationModal, setShowMigrationModal] = useState(false);
-  const [migrationData, setMigrationData] = useState(null);
-
   const hasInitialized = useRef(false);
 
   // NOTE: useCloud is now passed from TrackerContext (single source of truth)
 
-  const { isMigrating, handleMigration: resolveMigration, forceSyncToCloud: resolveForceSync } = useSyncResolver(
+  const { forceSyncToCloud: resolveForceSync } = useSyncResolver(
     supabase,
     useCloud,
     { foodLog, workoutLog, stepsLog, ouraLog, waterLog, weightHistory }
@@ -91,28 +87,8 @@ export const useTrackerSync = ({
     setWaterLog,
     setIsLoading,
     setSaveStatus,
-    setShowOnboarding,
-    setMigrationData,
-    setShowMigrationModal
+    setShowOnboarding
   });
-
-  const handleMigration = async () => {
-    const success = await resolveMigration(migrationData, {
-      onSuccess: (data) => {
-        // Supabase is source of truth - always sync
-        if (data.profile) setProfile(data.profile);
-        if (data.targets) setCustomTargets(data.targets);
-        if (data.weightHistory !== undefined) setWeightHistory(data.weightHistory);
-        if (data.foodLog !== undefined) setFoodLog(data.foodLog);
-        if (data.workouts !== undefined) setWorkoutLog(data.workouts);
-        if (data.stepsLog !== undefined) setStepsLog(data.stepsLog);
-        if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);
-        if (data.waterLog !== undefined) setWaterLog(data.waterLog);
-        setShowMigrationModal(false);
-        setMigrationData(null);
-      }
-    });
-  };
 
   const forceSyncToCloud = async () => {
     return await resolveForceSync(setSaveStatus);
@@ -197,9 +173,6 @@ export const useTrackerSync = ({
     isLoading, setIsLoading,
     saveStatus, setSaveStatus,
     isRefreshing, handleRefresh,
-    showMigrationModal, setShowMigrationModal,
-    migrationData, setMigrationData,
-    isMigrating, handleMigration,
     // useCloud removed - now managed in TrackerContext as single source of truth
     forceSyncToCloud,
     processPendingQueue, // The Vault auto-recovery worker

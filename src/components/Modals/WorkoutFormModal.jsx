@@ -1,3 +1,5 @@
+import { ExerciseForm } from '../Workouts/ExerciseForm';
+
 /**
  * WorkoutFormModal - Manual workout entry form
  * Modal for adding workout entries with exercise tracking
@@ -7,9 +9,17 @@ export const WorkoutFormModal = ({
   onClose,
   workout,
   onWorkoutChange,
-  onSubmit
+  onSubmit,
+  mode = 'add' // 'add' | 'edit'
 }) => {
   if (!isOpen) return null;
+
+  const isGymWorkout = workout.type === 'gym';
+  const headerText = mode === 'edit' ? '✏️ Editar Entreno' : '🏋️ Nuevo Entreno';
+
+  const handleExercisesChange = (exercises) => {
+    onWorkoutChange({ ...workout, exercises });
+  };
 
   return (
     <div
@@ -17,12 +27,12 @@ export const WorkoutFormModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-3xl p-6 lg:p-8 w-full max-w-sm lg:max-w-md border border-gray-100 shadow-2xl"
+        className="bg-white rounded-3xl p-6 lg:p-8 w-full max-w-sm lg:max-w-md border border-gray-100 shadow-2xl max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         {/* Header with close button */}
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl lg:text-2xl font-bold text-slate-900">🏋️ Nuevo Entreno</h3>
+          <h3 className="text-xl lg:text-2xl font-bold text-slate-900">{headerText}</h3>
           <button
             onClick={onClose}
             className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
@@ -104,6 +114,17 @@ export const WorkoutFormModal = ({
               className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all"
             />
           </div>
+
+          {/* Row 5: Exercises (Gym only) */}
+          {isGymWorkout && (
+            <div className="pt-4 border-t border-slate-100">
+              <ExerciseForm
+                exercises={workout.exercises || []}
+                onChange={handleExercisesChange}
+                disabled={false}
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex gap-4 mt-8">
@@ -115,9 +136,10 @@ export const WorkoutFormModal = ({
           </button>
           <button
             onClick={onSubmit}
-            className="flex-1 bg-gradient-to-br from-amber-600 to-orange-500 hover:from-amber-500 hover:to-orange-400 py-4 rounded-2xl text-white text-sm lg:text-base font-bold shadow-lg shadow-orange-500/20 transition-all active:scale-95"
+            disabled={!workout.name}
+            className="flex-1 bg-gradient-to-br from-amber-600 to-orange-500 hover:from-amber-500 hover:to-orange-400 py-4 rounded-2xl text-white text-sm lg:text-base font-bold shadow-lg shadow-orange-500/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Guardar
+            {mode === 'edit' ? 'Actualizar' : 'Guardar'}
           </button>
         </div>
       </div>

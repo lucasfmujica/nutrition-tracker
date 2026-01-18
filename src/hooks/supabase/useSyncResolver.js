@@ -1,30 +1,6 @@
-import { useState } from 'react';
+// useSyncResolver - Handles force sync to cloud operations
 
 export const useSyncResolver = (supabase, useCloud, logs) => {
-  const [isMigrating, setIsMigrating] = useState(false);
-
-  const handleMigration = async (migrationData, callbacks) => {
-    setIsMigrating(true);
-    try {
-      const result = await supabase.migrateLocalStorageToSupabase(migrationData);
-      if (result.success) {
-        supabase.clearMigratedLocalStorage();
-        // Reload data from Supabase
-        const data = await supabase.fetchAllData();
-        if (data) {
-          callbacks.onSuccess(data);
-        }
-        return true;
-      }
-      return false;
-    } catch (err) {
-      console.error('Migration failed:', err);
-      return false;
-    } finally {
-      setIsMigrating(false);
-    }
-  };
-
   const forceSyncToCloud = async (setSaveStatus) => {
     // Contract: Must return { success: boolean, synced: object, message?: string }
     if (!useCloud) return { success: false, message: 'No conectado a la nube' };
@@ -107,8 +83,6 @@ export const useSyncResolver = (supabase, useCloud, logs) => {
   };
 
   return {
-    isMigrating,
-    handleMigration,
     forceSyncToCloud
   };
 };

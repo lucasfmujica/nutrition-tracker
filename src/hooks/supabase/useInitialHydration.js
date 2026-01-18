@@ -28,8 +28,6 @@ import { cacheData, loadCachedData } from '../../utils/storageUtils';
  * @param {Function} params.setIsLoading - Loading state setter
  * @param {Function} params.setSaveStatus - Save status message setter
  * @param {Function} params.setShowOnboarding - Onboarding modal visibility setter
- * @param {Function} params.setMigrationData - Migration data state setter
- * @param {Function} params.setShowMigrationModal - Migration modal visibility setter
  */
 export const useInitialHydration = ({
   supabase,
@@ -46,9 +44,7 @@ export const useInitialHydration = ({
   setWaterLog,
   setIsLoading,
   setSaveStatus,
-  setShowOnboarding,
-  setMigrationData,
-  setShowMigrationModal
+  setShowOnboarding
 }) => {
   // Load data effect
   useEffect(() => {
@@ -69,17 +65,14 @@ export const useInitialHydration = ({
     hasInitialized.current = true;
     console.log('[Data] Starting data load with authenticated user:', supabase.user?.email);
 
-    // Check for onboarding and migration needs (only when authenticated)
+    // Check for onboarding needs (only when authenticated)
     if (supabase.isAuthenticated) {
+      // One-time cleanup of legacy localStorage keys
+      cleanupLegacyLocalStorage();
+
       supabase.checkNeedsOnboarding().then(needsOnboarding => {
         if (needsOnboarding) setShowOnboarding(true);
       });
-
-      const { hasData, localData } = supabase.checkLocalStorageForMigration();
-      if (hasData && supabase.isOnline) {
-        setMigrationData(localData);
-        setShowMigrationModal(true);
-      }
     }
 
     const loadData = async () => {
@@ -185,4 +178,48 @@ export const useInitialHydration = ({
 
   // This hook only performs side effects, no return value needed
   return {};
+};
+
+// One-time cleanup of legacy localStorage keys
+const CLEANUP_FLAG = 'migration_cleanup_v1_complete';
+
+const cleanupLegacyLocalStorage = () => {
+  // Only run once per browser
+  if (localStorage.getItem(CLEANUP_FLAG)) return;
+
+  const legacyKeys = [
+    // Old "nutrition_*" keys from v1
+    'nutrition_data_v1',
+    'nutrition_profile',
+    'nutrition_targets',
+    'nutrition_weight',
+    'nutrition_food',
+    'nutrition_workouts',
+    'nutrition_steps',
+    'nutrition_oura',
+    'nutrition_water',
+    // Old "lucas-*-v5" keys from v5
+    'lucas-profile-v5',
+    'lucas-weight-history-v5',
+    'lucas-food-log-v5',
+    'lucas-workout-log-v5',
+    'lucas-steps-log-v5',
+    'lucas-targets-v5',
+    'lucas-oura-log-v5'
+  ];
+
+  let cleaned = 0;
+  legacyKeys.forEach(key => {
+    if (localStorage.getItem(key)) {
+      localStorage.removeItem(key);
+      cleaned++;
+    }
+  });
+
+  if (cleaned > 0) {
+    console.log(`[Cleanup] Removed ${cleaned} legacy localStorage keys`);
+  }
+
+  // Mark cleanup as complete
+  localStorage.setItem(CLEANUP_FLAG, 'true');
 };

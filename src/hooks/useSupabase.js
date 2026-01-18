@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { useActivityData } from './supabase/useActivityData';
-import { useMigration } from './supabase/useMigration';
 import { useNutritionData } from './supabase/useNutritionData';
 import { useProfileData } from './supabase/useProfileData';
 import { useSupabaseAuth } from './supabase/useSupabaseAuth';
@@ -69,12 +68,6 @@ export function useSupabase() {
     fetchOuraLog,
     saveOura
   } = useActivityData(user, isOnline);
-
-  const {
-    migrateLocalStorageToSupabase,
-    checkLocalStorageForMigration,
-    clearMigratedLocalStorage
-  } = useMigration(user, isOnline);
 
   // Legacy loading state compatibility
   const [loading, setLoading] = useState(true);
@@ -259,9 +252,6 @@ export function useSupabase() {
     fetchWaterLog,
     saveWater,
     fetchAllData,
-    migrateLocalStorageToSupabase,
-    checkLocalStorageForMigration,
-    clearMigratedLocalStorage,
     onRealtimeUpdate,
   };
 }

@@ -1,4 +1,4 @@
-import { Activity, Dumbbell, Moon, RefreshCw, Target, Trophy, Zap } from 'lucide-react';
+import { Activity, Dumbbell, Moon, Pencil, RefreshCw, Target, Trophy, Zap } from 'lucide-react';
 import { useTracker } from '../../context/TrackerContext';
 import { useEffortAnalytics } from '../../hooks/useEffortAnalytics';
 import { addDaysToDate, getArgentinaDateString, getMondayOfWeek } from '../../utils/dateUtils';
@@ -30,7 +30,7 @@ export const WorkoutsTab = ({
 
   // AES Intelligence Engine
   const effortAnalytics = useEffortAnalytics(workoutLog, ouraLog, weightAnalytics);
-  const { syncOuraData, isSyncing, syncStatus } = useTracker();
+  const { syncOuraData, isSyncing, syncStatus, handleEditWorkout } = useTracker();
 
   return (
     <div className="space-y-3">
@@ -201,13 +201,24 @@ export const WorkoutsTab = ({
                       </div>
                       <h3 className="font-bold text-gray-900 text-lg leading-tight truncate">{workout.name}</h3>
                     </div>
-                    {needsReview && (
-                      <button onClick={() => confirmWorkout(workout.id)} className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/20 active:scale-90 transition-transform flex-shrink-0">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
+                    <div className="flex gap-2 items-center flex-shrink-0">
+                      {/* Edit Button */}
+                      <button
+                        onClick={() => handleEditWorkout(workout)}
+                        className="w-8 h-8 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition-colors active:scale-90"
+                        title="Editar entreno"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
                       </button>
-                    )}
+                      {/* Review Button */}
+                      {needsReview && (
+                        <button onClick={() => confirmWorkout(workout.id)} className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/20 active:scale-90 transition-transform">
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-3 pl-2">

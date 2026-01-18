@@ -3,7 +3,6 @@ import { useTracker } from '../../../context/TrackerContext';
 import { DeleteConfirmModal } from '../../Modals/DeleteConfirmModal';
 import { FoodFormModal } from '../../Modals/FoodFormModal';
 import { ImportModal } from '../../Modals/ImportModal';
-import { MigrationModal } from '../../Modals/MigrationModal';
 import { MondayBriefingModal } from '../../Modals/MondayBriefingModal';
 import { WorkoutFormModal } from '../../Modals/WorkoutFormModal';
 import { WeeklyReport } from './WeeklyReport';
@@ -14,14 +13,6 @@ export const ModalsManager = () => {
     deleteModal,
     setDeleteModal,
     executeDelete,
-
-    // Migration Modal
-    showMigrationModal,
-    setShowMigrationModal,
-    migrationData,
-    setMigrationData,
-    handleMigration,
-    isMigrating,
 
     // Food Form Modal
     showFoodForm,
@@ -38,6 +29,9 @@ export const ModalsManager = () => {
     newWorkout,
     setNewWorkout,
     addManualWorkout,
+    saveWorkout,
+    editingWorkout,
+    handleEditWorkout,
 
     // Import Modals
     showImportFoodModal,
@@ -92,18 +86,6 @@ export const ModalsManager = () => {
         onCancel={() => setDeleteModal({ show: false, type: '', id: null, name: '' })}
       />
 
-      {/* Migration Modal */}
-      <MigrationModal
-        isOpen={showMigrationModal}
-        data={migrationData}
-        onMigrate={handleMigration}
-        onSkip={() => {
-          setShowMigrationModal(false);
-          setMigrationData(null);
-        }}
-        isMigrating={isMigrating}
-      />
-
       {/* Manual Food Entry Modal */}
       <FoodFormModal
         isOpen={showFoodForm}
@@ -117,10 +99,11 @@ export const ModalsManager = () => {
       {/* Manual Workout Entry Modal */}
       <WorkoutFormModal
         isOpen={showWorkoutForm}
-        onClose={() => setShowWorkoutForm(false)}
+        onClose={() => { setShowWorkoutForm(false); if (editingWorkout) handleEditWorkout(null); }}
         workout={newWorkout}
         onWorkoutChange={setNewWorkout}
-        onSubmit={addManualWorkout}
+        onSubmit={saveWorkout || addManualWorkout}
+        mode={editingWorkout ? 'edit' : 'add'}
       />
 
       {/* Import Food Modal */}

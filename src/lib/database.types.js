@@ -235,17 +235,29 @@ export const mappers = {
   },
 
   // Workout: Supabase -> localStorage format
-  workoutFromDb: (dbEntry) => ({
-    id: dbEntry.id,
-    date: dbEntry.date,
-    type: dbEntry.type,
-    name: dbEntry.name,
-    duration: dbEntry.duration,
-    calories: dbEntry.calories,
-    volume: dbEntry.volume,
-    exercises: dbEntry.exercises || [],
-    notes: dbEntry.notes,
-  }),
+  workoutFromDb: (dbEntry) => {
+    // CRITICAL FIX: Restore 'tennis' type from 'sport' when name indicates tennis
+    // Database normalizes tennis → sport, but UI/analysis expects 'tennis' type
+    let displayType = dbEntry.type;
+    if (dbEntry.type === 'sport') {
+      const nameLower = dbEntry.name.toLowerCase();
+      if (nameLower.includes('tenis') || nameLower.includes('tennis')) {
+        displayType = 'tennis';
+      }
+    }
+
+    return {
+      id: dbEntry.id,
+      date: dbEntry.date,
+      type: displayType,
+      name: dbEntry.name,
+      duration: dbEntry.duration,
+      calories: dbEntry.calories,
+      volume: dbEntry.volume,
+      exercises: dbEntry.exercises || [],
+      notes: dbEntry.notes,
+    };
+  },
 
   // Steps: localStorage -> Supabase
   stepsToDb: (entry, userId) => ({

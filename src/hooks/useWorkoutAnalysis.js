@@ -10,7 +10,15 @@ export const useWorkoutAnalysis = (workoutLog) => {
     const currentWeekWorkouts = workoutLog.filter(w => w.date >= monday && w.date <= sunday);
 
     const gymCount = currentWeekWorkouts.filter(w => w.type === 'gym').length;
-    const tennisCount = currentWeekWorkouts.filter(w => w.type === 'tennis').length;
+    // CRITICAL FIX: Tennis recognition with fallback to name-based detection
+    // Database mapper should restore 'tennis' type, but this provides defense-in-depth
+    const tennisCount = currentWeekWorkouts.filter(w => {
+      const nameLower = w.name?.toLowerCase() || '';
+      return w.type === 'tennis' ||
+        w.type === 'sport' ||
+        nameLower.includes('tenis') ||
+        nameLower.includes('tennis');
+    }).length;
     const totalDuration = currentWeekWorkouts.reduce((sum, w) => sum + (parseInt(w.duration) || 0), 0);
 
     const analysis = [];
