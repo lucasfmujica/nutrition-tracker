@@ -6,6 +6,7 @@ import { formatRelativeTime } from '../../utils/dateUtils';
  * SyncStatusIndicator - Visual feedback for cloud sync status
  *
  * States:
+ * - 'stale': Amber cloud with animation (cache > 5 min old, revalidating)
  * - 'idle': Green cloud (all synced)
  * - 'syncing': Yellow cloud with animation (syncing in progress)
  * - 'success': Green cloud with checkmark (briefly shown after sync)
@@ -15,8 +16,9 @@ import { formatRelativeTime } from '../../utils/dateUtils';
  * - syncStatus: Current sync status from useSupabase
  * - syncError: Error message if sync failed
  * - lastSyncTime: Date object of last successful sync
+ * - cacheStale: Boolean indicating if cache is > 5 min old (SWR pattern)
  */
-export const SyncStatusIndicator = ({ syncStatus, syncError, lastSyncTime }) => {
+export const SyncStatusIndicator = ({ syncStatus, syncError, lastSyncTime, cacheStale = false }) => {
   const [relativeTime, setRelativeTime] = useState('');
 
   // Update relative time every 30 seconds
@@ -33,6 +35,18 @@ export const SyncStatusIndicator = ({ syncStatus, syncError, lastSyncTime }) => 
 
   // Determine icon and color based on status
   const getStatusConfig = () => {
+    // SWR PATTERN: Prioritize stale state - shows when cache is > 5 min old
+    // This gives user clear feedback that fresh data is being loaded
+    if (cacheStale) {
+      return {
+        Icon: RefreshCw,
+        color: 'text-amber-500',
+        bgColor: 'bg-amber-50',
+        label: 'Actualizando...',
+        animate: true
+      };
+    }
+
     switch (syncStatus) {
       case 'syncing':
         return {

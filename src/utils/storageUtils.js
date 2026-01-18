@@ -9,8 +9,27 @@ export const CACHE_KEYS = {
   TARGETS: 'lucas-targets-v5',
   OURA: 'lucas-oura-log-v5',
   WATER: 'lucas-water-log-v5',
-  PENDING_SYNC: 'lucas-pending-sync-v1' // The Vault - offline resilience queue
+  PENDING_SYNC: 'lucas-pending-sync-v1', // The Vault - offline resilience queue
+  METADATA: 'lucas-cache-metadata-v1' // SWR: Track sync timestamps & schema version
 };
+
+// ============================================================================
+// SWR PATTERN - Cache Validation & Staleness Detection
+// ============================================================================
+
+/**
+ * Cache TTL (Time-To-Live)
+ * Data older than 5 minutes is considered stale and won't be used for hydration
+ * This prevents race conditions with Argentina timezone date filtering
+ */
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Schema version for cache validation
+ * Increment this when making breaking changes to data structure
+ * Mismatched versions will trigger cache invalidation
+ */
+const SCHEMA_VERSION = 'v6';
 
 const safeParse = (item, defaultValue) => {
   if (!item?.value) return defaultValue;
@@ -84,6 +103,76 @@ export const clearCache = async () => {
   const keys = Object.values(CACHE_KEYS);
   for (const key of keys) {
     await storage.remove(key);
+  }
+};
+
+// ============================================================================
+// CACHE METADATA MANAGEMENT (SWR Pattern)
+// ============================================================================
+
+/**
+ * Get cache metadata containing sync timestamps and schema versions
+ * @returns {Promise<Object>} Metadata object with structure:
+ *   { dataType: { lastSynced: timestamp, schemaVersion: 'v6' } }
+ */
+export const getCacheMetadata = async () => {
+  try {
+    const item = await storage.get(CACHE_KEYS.METADATA);
+    if (!item?.value) return {};
+    return JSON.parse(item.value);
+  } catch (e) {
+    console.warn('[Cache] Error parsing metadata:', e);
+    return {};
+  }
+};
+
+/**
+ * Update cache metadata after successful Supabase sync
+ * Uses Argentina timezone (browser local time already in -03:00)
+ * @param {string} dataType - Data type key (e.g., 'food', 'weight', 'profile')
+ * @param {number} syncTimestamp - Optional timestamp (defaults to now)
+ * @returns {Promise<boolean>} Success status
+ */
+export const updateCacheMetadata = async (dataType, syncTimestamp = Date.now()) => {
+  try {
+    const metadata = await getCacheMetadata();
+    metadata[dataType] = {
+      lastSynced: syncTimestamp,
+      schemaVersion: SCHEMA_VERSION
+    };
+    await storage.set(CACHE_KEYS.METADATA, JSON.stringify(metadata));
+    return true;
+  } catch (err) {
+    console.error('[Cache] Failed to update metadata:', err);
+    return false;
+  }
+};
+
+/**
+ * Check if cached data is stale (older than TTL or schema mismatch)
+ * CRITICAL: Prevents race condition where stale cache renders before Supabase fetch
+ * @param {string} dataType - Data type key to check
+ * @returns {Promise<boolean>} True if stale, false if fresh
+ */
+export const isCacheStale = async (dataType) => {
+  try {
+    const metadata = await getCacheMetadata();
+    const dataMetadata = metadata[dataType];
+
+    // No metadata = stale (first load or corrupted cache)
+    if (!dataMetadata) return true;
+
+    // Schema version mismatch = stale (breaking change)
+    if (dataMetadata.schemaVersion !== SCHEMA_VERSION) return true;
+
+    // Time-based staleness check
+    const age = Date.now() - dataMetadata.lastSynced;
+    const isStale = age > CACHE_TTL_MS;
+
+    return isStale;
+  } catch (err) {
+    console.warn('[Cache] Error checking staleness:', err);
+    return true; // Fail-safe: treat as stale on error
   }
 };
 

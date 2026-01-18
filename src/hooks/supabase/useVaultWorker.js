@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { cacheData, getPendingWrites, incrementRetryCountsBatch, removePendingWritesBatch } from '../../utils/storageUtils';
+import { cacheData, getPendingWrites, incrementRetryCountsBatch, removePendingWritesBatch, updateCacheMetadata } from '../../utils/storageUtils';
 
 /**
  * useVaultWorker - Specialized hook for processing The Vault (offline resilience queue)
@@ -194,6 +194,20 @@ export const useVaultWorker = ({
               if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);
               if (data.waterLog !== undefined) setWaterLog(data.waterLog);
               await cacheData(data);
+
+              // SWR PATTERN: Update metadata after Vault sync
+              // This marks cache as fresh after offline writes are synced
+              const argentinaTimestamp = Date.now();
+              await Promise.all([
+                updateCacheMetadata('profile', argentinaTimestamp),
+                updateCacheMetadata('targets', argentinaTimestamp),
+                updateCacheMetadata('weight', argentinaTimestamp),
+                updateCacheMetadata('food', argentinaTimestamp),
+                updateCacheMetadata('workouts', argentinaTimestamp),
+                updateCacheMetadata('steps', argentinaTimestamp),
+                updateCacheMetadata('oura', argentinaTimestamp),
+                updateCacheMetadata('water', argentinaTimestamp)
+              ]);
             }
           }, 1000); // 1s delay allows UI to breathe
         }

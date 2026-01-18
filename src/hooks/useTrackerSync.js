@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { clearCache, clearPendingWrites } from '../utils/storageUtils';
+import { clearCache, clearPendingWrites, isCacheStale, updateCacheMetadata } from '../utils/storageUtils';
 import { useInitialHydration } from './supabase/useInitialHydration';
 import { useVaultWorker } from './supabase/useVaultWorker';
 
@@ -42,8 +42,34 @@ export const useTrackerSync = ({
   const [isLoading, setIsLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [cacheStale, setCacheStale] = useState(false); // SWR: Track cache staleness for UI indicator
 
   const hasInitialized = useRef(false);
+
+  // SWR PATTERN: Monitor cache staleness for UI indicator
+  // Checks every minute if any critical data is stale
+  useEffect(() => {
+    const checkStaleness = async () => {
+      try {
+        const checks = await Promise.all([
+          isCacheStale('food'),
+          isCacheStale('workouts'),
+          isCacheStale('weight')
+        ]);
+        const isStale = checks.some(stale => stale);
+        setCacheStale(isStale);
+      } catch (err) {
+        console.error('[Sync] Error checking staleness:', err);
+      }
+    };
+
+    // Initial check
+    checkStaleness();
+
+    // Check every minute
+    const interval = setInterval(checkStaleness, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   // NOTE: useCloud is now passed from TrackerContext (single source of truth)
 
@@ -80,7 +106,8 @@ export const useTrackerSync = ({
     setWaterLog,
     setIsLoading,
     setSaveStatus,
-    setShowOnboarding
+    setShowOnboarding,
+    setCacheStale // SWR: Allow hydration to clear stale state
   });
 
   // Handle auth state changes
@@ -113,6 +140,23 @@ export const useTrackerSync = ({
           if (data.stepsLog !== undefined) setStepsLog(data.stepsLog);
           if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);
           if (data.waterLog !== undefined) setWaterLog(data.waterLog);
+
+          // SWR PATTERN: Update metadata after manual refresh
+          const argentinaTimestamp = Date.now();
+          await Promise.all([
+            updateCacheMetadata('profile', argentinaTimestamp),
+            updateCacheMetadata('targets', argentinaTimestamp),
+            updateCacheMetadata('weight', argentinaTimestamp),
+            updateCacheMetadata('food', argentinaTimestamp),
+            updateCacheMetadata('workouts', argentinaTimestamp),
+            updateCacheMetadata('steps', argentinaTimestamp),
+            updateCacheMetadata('oura', argentinaTimestamp),
+            updateCacheMetadata('water', argentinaTimestamp)
+          ]);
+
+          // Clear stale flag immediately
+          setCacheStale(false);
+
           setSaveStatus('✓ Actualizado');
           console.log('[handleRefresh] Data updated successfully');
         } else {
@@ -165,6 +209,7 @@ export const useTrackerSync = ({
     isLoading, setIsLoading,
     saveStatus, setSaveStatus,
     isRefreshing, handleRefresh,
+    cacheStale, // SWR: Expose staleness state for UI indicator
     // useCloud removed - now managed in TrackerContext as single source of truth
     processPendingQueue, // The Vault auto-recovery worker
     handleLogout

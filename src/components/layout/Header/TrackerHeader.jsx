@@ -15,7 +15,8 @@ export const TrackerHeader = () => {
     getMostRecentWeight,
     setOfflineMode,
     setShowAuth,
-    isTrainingDay
+    isTrainingDay,
+    cacheStale // SWR: Cache staleness state for indicator
   } = useTracker();
 
   return (
@@ -56,6 +57,7 @@ export const TrackerHeader = () => {
                   syncStatus={supabase.syncStatus}
                   syncError={supabase.syncError}
                   lastSyncTime={supabase.lastSyncTime}
+                  cacheStale={cacheStale}
                 />
               ) : (
                 <span className="text-xs font-bold bg-amber-50 text-amber-600 px-3 py-1.5 rounded-full border border-amber-100">📴 Offline</span>

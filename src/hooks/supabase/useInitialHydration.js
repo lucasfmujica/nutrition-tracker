@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { cacheData, loadCachedData } from '../../utils/storageUtils';
+import { cacheData, isCacheStale, loadCachedData, updateCacheMetadata } from '../../utils/storageUtils';
 
 /**
  * useInitialHydration - Specialized hook for initial data loading and hydration
@@ -44,7 +44,8 @@ export const useInitialHydration = ({
   setWaterLog,
   setIsLoading,
   setSaveStatus,
-  setShowOnboarding
+  setShowOnboarding,
+  setCacheStale // SWR: Setter to clear stale state immediately
 }) => {
   // Load data effect
   useEffect(() => {
@@ -78,25 +79,108 @@ export const useInitialHydration = ({
     const loadData = async () => {
       setIsLoading(true);
       try {
+        // SWR PATTERN: Check staleness before loading cache
+        // This prevents race condition where stale cache renders before Supabase fetch
+        console.log('[Data] Step 1: Starting staleness checks...');
+
+        const stalenessChecks = await Promise.all([
+          isCacheStale('profile'),
+          isCacheStale('targets'),
+          isCacheStale('weight'),
+          isCacheStale('food'),
+          isCacheStale('workouts'),
+          isCacheStale('steps'),
+          isCacheStale('oura'),
+          isCacheStale('water')
+        ]);
+
+        console.log('[Data] Step 2: Staleness checks complete');
+
+        const [
+          profileStale, targetsStale, weightStale, foodStale,
+          workoutsStale, stepsStale, ouraStale, waterStale
+        ] = stalenessChecks;
+
         const cached = await loadCachedData();
 
-        // Set cached data immediately for better UX
-        if (cached.localProfile) setProfile(cached.localProfile);
-        if (cached.localTargets) setCustomTargets(cached.localTargets);
-        if (cached.localWeight.length) setWeightHistory(cached.localWeight);
-        if (cached.localFood.length) setFoodLog(cached.localFood);
-        if (cached.localWorkout.length) setWorkoutLog(cached.localWorkout);
-        if (cached.localSteps.length) setStepsLog(cached.localSteps);
-        if (cached.localOura.length) setOuraLog(cached.localOura);
-        if (cached.localWater.length) setWaterLog(cached.localWater);
+        // SWR: Only hydrate if cache is fresh (within 5-minute TTL)
+        // Stale cache is ignored to prevent showing outdated data
+        if (cached.localProfile && !profileStale) {
+          setProfile(cached.localProfile);
+        } else if (profileStale && cached.localProfile) {
+          setSaveStatus('⚡ Cargando perfil actualizado...');
+        }
+
+        if (cached.localTargets && !targetsStale) {
+          setCustomTargets(cached.localTargets);
+        }
+
+        if (cached.localWeight.length && !weightStale) {
+          setWeightHistory(cached.localWeight);
+        } else if (weightStale && cached.localWeight.length) {
+          setSaveStatus('⚡ Actualizando historial de peso...');
+        }
+
+        if (cached.localFood.length && !foodStale) {
+          setFoodLog(cached.localFood);
+        } else if (foodStale && cached.localFood.length) {
+          setSaveStatus('⚡ Actualizando registro de comidas...');
+        }
+
+        if (cached.localWorkout.length && !workoutsStale) {
+          setWorkoutLog(cached.localWorkout);
+        }
+
+        if (cached.localSteps.length && !stepsStale) {
+          setStepsLog(cached.localSteps);
+        }
+
+        if (cached.localOura.length && !ouraStale) {
+          setOuraLog(cached.localOura);
+        }
+
+        if (cached.localWater.length && !waterStale) {
+          setWaterLog(cached.localWater);
+        }
 
         const hasCachedData = cached.localFood.length > 0 || cached.localWorkout.length > 0 || cached.localWeight.length > 0;
-        if (hasCachedData) {
-          setIsLoading(false);
+        const hasAnyStaleness = stalenessChecks.some(stale => stale);
+
+        // CRITICAL FIX: Handle loading state correctly
+        // - If we have fresh cache: hide loading immediately (instant UX)
+        // - If cache is stale OR no cache: keep loading visible BUT ensure it clears after fetch
+        // - GRACEFUL DEGRADATION: If Supabase is slow (>3s) and we have stale cache, show it
+        let fallbackTimer = null;
+
+        if (hasCachedData && !hasAnyStaleness) {
+          setIsLoading(false); // Instant load with fresh cache
+        } else if (hasCachedData && hasAnyStaleness) {
+          // We have stale cache - set fallback timer to show it if Supabase is too slow
+          fallbackTimer = setTimeout(() => {
+            console.warn('[Data] Supabase slow (>3s), falling back to stale cache');
+            if (cached.localProfile && profileStale) setProfile(cached.localProfile);
+            if (cached.localTargets && targetsStale) setCustomTargets(cached.localTargets);
+            if (cached.localWeight.length && weightStale) setWeightHistory(cached.localWeight);
+            if (cached.localFood.length && foodStale) setFoodLog(cached.localFood);
+            if (cached.localWorkout.length && workoutsStale) setWorkoutLog(cached.localWorkout);
+            if (cached.localSteps.length && stepsStale) setStepsLog(cached.localSteps);
+            if (cached.localOura.length && ouraStale) setOuraLog(cached.localOura);
+            if (cached.localWater.length && waterStale) setWaterLog(cached.localWater);
+            setIsLoading(false);
+            setSaveStatus('⚠️ Mostrando datos antiguos - Actualizando en segundo plano...');
+          }, 3000); // 3-second grace period
         }
 
         // Fetch from Supabase if authenticated and online
+        console.log('[Data] Fetch conditions:', {
+          isAuthenticated: supabase.isAuthenticated,
+          isOnline: supabase.isOnline,
+          offlineMode,
+          willFetch: supabase.isAuthenticated && supabase.isOnline && !offlineMode
+        });
+
         if (supabase.isAuthenticated && supabase.isOnline && !offlineMode) {
+          console.log('[Data] Starting Supabase fetch...');
           let data = null;
           let timeoutOccurred = false;
 
@@ -123,6 +207,9 @@ export const useInitialHydration = ({
           }
 
           if (data) {
+            // Clear fallback timer since fresh data arrived
+            if (fallbackTimer) clearTimeout(fallbackTimer);
+
             // CRITICAL FIX: Supabase is the single source of truth
             // Always overwrite local state, even if cloud returns empty arrays
             // This ensures data integrity and prevents Argentina timezone issues
@@ -139,6 +226,24 @@ export const useInitialHydration = ({
             if (data.waterLog !== undefined) setWaterLog(data.waterLog);
 
             await cacheData(data);
+
+            // SWR PATTERN: Update metadata timestamps after successful sync
+            // Uses Argentina timezone (browser time already in -03:00)
+            const argentinaTimestamp = Date.now();
+
+            await Promise.all([
+              updateCacheMetadata('profile', argentinaTimestamp),
+              updateCacheMetadata('targets', argentinaTimestamp),
+              updateCacheMetadata('weight', argentinaTimestamp),
+              updateCacheMetadata('food', argentinaTimestamp),
+              updateCacheMetadata('workouts', argentinaTimestamp),
+              updateCacheMetadata('steps', argentinaTimestamp),
+              updateCacheMetadata('oura', argentinaTimestamp),
+              updateCacheMetadata('water', argentinaTimestamp)
+            ]);
+
+            // SWR: Clear stale flag immediately after successful sync
+            if (setCacheStale) setCacheStale(false);
 
             setSaveStatus('✓ Sincronizado');
             setTimeout(() => setSaveStatus(''), 2000);
