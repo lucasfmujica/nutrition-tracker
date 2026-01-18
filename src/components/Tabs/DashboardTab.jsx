@@ -89,7 +89,7 @@ export const DashboardTab = ({
   };
 
   return (
-    <div className="space-y-6 pb-24 lg:pb-8">
+    <div className="space-y-6 pb-8 lg:pb-8">
       {/* Date Navigator - Clean Desktop Design */}
       <div className="flex items-center lg:items-start lg:w-full lg:mb-8 justify-center lg:justify-between px-1">
         <div className="hidden lg:block">
@@ -98,16 +98,18 @@ export const DashboardTab = ({
         </div>
 
         {/* Date Navigation + Safety Net Toggle */}
-        <div className="flex items-center gap-3">
-          {/* Safety Net Toggle */}
-          <SafetyNetToggle
-            isActive={safetyNetActive}
-            onToggle={toggleSafetyNet}
-            statusMessage={getStatusMessage()}
-          />
+        <div className="flex flex-col-reverse lg:flex-row items-center gap-3 w-full lg:w-auto">
+          {/* Safety Net Toggle - Row 2 on Mobile (Full Width), Left on Desktop */}
+          <div className="w-full lg:w-auto">
+            <SafetyNetToggle
+              isActive={safetyNetActive}
+              onToggle={toggleSafetyNet}
+              statusMessage={getStatusMessage()}
+            />
+          </div>
 
-          {/* Date Navigator */}
-          <div className="min-w-[200px]">
+          {/* Date Navigator - Row 1 on Mobile (Full Width), Right on Desktop */}
+          <div className="w-full lg:min-w-[200px] lg:w-auto">
             <LukenFitDatePicker
                 selectedDate={dashboardDate}
                 onChange={setDashboardDate}

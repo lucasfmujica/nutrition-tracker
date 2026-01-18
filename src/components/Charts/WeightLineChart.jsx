@@ -37,7 +37,7 @@ export const WeightLineChart = ({ data, targetWeight }) => {
 
   return (
     <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm h-[350px] w-full">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
           <h3 className="text-lg font-bold text-gray-900">Historial de Peso</h3>
           <p className="text-xs text-gray-400 font-medium">Tendencia y Objetivo</p>

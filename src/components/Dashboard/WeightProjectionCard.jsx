@@ -8,23 +8,31 @@ export const WeightProjectionCard = ({ projection }) => {
   return (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50">
       <h3 className="text-gray-900 font-bold text-lg mb-4">Proyección</h3>
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div className="text-center p-3 bg-gray-50 rounded-xl">
-          <div className="text-xl font-bold text-gray-900">
-            {Number.isFinite(projection.adjustedTrend) ? (
-              <>
-                {projection.adjustedTrend > 0 ? '+' : ''}{projection.adjustedTrend.toFixed(1)}
-              </>
-            ) : '—'}
-            <span className="text-xs font-normal text-gray-500">kg/sem</span>
-          </div>
-          <div className="text-xs text-gray-400 mt-1">Ritmo actual</div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+        {/* Adjusted Trend */}
+        <div className="flex flex-row sm:flex-col justify-between sm:justify-center items-center p-3 bg-gray-50 rounded-xl">
+           <div className="text-sm sm:text-xs text-gray-500 font-medium">Ritmo actual</div>
+           <div className="flex items-baseline gap-1">
+             <span className="text-xl font-bold text-gray-900">
+               {Number.isFinite(projection.adjustedTrend) ? (
+                  <>
+                    {projection.adjustedTrend > 0 ? '+' : ''}{projection.adjustedTrend.toFixed(1)}
+                  </>
+                ) : '—'}
+             </span>
+             <span className="text-xs text-gray-500">kg/sem</span>
+           </div>
         </div>
-        <div className="text-center p-3 bg-gray-50 rounded-xl">
-          <div className="text-xl font-bold text-blue-600">
-            {projection.weeksToGoal ? `${projection.weeksToGoal} sem` : '-'}
-          </div>
-          <div className="text-xs text-gray-400 mt-1">Para objetivo</div>
+
+        {/* Weeks to Goal */}
+        <div className="flex flex-row sm:flex-col justify-between sm:justify-center items-center p-3 bg-gray-50 rounded-xl">
+           <div className="text-sm sm:text-xs text-gray-500 font-medium">Para objetivo</div>
+           <div className="flex items-baseline gap-1">
+             <span className="text-xl font-bold text-blue-600">
+                {projection.weeksToGoal || '-'}
+             </span>
+             <span className="text-xs text-blue-400">sem</span>
+           </div>
         </div>
       </div>
 

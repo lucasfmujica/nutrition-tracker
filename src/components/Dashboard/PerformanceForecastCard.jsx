@@ -49,13 +49,13 @@ export const PerformanceForecastCard = () => {
           {getIcon()}
         </div>
 
-        <div className="flex-1">
-          <div className="flex justify-between items-start">
-            <div>
-              <h3 className={`text-sm font-bold uppercase tracking-wide mb-1 opacity-80 ${textClass}`}>
+        <div className="flex-1 min-w-0 w-full">
+          <div className="flex justify-between items-start gap-2 w-full">
+            <div className="min-w-0 flex-1">
+              <h3 className={`text-sm font-bold uppercase tracking-wide mb-1 opacity-80 ${textClass} truncate w-full`}>
                 Pronóstico Mañana
               </h3>
-              <div className={`text-lg font-bold leading-tight ${textClass}`}>
+              <div className={`text-lg font-bold leading-tight ${textClass} break-words line-clamp-2`}>
                 {title}
               </div>
             </div>

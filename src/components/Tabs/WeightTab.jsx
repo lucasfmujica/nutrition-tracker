@@ -57,23 +57,26 @@ export const WeightTab = ({
           NUEVO REGISTRO
         </h2>
         <div className="flex flex-col gap-3">
-          <div className="flex gap-2">
-            <div className="flex-1 min-w-[140px]">
+
+          <div className="flex flex-col sm:flex-row gap-2 w-full">
+            <div className="w-full sm:flex-1 sm:min-w-[140px]">
               <LukenFitDatePicker
                 selectedDate={date}
                 onChange={setDate}
                 label="Fecha"
               />
             </div>
-            <input
-              type="number"
-              step="0.1"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              placeholder="84.5"
-              className="flex-[1.5] bg-white border border-gray-200 rounded-xl px-4 py-3 text-lg min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-            />
-            <span className="flex items-center text-gray-500 text-sm font-medium">kg</span>
+            <div className="flex gap-2 w-full sm:flex-[1.5]">
+              <input
+                type="number"
+                step="0.1"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+                placeholder="84.5"
+                className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-lg min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+              />
+              <span className="flex items-center text-gray-500 text-sm font-medium">kg</span>
+            </div>
           </div>
           <div className="flex gap-2">
             <input

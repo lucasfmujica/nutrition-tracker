@@ -50,7 +50,7 @@ export const OuraTab = ({
 
         <div className="flex flex-wrap items-center gap-3 bg-white p-1.5 rounded-xl border border-gray-100 shadow-sm mx-auto md:mx-0">
            {/* Date Nav */}
-           <div className="w-[200px]">
+           <div className="w-full md:w-[200px]">
              <LukenFitDatePicker
                  selectedDate={selectedDate}
                  onChange={setSelectedDate}

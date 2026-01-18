@@ -23,19 +23,21 @@ export const TrackerFAB = () => {
   if (showFoodForm || showWorkoutForm || showImportFoodModal || showImportWorkoutModal || showTemplatesModal) return null;
 
   return (
-    <FloatingActionButton
-      onAddFood={() => {
-        setNewFood({ ...newFood, date: dashboardDate });
-        setShowFoodForm(true);
-      }}
-      onAddWorkout={() => {
-        setNewWorkout({ ...newWorkout, date: dashboardDate });
-        setShowWorkoutForm(true);
-      }}
-      onImportFood={() => setShowImportFoodModal(true)}
-      onImportWorkout={() => setShowImportWorkoutModal(true)}
-      onQuickAdd={() => setShowTemplatesModal(true)}
-      onScanFood={() => setShowFoodScanModal(true)}
-    />
+    <div className="hidden lg:block">
+      <FloatingActionButton
+        onAddFood={() => {
+          setNewFood({ ...newFood, date: dashboardDate });
+          setShowFoodForm(true);
+        }}
+        onAddWorkout={() => {
+          setNewWorkout({ ...newWorkout, date: dashboardDate });
+          setShowWorkoutForm(true);
+        }}
+        onImportFood={() => setShowImportFoodModal(true)}
+        onImportWorkout={() => setShowImportWorkoutModal(true)}
+        onQuickAdd={() => setShowTemplatesModal(true)}
+        onScanFood={() => setShowFoodScanModal(true)}
+      />
+    </div>
   );
 };

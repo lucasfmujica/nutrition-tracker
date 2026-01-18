@@ -75,9 +75,9 @@ export const WeeklyPlanningCard = ({ periodization }) => {
         </div>
       </div>
 
-      {/* Week Grid - Horizontal scroll on mobile with padding for ring effect */}
-      <div className="overflow-x-auto pb-2 -mx-1 px-1">
-        <div className="flex gap-2 min-w-max sm:min-w-0 sm:grid sm:grid-cols-7 sm:gap-2 py-1">
+      {/* Week Grid - 7 Column Grid on Mobile (No Scroll) */}
+      <div className="pb-2">
+        <div className="grid grid-cols-7 gap-1 sm:gap-2">
           {weekDays.map((day) => {
             const styles = getIntensityStyles(day.intensity);
             const IconComponent = styles.icon;
@@ -85,32 +85,32 @@ export const WeeklyPlanningCard = ({ periodization }) => {
             return (
               <div
                 key={day.date}
-                className={`flex flex-col items-center p-2.5 sm:p-2 rounded-xl transition-all min-w-[52px] sm:min-w-0 ${
+                className={`flex flex-col items-center p-1 sm:p-2 rounded-xl transition-all w-full ${
                   day.isToday
-                    ? `${styles.bg} ring-2 ring-offset-1 ${styles.border.replace('border', 'ring')}`
+                    ? `${styles.bg} ring-1 sm:ring-2 ring-offset-1 ${styles.border.replace('border', 'ring')}`
                     : day.isPast
                       ? 'bg-gray-50'
                       : styles.bg
                 }`}
               >
                 {/* Day Label */}
-                <span className={`text-xs sm:text-[10px] font-bold ${
+                <span className={`text-[10px] sm:text-xs font-bold ${
                   day.isToday ? styles.text : day.isPast ? 'text-gray-400' : styles.text
                 }`}>
                   {day.dayOfWeek}
                 </span>
 
                 {/* Icon */}
-                <div className={`my-1.5 p-2 sm:p-1.5 rounded-full ${
+                <div className={`my-1 p-1 sm:p-1.5 rounded-full ${
                   day.isPast && !day.isToday ? 'bg-gray-100' : 'bg-white/70'
                 }`}>
-                  <IconComponent className={`w-4 h-4 sm:w-3 sm:h-3 ${
+                  <IconComponent className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${
                     day.isPast && !day.isToday ? 'text-gray-400' : styles.text
                   }`} />
                 </div>
 
                 {/* Calories */}
-                <span className={`text-[10px] sm:text-[9px] font-semibold ${
+                <span className={`text-[8px] sm:text-[9px] font-semibold leading-none ${
                   day.isPast && !day.isToday ? 'text-gray-400' : styles.text
                 }`}>
                   {day.calories}

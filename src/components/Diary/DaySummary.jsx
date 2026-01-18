@@ -4,7 +4,7 @@ export const DaySummary = ({ totals, targets }) => {
   const calsLeft = targets.calories - totals.calories;
 
   return (
-    <div className="bg-white border-t border-gray-100 p-4 fixed bottom-16 left-0 right-0 z-30 max-w-md mx-auto shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+    <div className="bg-white border border-gray-100 rounded-2xl p-4 mt-2 relative max-w-4xl mx-auto shadow-sm">
       <div className="flex justify-between items-end mb-2">
         <span className="text-xs font-medium text-gray-500">RESUMEN DIARIO</span>
         <span className={`text-sm font-bold ${calsLeft < 0 ? 'text-red-500' : 'text-green-600'}`}>

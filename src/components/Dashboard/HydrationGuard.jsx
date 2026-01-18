@@ -94,14 +94,16 @@ export const HydrationGuard = ({ currentIntake, hydrationTarget, onAddWater }) =
   return (
     <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-5 rounded-2xl border border-blue-100 shadow-sm">
       {/* Header with Weather Status */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-2">
           <div className="p-2 bg-blue-500 rounded-xl">
             <Droplets size={18} className="text-white" />
           </div>
           <h3 className="font-bold text-gray-900">Hidratación Inteligente</h3>
         </div>
-        <WeatherBadge weatherStatus={weatherStatus} isLoading={isLoadingWeather} />
+        <div className="self-start sm:self-auto">
+          <WeatherBadge weatherStatus={weatherStatus} isLoading={isLoadingWeather} />
+        </div>
       </div>
 
       {/* Progress Bar */}

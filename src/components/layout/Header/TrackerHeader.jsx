@@ -40,15 +40,15 @@ export const TrackerHeader = () => {
             )}
           </div>
           <div className="min-w-0">
-            <h1 className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tighter">LUKEN<span className="text-blue-600">FIT</span></h1>
-            <p className="text-xs lg:text-sm font-bold text-slate-400 flex items-center gap-1.5">
+            <h1 className="hidden sm:block text-2xl lg:text-3xl font-black text-slate-900 tracking-tighter">LUKEN<span className="text-blue-600">FIT</span></h1>
+            <p className="hidden sm:flex text-xs lg:text-sm font-bold text-slate-400 items-center gap-1.5 whitespace-nowrap">
               <span className="bg-slate-100 px-2 py-0.5 rounded-full">{getMostRecentWeight(weightHistory)?.weight || profile.currentWeight}kg</span>
               <span className="text-slate-300">→</span>
               <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">{profile.targetWeight}kg</span>
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           {supabase.isAuthenticated ? (
             <div className="flex items-center gap-2">
               {/* New SyncStatusIndicator replaces old saveStatus + sync icon */}

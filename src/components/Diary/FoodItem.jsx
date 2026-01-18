@@ -1,7 +1,8 @@
+import { Star } from 'lucide-react';
 import React from 'react';
 import { SwipeableItem } from '../UI/SwipeableItem';
 
-export const FoodItem = ({ food, onEdit, onDelete, onTemplate }) => {
+export const FoodItem = ({ food, onEdit, onDelete, onTemplate, isFavorite }) => {
   const needsReview = !food.reviewed || (food.confidence && food.confidence < 0.7);
 
   return (
@@ -24,11 +25,17 @@ export const FoodItem = ({ food, onEdit, onDelete, onTemplate }) => {
           </div>
         </div>
 
-        {/* Edit Button (Visible or Swipe?) - Keeping simple for now, maybe tap to edit */}
         <div className="flex items-center">
             <button
+              onClick={(e) => { e.stopPropagation(); onTemplate(); }}
+              className={`ml-3 p-1.5 transition-colors ${isFavorite ? 'text-yellow-400 fill-current' : 'text-gray-300 hover:text-yellow-400'}`}
+              title={isFavorite ? "Quitar de favoritos" : "Guardar como favorito"}
+            >
+              <Star size={16} fill={isFavorite ? "currentColor" : "none"} />
+            </button>
+            <button
             onClick={onEdit}
-            className="ml-3 p-1.5 text-gray-400 hover:text-blue-500 transition-colors"
+            className="ml-1 p-1.5 text-gray-400 hover:text-blue-500 transition-colors"
             title="Editar"
             >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -194,9 +194,7 @@ export const WorkoutsTab = ({
                         <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${workout.type === 'gym' ? 'bg-amber-50 text-amber-600' : 'bg-green-50 text-green-600'}`}>
                           {workout.type}
                         </span>
-                        {needsReview && (
-                          <span className="text-[10px] bg-red-50 text-red-600 px-2 py-0.5 rounded-full font-bold">REVISAR</span>
-                        )}
+
                       </div>
                       <h3 className="font-bold text-gray-900 text-lg leading-tight truncate">{workout.name}</h3>
                     </div>

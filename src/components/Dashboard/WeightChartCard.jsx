@@ -20,13 +20,13 @@ export const WeightChartCard = ({ data = [], currentWeight, targetWeight }) => {
 
   return (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50 mb-6">
-      <div className="flex justify-between items-start mb-6">
-        <div>
-          <h3 className="text-gray-900 font-bold text-lg">Peso Corporal</h3>
-          <p className="text-xs text-gray-400 font-medium">Últimos 7 registros</p>
+      <div className="flex justify-between items-start mb-6 gap-2 w-full">
+        <div className="min-w-0 flex-1">
+          <h3 className="text-gray-900 font-bold text-lg truncate w-full">Peso Corporal</h3>
+          <p className="text-xs text-gray-400 font-medium truncate w-full">Últimos 7 registros</p>
         </div>
-        <div className="text-right">
-          <span className="block text-2xl font-bold text-gray-900">{currentWeight} <span className="text-sm font-normal text-gray-400">kg</span></span>
+        <div className="text-right flex-shrink-0">
+          <span className="block text-2xl font-bold text-gray-900 whitespace-nowrap">{currentWeight} <span className="text-sm font-normal text-gray-400">kg</span></span>
           <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${isLoss ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
             {weeklyChange > 0 ? '+' : ''}{weeklyChange} kg
           </span>

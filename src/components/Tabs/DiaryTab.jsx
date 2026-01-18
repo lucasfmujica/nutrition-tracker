@@ -45,10 +45,27 @@ export const DiaryTab = ({
   setShowFoodForm,
   setEditingFoodId
 }) => {
-  const { frequentFoods, frequentCombos, quickLog, foodLog, customTargets } = useTracker();
+  const {
+    frequentFoods,
+    frequentCombos,
+    quickLog,
+    foodLog,
+    customTargets,
+    setShowSaveTemplateModal,
+    setTemplateToSave,
+    mealTemplates,
+    deleteTemplate
+  } = useTracker();
 
   const foods = getFoodsForDate(selectedFoodDate);
   const hasFoods = foods.length > 0;
+
+  // Memoize favorite Map (name -> id) for toggle logic - HMR FORCE
+  const favoriteMap = useMemo(() => {
+    const map = new Map();
+    mealTemplates.forEach(t => map.set(t.name.toLowerCase().trim(), t.id));
+    return map;
+  }, [mealTemplates]);
 
   // --- Protein Pacing Engine ---
   const proteinPacing = useProteinPacing(
@@ -89,6 +106,29 @@ export const DiaryTab = ({
       fiber: suggestion.fiber?.toString() || '0'
     });
     setShowFoodForm(true);
+  };
+
+
+
+  const handleToggleFavorite = (food) => {
+    const normalizedName = food.name.toLowerCase().trim();
+    if (favoriteMap.has(normalizedName)) {
+      // Remove from favorites
+      const templateId = favoriteMap.get(normalizedName);
+      deleteTemplate(templateId);
+    } else {
+      // Add to favorites
+      setTemplateToSave({
+        name: food.name,
+        meal: food.meal || 'Snack',
+        calories: parseInt(food.calories) || 0,
+        protein: parseFloat(food.protein) || 0,
+        carbs: parseFloat(food.carbs) || 0,
+        fat: parseFloat(food.fat) || 0,
+        description: food.description || ''
+      });
+      setShowSaveTemplateModal(true);
+    }
   };
 
   // --- Calculations (Hoisted Hooks) ---
@@ -176,30 +216,31 @@ export const DiaryTab = ({
           </button>
         </div>
       ) : (
-      <div className="space-y-6 pb-24">
+      <div className="space-y-4 pb-12">
         {/* Grouped Foods List */}
-        {groupedMeals.map(group => (
-          <MealSection
-            key={group.type}
-            title={group.type}
-            foods={group.items}
-            totals={{ calories: group.calories }}
-            onAddFood={() => handleAddFood(group.type)}
-            onEditFood={handleEditFood}
-            onDeleteFood={(food) => confirmDelete('food', food.id, food.name)}
-          />
-        ))}
+        <div className="space-y-6">
+          {groupedMeals.map(group => (
+            <MealSection
+              key={group.type}
+              title={group.type}
+              foods={group.items}
+              totals={{ calories: group.calories }}
+              onAddFood={() => handleAddFood(group.type)}
+              onEditFood={handleEditFood}
+              onToggleFavorite={handleToggleFavorite}
+              favoriteMap={favoriteMap}
+              onDeleteFood={(food) => confirmDelete('food', food.id, food.name)}
+            />
+          ))}
+        </div>
+
+        {/* Sticky Day Summary - Now integrated closely */}
+        <DaySummary
+          totals={getTotalsForDate(selectedFoodDate)}
+          targets={getTargetsForDate(selectedFoodDate) || { calories: 2000, protein: 150, carbs: 200, fat: 70 }}
+        />
       </div>
       )}
-
-      {/* Sticky Day Summary Footer */}
-       {hasFoods && (
-          <DaySummary
-            totals={getTotalsForDate(selectedFoodDate)}
-            targets={getTargetsForDate(selectedFoodDate) || { calories: 2000, protein: 150, carbs: 200, fat: 70 }}
-          />
-       )}
-
 
       {/* Fast-Log Carousel */}
       <FastLogCarousel

@@ -87,14 +87,14 @@ export const SyncStatusIndicator = ({ syncStatus, syncError, lastSyncTime, cache
   const { Icon, color, bgColor, label, animate } = getStatusConfig();
 
   return (
-    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-100 shadow-sm">
-      <div className={`${bgColor} rounded-full p-1`}>
+    <div className="flex items-center gap-2 px-2 sm:px-3 py-1.5 rounded-full bg-white border border-gray-100 shadow-sm max-w-[140px] sm:max-w-none transition-all">
+      <div className={`${bgColor} rounded-full p-1 flex-shrink-0`}>
         <Icon
           className={`w-4 h-4 ${color} ${animate ? 'animate-spin' : ''}`}
           strokeWidth={2}
         />
       </div>
-      <span className="text-xs font-medium text-gray-600">
+      <span className="text-[10px] sm:text-xs font-medium text-gray-600 truncate">
         {label}
       </span>
     </div>

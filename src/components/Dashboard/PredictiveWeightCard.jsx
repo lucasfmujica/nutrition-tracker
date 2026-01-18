@@ -94,11 +94,11 @@ export const PredictiveWeightCard = ({
       {/* Header */}
       <div className="px-5 pt-5 pb-3">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center flex-shrink-0">
               <Target className="w-4 h-4 text-white" />
             </div>
-            <h3 className="text-gray-900 font-bold text-base">Predictive Engine</h3>
+            <h3 className="text-gray-900 font-bold text-base truncate w-full">Predictive Engine</h3>
           </div>
 
           {/* Legend */}

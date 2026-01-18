@@ -2,7 +2,7 @@ import { Coffee, Cookie, Moon, Plus, Sun, Sunrise } from 'lucide-react';
 import React from 'react';
 import { FoodItem } from './FoodItem';
 
-export const MealSection = ({ title, foods, totals, onAddFood, onEditFood, onDeleteFood }) => {
+export const MealSection = ({ title, foods, totals, onAddFood, onEditFood, onDeleteFood, onToggleFavorite, favoriteMap }) => {
   const getIcon = () => {
     switch (title) {
       case 'Desayuno': return <Sunrise className="text-orange-500" size={20} />;
@@ -32,7 +32,9 @@ export const MealSection = ({ title, foods, totals, onAddFood, onEditFood, onDel
           <FoodItem
             key={food.id}
             food={food}
+            isFavorite={favoriteMap?.has(food.name.toLowerCase().trim())}
             onEdit={() => onEditFood(food)}
+            onTemplate={() => onToggleFavorite(food)}
             onDelete={() => onDeleteFood(food)}
           />
         ))}
