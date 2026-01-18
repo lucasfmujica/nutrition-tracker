@@ -81,8 +81,6 @@ export const useInitialHydration = ({
       try {
         // SWR PATTERN: Check staleness before loading cache
         // This prevents race condition where stale cache renders before Supabase fetch
-        console.log('[Data] Step 1: Starting staleness checks...');
-
         const stalenessChecks = await Promise.all([
           isCacheStale('profile'),
           isCacheStale('targets'),
@@ -93,8 +91,6 @@ export const useInitialHydration = ({
           isCacheStale('oura'),
           isCacheStale('water')
         ]);
-
-        console.log('[Data] Step 2: Staleness checks complete');
 
         const [
           profileStale, targetsStale, weightStale, foodStale,
@@ -172,15 +168,7 @@ export const useInitialHydration = ({
         }
 
         // Fetch from Supabase if authenticated and online
-        console.log('[Data] Fetch conditions:', {
-          isAuthenticated: supabase.isAuthenticated,
-          isOnline: supabase.isOnline,
-          offlineMode,
-          willFetch: supabase.isAuthenticated && supabase.isOnline && !offlineMode
-        });
-
         if (supabase.isAuthenticated && supabase.isOnline && !offlineMode) {
-          console.log('[Data] Starting Supabase fetch...');
           let data = null;
           let timeoutOccurred = false;
 
