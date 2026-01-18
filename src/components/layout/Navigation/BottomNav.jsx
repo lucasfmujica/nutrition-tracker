@@ -8,13 +8,14 @@ export const BottomNav = ({ activeTab, setActiveTab }) => {
     { id: 'entrenos', icon: Dumbbell, label: 'Entrenos' },
     { id: 'add', icon: PlusCircle, label: '', isFab: true },
     { id: 'peso', icon: BarChart2, label: 'Peso' },
-    { id: 'steps', icon: Footprints, label: 'Pasos' },
+    { id: 'peso', icon: BarChart2, label: 'Peso' },
+    { id: 'pasos', icon: Footprints, label: 'Pasos' },
     { id: 'oura', icon: Moon, label: 'Oura' }
   ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] pb-[env(safe-area-inset-bottom)] z-50">
-      <div className="flex items-center h-16 max-w-md mx-auto overflow-x-auto no-scrollbar px-2 md:justify-around">
+      <div className="flex items-center h-auto min-h-[64px] py-1 max-w-md mx-auto overflow-x-auto no-scrollbar px-2 md:justify-around text-[10px] md:text-xs">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
 

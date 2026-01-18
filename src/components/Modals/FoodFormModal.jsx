@@ -22,7 +22,7 @@ export const FoodFormModal = ({
       onClick={handleBackdropClick}
     >
       <div
-        className="bg-white rounded-3xl p-6 lg:p-8 w-full max-w-sm lg:max-w-md border border-gray-100 shadow-2xl"
+        className="bg-white rounded-3xl p-4 lg:p-8 w-full max-w-sm lg:max-w-md border border-gray-100 shadow-2xl"
         onClick={e => e.stopPropagation()}
       >
         {/* Header with close button */}
@@ -40,7 +40,7 @@ export const FoodFormModal = ({
 
         <div className="space-y-4">
           {/* Row 1: Meal type + Time */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-[1.5fr_1fr] gap-3">
             <div>
               <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Comida</label>
               <select

@@ -37,13 +37,19 @@ export const useEffortAnalytics = (workoutLog, ouraLog, weightAnalytics) => {
       }, 0);
     };
 
-    // Calculate last 7 days volume
+    // Calculate last 7 days volume (including TODAY)
     let last7DaysVolume = 0;
+    // Fix: Loop should go from 0 to 6 to count 7 days including today
     for (let i = 0; i < 7; i++) {
+      // i=0 is today
       const d = addDaysToDate(today, -i);
       last7DaysVolume += getDailyVolume(d, workoutLog);
     }
     const avg7DayVolume = last7DaysVolume / 7;
+
+    // Check if user ALREADY trained today with significant volume
+    const todayVolume = getDailyVolume(today, workoutLog);
+    const hasTrainedToday = todayVolume > 500; // Threshold for "significant" workout
 
     // Calculate last 30 days volume (Monthly Average)
     let last30DaysVolume = 0;
@@ -80,9 +86,15 @@ export const useEffortAnalytics = (workoutLog, ouraLog, weightAnalytics) => {
 
     // Logic Tree
 
+    // Scenario Pre-check: Already Trained Today
+    if (hasTrainedToday) {
+      status = 'Done';
+      insight = 'Great work today! Your volume is banked. Focus on nutrition and recovery now.';
+      score = 40; // Neutral/Recovery zone
+    }
     // Scenario A: High Fatigue Warning
     // readiness < 70 AND volume > 20% above monthly avg
-    if (readiness < 70 && isHighVolume) {
+    else if (readiness < 70 && isHighVolume) {
       status = 'Overreaching';
       insight = 'Fatigue is high and volume is spiking. Consider a shorter session or active recovery to protect your progress.';
       score = 90;

@@ -226,14 +226,6 @@ export const WorkoutsTab = ({
                       >
                         <Pencil className="w-3.5 h-3.5" />
                       </button>
-                      {/* Review Button */}
-                      {needsReview && (
-                        <button onClick={() => confirmWorkout(workout.id)} className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/20 active:scale-90 transition-transform">
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </button>
-                      )}
                     </div>
                   </div>
 

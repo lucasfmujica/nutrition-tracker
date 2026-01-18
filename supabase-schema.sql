@@ -13,6 +13,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  display_name TEXT,
+  avatar_url TEXT,
   height DECIMAL(5,2) NOT NULL DEFAULT 170,
   current_weight DECIMAL(5,2) NOT NULL DEFAULT 80,
   target_weight DECIMAL(5,2) NOT NULL DEFAULT 75,

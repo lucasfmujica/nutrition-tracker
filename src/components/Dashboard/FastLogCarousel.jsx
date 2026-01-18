@@ -120,7 +120,7 @@ export const FastLogCarousel = ({
           >
            <div className="flex justify-between items-start">
               <span className="text-3xl">
-                {successId === food.name ? '✅' : '🍎'}
+                {successId === food.name ? '✅' : ''}
               </span>
               <div className={`
                 w-8 h-8 rounded-full flex items-center justify-center transition-colors
