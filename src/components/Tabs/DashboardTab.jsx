@@ -31,9 +31,6 @@ export const DashboardTab = ({
   weightHistory,
   getMostRecentWeight,
   profile,
-  weightHistory,
-  getMostRecentWeight,
-  profile,
   weightProjection,
   // Pattern Recognition Props
   ouraLog,
