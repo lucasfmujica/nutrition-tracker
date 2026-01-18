@@ -10,7 +10,7 @@ export const Layout = ({ children, activeTab, setActiveTab, profile, showNav = t
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-h-screen relative w-full">
-        <main className="flex-1 w-full max-w-7xl mx-auto pb-24 lg:pb-8">
+        <main className="flex-1 w-full pb-24 lg:pb-8">
           {children}
         </main>
 

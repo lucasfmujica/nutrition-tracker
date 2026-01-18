@@ -22,7 +22,7 @@ export const TrackerHeader = () => {
 
   return (
     <header className="bg-white/90 backdrop-blur-md border-b border-slate-100 px-4 lg:px-8 py-4 lg:py-5 sticky top-0 z-30 shadow-sm">
-      <div className="max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto flex items-center justify-between gap-4">
+      <div className="w-full flex items-center justify-between gap-4">
         <div className="min-w-0 flex-1 flex items-center gap-4">
           <div className="relative lg:hidden">
             <svg viewBox="0 0 32 32" className="w-12 h-12 flex-shrink-0">

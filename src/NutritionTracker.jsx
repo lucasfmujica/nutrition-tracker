@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { TrackerFAB } from './components/layout/FAB/TrackerFAB';
 import { TrackerHeader } from './components/layout/Header/TrackerHeader';
 import { ModalsManager } from './components/layout/Modals/ModalsManager';
-import { TrackerNavigation } from './components/layout/Navigation/TrackerNavigation';
+
 import { AuthShell } from './components/layout/Shell/AuthShell';
 import { Layout } from './components/layout/Shell/Layout';
 import { UndoToast } from './components/shared/UndoToast';
@@ -65,7 +65,7 @@ const NutritionTrackerContent = () => {
         <ModalsManager />
         <UndoToast undoAction={undoAction} setUndoAction={setUndoAction} />
         <TrackerHeader />
-        <TrackerNavigation />
+
 
         <PullToRefresh onRefresh={handleRefresh} isRefreshing={isRefreshing}>
           <main className="p-4 lg:p-6 xl:p-8 pb-32 md:pb-36 w-full max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto">

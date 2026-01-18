@@ -26,21 +26,34 @@ export const LoadingScreen = ({ message = null }) => {
 
   return (
     <div className="min-h-screen bg-[#F9FAFB] flex items-center justify-center">
-      <div className="text-center px-6">
+      <div className="text-center px-6 flex flex-col items-center">
         {/* Logo/Branding */}
-        <div className="mb-8">
-          <h1 className="text-5xl md:text-6xl splash-logo splash-pulse font-bold tracking-tight">
-            LukenFit
+        <div className="mb-8 flex flex-col items-center gap-4">
+          <div className="relative">
+            <svg viewBox="0 0 32 32" className="w-24 h-24 flex-shrink-0 animate-pulse">
+              <defs>
+                <linearGradient id="loadingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style={{ stopColor: '#2563EB' }} />
+                  <stop offset="100%" style={{ stopColor: '#0891B2' }} />
+                </linearGradient>
+              </defs>
+              <circle cx="16" cy="16" r="15" fill="#F8FAFC" stroke="url(#loadingGrad)" strokeWidth="1.5" />
+              <path d="M10 7 L10 21 L19 21 L19 18 L13 18 L13 7 Z" fill="url(#loadingGrad)" />
+              <path d="M18 7 L14 15 L17 15 L15 25 L23 14 L19 14 L22 7 Z" fill="url(#loadingGrad)" opacity="0.9" />
+            </svg>
+          </div>
+          <h1 className="text-4xl font-black text-slate-900 tracking-tighter">
+            LUKEN<span className="text-blue-600">FIT</span>
           </h1>
         </div>
 
         {/* Loading Bar */}
-        <div className="w-64 mx-auto mb-6 h-1 bg-gray-200 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-indigo-600 via-purple-500 to-emerald-500 splash-loading-bar rounded-full" />
+        <div className="w-64 mx-auto mb-6 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-blue-600 to-cyan-500 splash-loading-bar rounded-full" />
         </div>
 
         {/* Dynamic Message */}
-        <div className="text-gray-600 text-base md:text-lg font-medium animate-fade-in">
+        <div className="text-gray-500 text-sm font-medium animate-fade-in uppercase tracking-wide">
           {displayMessage}
         </div>
       </div>
