@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { addDaysToDate, getArgentinaDateString } from '../utils/dateUtils';
 import { mapOuraActivity, mapOuraReadiness, mapOuraSleep, mapOuraSleepDetails, mergeOuraData } from '../utils/ouraMappers';
 
-const OURA_API_BASE = '/api/oura';
+const OURA_API_BASE = 'https://api.ouraring.com/v2/usercollection';
 const SYNC_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
 const STORAGE_KEY_LAST_SYNC = 'oura_last_sync';
 
@@ -15,18 +15,34 @@ export const useOuraSync = ({ saveOuraEntry, saveStepsEntry }) => {
     if (!token) throw new Error('VITE_OURA_TOKEN is not configured');
 
     const url = `${OURA_API_BASE}/${endpoint}?start_date=${start}&end_date=${end}`;
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Oura API error: ${response.status} ${response.statusText}`);
       }
-    });
 
-    if (!response.ok) {
-      throw new Error(`Oura API error: ${response.status} ${response.statusText}`);
+      return await response.json();
+    } catch (err) {
+      // Enhanced CORS error handling
+      if (err.name === 'TypeError' && err.message.includes('fetch')) {
+        const corsError = new Error(
+          '🚫 CORS Error: Unable to connect to Oura API directly from browser. ' +
+          'This is a browser security restriction. Consider using a backend proxy or ' +
+          'a browser extension to bypass CORS for development.'
+        );
+        console.error('[OuraSync] CORS Issue:', corsError.message);
+        throw corsError;
+      }
+      throw err;
     }
-
-    return await response.json();
   };
 
   const syncOuraData = useCallback(async (force = false) => {

@@ -114,7 +114,9 @@ export const useTrackerSync = ({
     });
   };
 
-  const forceSyncToCloud = () => resolveForceSync(setSaveStatus);
+  const forceSyncToCloud = async () => {
+    return await resolveForceSync(setSaveStatus);
+  };
 
   // Handle auth state changes
   useEffect(() => {

@@ -12,9 +12,9 @@ const isRetryableError = (error) => {
 
   // Network/timeout errors - always retryable
   if (message.includes('timeout') ||
-      message.includes('network') ||
-      message.includes('fetch failed') ||
-      message.includes('failed to fetch')) {
+    message.includes('network') ||
+    message.includes('fetch failed') ||
+    message.includes('failed to fetch')) {
     return true;
   }
 
@@ -42,9 +42,9 @@ const isRetryableError = (error) => {
 
   // PostgreSQL/Supabase specific errors (non-retryable)
   if (message.includes('unique constraint') ||
-      message.includes('foreign key') ||
-      message.includes('permission denied') ||
-      message.includes('invalid input')) {
+    message.includes('foreign key') ||
+    message.includes('permission denied') ||
+    message.includes('invalid input')) {
     return false;
   }
 
@@ -67,7 +67,7 @@ export function useSupabaseOperation() {
    * @param {number} timeoutMs - Timeout in milliseconds
    * @param {string} operationName - Name for error logging
    */
-  const withTimeout = async (promise, timeoutMs = 30000, operationName = 'Operation') => {
+  const withTimeout = async (promise, timeoutMs = 120000, operationName = 'Operation') => {
     let timeoutId;
     const timeoutPromise = new Promise((_, reject) => {
       timeoutId = setTimeout(() => {
@@ -91,14 +91,14 @@ export function useSupabaseOperation() {
    * @param {Object} options - Configuration options
    * @param {boolean} options.canUseSupabase - Guard to check if operation should proceed
    * @param {string} options.errorMessage - Custom error message
-   * @param {number} options.timeout - Timeout in ms (default 30000)
+   * @param {number} options.timeout - Timeout in ms (default 120000)
    * @param {number} options.maxRetries - Maximum retry attempts (default 3)
    * @param {boolean} options.enableRetry - Enable retry logic (default true)
    */
   const withSync = useCallback(async (operation, {
     canUseSupabase = true,
     errorMessage = 'Error de sincronización',
-    timeout = 30000,
+    timeout = 120000,
     maxRetries = 3,
     enableRetry = true
   } = {}) => {
