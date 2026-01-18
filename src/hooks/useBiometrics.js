@@ -12,7 +12,8 @@ export const useBiometrics = (supabase, useCloud, profileData = null, targetsDat
     activityLevel: 'moderate',
     goal: 'cut',
     avatar: '',
-    name: ''
+    name: '',
+    safety_net_enabled: false // Modo Escudo
   });
 
   const [customTargets, setCustomTargets] = useState(targetsData || {
@@ -85,6 +86,11 @@ export const useBiometrics = (supabase, useCloud, profileData = null, targetsDat
   };
 
   const saveWeightEntry = async (entry) => {
+    // 1. Optimistic Update (Immediate Feedback)
+    // Create new history array, saveWeightHistory handles sorting and profile update
+    const newHistory = [...weightHistory, entry];
+    await saveWeightHistory(newHistory);
+
     if (useCloud) {
       try {
         const result = await supabase.saveWeight(entry);
@@ -97,6 +103,7 @@ export const useBiometrics = (supabase, useCloud, profileData = null, targetsDat
             error: result.error.message,
             userId: supabase?.user?.id
           });
+          // Rollback on error? Complex to implement, relying on user to retry or eventual consistency
           throw new Error(result.error.message);
         }
 

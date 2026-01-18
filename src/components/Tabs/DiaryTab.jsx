@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useTracker } from '../../context/TrackerContext';
+import { useProteinPacing } from '../../hooks/useProteinPacing';
 import { useSmartMealCompass } from '../../hooks/useSmartMealCompass';
 import { formatDateDisplay, getArgentinaDateString } from '../../utils/dateUtils';
 import { FastLogCarousel } from '../Dashboard/FastLogCarousel';
@@ -7,6 +8,7 @@ import { HydrationGuard } from '../Dashboard/HydrationGuard';
 import { DaySummary } from '../Diary/DaySummary';
 import { MealCompassCard } from '../Diary/MealCompassCard';
 import { MealSection } from '../Diary/MealSection';
+import { ProteinTimeline } from '../Diary/ProteinTimeline';
 
 // Internal Wrapper to safeguard hook usage (conditional rendering in parent)
 const MealCompassWrapper = ({ foodLog, remaining, onAdd }) => {
@@ -41,10 +43,17 @@ export const DiaryTab = ({
   setShowFoodForm,
   setEditingFoodId
 }) => {
-  const { frequentFoods, frequentCombos, quickLog, foodLog } = useTracker();
+  const { frequentFoods, frequentCombos, quickLog, foodLog, customTargets } = useTracker();
 
   const foods = getFoodsForDate(selectedFoodDate);
   const hasFoods = foods.length > 0;
+
+  // --- Protein Pacing Engine ---
+  const proteinPacing = useProteinPacing(
+    foodLog,
+    customTargets?.protein,
+    selectedFoodDate
+  );
 
   // --- Actions ---
 
@@ -95,6 +104,7 @@ export const DiaryTab = ({
 
     // Only show if we have gaps to fill (e.g. at least 200 kcal left)
     const show = textRemaining.calories >= 200;
+
 
     return { remaining: textRemaining, show };
   }, [selectedFoodDate, getTotalsForDate, getTargetsForDate]);
@@ -166,6 +176,13 @@ export const DiaryTab = ({
         frequentFoods={frequentFoods}
         frequentCombos={frequentCombos}
         onQuickLog={quickLog}
+      />
+
+      {/* Protein Pacing Timeline */}
+      <ProteinTimeline
+        slots={proteinPacing.slots}
+        remaining={proteinPacing.remainingProtein}
+        targetProtein={proteinPacing.targetProtein}
       />
 
       {/* Feature 1: Smart Meal Compass */}

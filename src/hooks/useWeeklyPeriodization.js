@@ -1,0 +1,152 @@
+import { useMemo } from 'react';
+import { addDaysToDate, getArgentinaDateString, getMondayOfWeek } from '../utils/dateUtils';
+
+/**
+ * Day Intensity Categories
+ */
+const INTENSITY = {
+  HIGH: 'high',      // Tennis, Leg Day
+  MODERATE: 'moderate', // Upper body, cardio
+  RECOVERY: 'recovery'  // Rest or light activity
+};
+
+/**
+ * useWeeklyPeriodization - Weekly planning and calorie distribution
+ *
+ * Categorizes each day of the week and allocates calories:
+ * - HIGH: baseCalories + 300 (Tennis, Leg Day)
+ * - MODERATE: baseCalories (Normal gym)
+ * - RECOVERY: baseCalories - 150 (Rest)
+ *
+ * Ensures weekly average meets deficit goal for 75kg target.
+ *
+ * @param {Array} workoutLog - Workout entries from Supabase
+ * @param {Object} profile - User profile with weight info
+ * @param {Object} customTargets - Base nutrition targets
+ * @param {number} currentWeight - Current weight in kg
+ * @param {number} targetWeight - Goal weight (default 75)
+ * @returns {Object} Weekly plan with calorie allocation
+ */
+export const useWeeklyPeriodization = (
+  workoutLog,
+  profile,
+  customTargets,
+  currentWeight,
+  targetWeight = 75,
+  foodLog = [] // Safety Net integration
+) => {
+  return useMemo(() => {
+    const baseCalories = customTargets?.calories || 2100;
+    const today = getArgentinaDateString();
+    const monday = getMondayOfWeek(today);
+
+    // Calorie adjustments by intensity
+    const CALORIE_ADJUSTMENTS = {
+      [INTENSITY.HIGH]: 300,
+      [INTENSITY.MODERATE]: 0,
+      [INTENSITY.RECOVERY]: -150
+    };
+
+    // Build week days (Mon-Sun)
+    const weekDays = Array.from({ length: 7 }, (_, i) => {
+      const date = addDaysToDate(monday, i);
+      const dayWorkouts = workoutLog?.filter(w => w.date === date) || [];
+
+      // Safety Net Check
+      // Check if day is logged as safety net day in food log
+      const isSafetyNetDay = foodLog?.some(f => f.date === date && f.is_safety_net_day);
+
+      // Determine intensity based on workouts
+      let intensity = INTENSITY.RECOVERY;
+
+      for (const workout of dayWorkouts) {
+        const name = workout.name?.toLowerCase() || '';
+        const type = workout.type;
+
+        // HIGH: Tennis or Leg Day
+        if (type === 'sport' || name.includes('tennis') || name.includes('pierna') || name.includes('leg')) {
+          intensity = INTENSITY.HIGH;
+          break;
+        }
+
+        // MODERATE: Any gym or cardio workout
+        if (type === 'gym' || type === 'cardio') {
+          intensity = INTENSITY.MODERATE;
+          // Don't break - might find HIGH later
+        }
+      }
+
+      const calorieAdjustment = CALORIE_ADJUSTMENTS[intensity];
+
+      // If Safety Net day, use TDEE (Maintenance) instead of calculated deficit
+      // TDEE ≈ baseCalories + 500
+      const tdee = profile?.tdee || (baseCalories + 500);
+      const dayCalories = isSafetyNetDay ? tdee : (baseCalories + calorieAdjustment);
+
+      return {
+        date,
+        dayOfWeek: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][i],
+        intensity,
+        calories: dayCalories,
+        workouts: dayWorkouts.map(w => w.name),
+        isPast: date < today,
+        isToday: date === today,
+        isSafetyNet: isSafetyNetDay
+      };
+    });
+
+    // Calculate weekly stats
+    // Safety Net Logic: If excluding safety net days from "strict" adherence, handle here.
+    // For now, calculating raw average including safety net days to show reality.
+    // But for "On Track" status, we might want to be lenient?
+    // Let's keep it real: Average is average.
+    const totalCalories = weekDays.reduce((sum, d) => sum + d.calories, 0);
+    const weeklyAverage = Math.round(totalCalories / 7);
+
+    // Calculate if on track for goal
+    // Required deficit: ~500 kcal/day for 0.5kg/week loss
+    const weightToLose = (currentWeight || 84.9) - targetWeight;
+    const tdee = profile?.tdee || (baseCalories + 500); // Estimate TDEE
+    const neededDeficit = 500;
+    const targetDailyCalories = tdee - neededDeficit;
+
+    // Adjusted On Track Check:
+    // If we have Safety Net days, the average WILL be higher.
+    // Allow flexible status if mostly adherent on non-safety-net days?
+    // Simplified: Check if non-safety net days average matches target
+    const nonSafetyNetDays = weekDays.filter(d => !d.isSafetyNet);
+    const nonSafetyNetTotal = nonSafetyNetDays.reduce((sum, d) => sum + d.calories, 0);
+    const nonSafetyNetAvg = nonSafetyNetDays.length > 0 ? Math.round(nonSafetyNetTotal / nonSafetyNetDays.length) : targetDailyCalories;
+
+    const isOnTrack = nonSafetyNetAvg <= targetDailyCalories + 50;
+
+    // Count day types
+    const highDays = weekDays.filter(d => d.intensity === INTENSITY.HIGH).length;
+    const moderateDays = weekDays.filter(d => d.intensity === INTENSITY.MODERATE).length;
+    const recoveryDays = weekDays.filter(d => d.intensity === INTENSITY.RECOVERY).length;
+    const safetyNetDays = weekDays.filter(d => d.isSafetyNet).length;
+
+    console.log('[WeeklyPeriodization] Plan:', {
+      week: monday,
+      weeklyAverage,
+      targetDailyCalories,
+      nonSafetyNetAvg,
+      isOnTrack,
+      distribution: { high: highDays, moderate: moderateDays, recovery: recoveryDays, safetyNet: safetyNetDays }
+    });
+
+    return {
+      weekDays,
+      weeklyAverage,
+      totalCalories,
+      isOnTrack,
+      dayDistribution: {
+        high: highDays,
+        moderate: moderateDays,
+        recovery: recoveryDays
+      },
+      weekStart: monday,
+      targetAverage: targetDailyCalories
+    };
+  }, [workoutLog, profile, customTargets, currentWeight, targetWeight, foodLog]);
+};

@@ -3,7 +3,14 @@ import { getArgentinaDateString } from '../utils/dateUtils';
 import { storage } from '../utils/storage';
 import { addPendingWrite } from '../utils/storageUtils';
 
-export const useNutrition = (supabase, useCloud, customTargets, isTrainingDay) => {
+export const useNutrition = (
+  supabase,
+  useCloud,
+  customTargets,
+  isTrainingDay,
+  safetyNetGetTargets = null, // Safety Net: Override targets function
+  shouldTagAsSafetyNetDay = null // Safety Net: Day tagging function
+) => {
   const [foodLog, setFoodLog] = useState([]);
   const [waterLog, setWaterLog] = useState([]);
 
@@ -46,6 +53,16 @@ export const useNutrition = (supabase, useCloud, customTargets, isTrainingDay) =
   }, [indexedData]);
 
   const getTargetsForDate = useCallback((date) => {
+    // Priority 1: Check Safety Net mode (overrides everything)
+    if (safetyNetGetTargets) {
+      const safetyNetTargets = safetyNetGetTargets(date);
+      // If safety net returned different targets, use them
+      if (safetyNetTargets !== customTargets) {
+        return safetyNetTargets;
+      }
+    }
+
+    // Priority 2: Training day adjustments (normal flow)
     const training = isTrainingDay(date);
     if (training) {
       return {
@@ -54,8 +71,10 @@ export const useNutrition = (supabase, useCloud, customTargets, isTrainingDay) =
         carbs: customTargets.trainingDayCarbs
       };
     }
+
+    // Priority 3: Base targets
     return customTargets;
-  }, [customTargets, isTrainingDay]);
+  }, [customTargets, isTrainingDay, safetyNetGetTargets]);
 
   const isDayCompleted = useCallback((date) => {
     const totals = getTotalsForDate(date);
@@ -77,39 +96,45 @@ export const useNutrition = (supabase, useCloud, customTargets, isTrainingDay) =
   };
 
   const saveFoodEntry = async (entry) => {
+    // Tag entry if it's a safety net day
+    const taggedEntry = {
+      ...entry,
+      is_safety_net_day: shouldTagAsSafetyNetDay ? shouldTagAsSafetyNetDay(entry.date) : false
+    };
+
     if (useCloud) {
       try {
-        const result = await supabase.saveFood(entry);
+        const result = await supabase.saveFood(taggedEntry);
 
         if (result?.error) {
           console.error('[Nutrition] saveFoodEntry failed:', {
             function: 'saveFoodEntry',
-            date: entry.date,
-            name: entry.name,
+            date: taggedEntry.date,
+            name: taggedEntry.name,
             error: result.error.message
           });
           throw new Error(result.error.message);
         }
 
-        console.log('[Nutrition] saveFoodEntry successful:', entry.date, entry.name);
+        console.log('[Nutrition] saveFoodEntry successful:', taggedEntry.date, taggedEntry.name);
         return result.data;
       } catch (err) {
         console.error('[Nutrition] saveFoodEntry FAILED:', {
           function: 'saveFoodEntry',
-          date: entry.date,
-          name: entry.name,
+          date: taggedEntry.date,
+          name: taggedEntry.name,
           error: err.message,
           stack: err.stack
         });
 
         // Add to The Vault for offline resilience
-        await addPendingWrite('food_log', entry, supabase?.user?.id);
+        await addPendingWrite('food_log', taggedEntry, supabase?.user?.id);
 
         // Return original entry for optimistic UI
-        return entry;
+        return taggedEntry;
       }
     }
-    return entry;
+    return taggedEntry;
   };
 
   const deleteFoodEntry = async (id) => {

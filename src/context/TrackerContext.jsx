@@ -12,9 +12,11 @@ import { useNutrition } from '../hooks/useNutrition';
 import { useOuraSync } from '../hooks/useOuraSync'; // Oura Cloud Sync
 import { usePerformanceForecast } from '../hooks/usePerformanceForecast';
 import { useQuickLog } from '../hooks/useQuickLog'; // Fast-Log Library
+import { useSafetyNet } from '../hooks/useSafetyNet'; // Modo Escudo
 import { useSupabase } from '../hooks/useSupabase';
 import { useTrackerSync } from '../hooks/useTrackerSync';
 import { useWeightAnalytics } from '../hooks/useWeightAnalytics'; // Intelligence Engine
+import { useWeightProjection } from '../hooks/useWeightProjection'; // Predictive Weight Engine
 import { useWorkoutAnalysis } from '../hooks/useWorkoutAnalysis'; // New import
 import { useWorkoutEntry } from '../hooks/useWorkoutEntry';
 import { useWorkouts } from '../hooks/useWorkouts';
@@ -54,11 +56,21 @@ export const TrackerProvider = ({ children }) => {
   const workouts = useWorkouts(supabase, useCloud);
   const biometrics = useBiometrics(supabase, useCloud);
 
+  // 1b. Modo Escudo (Safety Net)
+  const safetyNet = useSafetyNet(
+    biometrics.profile,
+    biometrics.customTargets,
+    biometrics.saveProfile
+  );
+
+  // 2. Nutrition with Safety Net integration
   const nutrition = useNutrition(
     supabase,
     useCloud,
     biometrics.customTargets,
-    workouts.isTrainingDay
+    workouts.isTrainingDay,
+    safetyNet.getTargetsForDate, // Override targets when safety net is active
+    safetyNet.shouldTagAsSafetyNetDay // Tag food entries appropriately
   );
 
   // Weight Editing Logic
@@ -257,6 +269,15 @@ export const TrackerProvider = ({ children }) => {
     workouts.workoutLog
   );
 
+  // 14. Predictive Weight Engine
+  const weightProjection = useWeightProjection(
+    biometrics.weightHistory,
+    nutrition.foodLog,
+    biometrics.stepsLog,
+    biometrics.customTargets,
+    biometrics.profile
+  );
+
   // Derived State
   const workoutAnalysis = useWorkoutAnalysis(workouts.workoutLog);
 
@@ -318,8 +339,14 @@ export const TrackerProvider = ({ children }) => {
     // Performance Forecast
     performanceForecast,
 
+    // Predictive Weight Engine
+    weightProjection,
+
     // Fast-Log Library
     ...quickLog,
+
+    // Modo Escudo (Safety Net)
+    ...safetyNet,
 
     // Helpers
     workoutAnalysis,
@@ -346,7 +373,8 @@ export const TrackerProvider = ({ children }) => {
     showImportFoodModal, showImportWorkoutModal,
     globalDelete,
     dataOperations, analytics, exportDoc, foodEntry, workoutEntry, mealTemplates, ouraSync,
-    weightAnalytics, dynamicTargets, quickLog, workoutAnalysis, hydrationTarget, performanceForecast, supabase,
+    weightAnalytics, dynamicTargets, quickLog, workoutAnalysis, hydrationTarget, performanceForecast, weightProjection, supabase,
+    safetyNet, // Modo Escudo
     showFab, // Added dependency
     editingWeightId, editingWeightValue // Added dependency
   ]);

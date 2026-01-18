@@ -173,9 +173,10 @@ export const useWeightAnalytics = (weightHistory, foodLog, customTargets, curren
       totalDays++;
 
       // Get all food entries for this date
-      const dayEntries = foodLog.filter(entry => entry.date === date);
+      // Safety Net: Filter out days marked as safety net days from adherence check
+      const dayEntries = foodLog.filter(entry => entry.date === date && !entry.is_safety_net_day);
 
-      // If no entries, day is not adherent
+      // If no entries (or only safety net entries), skip
       if (dayEntries.length === 0) {
         return;
       }

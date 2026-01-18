@@ -1,4 +1,4 @@
-import { AlertCircle, Brain, Moon, Zap } from 'lucide-react';
+import { AlertCircle, Brain, Moon, Shield, Zap } from 'lucide-react';
 import React from 'react';
 
 const CoachInsight = ({ insight }) => {
@@ -10,6 +10,7 @@ const CoachInsight = ({ insight }) => {
       case 'Sleep': return Moon;
       case 'Brain': return Brain;
       case 'Warning': return AlertCircle;
+      case 'Shield': return Shield;
       default: return Zap;
     }
   };

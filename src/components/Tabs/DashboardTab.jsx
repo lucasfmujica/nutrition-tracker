@@ -3,17 +3,22 @@ import { useState } from 'react';
 import { useTracker } from '../../context/TrackerContext';
 import { useCorrelationAnalytics } from '../../hooks/useCorrelationAnalytics';
 import { usePatternRecognition } from '../../hooks/usePatternRecognition';
+import { usePlateauDetector } from '../../hooks/usePlateauDetector';
+import { useWeeklyPeriodization } from '../../hooks/useWeeklyPeriodization';
 import { useWeeklyReport } from '../../hooks/useWeeklyReport';
 import { formatDateDisplay, getArgentinaDateString } from '../../utils/dateUtils';
 import { ActivityCards } from '../Dashboard/ActivityCards';
 import CoachInsight from '../Dashboard/CoachInsight';
 import { CorrelationSection } from '../Dashboard/CorrelationSection';
-import { GoalInsightsCard } from '../Dashboard/GoalInsightsCard';
 import { MacroCards } from '../Dashboard/MacroCards';
 import { MacroCloserCard } from '../Dashboard/MacroCloserCard';
 import { PerformanceForecastCard } from '../Dashboard/PerformanceForecastCard';
+import { PlateauAlertCard } from '../Dashboard/PlateauAlertCard';
+import { PredictiveWeightCard } from '../Dashboard/PredictiveWeightCard';
+import { SafetyNetToggle } from '../Dashboard/SafetyNetToggle';
 import { SummaryCard } from '../Dashboard/SummaryCard';
 import { TrainingWidget } from '../Dashboard/TrainingWidget';
+import { WeeklyPlanningCard } from '../Dashboard/WeeklyPlanningCard';
 import { WeightChartCard } from '../Dashboard/WeightChartCard';
 import { WeightProjectionCard } from '../Dashboard/WeightProjectionCard';
 import { WeeklyReportModal } from '../Modals/WeeklyReportModal';
@@ -38,20 +43,39 @@ export const DashboardTab = ({
   weightHistory,
   getMostRecentWeight,
   profile,
-  weightProjection,
   // Pattern Recognition Props
   ouraLog,
   getTotalsForDate,
   getTargetsForDate
 }) => {
   const waterData = getTodayWater();
-  const { foodLog, workoutLog } = useTracker(); // Access full logs for analytics
+  const { foodLog, workoutLog, customTargets, weightProjection, safetyNetActive, toggleSafetyNet, getStatusMessage } = useTracker(); // Access full logs for analytics
 
   // Pattern Recognition Engine
-  const insight = usePatternRecognition(ouraLog, getTotalsForDate, getTargetsForDate);
+  const baseInsight = usePatternRecognition(ouraLog, getTotalsForDate, getTargetsForDate);
+
+  // Coach Insight Logic (Safety Net Override)
+  const insight = safetyNetActive ? {
+    icon: 'Shield',
+    message: 'Modo Escudo activado. Prioriza tu bienestar hoy.',
+    description: 'Tu meta cambia a Mantenimiento. Enfócate en la proteína y descansa.'
+  } : baseInsight;
 
   // Correlation Engine (Feature 3)
   const correlationAnalytics = useCorrelationAnalytics(foodLog, workoutLog, ouraLog);
+
+  // Plateau Detection Engine
+  const plateauData = usePlateauDetector(weightHistory, customTargets);
+
+  // Weekly Periodization Engine
+  const weeklyPeriodization = useWeeklyPeriodization(
+    workoutLog,
+    profile,
+    customTargets,
+    getMostRecentWeight(weightHistory)?.weight || profile?.currentWeight,
+    profile?.targetWeight || 75,
+    foodLog // Safety Net integration
+  );
 
   // Weekly Report Modal State
   const [showWeeklyReport, setShowWeeklyReport] = useState(false);
@@ -72,27 +96,38 @@ export const DashboardTab = ({
           <p className="text-sm text-gray-500">Resumen diario</p>
         </div>
 
-        <div className="flex items-center gap-4 bg-white p-1 rounded-2xl shadow-sm border border-gray-100">
-          <button
-              onClick={() => setDashboardDate(changeDate(dashboardDate, -1))}
-              className="w-10 h-10 rounded-xl hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors flex items-center justify-center"
-          >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-          </button>
-          <div className="text-center min-w-[120px]">
-            <span className="block text-sm font-bold text-gray-900">{formatDateDisplay(dashboardDate)}</span>
+        {/* Date Navigation + Safety Net Toggle */}
+        <div className="flex items-center gap-3">
+          {/* Safety Net Toggle */}
+          <SafetyNetToggle
+            isActive={safetyNetActive}
+            onToggle={toggleSafetyNet}
+            statusMessage={getStatusMessage()}
+          />
+
+          {/* Date Navigator */}
+          <div className="flex items-center gap-4 bg-white p-1 rounded-2xl shadow-sm border border-gray-100">
+            <button
+                onClick={() => setDashboardDate(changeDate(dashboardDate, -1))}
+                className="w-10 h-10 rounded-xl hover:bg-gray-50 text-gray-400 hover:text-blue-500 transition-colors flex items-center justify-center"
+            >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            <div className="text-center min-w-[120px]">
+              <span className="block text-sm font-bold text-gray-900">{formatDateDisplay(dashboardDate)}</span>
+            </div>
+            <button
+                onClick={() => setDashboardDate(changeDate(dashboardDate, 1))}
+                disabled={dashboardDate >= getArgentinaDateString()}
+                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${dashboardDate >= getArgentinaDateString() ? 'text-gray-200 cursor-not-allowed' : 'hover:bg-gray-50 text-gray-400 hover:text-blue-500'}`}
+            >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
           </div>
-          <button
-              onClick={() => setDashboardDate(changeDate(dashboardDate, 1))}
-              disabled={dashboardDate >= getArgentinaDateString()}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${dashboardDate >= getArgentinaDateString() ? 'text-gray-200 cursor-not-allowed' : 'hover:bg-gray-50 text-gray-400 hover:text-blue-500'}`}
-          >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-          </button>
         </div>
       </div>
 
@@ -104,14 +139,26 @@ export const DashboardTab = ({
           {/* Coach Insight (Pattern Recognition) */}
           <CoachInsight insight={insight} />
 
-          {/* Strategic Insights - Long-term Progress */}
-          <GoalInsightsCard />
+          {/* Strategic Insights - Predictive Weight Engine */}
+          <PredictiveWeightCard
+            formattedGoalDate={weightProjection.formattedGoalDate}
+            realistTrend={weightProjection.realistTrend}
+            adjustedTrend={weightProjection.adjustedTrend}
+            adherencePercent={weightProjection.adherencePercent}
+            remainingWeight={weightProjection.remainingWeight}
+            weeksToGoal={weightProjection.weeksToGoal}
+            projectionStatus={weightProjection.projectionStatus}
+            actualPath={weightProjection.actualPath}
+            projectedPath={weightProjection.projectedPath}
+            targetWeight={weightProjection.targetWeight}
+            coachMessage={weightProjection.coachMessage}
+          />
 
           {/* Feature 3: Correlation Engine (Luken Labs) */}
           <CorrelationSection analytics={correlationAnalytics} />
 
           {/* Tactical Summary - Daily Calories */}
-         <SummaryCard totals={dashboardTotals} targets={dashboardTargets} />
+         <SummaryCard totals={dashboardTotals} targets={dashboardTargets} safetyNetActive={safetyNetActive} />
 
         {/* Macro Cards */}
         <MacroCards totals={dashboardTotals} targets={dashboardTargets} />
@@ -147,6 +194,12 @@ export const DashboardTab = ({
 
       {/* Right Column - Analytics & Weight (33%) */}
       <div className="lg:w-4/12 space-y-4 lg:space-y-6">
+        {/* Plateau Alert (conditionally rendered) */}
+        <PlateauAlertCard plateauData={plateauData} />
+
+        {/* Weekly Periodization Coach */}
+        <WeeklyPlanningCard periodization={weeklyPeriodization} />
+
         {/* Performance Forecast (New) */}
         <PerformanceForecastCard />
 

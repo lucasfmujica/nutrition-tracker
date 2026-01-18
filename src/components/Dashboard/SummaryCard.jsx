@@ -1,21 +1,46 @@
+import { Shield } from 'lucide-react';
 import React from 'react';
 
-export const SummaryCard = ({ totals, targets }) => {
+export const SummaryCard = ({ totals, targets, safetyNetActive = false }) => {
   const caloriesRemaining = targets.calories - totals.calories;
   const progress = Math.min((totals.calories / targets.calories) * 100, 100);
 
   // Color based on remaining calories
   let statusColor = 'text-green-500';
-  if (caloriesRemaining < 0) statusColor = 'text-red-500';
-  else if (caloriesRemaining < 200) statusColor = 'text-amber-500';
+  if (safetyNetActive) {
+    // Safety Net mode: Blue color scheme (trust, calm)
+    statusColor = 'text-blue-500';
+  } else if (caloriesRemaining < 0) {
+    statusColor = 'text-red-500';
+  } else if (caloriesRemaining < 200) {
+    statusColor = 'text-amber-500';
+  }
 
   return (
     <div className="card bg-white p-5 shadow-sm rounded-2xl mb-4 relative overflow-hidden">
       {/* Background decoration */ }
-      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-10 -mt-10 opacity-50 pointer-events-none"></div>
+      <div className={`absolute top-0 right-0 w-32 h-32 rounded-full -mr-10 -mt-10 opacity-50 pointer-events-none ${
+        safetyNetActive ? 'bg-blue-50' : 'bg-blue-50'
+      }`}></div>
 
       <div className="relative z-10">
-        <h2 className="text-gray-500 text-sm font-medium mb-1 uppercase tracking-wide">Calorías Restantes</h2>
+        {/* Header with Shield badge if active */}
+        <div className="flex items-center gap-2 mb-1">
+          <h2 className="text-gray-500 text-sm font-medium uppercase tracking-wide">
+            Calorías Restantes
+          </h2>
+          {safetyNetActive && (
+            <div className="flex items-center gap-1 bg-blue-100 px-2 py-0.5 rounded-full">
+              <Shield className="w-3 h-3 text-blue-600" fill="currentColor" />
+              <span className="text-[10px] font-semibold text-blue-600">ESCUDO</span>
+            </div>
+          )}
+        </div>
+
+        {/* Status subtitle */}
+        {safetyNetActive && (
+          <p className="text-xs text-blue-600 mb-2">Modo Mantenimiento Activo</p>
+        )}
 
         <div className="flex items-end gap-2 mb-4">
           <span className={`text-4xl font-bold tracking-tight ${statusColor}`}>
@@ -28,7 +53,7 @@ export const SummaryCard = ({ totals, targets }) => {
         <div className="flex justify-between items-center text-sm text-gray-600 mb-4 px-1">
           <div className="flex flex-col">
             <span className="font-semibold text-gray-900">{targets.calories}</span>
-            <span className="text-xs text-gray-400">Objetivo</span>
+            <span className="text-xs text-gray-400">{safetyNetActive ? 'Mantenimiento' : 'Objetivo'}</span>
           </div>
           <span className="text-gray-300">-</span>
           <div className="flex flex-col text-right">
@@ -46,7 +71,7 @@ export const SummaryCard = ({ totals, targets }) => {
         <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-500 ease-out ${
-              caloriesRemaining < 0 ? 'bg-red-500' : 'bg-blue-500'
+              safetyNetActive ? 'bg-blue-500' : (caloriesRemaining < 0 ? 'bg-red-500' : 'bg-blue-500')
             }`}
             style={{ width: `${progress}%` }}
           />

@@ -138,7 +138,7 @@ export const useQuickLog = (foodLog, saveFoodEntry) => {
         carbs: item.carbs || 0,
         fat: item.fat || 0,
         fiber: item.fiber || 0,
-        source: 'quick-log',
+        source: 'manual',
         reviewed: true,
         sourceId: `quick-${Date.now()}`
       };
