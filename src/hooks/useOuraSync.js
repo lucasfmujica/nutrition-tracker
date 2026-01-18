@@ -10,38 +10,68 @@ export const useOuraSync = ({ saveOuraEntry, saveStepsEntry }) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState('idle');
 
+  // Detect production environment
+  const isProduction = import.meta.env.PROD;
+
   const fetchOuraEndpoint = async (endpoint, start, end) => {
     const token = import.meta.env.VITE_OURA_TOKEN;
     if (!token) throw new Error('VITE_OURA_TOKEN is not configured');
 
-    const url = `${OURA_API_BASE}/${endpoint}?start_date=${start}&end_date=${end}`;
+    // Use proxy in production, direct API in development
+    if (isProduction) {
+      // Production: Use serverless proxy to bypass CORS
+      const proxyUrl = `/api/oura-proxy?endpoint=${endpoint}&start_date=${start}&end_date=${end}`;
 
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+      try {
+        console.log(`[OuraSync] Using proxy: ${endpoint}`);
+        const response = await fetch(proxyUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || `Proxy error: ${response.status}`);
         }
-      });
 
-      if (!response.ok) {
-        throw new Error(`Oura API error: ${response.status} ${response.statusText}`);
+        return await response.json();
+      } catch (err) {
+        console.error('[OuraSync] Proxy Error:', err);
+        throw err;
       }
+    } else {
+      // Development: Direct API call (may require CORS extension)
+      const url = `${OURA_API_BASE}/${endpoint}?start_date=${start}&end_date=${end}`;
 
-      return await response.json();
-    } catch (err) {
-      // Enhanced CORS error handling
-      if (err.name === 'TypeError' && err.message.includes('fetch')) {
-        const corsError = new Error(
-          '🚫 CORS Error: Unable to connect to Oura API directly from browser. ' +
-          'This is a browser security restriction. Consider using a backend proxy or ' +
-          'a browser extension to bypass CORS for development.'
-        );
-        console.error('[OuraSync] CORS Issue:', corsError.message);
-        throw corsError;
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Oura API error: ${response.status} ${response.statusText}`);
+        }
+
+        return await response.json();
+      } catch (err) {
+        // Enhanced CORS error handling for development
+        if (err.name === 'TypeError' && err.message.includes('fetch')) {
+          const corsError = new Error(
+            '🚫 CORS Error: Unable to connect to Oura API directly from browser. ' +
+            'This is a browser security restriction. Consider using a backend proxy or ' +
+            'a browser extension to bypass CORS for development.'
+          );
+          console.error('[OuraSync] CORS Issue:', corsError.message);
+          throw corsError;
+        }
+        throw err;
       }
-      throw err;
     }
   };
 
