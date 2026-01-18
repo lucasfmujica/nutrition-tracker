@@ -13,7 +13,7 @@ export const WeightChartCard = ({ data = [], currentWeight, targetWeight }) => {
         date: `${day}/${month}`,
         weight: entry.weight
       };
-    }));
+    });
 
   const weeklyChange = data.length >= 2 ? (data[0].weight - data[data.length - 1].weight).toFixed(1) : 0;
   const isLoss = weeklyChange <= 0;
