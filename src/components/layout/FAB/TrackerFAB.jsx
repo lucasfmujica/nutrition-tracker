@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTracker } from '../../../context/TrackerContext';
-import { FloatingActionButton } from '../../ui/FloatingActionButton';
+import { FloatingActionButton } from '../../UI/FloatingActionButton';
 
 export const TrackerFAB = () => {
   const {

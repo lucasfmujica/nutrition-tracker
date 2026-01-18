@@ -2,8 +2,8 @@ import { Activity, Dumbbell, Moon, RefreshCw, Target, Trophy, Zap } from 'lucide
 import { useTracker } from '../../context/TrackerContext';
 import { useEffortAnalytics } from '../../hooks/useEffortAnalytics';
 import { addDaysToDate, getArgentinaDateString, getMondayOfWeek } from '../../utils/dateUtils';
+import { SwipeableItem } from '../UI/SwipeableItem';
 import { EffortRadar } from '../Workouts/EffortRadar';
-import { SwipeableItem } from '../ui/SwipeableItem';
 
 /**
  * WorkoutsTab - Workout tracking and history
