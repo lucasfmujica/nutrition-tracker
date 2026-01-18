@@ -1,6 +1,9 @@
+import { FileImage } from 'lucide-react';
+import { useState } from 'react';
 import { useTracker } from '../../context/TrackerContext';
 import { useCorrelationAnalytics } from '../../hooks/useCorrelationAnalytics';
 import { usePatternRecognition } from '../../hooks/usePatternRecognition';
+import { useWeeklyReport } from '../../hooks/useWeeklyReport';
 import { formatDateDisplay, getArgentinaDateString } from '../../utils/dateUtils';
 import { ActivityCards } from '../Dashboard/ActivityCards';
 import CoachInsight from '../Dashboard/CoachInsight';
@@ -13,6 +16,7 @@ import { SummaryCard } from '../Dashboard/SummaryCard';
 import { TrainingWidget } from '../Dashboard/TrainingWidget';
 import { WeightChartCard } from '../Dashboard/WeightChartCard';
 import { WeightProjectionCard } from '../Dashboard/WeightProjectionCard';
+import { WeeklyReportModal } from '../Modals/WeeklyReportModal';
 
 /**
  * DashboardTab - Main dashboard view
@@ -48,6 +52,16 @@ export const DashboardTab = ({
 
   // Correlation Engine (Feature 3)
   const correlationAnalytics = useCorrelationAnalytics(foodLog, workoutLog, ouraLog);
+
+  // Weekly Report Modal State
+  const [showWeeklyReport, setShowWeeklyReport] = useState(false);
+  const { stats, isLoading, error, fetchStats } = useWeeklyReport();
+
+  // Handler to open weekly report
+  const handleOpenWeeklyReport = async () => {
+    setShowWeeklyReport(true);
+    await fetchStats();
+  };
 
   return (
     <div className="space-y-6 pb-24 lg:pb-8">
@@ -120,6 +134,15 @@ export const DashboardTab = ({
             totalDuration={workoutAnalysis.totalDuration}
             analysis={workoutAnalysis.analysis}
           />
+
+          {/* Weekly Report Button */}
+          <button
+            onClick={handleOpenWeeklyReport}
+            className="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-purple-200/50 hover:shadow-xl hover:shadow-purple-200/70 transition-all active:scale-[0.99] flex items-center justify-center gap-3"
+          >
+            <FileImage className="w-5 h-5" />
+            Generar Reporte Semanal
+          </button>
         </div>
 
       {/* Right Column - Analytics & Weight (33%) */}
@@ -138,6 +161,15 @@ export const DashboardTab = ({
         <WeightProjectionCard projection={weightProjection} />
       </div>
     </div>
+
+    {/* Weekly Report Modal */}
+    <WeeklyReportModal
+      isOpen={showWeeklyReport}
+      onClose={() => setShowWeeklyReport(false)}
+      stats={stats}
+      isLoading={isLoading}
+      error={error}
+    />
   </div>
   );
 };
