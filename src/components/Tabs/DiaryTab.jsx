@@ -114,8 +114,8 @@ export const DiaryTab = ({
           </button>
         </div>
       ) : (
-      {/* Grouped Foods List */}
       <div className="space-y-6 pb-24">
+        {/* Grouped Foods List */}
         {useMemo(() => {
           const MEAL_ORDER = ['Desayuno', 'Almuerzo', 'Merienda', 'Cena', 'Snack'];
 
