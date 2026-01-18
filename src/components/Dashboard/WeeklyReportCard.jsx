@@ -1,23 +1,17 @@
-import { Dumbbell, Scale, Utensils } from 'lucide-react';
+// ... imports
+import { Activity, Dumbbell, Scale, Utensils } from 'lucide-react';
 import React from 'react';
 
 /**
  * WeeklyReportCard - Premium shareable card for Social Accountability Reports
- *
- * Designed for image conversion with html2canvas.
- * Optimized for WhatsApp Stories (4:5 aspect ratio).
- * Follows UX-Lead 'Premium Minimalist' guidelines from Clearframe Studio.
- *
- * @param {Object} props
- * @param {number} props.workouts - Number of completed workout sessions
- * @param {number} props.proteinAdherence - Average protein target adherence (%)
- * @param {number|null} props.weightDelta - Weight change from week start (kg)
- * @param {string} props.weekRange - Formatted week range (e.g., "13 Ene - 19 Ene")
- * @param {React.Ref} ref - Forwarded ref for html2canvas capture
+ * ...
  */
 export const WeeklyReportCard = React.forwardRef(({
-  workouts = 0,
+  workouts = 0, // Fallback total
+  gymCount = 0,
+  tennisCount = 0,
   proteinAdherence = 0,
+  proteinAvg = 0,
   weightDelta = null,
   weekRange = ''
 }, ref) => {
@@ -37,20 +31,21 @@ export const WeeklyReportCard = React.forwardRef(({
   };
 
   // Stat item component for visual consistency
-  const StatItem = ({ icon: Icon, iconBg, iconColor, label, value, unit }) => (
-    <div className="text-center">
-      <div className={`w-14 h-14 ${iconBg} rounded-2xl flex items-center justify-center mx-auto mb-3`}>
-        <Icon className={`w-7 h-7 ${iconColor}`} strokeWidth={1.5} />
+  const StatItem = ({ icon: Icon, iconBg, iconColor, label, value, unit, subtext }) => (
+    <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white border border-gray-50 shadow-sm">
+      <div className={`w-10 h-10 ${iconBg} rounded-xl flex items-center justify-center mb-2`}>
+        <Icon className={`w-5 h-5 ${iconColor}`} strokeWidth={2} />
       </div>
-      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-[0.15em] mb-1">
+      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">
         {label}
       </p>
-      <div className="flex items-baseline justify-center gap-1">
-        <span className={`text-3xl font-bold ${typeof value === 'string' && value.includes('-') ? getWeightDeltaColor() : 'text-gray-900'}`}>
+      <div className="flex items-baseline gap-1">
+        <span className={`text-2xl font-bold ${typeof value === 'string' && value.includes('-') || typeof value === 'string' && value.includes('+') ? getWeightDeltaColor() : 'text-gray-900'}`}>
           {value}
         </span>
-        <span className="text-xs text-gray-400 font-medium">{unit}</span>
+        {unit && <span className="text-[10px] text-gray-400 font-bold">{unit}</span>}
       </div>
+      {subtext && <span className="text-[9px] text-gray-400">{subtext}</span>}
     </div>
   );
 
@@ -62,75 +57,89 @@ export const WeeklyReportCard = React.forwardRef(({
         width: '22rem',
         height: '28rem',
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-        background: 'linear-gradient(180deg, #FAFAFA 0%, #FFFFFF 100%)',
+        background: 'linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%)',
         borderRadius: '2rem',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)'
       }}
     >
-      {/* Subtle Decorative Elements */}
+      {/* Background Decor */}
       <div
-        className="absolute -top-20 -right-20 w-40 h-40 rounded-full opacity-[0.04]"
+        className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-[0.03] translate-x-1/3 -translate-y-1/3"
         style={{ background: 'radial-gradient(circle, #8B5CF6 0%, transparent 70%)' }}
       />
       <div
-        className="absolute -bottom-16 -left-16 w-32 h-32 rounded-full opacity-[0.03]"
+        className="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-[0.03] -translate-x-1/3 translate-y-1/3"
         style={{ background: 'radial-gradient(circle, #3B82F6 0%, transparent 70%)' }}
       />
 
-      {/* Content Container - Generous padding for breathing room */}
+      {/* Content Container */}
       <div className="relative h-full flex flex-col px-8 py-8">
 
-        {/* Header - Clean & Minimal */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-gray-100 rounded-full mb-4">
-            <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500" />
-            <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-[0.2em]">
-              Resumen Semanal
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100/80 backdrop-blur-sm rounded-full mb-3 border border-gray-100">
+            <span className="flex h-1.5 w-1.5 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500"></span>
+            </span>
+            <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">
+              LUKENFIT REPORT
             </span>
           </div>
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+          <h1 className="text-xl font-black text-gray-900 tracking-tight leading-tight">
             {weekRange || 'Esta Semana'}
           </h1>
         </div>
 
-        {/* Stats Grid - Horizontal Layout */}
-        <div className="flex-1 flex items-center justify-center">
-          <div className="grid grid-cols-3 gap-6 w-full">
+        {/* Stats Grid - 2x2 Layout */}
+        <div className="flex-1 grid grid-cols-2 gap-4 place-content-center">
+            {/* 1. Bodybuilding/Gym */}
             <StatItem
               icon={Dumbbell}
               iconBg="bg-blue-50"
-              iconColor="text-blue-500"
-              label="Entrenos"
-              value={workouts}
-              unit=""
+              iconColor="text-blue-600"
+              label="Fuerza"
+              value={gymCount}
+              unit="sesiones"
             />
+
+            {/* 2. Tennis/Sport */}
+            <StatItem
+              icon={Activity}
+              iconBg="bg-orange-50"
+              iconColor="text-orange-500"
+              label="Tenis"
+              value={tennisCount}
+              unit="partidos"
+            />
+
+            {/* 3. Protein */}
             <StatItem
               icon={Utensils}
-              iconBg="bg-rose-50"
-              iconColor="text-rose-500"
-              label="Proteína"
-              value={`${proteinAdherence || 0}%`}
-              unit=""
-            />
-            <StatItem
-              icon={Scale}
               iconBg="bg-emerald-50"
               iconColor="text-emerald-500"
+              label="Proteína"
+              value={proteinAvg || 0}
+              unit="g/día"
+              subtext={`${proteinAdherence}% adherencia`}
+            />
+
+            {/* 4. Weight */}
+            <StatItem
+              icon={Scale}
+              iconBg="bg-indigo-50"
+              iconColor="text-indigo-500"
               label="Peso"
               value={formatWeightDelta()}
               unit="kg"
             />
-          </div>
         </div>
 
-        {/* Footer / Branding - Subtle & Professional */}
-        <div className="pt-6 flex items-center justify-center gap-2">
-          <div
-            className="w-4 h-4 rounded-full"
-            style={{ background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)' }}
-          />
-          <span className="text-[11px] font-semibold text-gray-300 tracking-wider">
-            LUKENFIT
+        {/* Footer */}
+        <div className="pt-6 flex flex-col items-center justify-center gap-1">
+          <div className="h-0.5 w-8 bg-gray-200 rounded-full mb-2"></div>
+          <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase">
+            Semana Finalizada
           </span>
         </div>
       </div>

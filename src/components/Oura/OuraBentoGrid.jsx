@@ -1,7 +1,7 @@
 import { Activity, Battery, Clock, Flame, Footprints, Heart, Moon, Zap } from 'lucide-react';
 import React from 'react';
 
-export const OuraBentoGrid = ({ data }) => {
+export const OuraBentoGrid = ({ data, stepGoal = 10000 }) => {
   if (!data) {
     return (
       <div className="bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm">
@@ -150,10 +150,10 @@ export const OuraBentoGrid = ({ data }) => {
              <div className="w-full bg-gray-100 rounded-full h-1.5 mt-2">
                 <div
                   className="bg-orange-500 h-1.5 rounded-full"
-                  style={{ width: `${Math.min(100, (steps / 10000) * 100)}%` }}
+                  style={{ width: `${Math.min(100, (steps / stepGoal) * 100)}%` }}
                 />
              </div>
-             <p className="text-[10px] text-gray-400 text-right">Meta: 10,000</p>
+             <p className="text-[10px] text-gray-400 text-right">Meta: {stepGoal.toLocaleString()}</p>
           </div>
         </div>
       </div>

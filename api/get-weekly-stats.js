@@ -90,25 +90,39 @@ export default async function handler(req, res) {
 
     console.log(`[WeeklyStats] Week range: ${monday} to ${sunday} (Today: ${todayArgentina})`);
 
-    // 4. Query Workouts Count
-    let workouts = 0;
+    // 4. Query Workouts Breakdown
+    let gymCount = 0;
+    let tennisCount = 0;
     try {
       const { data: workoutData, error: workoutError } = await supabase
         .from('workouts')
-        .select('id', { count: 'exact' })
+        .select('type, name')
         .eq('user_id', userId)
         .gte('date', monday)
         .lte('date', todayArgentina);
 
       if (workoutError) throw workoutError;
-      workouts = workoutData?.length || 0;
+
+      if (workoutData) {
+        workoutData.forEach(w => {
+          const type = w.type?.toLowerCase() || '';
+          const name = w.name?.toLowerCase() || '';
+          // Check for Tennis (mapped as 'sport' or explicitly named)
+          if (type === 'sport' || type === 'tennis' || name.includes('tenis') || name.includes('tennis')) {
+            tennisCount++;
+          } else {
+            gymCount++;
+          }
+        });
+      }
     } catch (err) {
       console.error('[WeeklyStats] Error fetching workouts:', err);
       // Continue with 0
     }
 
-    // 5. Calculate Protein Adherence
+    // 5. Calculate Protein Stats (Adherence & Average)
     let proteinAdherence = 0;
+    let proteinAvg = 0;
     try {
       // Get user's protein target
       const { data: profileData } = await supabase
@@ -137,9 +151,15 @@ export default async function handler(req, res) {
           dailyProtein[log.date] += parseFloat(log.protein) || 0;
         }
 
-        // Calculate average adherence across days with data
+        // Calculate metrics
         const days = Object.keys(dailyProtein);
         if (days.length > 0) {
+          const totalProtein = days.reduce((sum, day) => sum + dailyProtein[day], 0);
+
+          // Average (Integer)
+          proteinAvg = Math.round(totalProtein / days.length);
+
+          // Adherence (%)
           const totalAdherence = days.reduce((sum, day) => {
             const adherence = Math.min((dailyProtein[day] / targetProtein) * 100, 100);
             return sum + adherence;
@@ -191,8 +211,11 @@ export default async function handler(req, res) {
 
     // 8. Build Response
     const response = {
-      workouts,
+      workouts: gymCount + tennisCount, // Total for backward compatibility
+      gymCount,
+      tennisCount,
       proteinAdherence,
+      proteinAvg,
       weightDelta,
       weekRange
     };

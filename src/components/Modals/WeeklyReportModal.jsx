@@ -102,7 +102,10 @@ export const WeeklyReportModal = ({
               <WeeklyReportCard
                 ref={cardRef}
                 workouts={stats.workouts}
+                gymCount={stats.gymCount}
+                tennisCount={stats.tennisCount}
                 proteinAdherence={stats.proteinAdherence}
+                proteinAvg={stats.proteinAvg}
                 weightDelta={stats.weightDelta}
                 weekRange={stats.weekRange}
               />

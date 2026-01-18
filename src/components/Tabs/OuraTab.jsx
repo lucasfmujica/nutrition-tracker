@@ -14,7 +14,7 @@ export const OuraTab = ({
   ouraLog = []
 }) => {
   // Get data for selected date
-  const { syncOuraData, isSyncing, syncStatus, getStepsForDate } = useTracker();
+  const { syncOuraData, isSyncing, syncStatus, getStepsForDate, profile } = useTracker();
   const [selectedDate, setSelectedDate] = useState(getArgentinaDateString());
   const [lastSyncTime, setLastSyncTime] = useState(null);
 
@@ -79,7 +79,10 @@ export const OuraTab = ({
       </div>
 
       {/* Main Grid */}
-      <OuraBentoGrid data={dailyData} />
+      <OuraBentoGrid
+        data={dailyData}
+        stepGoal={profile?.stepGoal || 8000}
+      />
 
       {/* Sync Status Feedback */}
       {isSyncing && (
