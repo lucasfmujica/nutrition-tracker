@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTracker } from '../../../context/TrackerContext';
 import { SyncStatusIndicator } from '../SyncStatusIndicator';
 
 export const TrackerHeader = () => {
+  const [isLocalSyncing, setIsLocalSyncing] = useState(false);
   const {
     profile,
     weightHistory,
@@ -64,13 +65,16 @@ export const TrackerHeader = () => {
                 onClick={async (e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  setIsLocalSyncing(true);
                   await forceSyncToCloud();
+                  setIsLocalSyncing(false);
                 }}
-                className="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-2xl bg-white hover:bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 transition-all shadow-sm active:scale-90"
+                disabled={isLocalSyncing}
+                className={`w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-2xl bg-white hover:bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 transition-all shadow-sm active:scale-90 ${isLocalSyncing ? 'cursor-not-allowed opacity-80' : ''}`}
                 title="Forzar sincronización a la nube"
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-5 h-5 ${isLocalSyncing ? 'animate-spin text-blue-600' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
               </button>

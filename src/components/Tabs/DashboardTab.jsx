@@ -1,7 +1,10 @@
+import { useTracker } from '../../context/TrackerContext';
+import { useCorrelationAnalytics } from '../../hooks/useCorrelationAnalytics';
 import { usePatternRecognition } from '../../hooks/usePatternRecognition';
 import { formatDateDisplay, getArgentinaDateString } from '../../utils/dateUtils';
 import { ActivityCards } from '../Dashboard/ActivityCards';
 import CoachInsight from '../Dashboard/CoachInsight';
+import { CorrelationSection } from '../Dashboard/CorrelationSection';
 import { GoalInsightsCard } from '../Dashboard/GoalInsightsCard';
 import { MacroCards } from '../Dashboard/MacroCards';
 import { MacroCloserCard } from '../Dashboard/MacroCloserCard';
@@ -38,9 +41,13 @@ export const DashboardTab = ({
   getTargetsForDate
 }) => {
   const waterData = getTodayWater();
+  const { foodLog, workoutLog } = useTracker(); // Access full logs for analytics
 
   // Pattern Recognition Engine
   const insight = usePatternRecognition(ouraLog, getTotalsForDate, getTargetsForDate);
+
+  // Correlation Engine (Feature 3)
+  const correlationAnalytics = useCorrelationAnalytics(foodLog, workoutLog, ouraLog);
 
   return (
     <div className="space-y-6 pb-24 lg:pb-8">
@@ -85,6 +92,9 @@ export const DashboardTab = ({
 
           {/* Strategic Insights - Long-term Progress */}
           <GoalInsightsCard />
+
+          {/* Feature 3: Correlation Engine (Luken Labs) */}
+          <CorrelationSection analytics={correlationAnalytics} />
 
           {/* Tactical Summary - Daily Calories */}
          <SummaryCard totals={dashboardTotals} targets={dashboardTargets} />

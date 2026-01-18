@@ -1,10 +1,18 @@
 import { useMemo } from 'react';
 import { useTracker } from '../../context/TrackerContext';
+import { useSmartMealCompass } from '../../hooks/useSmartMealCompass';
 import { formatDateDisplay, getArgentinaDateString } from '../../utils/dateUtils';
 import { FastLogCarousel } from '../Dashboard/FastLogCarousel';
 import { HydrationGuard } from '../Dashboard/HydrationGuard';
 import { DaySummary } from '../Diary/DaySummary';
+import { MealCompassCard } from '../Diary/MealCompassCard';
 import { MealSection } from '../Diary/MealSection';
+
+// Internal Wrapper to safeguard hook usage (conditional rendering in parent)
+const MealCompassWrapper = ({ foodLog, remaining, onAdd }) => {
+  const suggestions = useSmartMealCompass(foodLog, remaining);
+  return <MealCompassCard suggestions={suggestions} onSelect={onAdd} />;
+};
 
 /**
  * DiaryTab - Main food diary view
@@ -33,10 +41,12 @@ export const DiaryTab = ({
   setShowFoodForm,
   setEditingFoodId
 }) => {
-  const { frequentFoods, frequentCombos, quickLog } = useTracker();
+  const { frequentFoods, frequentCombos, quickLog, foodLog } = useTracker();
 
   const foods = getFoodsForDate(selectedFoodDate);
   const hasFoods = foods.length > 0;
+
+  // --- Actions ---
 
   const handleAddFood = (meal) => {
     setNewFood({ ...newFood, date: selectedFoodDate, meal });
@@ -55,6 +65,66 @@ export const DiaryTab = ({
     setEditingFoodId(food.id);
     setShowFoodForm(true);
   };
+
+  const handleSmartAdd = (suggestion) => {
+    setNewFood({
+      date: selectedFoodDate,
+      meal: 'Snack', // Default slot, user can change
+      name: suggestion.name,
+      calories: suggestion.calories.toString(),
+      protein: suggestion.protein.toString(),
+      carbs: suggestion.carbs.toString(),
+      fat: suggestion.fat.toString(),
+      fiber: suggestion.fiber?.toString() || '0'
+    });
+    setShowFoodForm(true);
+  };
+
+  // --- Calculations (Hoisted Hooks) ---
+
+  // 1. Smart Compass Logic
+  const compassData = useMemo(() => {
+    const totals = getTotalsForDate(selectedFoodDate);
+    const targets = getTargetsForDate(selectedFoodDate);
+    const textRemaining = {
+      calories: targets.calories - totals.calories,
+      protein: targets.protein - totals.protein,
+      carbs: targets.carbs - totals.carbs,
+      fat: targets.fat - totals.fat
+    };
+
+    // Only show if we have gaps to fill (e.g. at least 200 kcal left)
+    const show = textRemaining.calories >= 200;
+
+    return { remaining: textRemaining, show };
+  }, [selectedFoodDate, getTotalsForDate, getTargetsForDate]);
+
+  // 2. Grouped Foods Logic
+  const groupedMeals = useMemo(() => {
+    if (!hasFoods) return [];
+
+    const MEAL_ORDER = ['Desayuno', 'Almuerzo', 'Merienda', 'Cena', 'Snack'];
+
+    const groups = foods.reduce((acc, food) => {
+      let meal = (food.meal || 'Snack').trim();
+      const normalizedMeal = MEAL_ORDER.find(m => m.toLowerCase() === meal.toLowerCase()) || 'Snack';
+
+      if (!acc[normalizedMeal]) acc[normalizedMeal] = { items: [], totalCalories: 0 };
+
+      acc[normalizedMeal].items.push(food);
+      acc[normalizedMeal].totalCalories += (parseInt(food.calories) || 0);
+      return acc;
+    }, {});
+
+    return MEAL_ORDER.map(mealType => {
+      const group = groups[mealType] || { items: [], totalCalories: 0 };
+      return {
+        type: mealType,
+        items: group.items,
+        calories: group.totalCalories
+      };
+    });
+  }, [foods, hasFoods]);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -98,6 +168,15 @@ export const DiaryTab = ({
         onQuickLog={quickLog}
       />
 
+      {/* Feature 1: Smart Meal Compass */}
+      {compassData.show && (
+        <MealCompassWrapper
+          foodLog={foodLog}
+          remaining={compassData.remaining}
+          onAdd={handleSmartAdd}
+        />
+      )}
+
       {/* Hydration Intelligence Module */}
       <HydrationGuard
         currentIntake={getTodayWater().ml || 0}
@@ -127,38 +206,17 @@ export const DiaryTab = ({
       ) : (
       <div className="space-y-6 pb-24">
         {/* Grouped Foods List */}
-        {useMemo(() => {
-          const MEAL_ORDER = ['Desayuno', 'Almuerzo', 'Merienda', 'Cena', 'Snack'];
-
-          // Group foods by meal type efficiently (O(N))
-          const groupedMeals = foods.reduce((acc, food) => {
-            let meal = (food.meal || 'Snack').trim();
-            // Normalize meal names to match order keys
-            const normalizedMeal = MEAL_ORDER.find(m => m.toLowerCase() === meal.toLowerCase()) || 'Snack';
-
-            if (!acc[normalizedMeal]) acc[normalizedMeal] = { items: [], totalCalories: 0 };
-
-            acc[normalizedMeal].items.push(food);
-            acc[normalizedMeal].totalCalories += (parseInt(food.calories) || 0);
-            return acc;
-          }, {});
-
-          return MEAL_ORDER.map(mealType => {
-            const group = groupedMeals[mealType] || { items: [], totalCalories: 0 };
-
-            return (
-              <MealSection
-                key={mealType}
-                title={mealType}
-                foods={group.items}
-                totals={{ calories: group.totalCalories }}
-                onAddFood={() => handleAddFood(mealType)}
-                onEditFood={handleEditFood}
-                onDeleteFood={(food) => confirmDelete('food', food.id, food.name)}
-              />
-            );
-          });
-        }, [foods, handleAddFood, handleEditFood, confirmDelete])}
+        {groupedMeals.map(group => (
+          <MealSection
+            key={group.type}
+            title={group.type}
+            foods={group.items}
+            totals={{ calories: group.calories }}
+            onAddFood={() => handleAddFood(group.type)}
+            onEditFood={handleEditFood}
+            onDeleteFood={(food) => confirmDelete('food', food.id, food.name)}
+          />
+        ))}
       </div>
       )}
 
