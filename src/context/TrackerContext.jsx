@@ -237,6 +237,7 @@ export const TrackerProvider = ({ children }) => {
     // UI State
     activeTab, setActiveTab,
     dashboardDate, setDashboardDate,
+    selectedFoodDate, setSelectedFoodDate, // Fixed: Added to value object
     selectedWorkoutDate, setSelectedWorkoutDate,
     stepsDate, setStepsDate, // Added stepsDate
     showImportFoodModal, setShowImportFoodModal,
@@ -282,7 +283,10 @@ export const TrackerProvider = ({ children }) => {
   }), [
     trackerSync, nutrition, biometrics, workouts,
     activeTab, // Added dependency
-    dashboardDate, selectedFoodDate, selectedWorkoutDate, stepsDate, // Added dependency
+    dashboardDate, setDashboardDate,
+    selectedFoodDate, setSelectedFoodDate, // Added selectedFoodDate
+    selectedWorkoutDate, setSelectedWorkoutDate,
+    stepsDate, setStepsDate, // Added stepsDate
     showImportFoodModal, showImportWorkoutModal,
     globalDelete,
     dataOperations, analytics, exportDoc, foodEntry, workoutEntry, mealTemplates, ouraSync,

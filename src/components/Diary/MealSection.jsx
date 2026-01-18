@@ -1,14 +1,29 @@
-import { Plus } from 'lucide-react';
+import { Coffee, Cookie, Moon, Plus, Sun, Sunrise } from 'lucide-react';
 import React from 'react';
 import { FoodItem } from './FoodItem';
 
 export const MealSection = ({ title, foods, totals, onAddFood, onEditFood, onDeleteFood }) => {
+  const getIcon = () => {
+    switch (title) {
+      case 'Desayuno': return <Sunrise className="text-orange-500" size={20} />;
+      case 'Almuerzo': return <Sun className="text-yellow-500" size={20} />;
+      case 'Merienda': return <Coffee className="text-brown-500" size={20} />; // Note: Tailwind doesn't have brown by default, using text-stone-600 or amber-700 usually
+      case 'Cena': return <Moon className="text-indigo-500" size={20} />;
+      default: return <Cookie className="text-pink-500" size={20} />;
+    }
+  };
+
   return (
-    <div className="mb-4 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="mb-6 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       {/* Header */}
       <div className="flex justify-between items-center p-4 bg-gray-50/50 border-b border-gray-100">
-        <h3 className="text-gray-900 font-bold text-base">{title}</h3>
-        <span className="text-sm font-semibold text-gray-900">{totals.calories} <span className="text-xs font-normal text-gray-500">kcal</span></span>
+        <div className="flex items-center gap-2">
+           {getIcon()}
+           <h3 className="text-gray-900 font-bold text-base">{title}</h3>
+        </div>
+        <span className="text-sm font-semibold text-gray-900 bg-white px-2 py-0.5 rounded-lg border border-gray-100 shadow-sm">
+          {totals.calories} <span className="text-xs font-normal text-gray-500">kcal</span>
+        </span>
       </div>
 
       {/* Foods List */}
@@ -22,19 +37,27 @@ export const MealSection = ({ title, foods, totals, onAddFood, onEditFood, onDel
           />
         ))}
         {foods.length === 0 && (
-          <div className="p-4 text-center text-xs text-gray-400 italic">
-            Sin alimentos registrados
+          <div className="p-6 text-center">
+            <p className="text-sm text-gray-400 italic mb-2">Sin alimentos</p>
+            <button
+              onClick={onAddFood}
+              className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+            >
+              + Añadir {title}
+            </button>
           </div>
         )}
       </div>
 
-      {/* Add Button */}
-      <button
-        onClick={onAddFood}
-        className="w-full py-3 flex items-center justify-center gap-2 text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors active:bg-blue-100"
-      >
-        <Plus size={16} /> Agregar Comida
-      </button>
+      {/* Quick Add Footer (Only if has foods) */}
+      {foods.length > 0 && (
+        <button
+          onClick={onAddFood}
+          className="w-full py-3 flex items-center justify-center gap-2 text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-gray-50 transition-colors border-t border-gray-50"
+        >
+          <Plus size={16} /> Agregar item
+        </button>
+      )}
     </div>
   );
 };

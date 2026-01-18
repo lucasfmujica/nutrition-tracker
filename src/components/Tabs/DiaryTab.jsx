@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useTracker } from '../../context/TrackerContext';
 import { formatDateDisplay, getArgentinaDateString } from '../../utils/dateUtils';
 import { FastLogCarousel } from '../Dashboard/FastLogCarousel';
@@ -113,36 +114,41 @@ export const DiaryTab = ({
           </button>
         </div>
       ) : (
-        <div className="space-y-6 pb-24">
-          {['Desayuno', 'Almuerzo', 'Merienda', 'Cena', 'Snack'].map(mealType => {
-            const mealFoods = foods.filter(f =>
-               // Normalize string comparison
-               (f.meal || '').toLowerCase() === mealType.toLowerCase() ||
-               // Fallback for old data or mismatches
-               (mealType === 'Snack' && !['desayuno', 'almuerzo', 'merienda', 'cena'].includes((f.meal || '').toLowerCase()))
-            );
+      {/* Grouped Foods List */}
+      <div className="space-y-6 pb-24">
+        {useMemo(() => {
+          const MEAL_ORDER = ['Desayuno', 'Almuerzo', 'Merienda', 'Cena', 'Snack'];
 
-            // Skip section if no foods (optional: keeping it clean)
-            // if (mealFoods.length === 0) return null;
+          // Group foods by meal type efficiently (O(N))
+          const groupedMeals = foods.reduce((acc, food) => {
+            let meal = (food.meal || 'Snack').trim();
+            // Normalize meal names to match order keys
+            const normalizedMeal = MEAL_ORDER.find(m => m.toLowerCase() === meal.toLowerCase()) || 'Snack';
 
-            // Calculate totals for this meal
-            const mealTotals = mealFoods.reduce((acc, food) => ({
-              calories: acc.calories + (parseInt(food.calories) || 0)
-            }), { calories: 0 });
+            if (!acc[normalizedMeal]) acc[normalizedMeal] = { items: [], totalCalories: 0 };
+
+            acc[normalizedMeal].items.push(food);
+            acc[normalizedMeal].totalCalories += (parseInt(food.calories) || 0);
+            return acc;
+          }, {});
+
+          return MEAL_ORDER.map(mealType => {
+            const group = groupedMeals[mealType] || { items: [], totalCalories: 0 };
 
             return (
               <MealSection
                 key={mealType}
                 title={mealType}
-                foods={mealFoods}
-                totals={mealTotals}
+                foods={group.items}
+                totals={{ calories: group.totalCalories }}
                 onAddFood={() => handleAddFood(mealType)}
                 onEditFood={handleEditFood}
                 onDeleteFood={(food) => confirmDelete('food', food.id, food.name)}
               />
             );
-          })}
-        </div>
+          });
+        }, [foods, handleAddFood, handleEditFood, confirmDelete])}
+      </div>
       )}
 
       {/* Sticky Day Summary Footer */}
