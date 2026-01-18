@@ -1,4 +1,5 @@
 import { SimpleBarChart } from '../Charts/SimpleBarChart';
+import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
 /**
  * StepsTab - Steps tracking and history
@@ -14,7 +15,7 @@ export const StepsTab = ({
   stepsLog
 }) => {
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="w-full space-y-6">
       <div className="mb-2 px-1">
         <h1 className="text-2xl font-bold text-gray-900">Pasos</h1>
         <p className="text-sm text-gray-500">Actividad diaria</p>
@@ -25,12 +26,13 @@ export const StepsTab = ({
           <span className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">👟</span>
           REGISTRAR PASOS
         </h2>
-        <input
-          type="date"
-          value={stepsDate}
-          onChange={(e) => setStepsDate(e.target.value)}
-          className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm mb-3 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-medium"
-        />
+        <div className="mb-3">
+          <LukenFitDatePicker
+            selectedDate={stepsDate}
+            onChange={setStepsDate}
+            label="Fecha"
+          />
+        </div>
         <div className="flex gap-2">
           <input
             type="number"

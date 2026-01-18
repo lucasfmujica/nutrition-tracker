@@ -6,6 +6,7 @@ import { FoodFormModal } from '../../Modals/FoodFormModal';
 import { ImportModal } from '../../Modals/ImportModal';
 import { MondayBriefingModal } from '../../Modals/MondayBriefingModal';
 import { WorkoutFormModal } from '../../Modals/WorkoutFormModal';
+import { WorkoutScanner } from '../../Workouts/WorkoutScanner';
 import { WeeklyReport } from './WeeklyReport';
 
 export const ModalsManager = () => {
@@ -31,6 +32,7 @@ export const ModalsManager = () => {
     setNewWorkout,
     addManualWorkout,
     saveWorkout,
+    saveWorkoutEntry,
     editingWorkout,
     handleEditWorkout,
 
@@ -123,19 +125,24 @@ export const ModalsManager = () => {
         accentColor="blue"
       />
 
-      {/* Import Workout Modal */}
-      <ImportModal
-        isOpen={showImportWorkoutModal}
-        onClose={() => { setShowImportWorkoutModal(false); setImportText(''); setImportError(''); }}
-        title="📥 Importar Entreno"
-        description="Pegá el JSON del entreno (Gravl o IA)."
-        placeholder={`{"type": "gym", "name": "Push Day", "duration": 60, "exercises": [...]}`}
-        value={importText}
-        onChange={(val) => { setImportText(val); setImportError(''); }}
-        onImport={handleImportWorkout}
-        error={importError}
-        accentColor="amber"
-      />
+      {/* Smart Import Workout Scanner (Gemini) */}
+      {showImportWorkoutModal && (
+        <WorkoutScanner
+          onSave={async (workoutData) => {
+            // Logic similar to WorkoutsTab handleSmartImport
+            const newEntry = {
+              ...workoutData,
+              date: workoutData.date || new Date().toISOString().split('T')[0], // Default to today if missing
+              source: 'ai-import',
+              reviewed: true,
+              confidence: 1.0
+            };
+            await saveWorkoutEntry(newEntry);
+            setShowImportWorkoutModal(false);
+          }}
+          onCancel={() => setShowImportWorkoutModal(false)}
+        />
+      )}
 
       {/* AI Meal Scanner Modal */}
       <FoodCameraModal

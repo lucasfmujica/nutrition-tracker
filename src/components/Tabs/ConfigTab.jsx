@@ -19,7 +19,7 @@ export const ConfigTab = ({
   importBackup
 }) => {
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="w-full max-w-none space-y-6">
       <div className="mb-2 px-1">
         <h1 className="text-2xl font-bold text-gray-900">Configuración</h1>
         <p className="text-sm text-gray-500">Ajustes de perfil y objetivos</p>

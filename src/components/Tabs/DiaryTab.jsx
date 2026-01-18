@@ -182,7 +182,7 @@ export const DiaryTab = ({
   }, [foods, hasFoods]);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="w-full space-y-6">
       {/* Date Navigator */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
         <div>
@@ -218,7 +218,7 @@ export const DiaryTab = ({
       ) : (
       <div className="space-y-4 pb-12">
         {/* Grouped Foods List */}
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {groupedMeals.map(group => (
             <MealSection
               key={group.type}

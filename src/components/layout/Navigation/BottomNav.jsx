@@ -20,8 +20,8 @@ export const BottomNav = ({ activeTab, setActiveTab }) => {
     { icon: <Utensils size={24} />, label: 'Comida', sublabel: 'Agregar manual', onClick: () => { setNewFood({ ...newFood, date: dashboardDate }); setShowFoodForm(true); }, color: 'text-cyan-500', bg: 'bg-cyan-50' },
     { icon: <Dumbbell size={24} />, label: 'Entreno', sublabel: 'Agregar manual', onClick: () => { setNewWorkout({ ...newWorkout, date: dashboardDate }); setShowWorkoutForm(true); }, color: 'text-orange-500', bg: 'bg-orange-50' },
     { icon: <Star size={24} />, label: 'Favoritos', sublabel: 'Plantillas rápidas', onClick: () => setShowTemplatesModal(true), color: 'text-purple-500', bg: 'bg-purple-50' },
-    { icon: <Camera size={20} />, label: 'Escanear', sublabel: 'Foto con IA', onClick: () => setShowFoodScanModal(true), color: 'text-blue-500', bg: 'bg-blue-50' },
-    { icon: <Import size={20} />, label: 'IA Work', sublabel: 'Importar JSON', onClick: () => setShowImportWorkoutModal(true), color: 'text-amber-500', bg: 'bg-amber-50' },
+    { icon: <Camera size={20} />, label: 'Escanear', sublabel: 'Alimentos', onClick: () => setShowFoodScanModal(true), color: 'text-blue-500', bg: 'bg-blue-50' },
+    { icon: <Import size={20} />, label: 'Imp. Gravl', sublabel: 'Gemini AI', onClick: () => setShowImportWorkoutModal(true), color: 'text-amber-500', bg: 'bg-amber-50' },
   ];
 
   const handleAction = (action) => {
@@ -55,7 +55,7 @@ export const BottomNav = ({ activeTab, setActiveTab }) => {
                   <button
                     key={i}
                     onClick={() => handleAction(action)}
-                    className="group flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-50 transition-all active:scale-95 border border-transparent hover:border-gray-100"
+                    className="group flex items-center gap-4 p-3 rounded-2xl hover:bg-white hover:shadow-lg hover:shadow-blue-500/5 hover:border-blue-100 transition-all active:scale-95 border border-transparent"
                   >
                     <div className={`${action.bg} ${action.color} w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm`}>
                       {action.icon}
@@ -83,10 +83,10 @@ export const BottomNav = ({ activeTab, setActiveTab }) => {
                  <div key={tab.id} className="relative -top-6 flex-shrink-0 z-10">
                    <button
                      onClick={() => setIsMenuOpen(!isMenuOpen)}
-                     className={`w-14 h-14 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-200 ring-4 ring-white ${
+                     className={`w-14 h-14 rounded-full flex items-center justify-center text-white shadow-xl transition-all duration-300 ring-4 ring-white ${
                         isMenuOpen
                           ? 'bg-slate-800 rotate-45 scale-105 shadow-slate-800/40'
-                          : 'bg-blue-600 hover:scale-105 active:scale-95 shadow-blue-600/40'
+                          : 'bg-gradient-to-tr from-blue-600 to-cyan-500 hover:scale-110 hover:-translate-y-1 hover:shadow-blue-500/50 hover:shadow-2xl active:scale-95 shadow-blue-500/30'
                      }`}
                    >
                      <PlusCircle size={28} strokeWidth={2.5} />

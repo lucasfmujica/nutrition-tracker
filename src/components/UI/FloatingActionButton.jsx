@@ -11,8 +11,8 @@ export const FloatingActionButton = ({ onAddFood, onAddWorkout, onImportFood, on
     { icon: <Utensils size={24} />, label: 'Comida', sublabel: 'Agregar manual', onClick: onAddFood, color: 'text-cyan-500', bg: 'bg-cyan-50' },
     { icon: <Dumbbell size={24} />, label: 'Entreno', sublabel: 'Agregar manual', onClick: onAddWorkout, color: 'text-orange-500', bg: 'bg-orange-50' },
     { icon: <Star size={24} />, label: 'Favoritos', sublabel: 'Plantillas rápidas', onClick: onQuickAdd, color: 'text-purple-500', bg: 'bg-purple-50' },
-    { icon: <Camera size={20} />, label: 'Escanear', sublabel: 'Foto con IA', onClick: onScanFood, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { icon: <Import size={20} />, label: 'IA Work', sublabel: 'Importar JSON', onClick: onImportWorkout, color: 'text-amber-500', bg: 'bg-amber-50' },
+    { icon: <Camera size={20} />, label: 'Escanear', sublabel: 'Alimentos (IA)', onClick: onScanFood, color: 'text-blue-500', bg: 'bg-blue-50' },
+    { icon: <Import size={20} />, label: 'Imp. Gravl', sublabel: 'Gemini AI', onClick: onImportWorkout, color: 'text-amber-500', bg: 'bg-amber-50' },
   ];
 
   return (
@@ -37,7 +37,7 @@ export const FloatingActionButton = ({ onAddFood, onAddWorkout, onImportFood, on
               <button
                 key={i}
                 onClick={() => { action.onClick(); setIsOpen(false); }}
-                className={`${i === 4 ? 'col-span-2' : ''} group flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-50 transition-all active:scale-95`}
+                className={`${i === 4 ? 'col-span-2' : ''} group flex items-center gap-3 p-3 rounded-2xl hover:bg-white hover:shadow-lg hover:shadow-blue-500/5 hover:border-blue-100 transition-all active:scale-95 border border-transparent`}
               >
                 <div className={`${action.bg} ${action.color} w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
                   {action.icon}
@@ -55,8 +55,8 @@ export const FloatingActionButton = ({ onAddFood, onAddWorkout, onImportFood, on
       {/* Main FAB */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed right-6 bottom-24 z-50 w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 text-white flex items-center justify-center shadow-2xl shadow-blue-500/40 transition-all duration-300 active:scale-90 ${
-          isOpen ? 'rotate-45 bg-slate-800 from-slate-800 to-slate-900' : 'scale-100'
+        className={`fixed right-6 bottom-24 z-50 w-16 h-16 rounded-full flex items-center justify-center text-white shadow-2xl transition-all duration-300 ring-4 ring-white active:scale-90 ${
+          isOpen ? 'rotate-45 bg-slate-800 shadow-slate-800/40' : 'scale-100 bg-gradient-to-tr from-blue-600 to-cyan-500 hover:scale-110 hover:-translate-y-1 hover:shadow-blue-500/50 hover:shadow-2xl'
         }`}
       >
         <Plus size={32} strokeWidth={2.5} />

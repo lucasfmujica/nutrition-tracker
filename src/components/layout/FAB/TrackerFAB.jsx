@@ -17,7 +17,7 @@ export const TrackerFAB = () => {
     setShowFoodScanModal // New Setter
   } = useTracker();
 
-  if (!showFab || !['dashboard', 'comidas', 'entrenos'].includes(activeTab)) return null;
+  if (!showFab || !['dashboard', 'comidas', 'entrenos', 'peso', 'pasos', 'oura', 'config'].includes(activeTab)) return null;
 
   // Don't show FAB if any modal is open
   if (showFoodForm || showWorkoutForm || showImportFoodModal || showImportWorkoutModal || showTemplatesModal) return null;

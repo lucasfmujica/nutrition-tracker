@@ -1,10 +1,11 @@
-import { Activity, Dumbbell, Moon, Pencil, RefreshCw, Target, Trophy, Zap } from 'lucide-react';
+import { Activity, Camera, Dumbbell, Moon, Pencil, RefreshCw, Target, Trophy, Zap } from 'lucide-react';
 import { useTracker } from '../../context/TrackerContext';
 import { useEffortAnalytics } from '../../hooks/useEffortAnalytics';
 import { addDaysToDate, getArgentinaDateString, getMondayOfWeek } from '../../utils/dateUtils';
 import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 import { SwipeableItem } from '../UI/SwipeableItem';
 import { EffortRadar } from '../Workouts/EffortRadar';
+import { WorkoutScanner } from '../Workouts/WorkoutScanner';
 
 /**
  * WorkoutsTab - Workout tracking and history
@@ -31,27 +32,16 @@ export const WorkoutsTab = ({
 
   // AES Intelligence Engine - Now date-aware!
   const effortAnalytics = useEffortAnalytics(workoutLog, ouraLog, weightAnalytics, selectedWorkoutDate);
-  const { syncOuraData, isSyncing, syncStatus, handleEditWorkout } = useTracker();
+  const { syncOuraData, isSyncing, syncStatus, handleEditWorkout, saveWorkoutEntry, setShowImportWorkoutModal } = useTracker();
+
 
   return (
     <div className="space-y-3 pb-24 lg:pb-8">
+
+
       {/* Weekly Summary - Bento Box Layout */}
       <div className="space-y-3">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <h2 className="text-sm font-bold text-gray-900">Resumen Semanal</h2>
-            <button
-              onClick={() => syncOuraData(true)}
-              disabled={isSyncing}
-              className={`p-1.5 rounded-lg transition-all ${isSyncing ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-100 text-gray-400 hover:text-gray-600'}`}
-              title="Sincronizar Oura Ring"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
-            </button>
-            {isSyncing && <span className="text-[10px] text-blue-500 font-medium animate-pulse">Sincronizando...</span>}
-          </div>
-          <span className="text-xs text-gray-500">desde {workoutAnalysis.weekStart}</span>
-        </div>
+
 
         {/* Header with date navigation */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
@@ -59,12 +49,22 @@ export const WorkoutsTab = ({
           <h1 className="text-2xl font-bold text-gray-900">Entrenos</h1>
           <p className="text-sm text-gray-500">Registro de actividad física</p>
         </div>
-        <div className="w-full md:w-auto">
-          <LukenFitDatePicker
-            selectedDate={selectedWorkoutDate}
-            onChange={setSelectedWorkoutDate}
-            label="Fecha"
-          />
+        <div className="flex flex-col-reverse md:flex-row gap-3 w-full md:w-auto">
+          <button
+            onClick={() => setShowImportWorkoutModal(true)}
+            className="group relative flex items-center justify-center gap-2 px-5 py-3 md:py-2 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl text-sm font-bold shadow-lg shadow-slate-900/20 active:scale-95 transition-all w-full md:w-auto overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            <Camera size={18} className="text-amber-400" />
+            <span>Importar Gravl</span>
+          </button>
+          <div className="w-full md:w-auto md:min-w-[200px]">
+            <LukenFitDatePicker
+              selectedDate={selectedWorkoutDate}
+              onChange={setSelectedWorkoutDate}
+              label="Fecha"
+            />
+          </div>
         </div>
       </div>
 

@@ -68,7 +68,7 @@ export const EffortRadar = ({ analytics }) => {
       </div>
 
       {/* Insight Text */}
-      <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 flex gap-3 items-start">
+      <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 flex gap-3 items-center">
         <span className="text-xl">💡</span>
         <p className="text-sm text-gray-600 leading-snug">
             {insight}

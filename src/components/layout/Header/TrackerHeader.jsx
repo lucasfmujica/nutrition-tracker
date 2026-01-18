@@ -23,8 +23,8 @@ export const TrackerHeader = () => {
     <header className="bg-white/90 backdrop-blur-md border-b border-slate-100 px-4 lg:px-8 py-4 lg:py-5 sticky top-0 z-30 shadow-sm">
       <div className="max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto flex items-center justify-between gap-4">
         <div className="min-w-0 flex-1 flex items-center gap-4">
-          <div className="relative">
-            <svg viewBox="0 0 32 32" className="w-12 h-12 lg:w-14 lg:h-14 flex-shrink-0">
+          <div className="relative lg:hidden">
+            <svg viewBox="0 0 32 32" className="w-12 h-12 flex-shrink-0">
               <defs>
                 <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" style={{ stopColor: '#2563EB' }} />
@@ -40,8 +40,22 @@ export const TrackerHeader = () => {
             )}
           </div>
           <div className="min-w-0">
-            <h1 className="hidden sm:block text-2xl lg:text-3xl font-black text-slate-900 tracking-tighter">LUKEN<span className="text-blue-600">FIT</span></h1>
-            <p className="hidden sm:flex text-xs lg:text-sm font-bold text-slate-400 items-center gap-1.5 whitespace-nowrap">
+            <h1 className="hidden sm:block lg:hidden text-2xl font-black text-slate-900 tracking-tighter">LUKEN<span className="text-blue-600">FIT</span></h1>
+
+            {/* Desktop Info Block */}
+            <div className="hidden lg:flex flex-col items-start gap-2">
+               <div className="text-sm font-bold text-slate-800 capitalize bg-slate-50 px-3 py-1 rounded-lg border border-slate-100">
+                  {new Date(dashboardDate + 'T00:00:00').toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}
+               </div>
+               <div className="flex items-center gap-2 text-xs font-medium text-slate-400 pl-1">
+                  <span>Peso: <span className="text-slate-700 font-bold">{getMostRecentWeight(weightHistory)?.weight || profile.currentWeight}kg</span></span>
+                  <span className="text-slate-300">•</span>
+                  <span>Meta: <span className="text-blue-600 font-bold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">{profile.targetWeight}kg</span></span>
+               </div>
+            </div>
+
+            {/* Mobile/Tablet Simple Status */}
+            <p className="hidden sm:flex lg:hidden text-xs font-bold text-slate-400 items-center gap-1.5 whitespace-nowrap">
               <span className="bg-slate-100 px-2 py-0.5 rounded-full">{getMostRecentWeight(weightHistory)?.weight || profile.currentWeight}kg</span>
               <span className="text-slate-300">→</span>
               <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">{profile.targetWeight}kg</span>

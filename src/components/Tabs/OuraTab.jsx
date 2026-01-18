@@ -37,7 +37,7 @@ export const OuraTab = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="w-full space-y-6">
       {/* Header & Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
         <div className="px-1 text-center md:text-left">
@@ -50,7 +50,7 @@ export const OuraTab = ({
 
         <div className="flex flex-wrap items-center gap-3 bg-white p-1.5 rounded-xl border border-gray-100 shadow-sm mx-auto md:mx-0">
            {/* Date Nav */}
-           <div className="w-full md:w-[200px]">
+           <div className="w-full md:w-[260px]">
              <LukenFitDatePicker
                  selectedDate={selectedDate}
                  onChange={setSelectedDate}
