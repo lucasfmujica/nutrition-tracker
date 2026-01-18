@@ -6,9 +6,13 @@ export const WeightChartCard = ({ data = [], currentWeight, targetWeight }) => {
   const chartData = data
     .slice(0, 7) // Last 7 entries
     .reverse()
-    .map(entry => ({
-      date: new Date(entry.date).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' }),
-      weight: entry.weight
+    .map(entry => {
+      // Safe date formatting without timezone issues (YYYY-MM-DD -> DD/MM)
+      const [year, month, day] = entry.date.split('-');
+      return {
+        date: `${day}/${month}`,
+        weight: entry.weight
+      };
     }));
 
   const weeklyChange = data.length >= 2 ? (data[0].weight - data[data.length - 1].weight).toFixed(1) : 0;

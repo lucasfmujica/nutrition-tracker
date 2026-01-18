@@ -46,8 +46,9 @@ export const TrackerProvider = ({ children }) => {
   // UI Visibility
   const [showFab, setShowFab] = useState(true);
 
-  // Note: importText, newWeight etc moved to local hooks
-  // Note: importText, newWeight etc moved to local hooks
+  // Weight Editing State
+  const [editingWeightId, setEditingWeightId] = useState(null);
+  const [editingWeightValue, setEditingWeightValue] = useState('');
 
   // 1. Core Domains - all use the same useCloud
   const workouts = useWorkouts(supabase, useCloud);
@@ -59,6 +60,37 @@ export const TrackerProvider = ({ children }) => {
     biometrics.customTargets,
     workouts.isTrainingDay
   );
+
+  // Weight Editing Logic
+  const startEditWeight = (id) => {
+    const entry = biometrics.weightHistory.find(w => w.id === id);
+    if (entry) {
+      setEditingWeightId(id);
+      setEditingWeightValue(entry.weight);
+    }
+  };
+
+  const cancelEditWeight = () => {
+    setEditingWeightId(null);
+    setEditingWeightValue('');
+  };
+
+  const saveEditWeight = async () => {
+    if (!editingWeightId) return;
+    const entry = biometrics.weightHistory.find(w => w.id === editingWeightId);
+    if (entry) {
+        const updatedEntry = { ...entry, weight: parseFloat(editingWeightValue) };
+
+        // 1. Update local storage and profile
+        const newHistory = biometrics.weightHistory.map(w => w.id === editingWeightId ? updatedEntry : w);
+        await biometrics.saveWeightHistory(newHistory);
+
+        // 2. Sync to cloud
+        await biometrics.saveWeightEntry(updatedEntry);
+    }
+    setEditingWeightId(null);
+    setEditingWeightValue('');
+  };
 
   // 2. Sync Orchestrator
   const trackerSync = useTrackerSync({
@@ -297,7 +329,13 @@ export const TrackerProvider = ({ children }) => {
     changeDate,
     formatTime,
     storage,
-    supabase
+    supabase,
+    // Weight Editing
+    editingWeightId, setEditingWeightId,
+    editingWeightValue, setEditingWeightValue,
+    startEditWeight,
+    cancelEditWeight,
+    saveEditWeight
   }), [
     trackerSync, nutrition, biometrics, workouts,
     activeTab, // Added dependency
@@ -309,7 +347,8 @@ export const TrackerProvider = ({ children }) => {
     globalDelete,
     dataOperations, analytics, exportDoc, foodEntry, workoutEntry, mealTemplates, ouraSync,
     weightAnalytics, dynamicTargets, quickLog, workoutAnalysis, hydrationTarget, performanceForecast, supabase,
-    showFab // Added dependency
+    showFab, // Added dependency
+    editingWeightId, editingWeightValue // Added dependency
   ]);
 
   return (
