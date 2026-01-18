@@ -22,8 +22,8 @@ import { addDaysToDate, getArgentinaDateString, getMondayOfWeek } from '../utils
  * - ✅ Performance: useMemo prevents recalculation on every render
  * - ✅ Edge Cases: Handles missing data, sparse entries, and invalid states
  */
-export const useWeightAnalytics = (weightHistory, foodLog, customTargets, currentWeight) => {
-  const TARGET_WEIGHT = 75; // kg - as per specifications
+export const useWeightAnalytics = (weightHistory, foodLog, customTargets, currentWeight, targetWeight = 75) => {
+  const TARGET_WEIGHT = targetWeight;
 
   /**
    * Calculate Real Rate of Loss (R)

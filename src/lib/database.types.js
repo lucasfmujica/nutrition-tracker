@@ -7,9 +7,12 @@
  * @typedef {Object} Profile
  * @property {string} id - UUID
  * @property {string} user_id - UUID reference to auth.users
+ * @property {string|null} display_name
+ * @property {string|null} avatar_url
  * @property {number} height - Height in cm
  * @property {number} current_weight - Current weight in kg
  * @property {number} target_weight - Target weight in kg
+ * @property {number} step_goal - Daily step goal
  * @property {number} age - Age in years
  * @property {'sedentary'|'light'|'moderate'|'active'|'very_active'} activity_level
  * @property {'cut'|'maintain'|'bulk'} goal
@@ -109,9 +112,12 @@ export const mappers = {
   // Profile: localStorage -> Supabase
   profileToDb: (profile, userId) => ({
     user_id: userId,
+    display_name: profile.name,
+    avatar_url: profile.avatar,
     height: profile.height,
     current_weight: profile.currentWeight,
     target_weight: profile.targetWeight,
+    step_goal: profile.stepGoal || 8000,
     age: profile.age,
     activity_level: profile.activityLevel,
     goal: profile.goal,
@@ -119,13 +125,17 @@ export const mappers = {
 
   // Profile: Supabase -> localStorage format (for compatibility)
   profileFromDb: (dbProfile) => ({
+    name: dbProfile.display_name,
+    avatar: dbProfile.avatar_url,
     height: dbProfile.height,
     currentWeight: dbProfile.current_weight,
     targetWeight: dbProfile.target_weight,
+    stepGoal: dbProfile.step_goal || 8000,
     age: dbProfile.age,
     activityLevel: dbProfile.activity_level,
     goal: dbProfile.goal,
   }),
+
 
   // Targets: localStorage -> Supabase (stored in profiles table)
   targetsToDb: (targets) => ({

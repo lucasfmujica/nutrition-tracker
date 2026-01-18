@@ -1,12 +1,15 @@
+import { usePatternRecognition } from '../../hooks/usePatternRecognition';
 import { formatDateDisplay, getArgentinaDateString } from '../../utils/dateUtils';
 import { ActivityCards } from '../Dashboard/ActivityCards';
 import { GoalInsightsCard } from '../Dashboard/GoalInsightsCard';
 import { MacroCards } from '../Dashboard/MacroCards';
 import { MacroCloserCard } from '../Dashboard/MacroCloserCard';
+import { PerformanceForecastCard } from '../Dashboard/PerformanceForecastCard';
 import { SummaryCard } from '../Dashboard/SummaryCard';
 import { TrainingWidget } from '../Dashboard/TrainingWidget';
 import { WeightChartCard } from '../Dashboard/WeightChartCard';
 import { WeightProjectionCard } from '../Dashboard/WeightProjectionCard';
+import CoachInsight from '../dashboard/CoachInsight';
 
 /**
  * DashboardTab - Main dashboard view
@@ -28,12 +31,22 @@ export const DashboardTab = ({
   weightHistory,
   getMostRecentWeight,
   profile,
-  weightProjection
+  weightHistory,
+  getMostRecentWeight,
+  profile,
+  weightProjection,
+  // Pattern Recognition Props
+  ouraLog,
+  getTotalsForDate,
+  getTargetsForDate
 }) => {
   const waterData = getTodayWater();
 
+  // Pattern Recognition Engine
+  const insight = usePatternRecognition(ouraLog, getTotalsForDate, getTargetsForDate);
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-24 lg:pb-8">
       {/* Date Navigator - Clean Desktop Design */}
       <div className="flex items-center lg:items-start lg:w-full lg:mb-8 justify-center lg:justify-between px-1">
         <div className="hidden lg:block">
@@ -70,6 +83,9 @@ export const DashboardTab = ({
 
         {/* Left Column - Main Tracking (67%) */}
         <div className="w-full lg:w-8/12 space-y-4 lg:space-y-6">
+          {/* Coach Insight (Pattern Recognition) */}
+          <CoachInsight insight={insight} />
+
           {/* Strategic Insights - Long-term Progress */}
           <GoalInsightsCard />
 
@@ -84,7 +100,7 @@ export const DashboardTab = ({
 
           <ActivityCards
             steps={getStepsForDate(dashboardDate)}
-            stepsTarget={10000}
+            stepsTarget={profile?.stepGoal || 8000}
             water={waterData.glasses}
             waterTarget={WATER_GOAL_GLASSES}
             onAddWater={addWaterGlass}
@@ -101,6 +117,9 @@ export const DashboardTab = ({
 
       {/* Right Column - Analytics & Weight (33%) */}
       <div className="lg:w-4/12 space-y-4 lg:space-y-6">
+        {/* Performance Forecast (New) */}
+        <PerformanceForecastCard />
+
         {/* Weight Chart */}
         <WeightChartCard
           data={weightHistory}

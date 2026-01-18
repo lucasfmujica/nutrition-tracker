@@ -54,9 +54,13 @@ export const Sidebar = ({ activeTab, setActiveTab, profile }) => {
           onClick={() => setActiveTab('config')}
           className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors active:scale-95"
         >
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-sm">
-                {profile?.avatar || (profile?.name?.substring(0, 2).toUpperCase() || 'LM')}
-            </div>
+            {profile?.avatar && profile.avatar.length > 4 ? (
+                <img src={profile.avatar} alt="Profile" className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm" />
+            ) : (
+                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                    {profile?.avatar || (profile?.name?.substring(0, 2).toUpperCase() || 'LM')}
+                </div>
+            )}
             <div className="overflow-hidden">
                 <p className="text-sm font-bold text-gray-900 truncate">{profile?.name || 'Lucas Mujica'}</p>
                 <p className="text-xs text-gray-500 truncate">Premium Member</p>

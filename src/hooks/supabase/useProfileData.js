@@ -100,6 +100,7 @@ export function useProfileData(user, isOnline, ensureProfileExists) {
           target_protein: onboardingData.protein_goal,
           target_carbs: onboardingData.carbs_goal,
           target_fat: onboardingData.fat_goal,
+          step_goal: 8000,
           training_days_per_week: onboardingData.training_days_per_week,
           onboarding_completed: true,
           updated_at: new Date().toISOString(),

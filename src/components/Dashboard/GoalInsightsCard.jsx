@@ -23,9 +23,9 @@ export const GoalInsightsCard = () => {
     profile
   } = useTracker();
 
-  const STARTING_WEIGHT = 84.9; // kg - Initial weight
-  const TARGET_WEIGHT = 75;     // kg - Goal weight
-  const TOTAL_JOURNEY = STARTING_WEIGHT - TARGET_WEIGHT; // 9.9 kg
+  const STARTING_WEIGHT = 84.9; // kg - Initial weight (could be dynamic later)
+  const TARGET_WEIGHT = profile?.targetWeight || 75;     // kg - Goal weight
+  const TOTAL_JOURNEY = STARTING_WEIGHT - TARGET_WEIGHT;
 
   // Calculate progress percentage with useMemo
   const progressPercentage = useMemo(() => {
@@ -138,7 +138,7 @@ export const GoalInsightsCard = () => {
       <div className="relative z-10">
         {/* Header */}
         <h2 className="text-gray-500 text-xs font-semibold mb-4 uppercase tracking-wider">
-          Objetivo 75 kg
+          Objetivo {TARGET_WEIGHT} kg
         </h2>
 
         {/* Hero: Estimated Goal Date */}

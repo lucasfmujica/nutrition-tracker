@@ -57,6 +57,19 @@ export const ConfigTab = ({
           </div>
         </div>
 
+        {/* URL Avatar Override */}
+        <div className="mb-8">
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">O URL de Imagen Personalizada</label>
+            <input
+                type="text"
+                value={profile.avatar?.length > 4 ? profile.avatar : ''}
+                onChange={(e) => updateConfig({ ...profile, avatar: e.target.value }, customTargets)}
+                placeholder="https://..."
+                className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+            />
+            <p className="text-[10px] text-gray-400 mt-2 px-1">Si ingresas una URL, se usará en lugar del emoji.</p>
+        </div>
+
         <h2 className="text-xs font-black text-gray-400 mb-4 uppercase tracking-[0.2em] flex items-center gap-2">
           PERFIL Y DATOS
         </h2>
@@ -76,6 +89,10 @@ export const ConfigTab = ({
           <div>
             <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Altura (cm)</label>
             <input type="number" value={profile.height} onChange={(e) => updateConfig({ ...profile, height: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all" />
+          </div>
+          <div>
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Meta de Pasos</label>
+            <input type="number" value={profile.stepGoal || 8000} onChange={(e) => updateConfig({ ...profile, stepGoal: parseInt(e.target.value) || 0 }, customTargets)} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all" />
           </div>
           <div>
             <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Edad</label>

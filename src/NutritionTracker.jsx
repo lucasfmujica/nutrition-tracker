@@ -105,6 +105,10 @@ const NutritionTrackerContent = () => {
                 WATER_GOAL_GLASSES={WATER_GOAL_GLASSES} workoutAnalysis={workoutAnalysis}
                 weightHistory={weightHistory} getMostRecentWeight={getMostRecentWeight}
                 profile={profile} weightProjection={weightProjection}
+                // Pattern Recognition Props
+                ouraLog={ouraLog}
+                getTotalsForDate={getTotalsForDate}
+                getTargetsForDate={getTargetsForDate}
               />
             )}
             {activeTab === 'comidas' && (

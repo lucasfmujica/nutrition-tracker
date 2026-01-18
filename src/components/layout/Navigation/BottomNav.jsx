@@ -1,26 +1,28 @@
-import { BarChart2, BookOpen, Dumbbell, Home, PlusCircle, User } from 'lucide-react';
+import { Activity, BarChart2, BookOpen, Dumbbell, Footprints, Home, Moon, PlusCircle } from 'lucide-react';
 import React from 'react';
 
 export const BottomNav = ({ activeTab, setActiveTab }) => {
   const tabs = [
     { id: 'dashboard', icon: Home, label: 'Diario' },
     { id: 'comidas', icon: BookOpen, label: 'Comidas' },
-    { id: 'add', icon: PlusCircle, label: '', isFab: true },
     { id: 'entrenos', icon: Dumbbell, label: 'Entrenos' },
-    { id: 'peso', icon: BarChart2, label: 'Peso' }
+    { id: 'add', icon: PlusCircle, label: '', isFab: true },
+    { id: 'peso', icon: BarChart2, label: 'Peso' },
+    { id: 'steps', icon: Footprints, label: 'Pasos' },
+    { id: 'oura', icon: Moon, label: 'Oura' }
   ];
 
   return (
-    <nav className="bg-white/90 backdrop-blur-md border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] pb-[env(safe-area-inset-bottom)] px-4">
-      <div className="flex justify-between items-end h-16 max-w-md mx-auto relative">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] pb-[env(safe-area-inset-bottom)] z-50">
+      <div className="flex items-center h-16 max-w-md mx-auto overflow-x-auto no-scrollbar px-2 md:justify-around">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
 
           if (tab.isFab) {
              return (
-               <div key={tab.id} className="relative -top-5">
+               <div key={tab.id} className="relative -top-6 mx-2 flex-shrink-0">
                  <button
-                   onClick={() => setActiveTab('dashboard')} // Usually opens a menu, keeping simple for now
+                   onClick={() => setActiveTab('dashboard')}
                    className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-blue-600/40 hover:scale-105 active:scale-95 transition-all duration-200"
                  >
                    <PlusCircle size={28} strokeWidth={2.5} />
@@ -33,7 +35,7 @@ export const BottomNav = ({ activeTab, setActiveTab }) => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 flex flex-col items-center justify-center py-2 transition-colors duration-200 ${
+              className={`flex-shrink-0 flex flex-col items-center justify-center py-2 min-w-[64px] transition-colors duration-200 ${
                 isActive ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'
               }`}
             >

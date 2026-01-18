@@ -8,6 +8,7 @@ export const useAnalytics = (trackerData) => {
     workoutLog,
     stepsLog,
     customTargets,
+    stepGoal = 8000,
     getTotalsForDate,
     getTargetsForDate
   } = trackerData;
@@ -77,7 +78,7 @@ export const useAnalytics = (trackerData) => {
         // Protein goal check (>= 90%)
         if (totals.protein >= targets.protein * 0.9) protOkDays++;
         // Steps goal check (>= 8000 default) - assumes 8000 if not set, or just use hardcoded for now
-        if (steps >= 8000) stepsOkDays++;
+        if (steps >= stepGoal) stepsOkDays++;
       }
     });
 

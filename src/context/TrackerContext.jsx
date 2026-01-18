@@ -10,6 +10,7 @@ import { useHydrationTarget } from '../hooks/useHydrationTarget'; // Hydration I
 import { useMealTemplates } from '../hooks/useMealTemplates';
 import { useNutrition } from '../hooks/useNutrition';
 import { useOuraSync } from '../hooks/useOuraSync'; // Oura Cloud Sync
+import { usePerformanceForecast } from '../hooks/usePerformanceForecast';
 import { useQuickLog } from '../hooks/useQuickLog'; // Fast-Log Library
 import { useSupabase } from '../hooks/useSupabase';
 import { useTrackerSync } from '../hooks/useTrackerSync';
@@ -135,6 +136,7 @@ export const TrackerProvider = ({ children }) => {
     workoutLog: workouts.workoutLog,
     stepsLog: biometrics.stepsLog,
     customTargets: biometrics.customTargets,
+    stepGoal: biometrics.profile.stepGoal,
     getTotalsForDate: nutrition.getTotalsForDate,
     getTargetsForDate: nutrition.getTargetsForDate
   });
@@ -144,7 +146,8 @@ export const TrackerProvider = ({ children }) => {
     biometrics.weightHistory,
     nutrition.foodLog,
     biometrics.customTargets,
-    biometrics.profile.currentWeight
+    biometrics.profile.currentWeight,
+    biometrics.profile.targetWeight
   );
 
   // 5c. Metabolic Auto-Pilot (Dynamic Targets)
@@ -216,6 +219,12 @@ export const TrackerProvider = ({ children }) => {
     saveStepsEntry: biometrics.saveStepsEntry
   });
 
+  // 13. Performance Forecast (Tomorrow's Outlook)
+  const performanceForecast = usePerformanceForecast(
+    biometrics.ouraLog,
+    workouts.workoutLog
+  );
+
   // Derived State
   const workoutAnalysis = useWorkoutAnalysis(workouts.workoutLog);
 
@@ -268,10 +277,14 @@ export const TrackerProvider = ({ children }) => {
     ...ouraSync, // Expose syncOuraData, isSyncing, syncStatus
 
     // Intelligence Engine
+    weightAnalytics,
     ...weightAnalytics,
 
     // Metabolic Auto-Pilot (Monday Briefing)
     ...dynamicTargets,
+
+    // Performance Forecast
+    performanceForecast,
 
     // Fast-Log Library
     ...quickLog,
@@ -295,7 +308,7 @@ export const TrackerProvider = ({ children }) => {
     showImportFoodModal, showImportWorkoutModal,
     globalDelete,
     dataOperations, analytics, exportDoc, foodEntry, workoutEntry, mealTemplates, ouraSync,
-    weightAnalytics, dynamicTargets, quickLog, workoutAnalysis, hydrationTarget, supabase,
+    weightAnalytics, dynamicTargets, quickLog, workoutAnalysis, hydrationTarget, performanceForecast, supabase,
     showFab // Added dependency
   ]);
 

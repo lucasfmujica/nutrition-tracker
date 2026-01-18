@@ -18,7 +18,7 @@ export const FoodFormModal = ({
 
   return (
     <div
-      className="fixed inset-0 bg-slate-900/40 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
+      className="fixed inset-0 bg-slate-900/40 flex items-start justify-center z-50 p-4 pt-20 pb-20 overflow-y-auto backdrop-blur-sm"
       onClick={handleBackdropClick}
     >
       <div

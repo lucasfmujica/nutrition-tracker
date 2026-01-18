@@ -33,7 +33,7 @@ export const WorkoutsTab = ({
   const { syncOuraData, isSyncing, syncStatus, handleEditWorkout } = useTracker();
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 pb-24 lg:pb-8">
       {/* Weekly Summary - Bento Box Layout */}
       <div className="space-y-3">
         <div className="flex justify-between items-center">
@@ -53,49 +53,65 @@ export const WorkoutsTab = ({
         </div>
 
         {/* Main Grid: AI Insight + Stats */}
-        <div className="grid grid-cols-3 gap-3">
-          {/* AI Coach Insight Card - spans 2 columns */}
-          <div className="col-span-2">
+        {/* Main Grid: AI Insight + Stats */}
+        <div className="space-y-3">
+          {/* AI Coach Insight Card - Full Width Row 1 */}
+          <div className="w-full">
             <EffortRadar analytics={effortAnalytics} />
           </div>
 
-          {/* Total Workouts Card */}
-          <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-            <div className="text-center space-y-2">
-              <div className="flex items-center justify-center gap-2">
+          {/* Metrics Row 2 - Bento Grid */}
+          <div className="grid grid-cols-2 gap-3">
+             {/* Total Workouts Card - Big Block */}
+            <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex flex-col justify-center items-center">
+              <div className="flex items-center gap-2 mb-1">
                 <Trophy className="w-5 h-5 text-amber-500" />
+                <h3 className="text-gray-900 font-bold">Total</h3>
               </div>
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-3xl font-black text-gray-900 leading-none mb-1">
                 {workoutAnalysis.gymCount + workoutAnalysis.tennisCount}
               </div>
-              <p className="text-xs text-gray-500 font-medium">Entrenamientos</p>
-              <div className="text-xs text-gray-400">{workoutAnalysis.totalDuration}' total</div>
+              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Entrenamientos</p>
             </div>
-          </div>
-        </div>
 
-        {/* Secondary Metrics Row */}
-        <div className="grid grid-cols-3 gap-2">
-          <div className="text-center p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
-            <div className="flex items-center justify-center mb-1">
-              <Dumbbell className="w-4 h-4 text-amber-600" />
-            </div>
-            <div className="text-xl font-bold text-amber-700">{workoutAnalysis.gymCount}</div>
-            <div className="text-xs text-amber-600 font-medium">Gym</div>
+            {/* Duration Block */}
+             <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-4 border border-cyan-100 flex flex-col justify-center items-center">
+               <div className="flex items-center gap-2 mb-1">
+                 <span className="text-xl">⏱️</span>
+                 <h3 className="text-cyan-900 font-bold">Tiempo</h3>
+               </div>
+               <div className="text-3xl font-black text-cyan-700 leading-none mb-1">
+                 {workoutAnalysis.totalDuration}'
+               </div>
+               <p className="text-[10px] text-cyan-600 font-bold uppercase tracking-wider">Minutos Totales</p>
+             </div>
           </div>
-          <div className="text-center p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100">
-            <div className="flex items-center justify-center mb-1">
-              <Target className="w-4 h-4 text-green-600" />
+
+          {/* Type Split Row 3 */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
+                  <Dumbbell className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                   <div className="text-lg font-bold text-gray-900 leading-none">{workoutAnalysis.gymCount}</div>
+                   <div className="text-[10px] text-gray-400 font-bold uppercase">Gym</div>
+                </div>
+              </div>
             </div>
-            <div className="text-xl font-bold text-green-700">{workoutAnalysis.tennisCount}</div>
-            <div className="text-xs text-green-600 font-medium">Tenis</div>
-          </div>
-          <div className="text-center p-3 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl border border-cyan-100">
-            <div className="flex items-center justify-center mb-1">
-              <span className="text-cyan-600">⏱️</span>
+
+            <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                  <Target className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                   <div className="text-lg font-bold text-gray-900 leading-none">{workoutAnalysis.tennisCount}</div>
+                   <div className="text-[10px] text-gray-400 font-bold uppercase">Tenis</div>
+                </div>
+              </div>
             </div>
-            <div className="text-xl font-bold text-cyan-700">{workoutAnalysis.totalDuration}'</div>
-            <div className="text-xs text-cyan-600 font-medium">Duración</div>
           </div>
         </div>
 
