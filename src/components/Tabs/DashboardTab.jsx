@@ -1,6 +1,7 @@
 import { usePatternRecognition } from '../../hooks/usePatternRecognition';
 import { formatDateDisplay, getArgentinaDateString } from '../../utils/dateUtils';
 import { ActivityCards } from '../Dashboard/ActivityCards';
+import CoachInsight from '../Dashboard/CoachInsight';
 import { GoalInsightsCard } from '../Dashboard/GoalInsightsCard';
 import { MacroCards } from '../Dashboard/MacroCards';
 import { MacroCloserCard } from '../Dashboard/MacroCloserCard';
@@ -9,7 +10,6 @@ import { SummaryCard } from '../Dashboard/SummaryCard';
 import { TrainingWidget } from '../Dashboard/TrainingWidget';
 import { WeightChartCard } from '../Dashboard/WeightChartCard';
 import { WeightProjectionCard } from '../Dashboard/WeightProjectionCard';
-import CoachInsight from '../dashboard/CoachInsight';
 
 /**
  * DashboardTab - Main dashboard view
