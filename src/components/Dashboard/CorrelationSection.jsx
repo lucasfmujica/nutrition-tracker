@@ -8,7 +8,8 @@ const ScatterCard = ({ title, subtitle, data, xLabel, yLabel, color }) => (
       <p className="text-xs text-slate-500">{subtitle}</p>
     </div>
     <div className="h-48 w-full">
-      <ResponsiveContainer width="100%" height="100%">
+      {data && data.length > 0 ? (
+        <ResponsiveContainer width="100%" height="100%">
         <ScatterChart margin={{ top: 10, right: 10, bottom: 10, left: 0 }}>
           <XAxis
             type="number"
@@ -45,6 +46,11 @@ const ScatterCard = ({ title, subtitle, data, xLabel, yLabel, color }) => (
           <Scatter name={title} data={data} fill={color} />
         </ScatterChart>
       </ResponsiveContainer>
+      ) : (
+        <div className="flex items-center justify-center text-gray-400 text-xs h-full">
+          <p>Sin datos</p>
+        </div>
+      )}
     </div>
   </div>
 );

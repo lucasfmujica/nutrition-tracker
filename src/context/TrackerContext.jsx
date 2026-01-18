@@ -1,28 +1,22 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
-import { useAnalytics } from '../hooks/useAnalytics';
 import { useBiometrics } from '../hooks/useBiometrics';
 import { useDataOperations } from '../hooks/useDataOperations';
-import { useDynamicTargets } from '../hooks/useDynamicTargets'; // Metabolic Auto-Pilot
 import { useExport } from '../hooks/useExport';
 import { useFoodEntry } from '../hooks/useFoodEntry';
 import { useGlobalDelete } from '../hooks/useGlobalDelete';
-import { useHydrationTarget } from '../hooks/useHydrationTarget'; // Hydration Intelligence
 import { useMealTemplates } from '../hooks/useMealTemplates';
 import { useNutrition } from '../hooks/useNutrition';
-import { useOuraSync } from '../hooks/useOuraSync'; // Oura Cloud Sync
-import { usePerformanceForecast } from '../hooks/usePerformanceForecast';
-import { useQuickLog } from '../hooks/useQuickLog'; // Fast-Log Library
-import { useSafetyNet } from '../hooks/useSafetyNet'; // Modo Escudo
+import { useOuraSync } from '../hooks/useOuraSync';
+import { useQuickLog } from '../hooks/useQuickLog';
+import { useSafetyNet } from '../hooks/useSafetyNet';
 import { useSupabase } from '../hooks/useSupabase';
+import { useTrackerActions } from '../hooks/useTrackerActions';
+import { useTrackerAnalytics } from '../hooks/useTrackerAnalytics';
 import { useTrackerSync } from '../hooks/useTrackerSync';
-import { useWeightAnalytics } from '../hooks/useWeightAnalytics'; // Intelligence Engine
-import { useWeightProjection } from '../hooks/useWeightProjection'; // Predictive Weight Engine
-import { useWorkoutAnalysis } from '../hooks/useWorkoutAnalysis'; // New import
+import { useTrackerUIState } from '../hooks/useTrackerUIState';
+import { useWeightEditing } from '../hooks/useWeightEditing';
 import { useWorkoutEntry } from '../hooks/useWorkoutEntry';
 import { useWorkouts } from '../hooks/useWorkouts';
-
-import { addDaysToDate, formatTime, getArgentinaDateString } from '../utils/dateUtils'; // formatTime imported
-import { storage } from '../utils/storage';
 
 const TrackerContext = createContext(null);
 
@@ -35,80 +29,38 @@ export const TrackerProvider = ({ children }) => {
   const [offlineMode, setOfflineMode] = useState(false);
   const useCloud = supabase.isAuthenticated && !offlineMode && supabase.isOnline;
 
-  // UI State that didn't fit into domain hooks
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [dashboardDate, setDashboardDate] = useState(getArgentinaDateString());
-  const [selectedFoodDate, setSelectedFoodDate] = useState(getArgentinaDateString());
-  const [selectedWorkoutDate, setSelectedWorkoutDate] = useState(getArgentinaDateString());
-  const [stepsDate, setStepsDate] = useState(getArgentinaDateString());
+  // 1. UI State (extracted hook)
+  const uiState = useTrackerUIState();
 
-  const [showImportFoodModal, setShowImportFoodModal] = useState(false);
-  const [showImportWorkoutModal, setShowImportWorkoutModal] = useState(false);
-
-  // UI Visibility
-  const [showFab, setShowFab] = useState(true);
-
-  // Weight Editing State
-  const [editingWeightId, setEditingWeightId] = useState(null);
-  const [editingWeightValue, setEditingWeightValue] = useState('');
-
-  // 1. Core Domains - all use the same useCloud
+  // 2. Core Domains - all use the same useCloud
   const workouts = useWorkouts(supabase, useCloud);
   const biometrics = useBiometrics(supabase, useCloud);
 
-  // 1b. Modo Escudo (Safety Net)
+  // 3. Modo Escudo (Safety Net)
   const safetyNet = useSafetyNet(
     biometrics.profile,
     biometrics.customTargets,
     biometrics.saveProfile
   );
 
-  // 2. Nutrition with Safety Net integration
+  // 4. Nutrition with Safety Net integration
   const nutrition = useNutrition(
     supabase,
     useCloud,
     biometrics.customTargets,
     workouts.isTrainingDay,
-    safetyNet.getTargetsForDate, // Override targets when safety net is active
-    safetyNet.shouldTagAsSafetyNetDay, // Tag food entries appropriately
-    workouts.workoutLog // Smart Targeting: Periodization
+    safetyNet.getTargetsForDate,
+    safetyNet.shouldTagAsSafetyNetDay,
+    workouts.workoutLog
   );
 
-  // Weight Editing Logic
-  const startEditWeight = (id) => {
-    const entry = biometrics.weightHistory.find(w => w.id === id);
-    if (entry) {
-      setEditingWeightId(id);
-      setEditingWeightValue(entry.weight);
-    }
-  };
+  // 5. Weight Editing (extracted hook)
+  const weightEditing = useWeightEditing(biometrics);
 
-  const cancelEditWeight = () => {
-    setEditingWeightId(null);
-    setEditingWeightValue('');
-  };
-
-  const saveEditWeight = async () => {
-    if (!editingWeightId) return;
-    const entry = biometrics.weightHistory.find(w => w.id === editingWeightId);
-    if (entry) {
-        const updatedEntry = { ...entry, weight: parseFloat(editingWeightValue) };
-
-        // 1. Update local storage and profile
-        const newHistory = biometrics.weightHistory.map(w => w.id === editingWeightId ? updatedEntry : w);
-        await biometrics.saveWeightHistory(newHistory);
-
-        // 2. Sync to cloud
-        await biometrics.saveWeightEntry(updatedEntry);
-    }
-    setEditingWeightId(null);
-    setEditingWeightValue('');
-  };
-
-  // 2. Sync Orchestrator
+  // 6. Sync Orchestrator
   const trackerSync = useTrackerSync({
     supabase,
-    useCloud, // ← CRITICAL: Pass unified useCloud flag
+    useCloud,
     offlineMode,
     setOfflineMode,
     // Setters for initial load
@@ -130,96 +82,80 @@ export const TrackerProvider = ({ children }) => {
     profile: biometrics.profile
   });
 
-  // Wrapper for ConfigTab to update both profile and targets
-  const updateConfig = async (newProfile, newTargets) => {
-    // Optimistic update
+  // 7. Analytics & Intelligence (extracted hook - WITH date reactivity)
+  const analytics = useTrackerAnalytics({
+    dashboardDate: uiState.dashboardDate,  // ✅ CRITICAL FIX: Date-reactive
+    biometrics,
+    nutrition,
+    workouts,
+    safetyNet,
+    updateConfig: null  // Will be defined in actions
+  });
+
+  // 8. Actions (extracted hook - needs updateConfig closure)
+  const updateConfigClosure = async (newProfile, newTargets) => {
     biometrics.setProfile(newProfile);
     biometrics.setCustomTargets(newTargets);
-
-    // Save to storage/cloud
     try {
       if (newProfile !== biometrics.profile) await biometrics.saveProfile(newProfile);
       if (newTargets !== biometrics.customTargets) await biometrics.saveTargets(newTargets);
     } catch (err) {
       console.error('Error updating config:', err);
-      // Revert on error? For now just log
     }
   };
 
-  // 3. Water Actions - Moved to wrapper to keep context clean
-  // (We use simple wrappers here or move logic to useNutrition completely later)
-  const addWaterGlass = async () => {
-    const msg = await nutrition.addWaterGlass();
-    if (msg) trackerSync.setSaveStatus(msg); // Simplified
-  };
+  const actions = useTrackerActions({
+    nutrition,
+    biometrics,
+    workouts,
+    trackerSync
+  });
 
-  const removeWaterGlass = async () => {
-    const msg = await nutrition.removeWaterGlass();
-    if (msg) trackerSync.setSaveStatus(msg); // Simplified
-  };
+  // Override updateConfig in actions (needed for dynamicTargets)
+  const updateConfig = updateConfigClosure;
 
-  // 4. Operations (Legacy hooks support)
+  // 9. Operations (Legacy hooks support)
   const dataOperations = useDataOperations({
     foodLog: nutrition.foodLog,
     saveFoodLog: nutrition.saveFoodLog,
     workoutLog: workouts.workoutLog,
     saveWorkoutLog: workouts.saveWorkoutLog,
-    saveFoodEntry: nutrition.saveFoodEntry, // Note: typo in useNutrition? checked: saveFoodEntry
+    saveFoodEntry: nutrition.saveFoodEntry,
     saveWorkoutEntry: workouts.saveWorkoutEntry,
     supabase,
-    useCloud, // ← CRITICAL FIX: Use unified useCloud from TrackerContext
-    showImportFoodModal, setShowImportFoodModal,
-    showImportWorkoutModal, setShowImportWorkoutModal,
+    useCloud,
+    showImportFoodModal: uiState.showImportFoodModal,
+    setShowImportFoodModal: uiState.setShowImportFoodModal,
+    showImportWorkoutModal: uiState.showImportWorkoutModal,
+    setShowImportWorkoutModal: uiState.setShowImportWorkoutModal,
     setSaveStatus: trackerSync.setSaveStatus,
-    dashboardDate
+    dashboardDate: uiState.dashboardDate
   });
 
-  // 5. Analytics
-  const analytics = useAnalytics({
-    weightHistory: biometrics.weightHistory,
-    foodLog: nutrition.foodLog,
-    workoutLog: workouts.workoutLog,
-    stepsLog: biometrics.stepsLog,
-    customTargets: biometrics.customTargets,
-    stepGoal: biometrics.profile.stepGoal,
-    getTotalsForDate: nutrition.getTotalsForDate,
-    getTargetsForDate: nutrition.getTargetsForDate
-  });
-
-  // 5b. Intelligence Engine - Weight Analytics (needed by useExport)
-  const weightAnalytics = useWeightAnalytics(
-    biometrics.weightHistory,
-    nutrition.foodLog,
-    biometrics.customTargets,
-    biometrics.profile.currentWeight,
-    biometrics.profile.targetWeight
-  );
-
-  // 5c. Metabolic Auto-Pilot (Dynamic Targets)
-  const dynamicTargets = useDynamicTargets(
-    weightAnalytics,
-    biometrics.customTargets,
-    biometrics.profile,
-    updateConfig
-  );
-
-  // 6. Export
+  // 10. Export
   const exportDoc = useExport({
-    profile: biometrics.profile, setProfile: biometrics.setProfile,
-    customTargets: biometrics.customTargets, setCustomTargets: biometrics.setCustomTargets,
-    weightHistory: biometrics.weightHistory, saveWeightHistory: biometrics.saveWeightHistory,
-    foodLog: nutrition.foodLog, saveFoodLog: nutrition.saveFoodLog,
-    workoutLog: workouts.workoutLog, saveWorkoutLog: workouts.saveWorkoutLog,
-    stepsLog: biometrics.stepsLog, saveStepsLog: biometrics.saveStepsLog,
-    ouraLog: biometrics.ouraLog, saveOuraLog: biometrics.saveOuraLog,
+    profile: biometrics.profile,
+    setProfile: biometrics.setProfile,
+    customTargets: biometrics.customTargets,
+    setCustomTargets: biometrics.setCustomTargets,
+    weightHistory: biometrics.weightHistory,
+    saveWeightHistory: biometrics.saveWeightHistory,
+    foodLog: nutrition.foodLog,
+    saveFoodLog: nutrition.saveFoodLog,
+    workoutLog: workouts.workoutLog,
+    saveWorkoutLog: workouts.saveWorkoutLog,
+    stepsLog: biometrics.stepsLog,
+    saveStepsLog: biometrics.saveStepsLog,
+    ouraLog: biometrics.ouraLog,
+    saveOuraLog: biometrics.saveOuraLog,
     getMostRecentWeight: biometrics.getMostRecentWeight,
     getTotalsForDate: nutrition.getTotalsForDate,
     getTargetsForDate: nutrition.getTargetsForDate,
     getStepsForDate: (date) => biometrics.stepsLog.find(s => s.date === date)?.steps || 0,
     getWorkoutsForDate: (date) => workouts.workoutLog.filter(entry => entry.date === date)
-  }, analytics, weightAnalytics); // Pass analytics as 2nd arg, weightAnalytics as 3rd
+  }, analytics, analytics.weightAnalytics);
 
-  // 7. Food Entry
+  // 11. Food Entry
   const foodEntry = useFoodEntry({
     foodLog: nutrition.foodLog,
     saveFoodLog: nutrition.saveFoodLog,
@@ -227,121 +163,67 @@ export const TrackerProvider = ({ children }) => {
     setSaveStatus: trackerSync.setSaveStatus
   });
 
-  // 7b. Fast-Log Library
+  // 12. Fast-Log Library
   const quickLog = useQuickLog(nutrition.foodLog, nutrition.saveFoodEntry);
 
-  // 8. Workout Entry
+  // 13. Workout Entry
   const workoutEntry = useWorkoutEntry({
     workoutLog: workouts.workoutLog,
     saveWorkoutLog: workouts.saveWorkoutLog,
     saveWorkoutEntry: workouts.saveWorkoutEntry
   });
 
-  // 9. Meal Templates
+  // 14. Meal Templates
   const mealTemplates = useMealTemplates({
-    storage,
+    storage: actions.storage,
     setSaveStatus: trackerSync.setSaveStatus,
-    selectedFoodDate,
+    selectedFoodDate: uiState.selectedFoodDate,
     saveFoodLog: nutrition.saveFoodLog,
     foodLog: nutrition.foodLog,
     saveFoodEntry: nutrition.saveFoodEntry
   });
 
-  // 11. Steps (Activity)
-  const stepsEntry = useDataOperations({
-      log: biometrics.stepsLog,
-      saveLog: biometrics.setStepsLog,
-      saveEntry: biometrics.saveStepsEntry,
-      dateParam: stepsDate
-    });
-
-  // 11. Global Delete Actions
+  // 15. Global Delete Actions
   const globalDelete = useGlobalDelete(nutrition, workouts, biometrics, supabase, useCloud);
 
-  // 12. Oura Sync Service
+  // 16. Oura Sync Service
   const ouraSync = useOuraSync({
     saveOuraEntry: biometrics.saveOuraEntry,
     saveStepsEntry: biometrics.saveStepsEntry
   });
 
-  // 13. Performance Forecast (Tomorrow's Outlook)
-  const performanceForecast = usePerformanceForecast(
-    biometrics.ouraLog,
-    workouts.workoutLog
-  );
-
-  // 14. Predictive Weight Engine
-  const weightProjection = useWeightProjection(
-    biometrics.weightHistory,
-    nutrition.foodLog,
-    biometrics.stepsLog,
-    biometrics.customTargets,
-    biometrics.profile
-  );
-
-  // Derived State
-  const workoutAnalysis = useWorkoutAnalysis(workouts.workoutLog);
-
-  // Hydration Intelligence Module
-  const hydrationTarget = useHydrationTarget(workouts.workoutLog);
-
-  // Derived state helpers
-
-  const getWorkoutsForDate = (date) => workouts.workoutLog.filter(entry => entry.date === date);
-  const getStepsForDate = (date) => biometrics.stepsLog.find(s => s.date === date)?.steps || 0;
-  const changeDate = (dateStr, delta) => addDaysToDate(dateStr, delta);
-
-
-
   // Combine everything into value
   const value = useMemo(() => ({
-    // Inherit everything from hooks
+    // Sync & Core Domains
     ...trackerSync,
     ...nutrition,
     ...biometrics,
     ...workouts,
 
-    // UI State
-    activeTab, setActiveTab,
-    dashboardDate, setDashboardDate,
-    selectedFoodDate, setSelectedFoodDate, // Fixed: Added to value object
-    selectedWorkoutDate, setSelectedWorkoutDate,
-    stepsDate, setStepsDate, // Added stepsDate
-    showImportFoodModal, setShowImportFoodModal,
-    showImportWorkoutModal, setShowImportWorkoutModal,
-    showFab, setShowFab,
+    // UI State (extracted)
+    ...uiState,
 
-    // Delete Modal & Undo
+    // Weight Editing (extracted)
+    ...weightEditing,
+
+    // Analytics & Intelligence (extracted)
+    ...analytics,
+
+    // Actions (extracted)
+    ...actions,
+    updateConfig,  // Override from closure
+
     // Delete Modal & Undo
     ...globalDelete,
 
-    // Overrides
-    addWaterGlass, // Wrapped version
-    removeWaterGlass, // Wrapped version
-    updateConfig, // Wrapped version
-
-    // Legacy hooks results
+    // Entry Hooks
     ...dataOperations,
-    ...analytics,
-    ...exportDoc,
     ...foodEntry,
     ...workoutEntry,
     ...mealTemplates,
 
-    ...ouraSync, // Expose syncOuraData, isSyncing, syncStatus
-
-    // Intelligence Engine
-    weightAnalytics,
-    ...weightAnalytics,
-
-    // Metabolic Auto-Pilot (Monday Briefing)
-    ...dynamicTargets,
-
-    // Performance Forecast
-    performanceForecast,
-
-    // Predictive Weight Engine
-    weightProjection,
+    // Oura Sync
+    ...ouraSync,
 
     // Fast-Log Library
     ...quickLog,
@@ -349,35 +231,27 @@ export const TrackerProvider = ({ children }) => {
     // Modo Escudo (Safety Net)
     ...safetyNet,
 
-    // Helpers
-    workoutAnalysis,
-    hydrationTarget, // Hydration Intelligence
-    getWorkoutsForDate,
-    getStepsForDate,
-    changeDate,
-    formatTime,
-    storage,
-    supabase,
-    // Weight Editing
-    editingWeightId, setEditingWeightId,
-    editingWeightValue, setEditingWeightValue,
-    startEditWeight,
-    cancelEditWeight,
-    saveEditWeight
+    // Supabase
+    supabase
   }), [
-    trackerSync, nutrition, biometrics, workouts,
-    activeTab, // Added dependency
-    dashboardDate, setDashboardDate,
-    selectedFoodDate, setSelectedFoodDate, // Added selectedFoodDate
-    selectedWorkoutDate, setSelectedWorkoutDate,
-    stepsDate, setStepsDate, // Added stepsDate
-    showImportFoodModal, showImportWorkoutModal,
+    trackerSync,
+    nutrition,
+    biometrics,
+    workouts,
+    uiState,
+    weightEditing,
+    analytics,
+    actions,
+    updateConfig,
     globalDelete,
-    dataOperations, analytics, exportDoc, foodEntry, workoutEntry, mealTemplates, ouraSync,
-    weightAnalytics, dynamicTargets, quickLog, workoutAnalysis, hydrationTarget, performanceForecast, weightProjection, supabase,
-    safetyNet, // Modo Escudo
-    showFab, // Added dependency
-    editingWeightId, editingWeightValue // Added dependency
+    dataOperations,
+    foodEntry,
+    workoutEntry,
+    mealTemplates,
+    ouraSync,
+    quickLog,
+    safetyNet,
+    supabase
   ]);
 
   return (

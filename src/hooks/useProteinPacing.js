@@ -105,14 +105,6 @@ export const useProteinPacing = (foodLog, targetProtein, selectedDate) => {
     const remainingProtein = Math.max(0, protein - totalConsumed);
     const missedSlots = slots.filter(s => s.status === 'missed').length;
 
-    console.log('[ProteinPacing] Analysis:', {
-      date,
-      currentHour: argentinaHour,
-      slots: slots.map(s => ({ name: s.name, status: s.status, consumed: s.consumedGrams })),
-      totalConsumed,
-      remainingProtein
-    });
-
     return {
       slots,
       totalConsumed: Math.round(totalConsumed),

@@ -33,39 +33,45 @@ export const WeightChartCard = ({ data = [], currentWeight, targetWeight }) => {
         </div>
       </div>
 
-      <div className="h-48 w-full min-w-0">
-        <ResponsiveContainer width="100%" height="100%" minHeight={192}>
-          <AreaChart data={chartData}>
-            <defs>
-              <linearGradient id="colorWeight" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#0066EE" stopOpacity={0.2}/>
-                <stop offset="95%" stopColor="#0066EE" stopOpacity={0}/>
-              </linearGradient>
-            </defs>
-            <XAxis
-              dataKey="date"
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 10, fill: '#9CA3AF' }}
-              dy={10}
-            />
-            <Tooltip
-              contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-              itemStyle={{ color: '#0066EE', fontWeight: 'bold' }}
-              cursor={{ stroke: '#0066EE', strokeWidth: 1, strokeDasharray: '4 4' }}
-            />
-            <Area
-              type="monotone"
-              dataKey="weight"
-              name="Peso"
-              stroke="#0066EE"
-              strokeWidth={3}
-              fillOpacity={1}
-              fill="url(#colorWeight)"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
+      {chartData.length > 0 ? (
+        <div className="h-48 w-full min-w-0">
+          <ResponsiveContainer width="100%" height="100%" minHeight={192}>
+            <AreaChart data={chartData}>
+              <defs>
+                <linearGradient id="colorWeight" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#0066EE" stopOpacity={0.2}/>
+                  <stop offset="95%" stopColor="#0066EE" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <XAxis
+                dataKey="date"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 10, fill: '#9CA3AF' }}
+                dy={10}
+              />
+              <Tooltip
+                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                itemStyle={{ color: '#0066EE', fontWeight: 'bold' }}
+                cursor={{ stroke: '#0066EE', strokeWidth: 1, strokeDasharray: '4 4' }}
+              />
+              <Area
+                type="monotone"
+                dataKey="weight"
+                name="Peso"
+                stroke="#0066EE"
+                strokeWidth={3}
+                fillOpacity={1}
+                fill="url(#colorWeight)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      ) : (
+        <div className="h-48 w-full flex items-center justify-center text-gray-400 text-sm">
+          <p>No hay datos suficientes para mostrar el gráfico</p>
+        </div>
+      )}
     </div>
   );
 };

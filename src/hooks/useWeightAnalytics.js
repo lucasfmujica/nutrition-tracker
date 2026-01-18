@@ -34,7 +34,6 @@ export const useWeightAnalytics = (weightHistory, foodLog, customTargets, curren
    */
   const currentTrend = useMemo(() => {
     if (!weightHistory || weightHistory.length === 0) {
-      console.log('[Analytics] No weight history available');
       return null;
     }
 
@@ -49,7 +48,6 @@ export const useWeightAnalytics = (weightHistory, foodLog, customTargets, curren
 
     // Edge case: Not enough data points
     if (recentEntries.length < 2) {
-      console.log('[Analytics] Insufficient data for trend calculation (need at least 2 points in 14 days)');
       return null;
     }
 
@@ -67,7 +65,6 @@ export const useWeightAnalytics = (weightHistory, foodLog, customTargets, curren
 
     // Guard: If dates are the same, cannot calculate trend
     if (daysDiff === 0) {
-      console.log('[Analytics] Same date for oldest and newest entry, cannot calculate trend');
       return 0;
     }
 
@@ -76,7 +73,6 @@ export const useWeightAnalytics = (weightHistory, foodLog, customTargets, curren
     const w2 = Number(String(oldestEntry.weight).replace(',', '.'));
 
     if (isNaN(w1) || isNaN(w2)) {
-      console.log('[Analytics] Invalid weight values');
       return null;
     }
 
@@ -85,16 +81,6 @@ export const useWeightAnalytics = (weightHistory, foodLog, customTargets, curren
     // Convert to kg/week: (weightDiff / daysDiff) * 7
     // Note: Negative value = losing weight, Positive = gaining weight
     const ratePerWeek = (weightDiff / daysDiff) * 7;
-
-    console.log('[Analytics] Rate of Loss calculated:', {
-      oldestDate: oldestEntry.date,
-      oldestWeight: oldestEntry.weight,
-      newestDate: newestEntry.date,
-      newestWeight: newestEntry.weight,
-      daysDiff,
-      weightDiff,
-      ratePerWeek: ratePerWeek.toFixed(2) + ' kg/week'
-    });
 
     return ratePerWeek;
   }, [weightHistory]);
@@ -124,7 +110,6 @@ export const useWeightAnalytics = (weightHistory, foodLog, customTargets, curren
 
     if (!currentTrend || currentTrend >= 0) {
       // Not losing weight (gaining or maintaining)
-      console.log('[Analytics] Cannot project goal date: not losing weight (R >= 0)');
       return null;
     }
 
@@ -137,16 +122,6 @@ export const useWeightAnalytics = (weightHistory, foodLog, customTargets, curren
     const today = getArgentinaDateString();
     const projectedDate = addDaysToDate(today, daysToGoal);
 
-    console.log('[Analytics] Goal projection:', {
-      currentWeight,
-      targetWeight: TARGET_WEIGHT,
-      remainingWeight,
-      ratePerWeek: currentTrend.toFixed(2) + ' kg/week',
-      weeksToGoal: weeksToGoal.toFixed(1),
-      daysToGoal,
-      projectedDate
-    });
-
     return projectedDate;
   }, [currentWeight, currentTrend, remainingWeight]);
 
@@ -158,7 +133,6 @@ export const useWeightAnalytics = (weightHistory, foodLog, customTargets, curren
    */
   const weeklyAdherence = useMemo(() => {
     if (!foodLog || !customTargets) {
-      console.log('[Analytics] Missing data for adherence calculation');
       return 0;
     }
 
@@ -168,8 +142,6 @@ export const useWeightAnalytics = (weightHistory, foodLog, customTargets, curren
 
     // Generate all 7 days of the current week
     const weekDays = Array.from({ length: 7 }, (_, i) => addDaysToDate(monday, i));
-
-    console.log('[Analytics] Analyzing week:', monday, 'to', weekDays[6]);
 
     let adherentDays = 0;
     let totalDays = 0;
@@ -210,26 +182,10 @@ export const useWeightAnalytics = (weightHistory, foodLog, customTargets, curren
       if (isAdherent) {
         adherentDays++;
       }
-
-      console.log(`[Analytics] ${date}:`, {
-        calories: totals.calories,
-        calorieTarget,
-        caloriesOk,
-        protein: totals.protein,
-        proteinTarget,
-        proteinOk,
-        adherent: isAdherent
-      });
     });
 
     // Calculate percentage
     const adherencePercentage = totalDays > 0 ? (adherentDays / totalDays) * 100 : 0;
-
-    console.log('[Analytics] Weekly Adherence:', {
-      adherentDays,
-      totalDays,
-      percentage: adherencePercentage.toFixed(1) + '%'
-    });
 
     return Math.round(adherencePercentage);
   }, [foodLog, customTargets]);

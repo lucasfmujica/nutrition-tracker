@@ -11,8 +11,9 @@ import { addDaysToDate, getArgentinaDateString } from '../utils/dateUtils';
  *
  * @param {Array} ouraLog - List of Oura readiness/sleep entries
  * @param {Array} workoutLog - List of workout entries
+ * @param {string} referenceDate - Optional date to use as reference (YYYY-MM-DD). Defaults to current date.
  */
-export const usePerformanceForecast = (ouraLog, workoutLog) => {
+export const usePerformanceForecast = (ouraLog, workoutLog, referenceDate = null) => {
   return useMemo(() => {
     // 0. Base Guards
     if (!ouraLog || ouraLog.length < 3) {
@@ -26,7 +27,7 @@ export const usePerformanceForecast = (ouraLog, workoutLog) => {
       };
     }
 
-    const today = getArgentinaDateString();
+    const today = referenceDate || getArgentinaDateString();
 
     // 1. Calculate Averages (Readiness & Sleep)
     const getAvgMetrics = (daysBack) => {
@@ -183,5 +184,5 @@ export const usePerformanceForecast = (ouraLog, workoutLog) => {
       }
     };
 
-  }, [ouraLog, workoutLog]);
+  }, [ouraLog, workoutLog, referenceDate]);
 };

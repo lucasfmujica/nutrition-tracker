@@ -126,15 +126,6 @@ export const useWeeklyPeriodization = (
     const recoveryDays = weekDays.filter(d => d.intensity === INTENSITY.RECOVERY).length;
     const safetyNetDays = weekDays.filter(d => d.isSafetyNet).length;
 
-    console.log('[WeeklyPeriodization] Plan:', {
-      week: monday,
-      weeklyAverage,
-      targetDailyCalories,
-      nonSafetyNetAvg,
-      isOnTrack,
-      distribution: { high: highDays, moderate: moderateDays, recovery: recoveryDays, safetyNet: safetyNetDays }
-    });
-
     return {
       weekDays,
       weeklyAverage,

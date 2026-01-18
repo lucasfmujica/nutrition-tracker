@@ -67,8 +67,6 @@ export const getSmartTargets = (date, workoutLog, baseTargets) => {
 
   const safeBase = baseTargets || { calories: 2100, protein: 150, carbs: 200, fat: 70 };
 
-  console.log(`[SmartCalories] Date: ${date}, Intensity: ${intensity}, Adj: ${adjustment}, Base: ${safeBase.calories}`);
-
   return {
     ...safeBase,
     calories: (Number(safeBase.calories) || 2100) + adjustment,

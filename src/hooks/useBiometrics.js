@@ -112,7 +112,6 @@ export const useBiometrics = (supabase, useCloud, profileData = null, targetsDat
           throw new Error(result.error.message);
         }
 
-        console.log('[Biometrics] saveWeightEntry successful:', entry.date);
         return result;
       } catch (err) {
         console.error('[Biometrics] saveWeightEntry FAILED:', {
@@ -167,7 +166,6 @@ export const useBiometrics = (supabase, useCloud, profileData = null, targetsDat
           throw new Error(result.error.message);
         }
 
-        console.log('[Biometrics] saveStepsEntry successful:', entry.date);
         return result;
       } catch (err) {
         console.error('[Biometrics] saveStepsEntry FAILED:', {
@@ -222,7 +220,6 @@ export const useBiometrics = (supabase, useCloud, profileData = null, targetsDat
           throw new Error(result.error.message);
         }
 
-        console.log('[Biometrics] saveOuraEntry successful:', entry.date);
         return result;
       } catch (err) {
         // CRITICAL: Log error with full context

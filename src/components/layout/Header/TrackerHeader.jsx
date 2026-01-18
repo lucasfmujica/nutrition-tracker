@@ -9,7 +9,7 @@ export const TrackerHeader = () => {
     weightHistory,
     saveStatus,
     supabase,
-    forceSyncToCloud,
+    handleRefresh,
     handleLogout,
     dashboardDate,
     getMostRecentWeight,
@@ -66,12 +66,12 @@ export const TrackerHeader = () => {
                   e.preventDefault();
                   e.stopPropagation();
                   setIsLocalSyncing(true);
-                  await forceSyncToCloud();
+                  await handleRefresh();  // ✅ Pull fresh data from Supabase
                   setIsLocalSyncing(false);
                 }}
                 disabled={isLocalSyncing}
                 className={`w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-2xl bg-white hover:bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 transition-all shadow-sm active:scale-90 ${isLocalSyncing ? 'cursor-not-allowed opacity-80' : ''}`}
-                title="Forzar sincronización a la nube"
+                title="Refrescar datos desde la nube"
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
                 <svg className={`w-5 h-5 ${isLocalSyncing ? 'animate-spin text-blue-600' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">

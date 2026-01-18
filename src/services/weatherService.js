@@ -122,17 +122,11 @@ export const getCurrentWeather = async () => {
 
       // Return cached data if still valid
       if (isCacheValid(cache)) {
-        console.log('[WeatherService] Using cached weather data:', {
-          temperature: cache.temperature,
-          humidity: cache.humidity,
-          age: Math.round((Date.now() - new Date(cache.cachedAt).getTime()) / 60000) + ' min'
-        });
         return cache;
       }
     }
 
     // Cache is stale or missing, fetch fresh data
-    console.log('[WeatherService] Fetching fresh weather data from API');
     const freshWeather = await fetchWeatherFromAPI();
 
     if (!freshWeather) {
@@ -149,11 +143,6 @@ export const getCurrentWeather = async () => {
 
     // Save fresh data to cache
     await storage.set(CACHE_KEY, JSON.stringify(freshWeather));
-
-    console.log('[WeatherService] Fresh weather data cached:', {
-      temperature: freshWeather.temperature,
-      humidity: freshWeather.humidity
-    });
 
     return freshWeather;
   } catch (error) {

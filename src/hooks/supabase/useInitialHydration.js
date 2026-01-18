@@ -78,7 +78,6 @@ export const useInitialHydration = ({
     const loadData = async () => {
       setIsLoading(true);
       try {
-        console.log('[Data] Loading localStorage cache...');
         const cached = await loadCachedData();
 
         // Set cached data immediately for better UX
@@ -94,13 +93,10 @@ export const useInitialHydration = ({
         const hasCachedData = cached.localFood.length > 0 || cached.localWorkout.length > 0 || cached.localWeight.length > 0;
         if (hasCachedData) {
           setIsLoading(false);
-          console.log('[Data] Showing cached data, syncing from Supabase in background...');
         }
 
         // Fetch from Supabase if authenticated and online
         if (supabase.isAuthenticated && supabase.isOnline && !offlineMode) {
-          console.log('[Data] Fetching from Supabase...');
-
           let data = null;
           let timeoutOccurred = false;
 
@@ -215,10 +211,6 @@ const cleanupLegacyLocalStorage = () => {
       cleaned++;
     }
   });
-
-  if (cleaned > 0) {
-    console.log(`[Cleanup] Removed ${cleaned} legacy localStorage keys`);
-  }
 
   // Mark cleanup as complete
   localStorage.setItem(CLEANUP_FLAG, 'true');

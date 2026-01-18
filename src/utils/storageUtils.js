@@ -73,7 +73,6 @@ export const cacheData = async (data) => {
     if (data.waterLog !== undefined) promises.push(storage.set(CACHE_KEYS.WATER, JSON.stringify(data.waterLog)));
 
     await Promise.all(promises);
-    console.log('[Storage] Cache updated from Supabase');
     return true;
   } catch (err) {
     console.error('[Storage] Failed to cache data:', err);
@@ -138,7 +137,6 @@ export const addPendingWrite = async (table, data, userId) => {
     // PROTECTION 3: Deduplication - update existing entry instead of creating duplicate
     const existingIndex = queue.findIndex(item => item.id === deterministicId);
     if (existingIndex >= 0) {
-      console.log('[Vault] Updating existing pending write (prevents duplicate):', deterministicId);
       queue[existingIndex] = {
         ...queue[existingIndex],
         data, // Update with latest data
@@ -160,13 +158,6 @@ export const addPendingWrite = async (table, data, userId) => {
 
     await storage.set(CACHE_KEYS.PENDING_SYNC, JSON.stringify(queue));
 
-    console.log('[Vault] Pending write added:', {
-      table,
-      date: data.date,
-      userId,
-      queueSize: queue.length,
-      deduplicated: existingIndex >= 0
-    });
     return true;
   } catch (err) {
     console.error('[Vault] Failed to add pending write:', err);
@@ -199,7 +190,6 @@ export const removePendingWrite = async (id) => {
     const filtered = queue.filter(item => item.id !== id);
 
     await storage.set(CACHE_KEYS.PENDING_SYNC, JSON.stringify(filtered));
-    console.log('[Vault] Pending write removed:', id);
     return true;
   } catch (err) {
     console.error('[Vault] Failed to remove pending write:', err);
@@ -242,7 +232,6 @@ export const removePendingWritesBatch = async (ids) => {
     const filtered = queue.filter(item => !idsSet.has(item.id));
 
     await storage.set(CACHE_KEYS.PENDING_SYNC, JSON.stringify(filtered));
-    console.log(`[Vault] Batch removed ${ids.length} pending writes`);
     return true;
   } catch (err) {
     console.error('[Vault] Failed to batch remove pending writes:', err);
@@ -268,7 +257,6 @@ export const incrementRetryCountsBatch = async (ids) => {
     });
 
     await storage.set(CACHE_KEYS.PENDING_SYNC, JSON.stringify(queue));
-    console.log(`[Vault] Batch incremented retry count for ${ids.length} items`);
     return true;
   } catch (err) {
     console.error('[Vault] Failed to batch increment retry counts:', err);
@@ -283,7 +271,6 @@ export const incrementRetryCountsBatch = async (ids) => {
 export const clearPendingWrites = async () => {
   try {
     await storage.remove(CACHE_KEYS.PENDING_SYNC);
-    console.log('[Vault] All pending writes cleared');
     return true;
   } catch (err) {
     console.error('[Vault] Failed to clear pending writes:', err);

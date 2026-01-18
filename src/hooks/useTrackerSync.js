@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { clearCache, clearPendingWrites } from '../utils/storageUtils';
 import { useInitialHydration } from './supabase/useInitialHydration';
-import { useSyncResolver } from './supabase/useSyncResolver';
 import { useVaultWorker } from './supabase/useVaultWorker';
 
 /**
@@ -48,12 +47,6 @@ export const useTrackerSync = ({
 
   // NOTE: useCloud is now passed from TrackerContext (single source of truth)
 
-  const { forceSyncToCloud: resolveForceSync } = useSyncResolver(
-    supabase,
-    useCloud,
-    { foodLog, workoutLog, stepsLog, ouraLog, waterLog, weightHistory }
-  );
-
   // Vault Worker: Handles queue processing and auto-trigger
   const { processPendingQueue } = useVaultWorker({
     supabase,
@@ -90,10 +83,6 @@ export const useTrackerSync = ({
     setShowOnboarding
   });
 
-  const forceSyncToCloud = async () => {
-    return await resolveForceSync(setSaveStatus);
-  };
-
   // Handle auth state changes
   useEffect(() => {
     if (supabase.loading) return;
@@ -125,9 +114,12 @@ export const useTrackerSync = ({
           if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);
           if (data.waterLog !== undefined) setWaterLog(data.waterLog);
           setSaveStatus('✓ Actualizado');
+          console.log('[handleRefresh] Data updated successfully');
         } else {
           setSaveStatus('Error al actualizar');
         }
+      } else {
+        console.log('[handleRefresh] useCloud is false, skipping fetch');
       }
     } catch (err) {
       console.error('[TrackerSync] Refresh error:', err);
@@ -174,7 +166,6 @@ export const useTrackerSync = ({
     saveStatus, setSaveStatus,
     isRefreshing, handleRefresh,
     // useCloud removed - now managed in TrackerContext as single source of truth
-    forceSyncToCloud,
     processPendingQueue, // The Vault auto-recovery worker
     handleLogout
   };

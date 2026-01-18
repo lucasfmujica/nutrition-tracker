@@ -101,7 +101,6 @@ export function useSupabase() {
             filter: `user_id=eq.${user.id}`
           },
           (payload) => {
-            console.log(`Real-time update on ${table}:`, payload.eventType);
             if (realtimeCallbacks[table]) {
               realtimeCallbacks[table](payload);
             }
@@ -125,7 +124,6 @@ export function useSupabase() {
   // Fetch All Data Orchestrator (CRITICAL FIX: Resilient parallel fetch)
   const fetchAllData = useCallback(async () => {
     if (!canUseSupabase) {
-      console.log('[Supabase] fetchAllData: cannot use Supabase');
       setSyncStatus('idle');
       return null;
     }
@@ -137,8 +135,6 @@ export function useSupabase() {
     );
 
     try {
-      console.log('[Supabase] fetchAllData: starting for user:', user?.id);
-
       // CRITICAL FIX: Use Promise.allSettled instead of Promise.all
       // This ensures that if one source fails (e.g., Oura), others still load
       const fetchPromise = Promise.allSettled([
@@ -180,7 +176,6 @@ export function useSupabase() {
         console.warn(`[Supabase] fetchAllData: ${failedCount}/${results.length} sources failed, but proceeding with partial data`);
       }
 
-      console.log('[Supabase] fetchAllData: completed');
       setSyncStatus('success');
       setLastSyncTime(new Date());
       setTimeout(() => setSyncStatus('idle'), 1500);

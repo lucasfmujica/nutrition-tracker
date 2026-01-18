@@ -88,7 +88,6 @@ export const useVaultWorker = ({
         throw new Error(result.error.message);
       }
 
-      console.log(`[Vault] ✓ Synced ${item.table} for date ${item.data.date}`);
       return { success: true, id: item.id };
     } catch (err) {
       console.error(`[Vault] ✗ Failed to sync ${item.table} for date ${item.data.date}:`, err.message);
@@ -103,17 +102,13 @@ export const useVaultWorker = ({
    */
   const processPendingQueue = async () => {
     if (!useCloud) {
-      console.log('[Vault] Cannot process queue - not connected to cloud');
       return { success: false, synced: 0, failed: 0 };
     }
 
     const queue = await getPendingWrites();
     if (queue.length === 0) {
-      console.log('[Vault] Queue is empty, nothing to process');
       return { success: true, synced: 0, failed: 0 };
     }
-
-    console.log(`[Vault] Processing ${queue.length} pending writes in batches...`);
 
     const BATCH_SIZE = 3; // Process 3 items at a time to prevent UI blocking
     let synced = 0;
@@ -176,7 +171,6 @@ export const useVaultWorker = ({
 
     // Check if already processing
     if (isProcessingQueue.current) {
-      console.log('[Vault] Queue processing already in progress, skipping');
       return;
     }
 
@@ -184,13 +178,11 @@ export const useVaultWorker = ({
     const timeoutId = setTimeout(async () => {
       isProcessingQueue.current = true;
       try {
-        console.log('[Vault] Network stable, checking pending queue...');
         const result = await processPendingQueue();
 
         if (result.synced > 0) {
           // Delay refresh to allow UI to recover from queue processing
           setTimeout(async () => {
-            console.log('[Vault] Queue processed successfully, refreshing data in background...');
             const data = await supabase.fetchAllData();
             if (data) {
               if (data.profile) setProfile(data.profile);
