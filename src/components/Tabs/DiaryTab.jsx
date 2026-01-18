@@ -174,41 +174,6 @@ export const DiaryTab = ({
         </div>
       </div>
 
-      {/* Fast-Log Carousel */}
-      <FastLogCarousel
-        frequentFoods={frequentFoods}
-        frequentCombos={frequentCombos}
-        onQuickLog={quickLog}
-      />
-
-      {/* Protein Pacing Timeline */}
-      <ProteinTimeline
-        slots={proteinPacing.slots}
-        remaining={proteinPacing.remainingProtein}
-        targetProtein={proteinPacing.targetProtein}
-      />
-
-      {/* Feature 1: Smart Meal Compass */}
-      {compassData.show && (
-        <MealCompassWrapper
-          foodLog={foodLog}
-          remaining={compassData.remaining}
-          onAdd={handleSmartAdd}
-        />
-      )}
-
-      {/* Hydration Intelligence Module */}
-      <HydrationGuard
-        currentIntake={getWaterForDate(selectedFoodDate).ml || 0}
-        hydrationTarget={hydrationTarget}
-        onAddWater={addWaterGlass}
-      />
-
-      {/* Swipe hint */}
-      {hasFoods && (
-        <p className="text-xs text-gray-500 text-center">← Desliza para eliminar</p>
-      )}
-
       {!hasFoods ? (
         <div className="bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm">
           <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -247,6 +212,42 @@ export const DiaryTab = ({
             targets={getTargetsForDate(selectedFoodDate) || { calories: 2000, protein: 150, carbs: 200, fat: 70 }}
           />
        )}
+
+
+      {/* Fast-Log Carousel */}
+      <FastLogCarousel
+        frequentFoods={frequentFoods}
+        frequentCombos={frequentCombos}
+        onQuickLog={quickLog}
+      />
+
+      {/* Protein Pacing Timeline */}
+      <ProteinTimeline
+        slots={proteinPacing.slots}
+        remaining={proteinPacing.remainingProtein}
+        targetProtein={proteinPacing.targetProtein}
+      />
+
+      {/* Feature 1: Smart Meal Compass */}
+      {compassData.show && (
+        <MealCompassWrapper
+          foodLog={foodLog}
+          remaining={compassData.remaining}
+          onAdd={handleSmartAdd}
+        />
+      )}
+
+      {/* Hydration Intelligence Module */}
+      <HydrationGuard
+        currentIntake={getWaterForDate(selectedFoodDate).ml || 0}
+        hydrationTarget={hydrationTarget}
+        onAddWater={addWaterGlass}
+      />
+
+      {/* Swipe hint */}
+      {hasFoods && (
+        <p className="text-xs text-gray-500 text-center">← Desliza para eliminar</p>
+      )}
     </div>
   );
 };
