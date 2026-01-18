@@ -1,3 +1,4 @@
+import { Moon, Sun } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTracker } from '../../../context/TrackerContext';
 import { SyncStatusIndicator } from '../SyncStatusIndicator';
@@ -44,7 +45,12 @@ export const TrackerHeader = () => {
 
             {/* Desktop Info Block */}
             <div className="hidden lg:flex flex-col items-start gap-2">
-               <div className="text-sm font-bold text-slate-800 capitalize bg-slate-50 px-3 py-1 rounded-lg border border-slate-100">
+               <div className="text-sm font-bold text-slate-800 capitalize bg-slate-50 px-3 py-1 rounded-lg border border-slate-100 flex items-center gap-2">
+                  {new Date().getHours() >= 6 && new Date().getHours() < 20 ? (
+                    <Sun size={14} className="text-amber-500" />
+                  ) : (
+                    <Moon size={14} className="text-indigo-500" />
+                  )}
                   {new Date(dashboardDate + 'T00:00:00').toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' })}
                </div>
                <div className="flex items-center gap-2 text-xs font-medium text-slate-400 pl-1">
