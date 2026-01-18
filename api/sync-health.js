@@ -58,21 +58,35 @@ export default async function handler(req, res) {
 
     console.log(`[SyncHealth] Processing ${type} sync for User: ${userId}, Date: ${date}, Value: ${value}`);
 
-    // 4. Date Formatting (Argentina Timezone)
+    // 4. Date Logic (Crucial for Timezones)
     let argentinaDate;
     try {
-      // Force Timezone to Argentina (UTC-3) to treat the input date as local to that region
-      // or respect the ISO string provided.
-      // We want to ensure it locks to YYYY-MM-DD in Argentina.
-      argentinaDate = new Date(date).toLocaleDateString('es-AR', {
-        timeZone: 'America/Argentina/Buenos_Aires',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      }).split('/').reverse().join('-'); // YYYY-MM-DD
+      console.log(`[SyncHealth] Raw input date: "${date}"`);
+
+      // Check if input is already strictly YYYY-MM-DD
+      const simpleDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (simpleDateRegex.test(date)) {
+        argentinaDate = date;
+        console.log(`[SyncHealth] Simple date detected. Using directly: ${argentinaDate}`);
+      } else {
+        // It's likely an ISO string (e.g. 2026-01-18T08:00:00Z) or iOS localized format.
+        // We must convert this instant to Argentina time.
+        const dateObj = new Date(date);
+        if (isNaN(dateObj.getTime())) throw new Error("Invalid Date Object");
+
+        // 'en-CA' outputs YYYY-MM-DD format directly, which is handy.
+        argentinaDate = new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'America/Argentina/Buenos_Aires',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        }).format(dateObj);
+
+        console.log(`[SyncHealth] ISO/Complex date converted to Argentina Time: ${argentinaDate}`);
+      }
     } catch (dateError) {
       console.error('[SyncHealth] Date parsing error:', dateError);
-      return res.status(400).json({ error: 'Invalid Date Format' });
+      return res.status(400).json({ error: 'Invalid Date Format. Use YYYY-MM-DD or ISO 8601.' });
     }
 
     // 5. Database Operations
