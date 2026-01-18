@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { isSupabaseConfigured, supabase } from '../../lib/supabase';
 import { useSupabaseOperation } from './useSupabaseOperation';
 
@@ -7,6 +7,9 @@ export function useSupabaseAuth() {
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  // Track current user ID to prevent duplicate state updates
+  const currentUserIdRef = useRef(null);
 
   const { withTimeout } = useSupabaseOperation();
 
@@ -114,15 +117,24 @@ export function useSupabaseAuth() {
         if (!mounted) return;
 
         const newUser = session?.user ?? null;
-        console.log('[Auth] Auth state changed:', _event, newUser?.email);
-        setUser(newUser);
+        const newUserId = newUser?.id ?? null;
 
-        if (['SIGNED_IN', 'TOKEN_REFRESHED', 'INITIAL_SESSION', 'SIGNED_OUT'].includes(_event)) {
-          resolveAuth(`onAuthStateChange-${_event}`);
-        }
+        // Only update state if user actually changed
+        if (currentUserIdRef.current !== newUserId) {
+          console.log('[Auth] Auth state changed:', _event, newUser?.email);
+          currentUserIdRef.current = newUserId;
+          setUser(newUser);
 
-        if (newUser && ['SIGNED_IN', 'TOKEN_REFRESHED'].includes(_event)) {
-          await ensureProfileExists(newUser.id);
+          if (['SIGNED_IN', 'TOKEN_REFRESHED', 'INITIAL_SESSION', 'SIGNED_OUT'].includes(_event)) {
+            resolveAuth(`onAuthStateChange-${_event}`);
+          }
+
+          if (newUser && ['SIGNED_IN', 'TOKEN_REFRESHED'].includes(_event)) {
+            await ensureProfileExists(newUser.id);
+          }
+        } else if (_event === 'TOKEN_REFRESHED') {
+          // Silent token refresh - don't log or update state
+          // This prevents log spam every hour
         }
       }
     );
@@ -130,6 +142,7 @@ export function useSupabaseAuth() {
     return () => {
       mounted = false;
       if (timeoutId) clearTimeout(timeoutId);
+      currentUserIdRef.current = null;
       subscription.unsubscribe();
     };
   }, []);
@@ -248,7 +261,7 @@ export function useSupabaseAuth() {
     if (!isSupabaseConfigured()) return { error: null };
 
     try {
-      const { error } = await withTimeout(supabase.auth.signOut(), 5000, 'signOut');
+      const { error } = await withTimeout(supabase.auth.signOut(), 10000, 'signOut');
       if (error) setAuthError(error.message);
       return { error };
     } catch (err) {

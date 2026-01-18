@@ -30,7 +30,7 @@ export const WeightChartCard = ({ data = [], currentWeight, targetWeight }) => {
       </div>
 
       <div className="h-48 w-full min-w-0">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" minHeight={192}>
           <AreaChart data={chartData}>
             <defs>
               <linearGradient id="colorWeight" x1="0" y1="0" x2="0" y2="1">
