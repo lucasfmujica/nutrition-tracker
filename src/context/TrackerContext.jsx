@@ -6,6 +6,7 @@ import { useDynamicTargets } from '../hooks/useDynamicTargets'; // Metabolic Aut
 import { useExport } from '../hooks/useExport';
 import { useFoodEntry } from '../hooks/useFoodEntry';
 import { useGlobalDelete } from '../hooks/useGlobalDelete';
+import { useHydrationTarget } from '../hooks/useHydrationTarget'; // Hydration Intelligence
 import { useMealTemplates } from '../hooks/useMealTemplates';
 import { useNutrition } from '../hooks/useNutrition';
 import { useOuraSync } from '../hooks/useOuraSync'; // Oura Cloud Sync
@@ -218,6 +219,9 @@ export const TrackerProvider = ({ children }) => {
   // Derived State
   const workoutAnalysis = useWorkoutAnalysis(workouts.workoutLog);
 
+  // Hydration Intelligence Module
+  const hydrationTarget = useHydrationTarget(workouts.workoutLog);
+
   // Derived state helpers
 
   const getWorkoutsForDate = (date) => workouts.workoutLog.filter(entry => entry.date === date);
@@ -274,6 +278,7 @@ export const TrackerProvider = ({ children }) => {
 
     // Helpers
     workoutAnalysis,
+    hydrationTarget, // Hydration Intelligence
     getWorkoutsForDate,
     getStepsForDate,
     changeDate,
@@ -290,7 +295,7 @@ export const TrackerProvider = ({ children }) => {
     showImportFoodModal, showImportWorkoutModal,
     globalDelete,
     dataOperations, analytics, exportDoc, foodEntry, workoutEntry, mealTemplates, ouraSync,
-    weightAnalytics, dynamicTargets, quickLog, workoutAnalysis, supabase,
+    weightAnalytics, dynamicTargets, quickLog, workoutAnalysis, hydrationTarget, supabase,
     showFab // Added dependency
   ]);
 

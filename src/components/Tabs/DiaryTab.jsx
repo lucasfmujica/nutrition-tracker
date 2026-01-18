@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useTracker } from '../../context/TrackerContext';
 import { formatDateDisplay, getArgentinaDateString } from '../../utils/dateUtils';
 import { FastLogCarousel } from '../Dashboard/FastLogCarousel';
+import { HydrationGuard } from '../Dashboard/HydrationGuard';
 import { DaySummary } from '../Diary/DaySummary';
 import { MealSection } from '../Diary/MealSection';
 
@@ -19,6 +20,9 @@ export const DiaryTab = ({
   getFoodsForDate,
   getTotalsForDate,
   getTargetsForDate,
+  getTodayWater,
+  hydrationTarget,
+  addWaterGlass,
 
   // Actions
   confirmDelete,
@@ -92,6 +96,13 @@ export const DiaryTab = ({
         frequentFoods={frequentFoods}
         frequentCombos={frequentCombos}
         onQuickLog={quickLog}
+      />
+
+      {/* Hydration Intelligence Module */}
+      <HydrationGuard
+        currentIntake={getTodayWater().ml || 0}
+        hydrationTarget={hydrationTarget}
+        onAddWater={addWaterGlass}
       />
 
       {/* Swipe hint */}

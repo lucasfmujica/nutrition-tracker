@@ -45,7 +45,7 @@ const NutritionTrackerContent = () => {
     getWeightChartData, editingWeightId, setEditingWeightId, editingWeightValue, setEditingWeightValue,
     startEditWeight, saveEditWeight, cancelEditWeight,
     stepsDate, setStepsDate, newSteps, setNewSteps, addStepsEntry, getWeeklyData, getStepsForDate,
-    getTodayWater, addWaterGlass, weightProjection, formatTime
+    getTodayWater, addWaterGlass, weightProjection, formatTime, hydrationTarget
   } = useTracker();
 
   // Safety timeout: never stay in loading state for more than 8 seconds
@@ -111,6 +111,7 @@ const NutritionTrackerContent = () => {
               <DiaryTab
                 selectedFoodDate={selectedFoodDate} setSelectedFoodDate={setSelectedFoodDate} changeDate={changeDate}
                 getFoodsForDate={getFoodsForDate} getTotalsForDate={getTotalsForDate} getTargetsForDate={getTargetsForDate}
+                getTodayWater={getTodayWater} hydrationTarget={hydrationTarget} addWaterGlass={addWaterGlass}
                 confirmDelete={confirmDelete} setNewFood={setNewFood} setShowFoodForm={setShowFoodForm}
                 setEditingFoodId={setEditingFoodId}
               />
