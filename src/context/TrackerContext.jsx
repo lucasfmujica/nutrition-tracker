@@ -1,18 +1,20 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
 import { useAnalytics } from '../hooks/useAnalytics';
+import { useBiometrics } from '../hooks/useBiometrics';
 import { useDataOperations } from '../hooks/useDataOperations';
+import { useDynamicTargets } from '../hooks/useDynamicTargets'; // Metabolic Auto-Pilot
 import { useExport } from '../hooks/useExport';
 import { useFoodEntry } from '../hooks/useFoodEntry';
-import { useMealTemplates } from '../hooks/useMealTemplates';
-import { useSupabase } from '../hooks/useSupabase';
-import { useWorkoutEntry } from '../hooks/useWorkoutEntry';
-import { useBiometrics } from '../hooks/useBiometrics';
 import { useGlobalDelete } from '../hooks/useGlobalDelete';
+import { useMealTemplates } from '../hooks/useMealTemplates';
 import { useNutrition } from '../hooks/useNutrition';
 import { useOuraSync } from '../hooks/useOuraSync'; // Oura Cloud Sync
+import { useQuickLog } from '../hooks/useQuickLog'; // Fast-Log Library
+import { useSupabase } from '../hooks/useSupabase';
 import { useTrackerSync } from '../hooks/useTrackerSync';
 import { useWeightAnalytics } from '../hooks/useWeightAnalytics'; // Intelligence Engine
 import { useWorkoutAnalysis } from '../hooks/useWorkoutAnalysis'; // New import
+import { useWorkoutEntry } from '../hooks/useWorkoutEntry';
 import { useWorkouts } from '../hooks/useWorkouts';
 
 import { addDaysToDate, formatTime, getArgentinaDateString } from '../utils/dateUtils'; // formatTime imported
@@ -144,6 +146,14 @@ export const TrackerProvider = ({ children }) => {
     biometrics.profile.currentWeight
   );
 
+  // 5c. Metabolic Auto-Pilot (Dynamic Targets)
+  const dynamicTargets = useDynamicTargets(
+    weightAnalytics,
+    biometrics.customTargets,
+    biometrics.profile,
+    updateConfig
+  );
+
   // 6. Export
   const exportDoc = useExport({
     profile: biometrics.profile, setProfile: biometrics.setProfile,
@@ -167,6 +177,9 @@ export const TrackerProvider = ({ children }) => {
     saveFoodEntry: nutrition.saveFoodEntry,
     setSaveStatus: trackerSync.setSaveStatus
   });
+
+  // 7b. Fast-Log Library
+  const quickLog = useQuickLog(nutrition.foodLog, nutrition.saveFoodEntry);
 
   // 8. Workout Entry
   const workoutEntry = useWorkoutEntry({
@@ -252,6 +265,12 @@ export const TrackerProvider = ({ children }) => {
     // Intelligence Engine
     ...weightAnalytics,
 
+    // Metabolic Auto-Pilot (Monday Briefing)
+    ...dynamicTargets,
+
+    // Fast-Log Library
+    ...quickLog,
+
     // Helpers
     workoutAnalysis,
     getWorkoutsForDate,
@@ -267,7 +286,7 @@ export const TrackerProvider = ({ children }) => {
     showImportFoodModal, showImportWorkoutModal,
     globalDelete,
     dataOperations, analytics, exportDoc, foodEntry, workoutEntry, mealTemplates, ouraSync,
-    weightAnalytics, workoutAnalysis, supabase,
+    weightAnalytics, dynamicTargets, quickLog, workoutAnalysis, supabase,
     showFab // Added dependency
   ]);
 

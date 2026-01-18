@@ -4,6 +4,7 @@ import { DeleteConfirmModal } from '../../Modals/DeleteConfirmModal';
 import { FoodFormModal } from '../../Modals/FoodFormModal';
 import { ImportModal } from '../../Modals/ImportModal';
 import { MigrationModal } from '../../Modals/MigrationModal';
+import { MondayBriefingModal } from '../../Modals/MondayBriefingModal';
 import { WorkoutFormModal } from '../../Modals/WorkoutFormModal';
 import { WeeklyReport } from './WeeklyReport';
 
@@ -71,7 +72,14 @@ export const ModalsManager = () => {
     workoutLog,
     weightHistory,
     stepsLog,
-    customTargets
+    customTargets,
+
+    // Monday Briefing
+    showMondayBriefing,
+    setShowMondayBriefing,
+    briefingData,
+    acceptProposedTargets,
+    markBriefingReviewed
   } = useTracker();
 
   return (
@@ -260,6 +268,15 @@ export const ModalsManager = () => {
           stepsLog={stepsLog}
           targets={customTargets}
           onClose={() => setShowWeeklyReport(false)}
+        />
+      )}
+
+      {/* Monday Briefing Modal (Metabolic Auto-Pilot) */}
+      {showMondayBriefing && briefingData && (
+        <MondayBriefingModal
+          onAccept={acceptProposedTargets}
+          onDismiss={markBriefingReviewed}
+          {...briefingData} // spread { currentWeight, currentTrend, weeklyAdherence, proposal, currentTargets }
         />
       )}
     </>

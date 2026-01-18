@@ -1,4 +1,6 @@
+import { useTracker } from '../../context/TrackerContext';
 import { formatDateDisplay, getArgentinaDateString } from '../../utils/dateUtils';
+import { FastLogCarousel } from '../Dashboard/FastLogCarousel';
 import { DaySummary } from '../Diary/DaySummary';
 import { MealSection } from '../Diary/MealSection';
 
@@ -26,6 +28,8 @@ export const DiaryTab = ({
   setShowFoodForm,
   setEditingFoodId
 }) => {
+  const { frequentFoods, frequentCombos, quickLog } = useTracker();
+
   const foods = getFoodsForDate(selectedFoodDate);
   const hasFoods = foods.length > 0;
 
@@ -81,6 +85,13 @@ export const DiaryTab = ({
           </button>
         </div>
       </div>
+
+      {/* Fast-Log Carousel */}
+      <FastLogCarousel
+        frequentFoods={frequentFoods}
+        frequentCombos={frequentCombos}
+        onQuickLog={quickLog}
+      />
 
       {/* Swipe hint */}
       {hasFoods && (
