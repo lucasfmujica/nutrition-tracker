@@ -1,10 +1,17 @@
 import { useMemo } from 'react';
 import { addDaysToDate, getArgentinaDateString, getMondayOfWeek } from '../utils/dateUtils';
 
-export const useWorkoutAnalysis = (workoutLog) => {
+/**
+ * useWorkoutAnalysis - Analyzes workout data for a specific week
+ * @param {Array} workoutLog - All workout entries
+ * @param {string} selectedDate - Optional date to analyze (YYYY-MM-DD). If not provided, uses today.
+ * @returns {Object} Workout statistics for the selected week
+ */
+export const useWorkoutAnalysis = (workoutLog, selectedDate = null) => {
   return useMemo(() => {
-    const today = getArgentinaDateString();
-    const monday = getMondayOfWeek(today);
+    // Use selectedDate if provided, otherwise use today
+    const referenceDate = selectedDate || getArgentinaDateString();
+    const monday = getMondayOfWeek(referenceDate);
     const sunday = addDaysToDate(monday, 6);
 
     const currentWeekWorkouts = workoutLog.filter(w => w.date >= monday && w.date <= sunday);
@@ -37,5 +44,5 @@ export const useWorkoutAnalysis = (workoutLog) => {
       totalDuration,
       analysis
     };
-  }, [workoutLog]);
+  }, [workoutLog, selectedDate]);
 };

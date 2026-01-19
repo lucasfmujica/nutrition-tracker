@@ -76,8 +76,8 @@ export const useTrackerAnalytics = ({
     biometrics.profile
   );
 
-  // Workout Analysis
-  const workoutAnalysis = useWorkoutAnalysis(workouts.workoutLog);
+  // Workout Analysis (now date-reactive)
+  const workoutAnalysis = useWorkoutAnalysis(workouts.workoutLog, dashboardDate);
 
   // Hydration Intelligence
   const hydrationTarget = useHydrationTarget(workouts.workoutLog);

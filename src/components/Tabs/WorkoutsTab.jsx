@@ -1,6 +1,10 @@
 import { Activity, Camera, Dumbbell, Moon, Pencil, RefreshCw, Target, Trophy, Zap } from 'lucide-react';
+import { useState } from 'react';
+import { DEFAULT_WEEKLY_PLAN } from '../../constants/weeklyPlan';
 import { useTracker } from '../../context/TrackerContext';
 import { useEffortAnalytics } from '../../hooks/useEffortAnalytics';
+import { useWeeklyPlan } from '../../hooks/useWeeklyPlan';
+import { useWorkoutAnalysis } from '../../hooks/useWorkoutAnalysis';
 import { addDaysToDate, getArgentinaDateString, getMondayOfWeek } from '../../utils/dateUtils';
 import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 import { SwipeableItem } from '../UI/SwipeableItem';
@@ -18,7 +22,6 @@ export const WorkoutsTab = ({
   changeDate,
   // Data
   workoutLog,
-  workoutAnalysis,
   weightAnalytics,
   ouraLog,
   currentWeight,
@@ -29,6 +32,9 @@ export const WorkoutsTab = ({
 }) => {
   const workoutsForSelectedDate = getWorkoutsForDate(selectedWorkoutDate);
   const dailyOura = ouraLog.find(e => e.date === selectedWorkoutDate);
+
+  // Calculate workout analysis for the selected week (date-reactive)
+  const workoutAnalysis = useWorkoutAnalysis(workoutLog, selectedWorkoutDate);
 
   // AES Intelligence Engine - Now date-aware!
   const effortAnalytics = useEffortAnalytics(workoutLog, ouraLog, weightAnalytics, selectedWorkoutDate);
@@ -73,7 +79,7 @@ export const WorkoutsTab = ({
         <div className="space-y-3">
           {/* AI Coach Insight Card - Full Width Row 1 */}
           <div className="w-full">
-            <EffortRadar analytics={effortAnalytics} />
+            <EffortRadar analytics={effortAnalytics} selectedDate={selectedWorkoutDate} />
           </div>
 
           {/* Metrics Row 2 - Bento Grid */}
@@ -253,26 +259,169 @@ export const WorkoutsTab = ({
         </div>
       )}
 
-      {/* Weekly Schedule */}
-      <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-        <h3 className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest">Plan Semanal</h3>
-        <div className="grid grid-cols-7 gap-2 text-center">
-          {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((day, i) => {
-            const mondayOfWeek = getMondayOfWeek(getArgentinaDateString());
-            const dayDate = addDaysToDate(mondayOfWeek, i);
-            return (
-              <button
-                key={day}
-                onClick={() => setSelectedWorkoutDate(dayDate)}
-                className={`p-2 rounded-xl border transition-all hover:scale-105 cursor-pointer ${[0, 3, 5].includes(i) ? 'bg-amber-50 border-amber-100 text-amber-700 hover:bg-amber-100' : i === 2 ? 'bg-green-50 border-green-100 text-green-700 hover:bg-green-100' : 'bg-gray-50 border-gray-100 text-gray-400 hover:bg-gray-100'}`}
-              >
-                <div className="font-bold text-xs">{day}</div>
-                <div className="text-[10px] font-bold mt-1 tracking-tighter">{[0, 3, 5].includes(i) ? 'GYM' : i === 2 ? 'TEN' : 'OFF'}</div>
-              </button>
-            );
-          })}
-        </div>
+      {/* Weekly Schedule - Editable */}
+      <EditableWeeklyPlan
+        selectedWorkoutDate={selectedWorkoutDate}
+        setSelectedWorkoutDate={setSelectedWorkoutDate}
+      />
+    </div>
+  );
+};
+
+
+/**
+ * EditableWeeklyPlan - Inline editable weekly training plan
+ * Premium Minimalist design with smooth transitions and clear visual feedback
+ */
+const EditableWeeklyPlan = ({ selectedWorkoutDate, setSelectedWorkoutDate }) => {
+  const { plan, isEditing, setIsEditing, updateDayPlan, isLoading } = useWeeklyPlan();
+  const [editingDay, setEditingDay] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleDayClick = (dayDate, dayIndex) => {
+    if (isEditing) {
+      setEditingDay(dayIndex);
+    } else {
+      setSelectedWorkoutDate(dayDate);
+    }
+  };
+
+  const handleTypeChange = async (dayIndex, newType) => {
+    setIsSaving(true);
+
+    const intensityMap = {
+      'gym': 'moderate',
+      'sport': 'high',
+      'cardio': 'moderate',
+      'rest': 'recovery'
+    };
+
+    const nameMap = {
+      'gym': 'Gym',
+      'sport': 'Tenis',
+      'cardio': 'Cardio',
+      'rest': null
+    };
+
+    if (newType === 'rest') {
+      await updateDayPlan(dayIndex, null);
+    } else {
+      await updateDayPlan(dayIndex, {
+        type: newType,
+        name: nameMap[newType],
+        intensity: intensityMap[newType]
+      });
+    }
+
+    setEditingDay(null);
+    setIsSaving(false);
+  };
+
+  return (
+    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Plan Semanal</h3>
+        <button
+          onClick={() => setIsEditing(!isEditing)}
+          disabled={isSaving}
+          className={`group relative flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-xl transition-all duration-200 ${
+            isEditing
+              ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg shadow-green-200/50 hover:shadow-xl hover:shadow-green-200/70 active:scale-95'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:scale-95'
+          } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          <span className="text-base">{isEditing ? '✓' : '✏️'}</span>
+          <span>{isEditing ? 'Listo' : 'Editar'}</span>
+        </button>
       </div>
+
+      <div className="grid grid-cols-7 gap-2 text-center">
+        {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((day, i) => {
+          const mondayOfWeek = getMondayOfWeek(getArgentinaDateString());
+          const dayDate = addDaysToDate(mondayOfWeek, i);
+
+          // Use hasOwnProperty to distinguish between null (explicit rest) and undefined (use default)
+          const plannedWorkout = plan.hasOwnProperty(i) ? plan[i] : DEFAULT_WEEKLY_PLAN[i];
+
+          // Determine styling based on plan
+          const isGym = plannedWorkout?.type === 'gym';
+          const isTennis = plannedWorkout?.type === 'sport';
+          const isCardio = plannedWorkout?.type === 'cardio';
+          const isRest = !plannedWorkout;
+
+          if (isEditing && editingDay === i) {
+            // Show dropdown for editing - Premium design
+            return (
+              <div key={day} className="relative">
+                <select
+                  value={plannedWorkout?.type || 'rest'}
+                  onChange={(e) => handleTypeChange(i, e.target.value)}
+                  className="w-full p-2 rounded-xl border-2 border-blue-400 bg-white text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-lg transition-all cursor-pointer appearance-none text-center"
+                  autoFocus
+                  onBlur={() => setEditingDay(null)}
+                  style={{
+                    backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234B5563' d='M6 9L1 4h10z'/%3E%3C/svg%3E\")",
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'right 0.5rem center',
+                    backgroundSize: '12px'
+                  }}
+                >
+                  <option value="rest">OFF</option>
+                  <option value="gym">GYM</option>
+                  <option value="sport">TEN</option>
+                  <option value="cardio">CARDIO</option>
+                </select>
+              </div>
+            );
+          }
+
+          return (
+            <button
+              key={day}
+              onClick={() => handleDayClick(dayDate, i)}
+              disabled={isSaving}
+              className={`p-2 rounded-xl border transition-all duration-200 ${
+                isEditing
+                  ? 'hover:scale-105 hover:ring-2 hover:ring-blue-400 hover:shadow-lg active:scale-100'
+                  : 'hover:scale-105 active:scale-95'
+              } cursor-pointer ${
+                isSaving ? 'opacity-50 cursor-not-allowed' : ''
+              } ${
+                isGym
+                  ? 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100'
+                  : isTennis
+                    ? 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100'
+                    : isCardio
+                      ? 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100'
+                      : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100'
+              }`}
+            >
+              <div className="font-bold text-xs">{day}</div>
+              <div className="text-[10px] font-bold mt-1 tracking-tighter">
+                {isGym ? 'GYM' : isTennis ? 'TEN' : isCardio ? 'CARDIO' : 'OFF'}
+              </div>
+              {isEditing && (
+                <div className="mt-1 text-[8px] text-gray-400 font-normal">tap</div>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {isEditing && (
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-xl">
+          <p className="text-xs text-blue-700 text-center font-medium">
+            👆 Toca un día para cambiar el tipo de entrenamiento
+          </p>
+        </div>
+      )}
+
+      {isSaving && (
+        <div className="mt-3 flex items-center justify-center gap-2 text-xs text-gray-500">
+          <div className="w-3 h-3 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+          Guardando...
+        </div>
+      )}
     </div>
   );
 };

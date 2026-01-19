@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { DEFAULT_WEEKLY_PLAN } from '../constants/weeklyPlan';
 import { addDaysToDate, getArgentinaDateString, getMondayOfWeek } from '../utils/dateUtils';
 
 /**
@@ -25,6 +26,8 @@ const INTENSITY = {
  * @param {Object} customTargets - Base nutrition targets
  * @param {number} currentWeight - Current weight in kg
  * @param {number} targetWeight - Goal weight (default 75)
+ * @param {Array} foodLog - Food log for safety net detection
+ * @param {Object} weeklyPlan - User's custom weekly plan from Supabase
  * @returns {Object} Weekly plan with calorie allocation
  */
 export const useWeeklyPeriodization = (
@@ -33,7 +36,8 @@ export const useWeeklyPeriodization = (
   customTargets,
   currentWeight,
   targetWeight = 75,
-  foodLog = [] // Safety Net integration
+  foodLog = [], // Safety Net integration
+  weeklyPlan = {} // User's custom plan
 ) => {
   return useMemo(() => {
     const baseCalories = customTargets?.calories || 2100;
@@ -50,7 +54,17 @@ export const useWeeklyPeriodization = (
     // Build week days (Mon-Sun)
     const weekDays = Array.from({ length: 7 }, (_, i) => {
       const date = addDaysToDate(monday, i);
-      const dayWorkouts = workoutLog?.filter(w => w.date === date) || [];
+      let dayWorkouts = workoutLog?.filter(w => w.date === date) || [];
+
+      // Fallback: Use user's custom plan or default plan if no workouts logged
+      if (dayWorkouts.length === 0) {
+        // Priority 1: User's custom plan from Supabase
+        // Priority 2: Default plan constant
+        const plannedWorkout = weeklyPlan[i] || DEFAULT_WEEKLY_PLAN[i];
+        if (plannedWorkout) {
+          dayWorkouts = [plannedWorkout]; // Use as virtual workout
+        }
+      }
 
       // Safety Net Check
       // Check if day is logged as safety net day in food log
@@ -139,5 +153,5 @@ export const useWeeklyPeriodization = (
       weekStart: monday,
       targetAverage: targetDailyCalories
     };
-  }, [workoutLog, profile, customTargets, currentWeight, targetWeight, foodLog]);
+  }, [workoutLog, profile, customTargets, currentWeight, targetWeight, foodLog, weeklyPlan]);
 };

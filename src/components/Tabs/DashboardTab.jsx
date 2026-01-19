@@ -5,6 +5,7 @@ import { useCorrelationAnalytics } from '../../hooks/useCorrelationAnalytics';
 import { usePatternRecognition } from '../../hooks/usePatternRecognition';
 import { usePlateauDetector } from '../../hooks/usePlateauDetector';
 import { useWeeklyPeriodization } from '../../hooks/useWeeklyPeriodization';
+import { useWeeklyPlan } from '../../hooks/useWeeklyPlan';
 import { useWeeklyReport } from '../../hooks/useWeeklyReport';
 import { ActivityCards } from '../Dashboard/ActivityCards';
 import CoachInsight from '../Dashboard/CoachInsight';
@@ -68,14 +69,18 @@ export const DashboardTab = ({
   // Plateau Detection Engine
   const plateauData = usePlateauDetector(weightHistory, customTargets);
 
-  // Weekly Periodization Engine
+  // User's Custom Weekly Plan (editable from WorkoutsTab)
+  const { plan: weeklyPlan } = useWeeklyPlan();
+
+  // Weekly Periodization Engine (now uses user's custom plan)
   const weeklyPeriodization = useWeeklyPeriodization(
     workoutLog,
     profile,
     customTargets,
     getMostRecentWeight(weightHistory)?.weight || profile?.currentWeight,
     profile?.targetWeight || 75,
-    foodLog // Safety Net integration
+    foodLog, // Safety Net integration
+    weeklyPlan // User's custom plan from Supabase
   );
 
   // Weekly Report Modal State

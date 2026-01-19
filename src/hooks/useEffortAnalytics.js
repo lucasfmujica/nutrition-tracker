@@ -149,7 +149,8 @@ export const useEffortAnalytics = (workoutLog, ouraLog, weightAnalytics, selecte
         readiness,
         sleepScore,
         trend: currentTrend,
-        todayVolume
+        todayVolume,
+        ouraDate: targetOura?.date || null // Track which date the Oura data is from
       },
       score
     };
