@@ -93,12 +93,22 @@ const calculateHeatBonus = (weather) => {
  * @param {Array} workoutLog - User's workout log
  * @returns {Object} Hydration target data
  */
-export const useHydrationTarget = (workoutLog) => {
+export const useHydrationTarget = (workoutLog, date) => {
   const [weather, setWeather] = useState(null);
-  const [isLoadingWeather, setIsLoadingWeather] = useState(true);
+  const [isLoadingWeather, setIsLoadingWeather] = useState(false);
 
-  // Fetch weather data on mount
+  // Determine if the requested date is today
+  const isToday = useMemo(() => {
+    return date === getArgentinaDateString();
+  }, [date]);
+
+  // Fetch weather data only if it is today
   useEffect(() => {
+    if (!isToday) {
+      setWeather(null);
+      return;
+    }
+
     const loadWeather = async () => {
       try {
         setIsLoadingWeather(true);
@@ -113,17 +123,15 @@ export const useHydrationTarget = (workoutLog) => {
     };
 
     loadWeather();
-  }, []);
+  }, [isToday]);
 
   // Calculate hydration target (memoized for performance)
   const hydrationData = useMemo(() => {
-    const currentDate = getArgentinaDateString();
-
-    // Calculate activity bonus
-    const activityMinutes = calculateActivityMinutes(workoutLog, currentDate);
+    // Calculate activity bonus for the specific date
+    const activityMinutes = calculateActivityMinutes(workoutLog, date);
     const activityBonus = activityMinutes * ML_PER_ACTIVITY_MINUTE;
 
-    // Calculate heat bonus
+    // Calculate heat bonus (only applies if we have weather data, i.e., today)
     const { bonus: heatBonus, needsElectrolytes } = calculateHeatBonus(weather);
 
     // Final target (baseline + bonuses)
@@ -144,7 +152,7 @@ export const useHydrationTarget = (workoutLog) => {
       isLoadingWeather,
       activityMinutes
     };
-  }, [workoutLog, weather, isLoadingWeather]);
+  }, [workoutLog, weather, isLoadingWeather, date]);
 
   return hydrationData;
 };

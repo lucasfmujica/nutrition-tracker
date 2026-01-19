@@ -34,13 +34,13 @@ export const useTrackerActions = ({
   }, [biometrics]);
 
   // Water actions with status updates
-  const addWaterGlass = useCallback(async () => {
-    const msg = await nutrition.addWaterGlass();
+  const addWaterGlass = useCallback(async (date) => {
+    const msg = await nutrition.addWaterGlass(date);
     if (msg) trackerSync.setSaveStatus(msg);
   }, [nutrition, trackerSync]);
 
-  const removeWaterGlass = useCallback(async () => {
-    const msg = await nutrition.removeWaterGlass();
+  const removeWaterGlass = useCallback(async (date) => {
+    const msg = await nutrition.removeWaterGlass(date);
     if (msg) trackerSync.setSaveStatus(msg);
   }, [nutrition, trackerSync]);
 

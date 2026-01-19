@@ -200,8 +200,8 @@ export const useNutrition = (
     return waterLog.find(e => e.date === date) || { date: date, glasses: 0, ml: 0 };
   }, [waterLog]);
 
-  const addWaterGlass = async () => {
-    const today = getArgentinaDateString();
+  const addWaterGlass = async (date) => {
+    const targetDate = date || getArgentinaDateString();
     // ... logic remains for ADDING (always adds to today for now, or should it add to selected date? Usually adding is for today. But viewing is for history.)
     // Let's assume user wants to add to TODAY unless we want to support backfilling water.
     // For now, let's keep adding to TODAY to be safe/simple, but viewing relies on getWaterForDate.
@@ -214,24 +214,24 @@ export const useNutrition = (
     // This implies we ONLY support tracking water for today.
     // If the user wants to see past water, we use getWaterForDate.
 
-    const existingEntry = waterLog.find(e => e.date === today);
+    const existingEntry = waterLog.find(e => e.date === targetDate);
     const newEntry = existingEntry
       ? { ...existingEntry, glasses: existingEntry.glasses + 1, ml: (existingEntry.glasses + 1) * 250 }
-      : { date: today, glasses: 1, ml: 250 };
+      : { date: targetDate, glasses: 1, ml: 250 };
     const newLog = existingEntry
-      ? waterLog.map(e => e.date === today ? newEntry : e)
+      ? waterLog.map(e => e.date === targetDate ? newEntry : e)
       : [...waterLog, newEntry];
     saveWaterLog(newLog);
     saveWaterEntry(newEntry);
     return '💧 +1 vaso';
   };
 
-  const removeWaterGlass = async () => {
-    const today = getArgentinaDateString();
-    const existingEntry = waterLog.find(e => e.date === today);
+  const removeWaterGlass = async (date) => {
+    const targetDate = date || getArgentinaDateString();
+    const existingEntry = waterLog.find(e => e.date === targetDate);
     if (!existingEntry || existingEntry.glasses <= 0) return null;
     const newEntry = { ...existingEntry, glasses: existingEntry.glasses - 1, ml: (existingEntry.glasses - 1) * 250 };
-    const newLog = waterLog.map(e => e.date === today ? newEntry : e);
+    const newLog = waterLog.map(e => e.date === targetDate ? newEntry : e);
     saveWaterLog(newLog);
     saveWaterEntry(newEntry);
     return '💧 -1 vaso';

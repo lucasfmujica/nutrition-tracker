@@ -80,7 +80,7 @@ export const useTrackerAnalytics = ({
   const workoutAnalysis = useWorkoutAnalysis(workouts.workoutLog, dashboardDate);
 
   // Hydration Intelligence
-  const hydrationTarget = useHydrationTarget(workouts.workoutLog);
+  const hydrationTarget = useHydrationTarget(workouts.workoutLog, dashboardDate);
 
   return {
     // Spread individual analytics

@@ -1,7 +1,7 @@
-import { Droplets, Footprints, Plus } from 'lucide-react';
+import { Droplets, Footprints, Minus, Plus } from 'lucide-react';
 import React from 'react';
 
-const ActivityCard = ({ title, value, target, unit, icon: Icon, color, onAdd, subtext }) => {
+const ActivityCard = ({ title, value, target, unit, icon: Icon, color, onAdd, onDecrease, subtext }) => {
   const percentage = Math.min((value / target) * 100, 100);
 
   return (
@@ -10,14 +10,24 @@ const ActivityCard = ({ title, value, target, unit, icon: Icon, color, onAdd, su
         <div className={`p-2 rounded-full ${color}`}>
           <Icon size={20} className="text-white" />
         </div>
-        {onAdd && (
-          <button
-            onClick={onAdd}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
-          >
-            <Plus size={18} />
-          </button>
-        )}
+        <div className="flex gap-1">
+          {onDecrease && (
+            <button
+              onClick={onDecrease}
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-500 hover:bg-gray-100 transition-colors"
+            >
+              <Minus size={16} />
+            </button>
+          )}
+          {onAdd && (
+            <button
+              onClick={onAdd}
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+            >
+              <Plus size={18} />
+            </button>
+          )}
+        </div>
       </div>
 
       <div>
@@ -38,7 +48,7 @@ const ActivityCard = ({ title, value, target, unit, icon: Icon, color, onAdd, su
   );
 };
 
-export const ActivityCards = ({ steps, stepsTarget, water, waterTarget, onAddWater }) => {
+export const ActivityCards = ({ steps, stepsTarget, water, waterTarget, onAddWater, onRemoveWater }) => {
   return (
     <div className="flex gap-3 mb-6">
       {/* Steps Card */}
@@ -61,6 +71,7 @@ export const ActivityCards = ({ steps, stepsTarget, water, waterTarget, onAddWat
         icon={Droplets}
         color="bg-blue-400"
         onAdd={onAddWater}
+        onDecrease={onRemoveWater}
         subtext={`${water}/${waterTarget}`}
       />
     </div>

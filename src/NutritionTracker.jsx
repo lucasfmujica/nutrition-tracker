@@ -45,7 +45,7 @@ const NutritionTrackerContent = () => {
     getWeightChartData, editingWeightId, setEditingWeightId, editingWeightValue, setEditingWeightValue,
     startEditWeight, saveEditWeight, cancelEditWeight,
     stepsDate, setStepsDate, newSteps, setNewSteps, addStepsEntry, getWeeklyData, getStepsForDate,
-    getWaterForDate, addWaterGlass, weightProjection, formatTime, hydrationTarget
+    getWaterForDate, addWaterGlass, removeWaterGlass, weightProjection, formatTime, hydrationTarget
   } = useTracker();
 
   // Derived state for Dashboard
@@ -73,8 +73,8 @@ const NutritionTrackerContent = () => {
               <DashboardTab
                 dashboardDate={dashboardDate} setDashboardDate={setDashboardDate} changeDate={changeDate}
                 dashboardTotals={dashboardTotals} dashboardTargets={dashboardTargets}
-                getStepsForDate={getStepsForDate} getWaterForDate={getWaterForDate} addWaterGlass={addWaterGlass}
-                WATER_GOAL_GLASSES={WATER_GOAL_GLASSES} workoutAnalysis={workoutAnalysis}
+                getStepsForDate={getStepsForDate} getWaterForDate={getWaterForDate} addWaterGlass={addWaterGlass} removeWaterGlass={removeWaterGlass}
+                WATER_GOAL_GLASSES={hydrationTarget ? Math.ceil(hydrationTarget.target / 250) : 8} hydrationTarget={hydrationTarget} workoutAnalysis={workoutAnalysis}
                 weightHistory={weightHistory} getMostRecentWeight={getMostRecentWeight}
                 profile={profile} weightProjection={weightProjection}
                 // Pattern Recognition Props

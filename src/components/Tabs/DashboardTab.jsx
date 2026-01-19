@@ -40,7 +40,9 @@ export const DashboardTab = ({
   getStepsForDate,
   getWaterForDate,
   addWaterGlass,
+  removeWaterGlass, // Added
   WATER_GOAL_GLASSES,
+  hydrationTarget, // Added
   workoutAnalysis,
   weightHistory,
   getMostRecentWeight,
@@ -194,7 +196,8 @@ export const DashboardTab = ({
             stepsTarget={profile?.stepGoal || 8000}
             water={waterData.glasses}
             waterTarget={WATER_GOAL_GLASSES}
-            onAddWater={addWaterGlass}
+            onAddWater={() => addWaterGlass(dashboardDate)}
+            onRemoveWater={() => removeWaterGlass(dashboardDate)}
           />
 
           {/* Training Widget */}

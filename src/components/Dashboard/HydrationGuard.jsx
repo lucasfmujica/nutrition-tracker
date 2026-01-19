@@ -52,7 +52,7 @@ const WeatherBadge = ({ weatherStatus, isLoading }) => {
     return (
       <div className="flex items-center gap-2 text-sm text-gray-400">
         <Cloud size={16} />
-        <span>Clima no disponible</span>
+        <span>Sin datos climáticos</span>
       </div>
     );
   }
