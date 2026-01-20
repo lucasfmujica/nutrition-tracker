@@ -80,11 +80,10 @@ export const usePerformanceForecast = (ouraLog, workoutLog, referenceDate = null
       if (!workoutLog) return 0;
       const entries = workoutLog.filter(w => w.date === date);
       return entries.reduce((total, w) => {
-        if (w.exercises && Array.isArray(w.exercises)) {
-          return total + w.exercises.reduce((exTotal, ex) =>
-            exTotal + ((ex.sets || 0) * (ex.reps || 0) * (ex.weight || 0)), 0);
-        }
-        return total + (w.volume || 0);
+        // Use the stored volume field as the source of truth
+        // Handle comma decimals for Argentina locale
+        const volume = Number(String(w.volume).replace(',', '.')) || 0;
+        return total + volume;
       }, 0);
     };
 
