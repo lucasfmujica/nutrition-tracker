@@ -81,6 +81,7 @@ export const PerformanceForecastCard = () => {
               </span>
             )}
           </div>
+        </div>
 
           <p className="text-sm text-slate-600 mt-2 leading-relaxed">
             {copy}
