@@ -236,9 +236,9 @@ export const mappers = {
       date: entry.date,
       type: normalizedType,
       name: entry.name,
-      duration: entry.duration || 0,
-      calories: entry.calories || 0,
-      volume: entry.volume || null,
+      duration: Math.round(Number(entry.duration) || 0),
+      calories: Math.round(Number(entry.calories) || 0),
+      volume: entry.volume ? Math.round(Number(entry.volume)) : null,
       exercises: entry.exercises || [],
       notes: entry.notes || null,
     };
