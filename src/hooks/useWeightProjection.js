@@ -1,5 +1,9 @@
 import { useMemo } from 'react';
-import { addDaysToDate, getArgentinaDateString, getMondayOfWeek } from '../utils/dateUtils';
+import {
+  addDaysToDate,
+  getArgentinaDateString,
+  getMondayOfWeek,
+} from '../utils/dateUtils';
 
 /**
  * useWeightProjection - Predictive Weight Engine for LukenFit
@@ -23,11 +27,23 @@ export const useWeightProjection = (
   foodLog,
   stepsLog,
   customTargets,
-  profile
+  profile,
 ) => {
   const TARGET_WEIGHT = profile?.targetWeight || 75;
   const STEP_GOAL = profile?.stepGoal || 10000;
-  const currentWeight = profile?.currentWeight;
+  // Use profile weight as fallback, but prefer today's log for specific calculations
+  const profileWeight = profile?.currentWeight;
+
+  // Derive the most accurate current weight:
+  // 1. Check if there is a weight entry for TODAY in history
+  // 2. Fallback to profile.currentWeight
+  const currentWeight = useMemo(() => {
+    const today = getArgentinaDateString();
+    const todayEntry = weightHistory?.find((entry) => entry.date === today);
+    return todayEntry
+      ? Number(String(todayEntry.weight).replace(',', '.'))
+      : profileWeight;
+  }, [weightHistory, profileWeight]);
 
   /**
    * Calculate 14-day Realist Trend (R)
@@ -42,8 +58,8 @@ export const useWeightProjection = (
     const fourteenDaysAgo = addDaysToDate(today, -14);
 
     // Filter entries within last 14 days
-    const recentEntries = weightHistory.filter(entry =>
-      entry.date >= fourteenDaysAgo && entry.date <= today
+    const recentEntries = weightHistory.filter(
+      (entry) => entry.date >= fourteenDaysAgo && entry.date <= today,
     );
 
     if (recentEntries.length < 2) {
@@ -51,7 +67,9 @@ export const useWeightProjection = (
     }
 
     // Sort by date ascending
-    const sorted = [...recentEntries].sort((a, b) => a.date.localeCompare(b.date));
+    const sorted = [...recentEntries].sort((a, b) =>
+      a.date.localeCompare(b.date),
+    );
     const oldest = sorted[0];
     const newest = sorted[sorted.length - 1];
 
@@ -109,19 +127,27 @@ export const useWeightProjection = (
 
       // Calories & Protein check
       // CRITICAL: Filter out safety net days from adherence calculation
-      const dayFoods = foodLog?.filter(f => f.date === date && !f.is_safety_net_day) || [];
+      const dayFoods =
+        foodLog?.filter((f) => f.date === date && !f.is_safety_net_day) ||
+        [];
       if (dayFoods.length > 0) {
         daysWithData++;
-        const totals = dayFoods.reduce((acc, f) => ({
-          calories: acc.calories + (Number(f.calories) || 0),
-          protein: acc.protein + (Number(f.protein) || 0)
-        }), { calories: 0, protein: 0 });
+        const totals = dayFoods.reduce(
+          (acc, f) => ({
+            calories: acc.calories + (Number(f.calories) || 0),
+            protein: acc.protein + (Number(f.protein) || 0),
+          }),
+          { calories: 0, protein: 0 },
+        );
 
         const calorieTarget = customTargets?.calories || 2200;
         const proteinTarget = customTargets?.protein || 160;
 
         // Within ±15% for more forgiving adherence
-        if (Math.abs(totals.calories - calorieTarget) <= calorieTarget * 0.15) {
+        if (
+          Math.abs(totals.calories - calorieTarget) <=
+          calorieTarget * 0.15
+        ) {
           caloriesOkCount++;
         }
         if (totals.protein >= proteinTarget * 0.85) {
@@ -130,16 +156,18 @@ export const useWeightProjection = (
       }
 
       // Steps check (not affected by safety net - activity still matters!)
-      const daySteps = stepsLog?.find(s => s.date === date)?.steps || 0;
-      if (daySteps >= STEP_GOAL * 0.8) { // 80% of goal counts as adherent
+      const daySteps = stepsLog?.find((s) => s.date === date)?.steps || 0;
+      if (daySteps >= STEP_GOAL * 0.8) {
+        // 80% of goal counts as adherent
         stepsOkCount++;
       }
     }
 
     const totalPossible = daysWithData * 3;
-    const adherenceScore = totalPossible > 0
-      ? (caloriesOkCount + proteinOkCount + stepsOkCount) / totalPossible
-      : 0.5; // Default to 50% if no data
+    const adherenceScore =
+      totalPossible > 0
+        ? (caloriesOkCount + proteinOkCount + stepsOkCount) / totalPossible
+        : 0.5; // Default to 50% if no data
 
     return {
       adherenceScore,
@@ -147,7 +175,7 @@ export const useWeightProjection = (
       caloriesOkCount,
       proteinOkCount,
       stepsOkCount,
-      daysWithData
+      daysWithData,
     };
   }, [foodLog, stepsLog, customTargets, STEP_GOAL]);
 
@@ -163,7 +191,7 @@ export const useWeightProjection = (
         weeksToGoal: 0,
         daysToGoal: 0,
         remainingWeight: 0,
-        status: 'goal_reached'
+        status: 'goal_reached',
       };
     }
 
@@ -175,7 +203,7 @@ export const useWeightProjection = (
         weeksToGoal: null,
         daysToGoal: null,
         remainingWeight: currentWeight - TARGET_WEIGHT,
-        status: 'not_losing'
+        status: 'not_losing',
       };
     }
 
@@ -196,7 +224,7 @@ export const useWeightProjection = (
       weeksToGoal: weeksToGoal.toFixed(1),
       daysToGoal,
       remainingWeight,
-      status: 'on_track'
+      status: 'on_track',
     };
   }, [currentWeight, realistTrend, adherenceData.adherenceScore, TARGET_WEIGHT]);
 
@@ -217,10 +245,10 @@ export const useWeightProjection = (
     const maxPoints = Math.min(Math.ceil(projection.daysToGoal / 7), 52);
     for (let week = 0; week <= maxPoints; week++) {
       const date = addDaysToDate(today, week * 7);
-      const projected = currentWeight - (dailyLoss * week * 7);
+      const projected = currentWeight - dailyLoss * week * 7;
       path.push({
         date,
-        projectedWeight: Math.max(projected, TARGET_WEIGHT)
+        projectedWeight: Math.max(projected, TARGET_WEIGHT),
       });
     }
 
@@ -228,20 +256,20 @@ export const useWeightProjection = (
   }, [projection, currentWeight, TARGET_WEIGHT]);
 
   /**
-   * Get actual weight data for last 14 days for chart
+   * Get actual weight data for last 90 days for chart (increased from 14 to show more context)
    */
   const actualPath = useMemo(() => {
     if (!weightHistory || weightHistory.length === 0) return [];
 
     const today = getArgentinaDateString();
-    const fourteenDaysAgo = addDaysToDate(today, -14);
+    const historyStartDate = addDaysToDate(today, -90); // Expanded history window
 
     return weightHistory
-      .filter(entry => entry.date >= fourteenDaysAgo && entry.date <= today)
+      .filter((entry) => entry.date >= historyStartDate && entry.date <= today)
       .sort((a, b) => a.date.localeCompare(b.date))
-      .map(entry => ({
+      .map((entry) => ({
         date: entry.date,
-        actualWeight: entry.weight
+        actualWeight: Number(String(entry.weight).replace(',', '.')), // Normalize weight
       }));
   }, [weightHistory]);
 
@@ -252,20 +280,32 @@ export const useWeightProjection = (
     const { adherencePercent } = adherenceData;
 
     if (projection.status === 'goal_reached') {
-      return { emoji: '🎉', text: '¡Llegaste a tu meta! Es hora de mantener.' };
+      return {
+        emoji: '🎉',
+        text: '¡Llegaste a tu meta! Es hora de mantener.',
+      };
     }
 
     if (projection.status === 'not_losing') {
       if (realistTrend > 0) {
-        return { emoji: '⚠️', text: 'Tendencia al alza. Revisa tu déficit calórico.' };
+        return {
+          emoji: '⚠️',
+          text: 'Tendencia al alza. Revisa tu déficit calórico.',
+        };
       }
-      return { emoji: '📊', text: 'Registra más datos para generar tu proyección.' };
+      return {
+        emoji: '📊',
+        text: 'Registra más datos para generar tu proyección.',
+      };
     }
 
     if (adherencePercent >= 80) {
       return { emoji: '🔥', text: 'Excelente adherencia. ¡Sigue así!' };
     } else if (adherencePercent >= 60) {
-      return { emoji: '👍', text: 'Buen progreso. Suma más días consistentes.' };
+      return {
+        emoji: '👍',
+        text: 'Buen progreso. Suma más días consistentes.',
+      };
     } else if (adherencePercent >= 40) {
       return { emoji: '💪', text: 'Cada día cuenta. Enfócate hoy.' };
     } else {
@@ -277,7 +317,10 @@ export const useWeightProjection = (
    * Format goal date in Argentine locale
    */
   const formattedGoalDate = useMemo(() => {
-    if (!projection.projectedGoalDate || projection.projectedGoalDate.includes('🎉')) {
+    if (
+      !projection.projectedGoalDate ||
+      projection.projectedGoalDate.includes('🎉')
+    ) {
       return projection.projectedGoalDate;
     }
 
@@ -287,7 +330,7 @@ export const useWeightProjection = (
         day: 'numeric',
         month: 'long',
         year: 'numeric',
-        timeZone: 'America/Argentina/Buenos_Aires'
+        timeZone: 'America/Argentina/Buenos_Aires',
       }).format(date);
     } catch {
       return 'Calculando...';
@@ -296,7 +339,7 @@ export const useWeightProjection = (
 
   return {
     // Core metrics
-    realistTrend,                    // kg/week from actual 14-day data
+    realistTrend, // kg/week from actual 14-day data
     adjustedTrend: projection.adjustedTrend, // kg/week after adherence modifier
     remainingWeight: projection.remainingWeight,
 
@@ -317,6 +360,6 @@ export const useWeightProjection = (
     targetWeight: TARGET_WEIGHT,
 
     // Coach feedback
-    coachMessage
+    coachMessage,
   };
 };
