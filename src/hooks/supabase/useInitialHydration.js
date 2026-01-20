@@ -42,6 +42,7 @@ export const useInitialHydration = ({
   setStepsLog,
   setOuraLog,
   setWaterLog,
+  setMealTemplates,
   setIsLoading,
   setSaveStatus,
   setShowOnboarding,
@@ -89,12 +90,13 @@ export const useInitialHydration = ({
           isCacheStale('workouts'),
           isCacheStale('steps'),
           isCacheStale('oura'),
-          isCacheStale('water')
+          isCacheStale('water'),
+          isCacheStale('templates')
         ]);
 
         const [
           profileStale, targetsStale, weightStale, foodStale,
-          workoutsStale, stepsStale, ouraStale, waterStale
+          workoutsStale, stepsStale, ouraStale, waterStale, templatesStale
         ] = stalenessChecks;
 
         const cached = await loadCachedData();
@@ -139,6 +141,10 @@ export const useInitialHydration = ({
           setWaterLog(cached.localWater);
         }
 
+        if (cached.localTemplates.length && !templatesStale) {
+          setMealTemplates(cached.localTemplates);
+        }
+
         const hasCachedData = cached.localFood.length > 0 || cached.localWorkout.length > 0 || cached.localWeight.length > 0;
         const hasAnyStaleness = stalenessChecks.some(stale => stale);
 
@@ -162,6 +168,7 @@ export const useInitialHydration = ({
             if (cached.localSteps.length && stepsStale) setStepsLog(cached.localSteps);
             if (cached.localOura.length && ouraStale) setOuraLog(cached.localOura);
             if (cached.localWater.length && waterStale) setWaterLog(cached.localWater);
+            if (cached.localTemplates.length && templatesStale) setMealTemplates(cached.localTemplates);
             setIsLoading(false);
             setSaveStatus('⚠️ Mostrando datos antiguos - Actualizando en segundo plano...');
           }, 3000); // 3-second grace period
@@ -212,6 +219,7 @@ export const useInitialHydration = ({
             if (data.stepsLog !== undefined) setStepsLog(data.stepsLog);
             if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);  // ← FIX: Allows empty sync
             if (data.waterLog !== undefined) setWaterLog(data.waterLog);
+            if (data.mealTemplates !== undefined) setMealTemplates(data.mealTemplates);
 
             await cacheData(data);
 
@@ -227,7 +235,8 @@ export const useInitialHydration = ({
               updateCacheMetadata('workouts', argentinaTimestamp),
               updateCacheMetadata('steps', argentinaTimestamp),
               updateCacheMetadata('oura', argentinaTimestamp),
-              updateCacheMetadata('water', argentinaTimestamp)
+              updateCacheMetadata('water', argentinaTimestamp),
+              updateCacheMetadata('templates', argentinaTimestamp)
             ]);
 
             // SWR: Clear stale flag immediately after successful sync

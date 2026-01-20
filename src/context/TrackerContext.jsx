@@ -29,6 +29,9 @@ export const TrackerProvider = ({ children }) => {
   const [offlineMode, setOfflineMode] = useState(false);
   const useCloud = supabase.isAuthenticated && !offlineMode && supabase.isOnline;
 
+  // 0. Shared state for templates (needed by both sync and template hook)
+  const [mealTemplatesData, setMealTemplatesData] = useState([]);
+
   // 1. UI State (extracted hook)
   const uiState = useTrackerUIState();
 
@@ -72,6 +75,7 @@ export const TrackerProvider = ({ children }) => {
     setStepsLog: biometrics.setStepsLog,
     setOuraLog: biometrics.setOuraLog,
     setWaterLog: nutrition.setWaterLog,
+    setMealTemplates: setMealTemplatesData,
     // Data for Force Sync
     foodLog: nutrition.foodLog,
     workoutLog: workouts.workoutLog,
@@ -175,12 +179,17 @@ export const TrackerProvider = ({ children }) => {
 
   // 14. Meal Templates
   const mealTemplates = useMealTemplates({
+    mealTemplates: mealTemplatesData,
+    setMealTemplates: setMealTemplatesData,
     storage: actions.storage,
     setSaveStatus: trackerSync.setSaveStatus,
     selectedFoodDate: uiState.selectedFoodDate,
     saveFoodLog: nutrition.saveFoodLog,
     foodLog: nutrition.foodLog,
-    saveFoodEntry: nutrition.saveFoodEntry
+    saveFoodEntry: nutrition.saveFoodEntry,
+    saveTemplate: supabase.saveTemplate,
+    deleteTemplateDb: supabase.deleteTemplateDb,
+    useCloud
   });
 
   // 15. Global Delete Actions

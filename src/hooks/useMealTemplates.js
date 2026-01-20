@@ -2,21 +2,27 @@ import { useEffect, useState } from 'react';
 import { ARGENTINA_TZ } from '../utils/dateUtils';
 
 export const useMealTemplates = ({
+  mealTemplates,
+  setMealTemplates,
   storage,
   setSaveStatus,
   selectedFoodDate,
   saveFoodLog,
   foodLog,
-  saveFoodEntry
+  saveFoodEntry,
+  saveTemplate,
+  deleteTemplateDb,
+  useCloud
 }) => {
-  const [mealTemplates, setMealTemplates] = useState([]);
   const [showTemplatesModal, setShowTemplatesModal] = useState(false);
   const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
   const [templateToSave, setTemplateToSave] = useState(null);
 
-  // Load templates from storage on mount
+  // Load templates from storage on mount if not already loaded (fallback for offline/initial)
   useEffect(() => {
     const loadTemplates = async () => {
+      if (mealTemplates && mealTemplates.length > 0) return;
+
       try {
         const stored = await storage.get('lucas-meal-templates-v1');
         if (stored?.value) {
@@ -26,18 +32,18 @@ export const useMealTemplates = ({
         console.log('Using default templates');
       }
     };
-    if (storage) {
+    if (storage && !useCloud) {
       loadTemplates();
     }
-  }, [storage]);
+  }, [storage, useCloud]);
 
   // Save templates to storage
-  const saveTemplatesToStorage = async (templates) => {
+  const saveTemplatesToLocal = async (templates) => {
     setMealTemplates(templates);
     try {
       await storage.set('lucas-meal-templates-v1', JSON.stringify(templates));
     } catch (err) {
-      console.error('Error saving templates:', err);
+      console.error('Error saving templates to local:', err);
     }
   };
 
@@ -61,7 +67,7 @@ export const useMealTemplates = ({
       source: 'template',
       reviewed: true,
       confidence: 1,
-      sourceId: `tpl-${Date.now()}`
+      sourceId: template.id.startsWith('tpl-') ? template.id : `tpl-${template.id}`
     };
 
     // Save to Supabase
@@ -81,29 +87,35 @@ export const useMealTemplates = ({
     setTimeout(() => setSaveStatus(''), 2000);
   };
 
-  // Save current food as template
-  const saveAsTemplate = (food) => {
-    setTemplateToSave({
-      name: food.name,
-      meal: food.meal,
-      description: food.description || '',
-      calories: food.calories,
-      protein: food.protein,
-      carbs: food.carbs,
-      fat: food.fat,
-      fiber: food.fiber || 0
-    });
-    setShowSaveTemplateModal(true);
-  };
-
   // Confirm save template
-  const confirmSaveTemplate = () => {
+  const confirmSaveTemplate = async () => {
     if (!templateToSave?.name) return;
+
     const newTemplate = {
       id: `tpl-${Date.now()}`,
       ...templateToSave
     };
-    saveTemplatesToStorage([...mealTemplates, newTemplate]);
+
+    // Optimistic update
+    const updatedTemplates = [...mealTemplates, newTemplate];
+    saveTemplatesToLocal(updatedTemplates);
+
+    // Save to Supabase if cloud enabled
+    if (useCloud && saveTemplate) {
+      try {
+        const result = await saveTemplate(newTemplate);
+        if (result?.data) {
+          // Replace optimistic temp ID with DB ID
+          setMealTemplates(prev => prev.map(t => t.id === newTemplate.id ? result.data : t));
+          // Update local storage again with DB ID
+          const finalTemplates = updatedTemplates.map(t => t.id === newTemplate.id ? result.data : t);
+          storage.set('lucas-meal-templates-v1', JSON.stringify(finalTemplates));
+        }
+      } catch (err) {
+        console.error('Error saving template to Supabase:', err);
+      }
+    }
+
     setShowSaveTemplateModal(false);
     setTemplateToSave(null);
     setSaveStatus('✓ Plantilla guardada');
@@ -111,20 +123,43 @@ export const useMealTemplates = ({
   };
 
   // Delete template
-  const deleteTemplate = (id) => {
-    saveTemplatesToStorage(mealTemplates.filter(t => t.id !== id));
+  const deleteTemplate = async (id) => {
+    // Optimistic delete
+    const updatedTemplates = mealTemplates.filter(t => t.id !== id);
+    saveTemplatesToLocal(updatedTemplates);
+
+    // Delete from Supabase if cloud enabled
+    if (useCloud && deleteTemplateDb) {
+      try {
+        await deleteTemplateDb(id);
+      } catch (err) {
+        console.error('Error deleting template from Supabase:', err);
+      }
+    }
   };
 
   return {
     mealTemplates,
-    setMealTemplates, // Exposed in case needed, but logic is mostly encapsulated
+    setMealTemplates,
     showTemplatesModal,
     setShowTemplatesModal,
     showSaveTemplateModal,
     setShowSaveTemplateModal,
     templateToSave,
     setTemplateToSave,
-    saveAsTemplate,
+    saveAsTemplate: (food) => {
+      setTemplateToSave({
+        name: food.name,
+        meal: food.meal,
+        description: food.description || '',
+        calories: food.calories,
+        protein: food.protein,
+        carbs: food.carbs,
+        fat: food.fat,
+        fiber: food.fiber || 0
+      });
+      setShowSaveTemplateModal(true);
+    },
     confirmSaveTemplate,
     deleteTemplate,
     addFromTemplate

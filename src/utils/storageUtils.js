@@ -9,6 +9,7 @@ export const CACHE_KEYS = {
   TARGETS: 'lucas-targets-v5',
   OURA: 'lucas-oura-log-v5',
   WATER: 'lucas-water-log-v5',
+  TEMPLATES: 'lucas-meal-templates-v1',
   PENDING_SYNC: 'lucas-pending-sync-v1', // The Vault - offline resilience queue
   METADATA: 'lucas-cache-metadata-v1' // SWR: Track sync timestamps & schema version
 };
@@ -50,7 +51,8 @@ export const loadCachedData = async () => {
     stepsData,
     targetsData,
     ouraData,
-    waterData
+    waterData,
+    templatesData
   ] = await Promise.all([
     storage.get(CACHE_KEYS.PROFILE).catch(() => null),
     storage.get(CACHE_KEYS.WEIGHT).catch(() => null),
@@ -59,7 +61,8 @@ export const loadCachedData = async () => {
     storage.get(CACHE_KEYS.STEPS).catch(() => null),
     storage.get(CACHE_KEYS.TARGETS).catch(() => null),
     storage.get(CACHE_KEYS.OURA).catch(() => null),
-    storage.get(CACHE_KEYS.WATER).catch(() => null)
+    storage.get(CACHE_KEYS.WATER).catch(() => null),
+    storage.get(CACHE_KEYS.TEMPLATES).catch(() => null)
   ]);
 
   return {
@@ -70,7 +73,8 @@ export const loadCachedData = async () => {
     localSteps: safeParse(stepsData, []),
     localTargets: safeParse(targetsData, null),
     localOura: safeParse(ouraData, []),
-    localWater: safeParse(waterData, [])
+    localWater: safeParse(waterData, []),
+    localTemplates: safeParse(templatesData, [])
   };
 };
 
@@ -90,6 +94,7 @@ export const cacheData = async (data) => {
     if (data.stepsLog !== undefined) promises.push(storage.set(CACHE_KEYS.STEPS, JSON.stringify(data.stepsLog)));
     if (data.ouraLog !== undefined) promises.push(storage.set(CACHE_KEYS.OURA, JSON.stringify(data.ouraLog)));  // ← FIX
     if (data.waterLog !== undefined) promises.push(storage.set(CACHE_KEYS.WATER, JSON.stringify(data.waterLog)));
+    if (data.mealTemplates !== undefined) promises.push(storage.set(CACHE_KEYS.TEMPLATES, JSON.stringify(data.mealTemplates)));
 
     await Promise.all(promises);
     return true;

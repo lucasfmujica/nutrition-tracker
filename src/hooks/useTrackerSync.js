@@ -29,6 +29,7 @@ export const useTrackerSync = ({
   setStepsLog,
   setOuraLog,
   setWaterLog,
+  setMealTemplates,
   // Data needed for forceSync
   foodLog,
   workoutLog,
@@ -87,7 +88,8 @@ export const useTrackerSync = ({
     setWorkoutLog,
     setStepsLog,
     setOuraLog,
-    setWaterLog
+    setWaterLog,
+    setMealTemplates
   });
 
   // Initial Hydration: Handles data loading from cache and Supabase
@@ -140,6 +142,7 @@ export const useTrackerSync = ({
           if (data.stepsLog !== undefined) setStepsLog(data.stepsLog);
           if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);
           if (data.waterLog !== undefined) setWaterLog(data.waterLog);
+          if (data.mealTemplates !== undefined) setMealTemplates(data.mealTemplates);
 
           // SWR PATTERN: Update metadata after manual refresh
           const argentinaTimestamp = Date.now();
@@ -151,7 +154,8 @@ export const useTrackerSync = ({
             updateCacheMetadata('workouts', argentinaTimestamp),
             updateCacheMetadata('steps', argentinaTimestamp),
             updateCacheMetadata('oura', argentinaTimestamp),
-            updateCacheMetadata('water', argentinaTimestamp)
+            updateCacheMetadata('water', argentinaTimestamp),
+            updateCacheMetadata('templates', argentinaTimestamp)
           ]);
 
           // Clear stale flag immediately
@@ -193,6 +197,7 @@ export const useTrackerSync = ({
       setStepsLog([]);
       setOuraLog([]);
       setWaterLog([]);
+      setMealTemplates([]);
 
       await supabase.signOut();
       setShowAuth(true);

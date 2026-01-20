@@ -5,6 +5,7 @@ import { useNutritionData } from './supabase/useNutritionData';
 import { useProfileData } from './supabase/useProfileData';
 import { useSupabaseAuth } from './supabase/useSupabaseAuth';
 import { useSupabaseOperation } from './supabase/useSupabaseOperation';
+import { useTemplateData } from './supabase/useTemplateData';
 import { useWeightData } from './supabase/useWeightData';
 
 /**
@@ -69,6 +70,12 @@ export function useSupabase() {
     saveOura
   } = useActivityData(user, isOnline);
 
+  const {
+    fetchTemplates,
+    saveTemplate,
+    deleteTemplate: deleteTemplateDb
+  } = useTemplateData(user, isOnline);
+
   // Legacy loading state compatibility
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -87,7 +94,7 @@ export function useSupabase() {
       return;
     }
 
-    const tables = ['profiles', 'weight_history', 'food_log', 'workouts', 'steps_log', 'oura_log'];
+    const tables = ['profiles', 'weight_history', 'food_log', 'workouts', 'steps_log', 'oura_log', 'meal_templates'];
 
     tables.forEach(table => {
       const channel = supabase
@@ -145,12 +152,13 @@ export function useSupabase() {
         fetchStepsLog(),
         fetchOuraLog(),
         fetchWaterLog(),
+        fetchTemplates(),
       ]);
 
       const results = await Promise.race([fetchPromise, timeoutPromise]);
 
       // Extract successful results and log failures
-      const [profileResult, weightResult, foodResult, workoutsResult, stepsResult, ouraResult, waterResult] = results;
+      const [profileResult, weightResult, foodResult, workoutsResult, stepsResult, ouraResult, waterResult, templateResult] = results;
 
       // Helper to extract value or return fallback
       const getValue = (result, fallback, name) => {
@@ -169,6 +177,7 @@ export function useSupabase() {
       const stepsLog = getValue(stepsResult, [], 'Steps Log');
       const ouraLog = getValue(ouraResult, [], 'Oura Log');
       const waterLog = getValue(waterResult, [], 'Water Log');
+      const mealTemplates = getValue(templateResult, [], 'Meal Templates');
 
       // Count failures for logging
       const failedCount = results.filter(r => r.status === 'rejected').length;
@@ -189,6 +198,7 @@ export function useSupabase() {
         stepsLog,
         ouraLog,
         waterLog,
+        mealTemplates,
       };
     } catch (err) {
       console.error('[Supabase] fetchAllData error:', err);
@@ -209,7 +219,8 @@ export function useSupabase() {
     fetchWorkouts,
     fetchStepsLog,
     fetchOuraLog,
-    fetchWaterLog
+    fetchWaterLog,
+    fetchTemplates
   ]);
 
   return {
@@ -246,6 +257,9 @@ export function useSupabase() {
     saveOura,
     fetchWaterLog,
     saveWater,
+    fetchTemplates,
+    saveTemplate,
+    deleteTemplateDb,
     fetchAllData,
     onRealtimeUpdate,
   };

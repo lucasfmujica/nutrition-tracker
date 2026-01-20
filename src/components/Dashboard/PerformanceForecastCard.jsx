@@ -1,5 +1,5 @@
-import { BatteryCharging, Cloud, CloudRain, Loader, Sun } from 'lucide-react';
-import React from 'react';
+import { BatteryCharging, Cloud, CloudRain, Info, Loader, Sun } from 'lucide-react';
+import React, { useState } from 'react';
 import { useTracker } from '../../context/TrackerContext';
 
 /**
@@ -11,6 +11,7 @@ import { useTracker } from '../../context/TrackerContext';
  */
 export const PerformanceForecastCard = () => {
   const { performanceForecast } = useTracker();
+  const [showExplanation, setShowExplanation] = useState(false);
 
   if (!performanceForecast) return null;
 
@@ -20,7 +21,8 @@ export const PerformanceForecastCard = () => {
     copy,
     icon,
     ui,
-    forecastCode
+    forecastCode,
+    metrics
   } = performanceForecast;
 
   // Icon Mapping
@@ -59,6 +61,14 @@ export const PerformanceForecastCard = () => {
                 {title}
               </div>
             </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowExplanation(!showExplanation)}
+                className={`p-1.5 rounded-lg transition-all ${showExplanation ? 'bg-white shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                title="¿Cómo se calcula esto?"
+              >
+                <Info size={18} />
+              </button>
             {/* Status Badge (optional, maybe redundant with title) */}
             {forecastCode === 'peak' && (
               <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
@@ -77,6 +87,66 @@ export const PerformanceForecastCard = () => {
           </p>
         </div>
       </div>
+
+      {/* Logic Explanation - Premium Bento Style */}
+      {showExplanation && (
+        <div className="mt-4 pt-4 border-t border-white/40 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="bg-white/60 backdrop-blur-md rounded-xl p-4 space-y-3 ring-1 ring-black/5 shadow-inner">
+            <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></span>
+              Algoritmo de Predicción
+            </h4>
+
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Analizamos la relación entre tu recuperación reciente y la fatiga acumulada para predecir tu ventana de rendimiento óptimo.
+            </p>
+
+            <div className="grid grid-cols-2 gap-3 mt-2">
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase">Tendencia Readiness</span>
+                <div className="flex items-center gap-2">
+                   <span className={`text-sm font-black ${parseFloat(metrics.readinessTrend) >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                     {metrics.readinessTrend > 0 ? '+' : ''}{metrics.readinessTrend}%
+                   </span>
+                   <span className="text-[10px] text-slate-400">vs 7d</span>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase">Tendencia Sueño</span>
+                <div className="flex items-center gap-2">
+                   <span className={`text-sm font-black ${parseFloat(metrics.sleepTrend) >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                     {metrics.sleepTrend > 0 ? '+' : ''}{metrics.sleepTrend}%
+                   </span>
+                   <span className="text-[10px] text-slate-400">vs 7d</span>
+                </div>
+              </div>
+
+              <div className="col-span-2 space-y-1 pt-1 border-t border-slate-200/50">
+                <span className="text-[10px] font-bold text-slate-400 uppercase">Carga de Entrenamiento</span>
+                <div className="flex items-center justify-between">
+                   <span className="text-sm font-black text-slate-700">
+                     {metrics.volume48h.toLocaleString()} <span className="text-[10px] font-medium text-slate-400">kg (48h)</span>
+                   </span>
+                   <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${metrics.volume48h > 10000 ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>
+                     {metrics.volume48h > 10000 ? 'ALTA CARGA' : 'ÓPTIMO'}
+                   </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-blue-50/50 p-2.5 rounded-lg">
+              <p className="text-[10px] text-blue-700 italic leading-snug">
+                <strong>¿Por qué esta frase?</strong> {metrics.readinessTrend > 3 && metrics.sleepTrend > 2
+                  ? "Tus promedios de 3 días superan a los de 7 días, indicando un ascenso en tu capacidad."
+                  : metrics.volume48h > 10000
+                    ? "Has acumulado mucho volumen; el algoritmo prioriza la recuperación muscular aunque los scores sean buenos."
+                    : "Tus métricas muestran estabilidad fisiológica, lo que sugiere una capacidad estándar."}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

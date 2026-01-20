@@ -330,4 +330,30 @@ export const mappers = {
     glasses: dbEntry.glasses,
     ml: dbEntry.ml,
   }),
+
+  // Template: localStorage -> Supabase
+  templateToDb: (template, userId) => ({
+    user_id: userId,
+    name: template.name,
+    meal: template.meal,
+    description: template.description || null,
+    calories: template.calories || 0,
+    protein: template.protein || 0,
+    carbs: template.carbs || 0,
+    fat: template.fat || 0,
+    fiber: template.fiber || 0,
+  }),
+
+  // Template: Supabase -> localStorage format
+  templateFromDb: (dbEntry) => ({
+    id: dbEntry.id,
+    name: dbEntry.name,
+    meal: dbEntry.meal,
+    description: dbEntry.description,
+    calories: dbEntry.calories,
+    protein: parseFloat(dbEntry.protein),
+    carbs: parseFloat(dbEntry.carbs),
+    fat: parseFloat(dbEntry.fat),
+    fiber: parseFloat(dbEntry.fiber),
+  }),
 };

@@ -39,7 +39,8 @@ export const useVaultWorker = ({
   setWorkoutLog,
   setStepsLog,
   setOuraLog,
-  setWaterLog
+  setWaterLog,
+  setMealTemplates
 }) => {
   const isProcessingQueue = useRef(false); // CRITICAL: Prevent concurrent queue processing
 
@@ -78,6 +79,9 @@ export const useVaultWorker = ({
           break;
         case 'workouts':
           result = await supabase.saveWorkout(item.data);
+          break;
+        case 'meal_templates':
+          result = await supabase.saveTemplate(item.data);
           break;
         default:
           console.warn(`[Vault] Unknown table: ${item.table}`);
@@ -193,6 +197,7 @@ export const useVaultWorker = ({
               if (data.stepsLog !== undefined) setStepsLog(data.stepsLog);
               if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);
               if (data.waterLog !== undefined) setWaterLog(data.waterLog);
+              if (data.mealTemplates !== undefined) setMealTemplates(data.mealTemplates);
               await cacheData(data);
 
               // SWR PATTERN: Update metadata after Vault sync
@@ -206,7 +211,8 @@ export const useVaultWorker = ({
                 updateCacheMetadata('workouts', argentinaTimestamp),
                 updateCacheMetadata('steps', argentinaTimestamp),
                 updateCacheMetadata('oura', argentinaTimestamp),
-                updateCacheMetadata('water', argentinaTimestamp)
+                updateCacheMetadata('water', argentinaTimestamp),
+                updateCacheMetadata('templates', argentinaTimestamp)
               ]);
             }
           }, 1000); // 1s delay allows UI to breathe
