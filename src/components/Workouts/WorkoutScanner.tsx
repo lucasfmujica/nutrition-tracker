@@ -50,7 +50,14 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
         try {
             if (!parsedResult) return;
             const parsed = JSON.parse(parsedResult);
-            onSave(parsed);
+
+            // Ensure ID exists for optimistic UI and database consistency
+            const workoutToSave = {
+                ...parsed,
+                id: parsed.id || `w-ai-${Date.now()}`,
+            };
+
+            onSave(workoutToSave);
         } catch (e) {
             setJsonError('El JSON no es válido. Por favor corrige el formato.');
         }

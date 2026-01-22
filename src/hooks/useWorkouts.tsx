@@ -19,6 +19,18 @@ export const useWorkouts = (supabase: SupabaseClient, useCloud: boolean) => {
     };
 
     const saveWorkoutEntry = async (entry: Workout): Promise<Workout | null> => {
+        // Optimistic update
+        setWorkoutLog((prevLog) => {
+            const newLog = [...prevLog];
+            const index = newLog.findIndex((e) => e.id === entry.id);
+            if (index >= 0) {
+                newLog[index] = entry;
+            } else {
+                newLog.push(entry);
+            }
+            return newLog;
+        });
+
         if (useCloud) {
             try {
                 const result = await supabase.saveWorkout(entry);
