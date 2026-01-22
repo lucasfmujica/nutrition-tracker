@@ -75,7 +75,15 @@ export type Database = {
                     updated_at?: string | null;
                     user_id?: string;
                 };
-                Relationships: [];
+                Relationships: [
+                    {
+                        foreignKeyName: 'food_log_user_id_fkey';
+                        columns: ['user_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'users';
+                        referencedColumns: ['id'];
+                    },
+                ];
             };
             meal_templates: {
                 Row: {
@@ -120,12 +128,19 @@ export type Database = {
                     updated_at?: string | null;
                     user_id?: string;
                 };
-                Relationships: [];
+                Relationships: [
+                    {
+                        foreignKeyName: 'meal_templates_user_id_fkey';
+                        columns: ['user_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'users';
+                        referencedColumns: ['id'];
+                    },
+                ];
             };
             oura_log: {
                 Row: {
                     activity_score: number | null;
-                    bedtime: string | null;
                     created_at: string | null;
                     date: string;
                     deep_sleep_mins: number | null;
@@ -137,11 +152,9 @@ export type Database = {
                     sleep_hours: number | null;
                     sleep_score: number | null;
                     user_id: string;
-                    wake_time: string | null;
                 };
                 Insert: {
                     activity_score?: number | null;
-                    bedtime?: string | null;
                     created_at?: string | null;
                     date: string;
                     deep_sleep_mins?: number | null;
@@ -153,11 +166,9 @@ export type Database = {
                     sleep_hours?: number | null;
                     sleep_score?: number | null;
                     user_id: string;
-                    wake_time?: string | null;
                 };
                 Update: {
                     activity_score?: number | null;
-                    bedtime?: string | null;
                     created_at?: string | null;
                     date?: string;
                     deep_sleep_mins?: number | null;
@@ -169,102 +180,90 @@ export type Database = {
                     sleep_hours?: number | null;
                     sleep_score?: number | null;
                     user_id?: string;
-                    wake_time?: string | null;
                 };
-                Relationships: [];
+                Relationships: [
+                    {
+                        foreignKeyName: 'oura_log_user_id_fkey';
+                        columns: ['user_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'users';
+                        referencedColumns: ['id'];
+                    },
+                ];
             };
             profiles: {
                 Row: {
-                    activity_level: string;
-                    age: number;
+                    activity_level: string | null;
+                    age: number | null;
                     avatar_url: string | null;
                     created_at: string | null;
-                    current_weight: number;
+                    current_weight: number | null;
                     display_name: string | null;
-                    gender: string | null;
-                    goal: string;
-                    goal_weight: number | null;
-                    height: number;
+                    goal: string | null;
+                    height: number | null;
                     id: string;
-                    onboarding_completed: boolean | null;
-                    primary_goal: string | null;
-                    renpho_last_sync: string | null;
-                    renpho_token: string | null;
-                    renpho_user_id: string | null;
-                    step_goal: number | null;
-                    target_calories: number;
-                    target_carbs: number;
-                    target_fat: number;
-                    target_fiber: number;
-                    target_protein: number;
-                    target_weight: number;
-                    training_day_calories_bonus: number;
-                    training_day_carbs: number;
-                    training_days_per_week: number | null;
+                    target_calories: number | null;
+                    target_carbs: number | null;
+                    target_fat: number | null;
+                    target_fiber: number | null;
+                    target_protein: number | null;
+                    target_weight: number | null;
+                    training_day_calories_bonus: number | null;
+                    training_day_carbs: number | null;
                     updated_at: string | null;
                     user_id: string;
                 };
                 Insert: {
-                    activity_level?: string;
-                    age?: number;
+                    activity_level?: string | null;
+                    age?: number | null;
                     avatar_url?: string | null;
                     created_at?: string | null;
-                    current_weight?: number;
+                    current_weight?: number | null;
                     display_name?: string | null;
-                    gender?: string | null;
-                    goal?: string;
-                    goal_weight?: number | null;
-                    height?: number;
+                    goal?: string | null;
+                    height?: number | null;
                     id?: string;
-                    onboarding_completed?: boolean | null;
-                    primary_goal?: string | null;
-                    renpho_last_sync?: string | null;
-                    renpho_token?: string | null;
-                    renpho_user_id?: string | null;
-                    step_goal?: number | null;
-                    target_calories?: number;
-                    target_carbs?: number;
-                    target_fat?: number;
-                    target_fiber?: number;
-                    target_protein?: number;
-                    target_weight?: number;
-                    training_day_calories_bonus?: number;
-                    training_day_carbs?: number;
-                    training_days_per_week?: number | null;
+                    target_calories?: number | null;
+                    target_carbs?: number | null;
+                    target_fat?: number | null;
+                    target_fiber?: number | null;
+                    target_protein?: number | null;
+                    target_weight?: number | null;
+                    training_day_calories_bonus?: number | null;
+                    training_day_carbs?: number | null;
                     updated_at?: string | null;
                     user_id: string;
                 };
                 Update: {
-                    activity_level?: string;
-                    age?: number;
+                    activity_level?: string | null;
+                    age?: number | null;
                     avatar_url?: string | null;
                     created_at?: string | null;
-                    current_weight?: number;
+                    current_weight?: number | null;
                     display_name?: string | null;
-                    gender?: string | null;
-                    goal?: string;
-                    goal_weight?: number | null;
-                    height?: number;
+                    goal?: string | null;
+                    height?: number | null;
                     id?: string;
-                    onboarding_completed?: boolean | null;
-                    primary_goal?: string | null;
-                    renpho_last_sync?: string | null;
-                    renpho_token?: string | null;
-                    renpho_user_id?: string | null;
-                    step_goal?: number | null;
-                    target_calories?: number;
-                    target_carbs?: number;
-                    target_fat?: number;
-                    target_fiber?: number;
-                    target_protein?: number;
-                    target_weight?: number;
-                    training_day_calories_bonus?: number;
-                    training_day_carbs?: number;
-                    training_days_per_week?: number | null;
+                    target_calories?: number | null;
+                    target_carbs?: number | null;
+                    target_fat?: number | null;
+                    target_fiber?: number | null;
+                    target_protein?: number | null;
+                    target_weight?: number | null;
+                    training_day_calories_bonus?: number | null;
+                    training_day_carbs?: number | null;
                     updated_at?: string | null;
                     user_id?: string;
                 };
-                Relationships: [];
+                Relationships: [
+                    {
+                        foreignKeyName: 'profiles_user_id_fkey';
+                        columns: ['user_id'];
+                        isOneToOne: true;
+                        referencedRelation: 'users';
+                        referencedColumns: ['id'];
+                    },
+                ];
             };
             steps_log: {
                 Row: {
@@ -278,7 +277,7 @@ export type Database = {
                     created_at?: string | null;
                     date: string;
                     id?: string;
-                    steps?: number;
+                    steps: number;
                     user_id: string;
                 };
                 Update: {
@@ -288,7 +287,15 @@ export type Database = {
                     steps?: number;
                     user_id?: string;
                 };
-                Relationships: [];
+                Relationships: [
+                    {
+                        foreignKeyName: 'steps_log_user_id_fkey';
+                        columns: ['user_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'users';
+                        referencedColumns: ['id'];
+                    },
+                ];
             };
             water_log: {
                 Row: {
@@ -297,7 +304,6 @@ export type Database = {
                     glasses: number;
                     id: string;
                     ml: number;
-                    updated_at: string | null;
                     user_id: string;
                 };
                 Insert: {
@@ -306,7 +312,6 @@ export type Database = {
                     glasses?: number;
                     id?: string;
                     ml?: number;
-                    updated_at?: string | null;
                     user_id: string;
                 };
                 Update: {
@@ -315,67 +320,49 @@ export type Database = {
                     glasses?: number;
                     id?: string;
                     ml?: number;
-                    updated_at?: string | null;
                     user_id?: string;
                 };
-                Relationships: [];
-            };
-            weekly_plan: {
-                Row: {
-                    created_at: string | null;
-                    day_of_week: number;
-                    id: string;
-                    intensity: string | null;
-                    updated_at: string | null;
-                    user_id: string;
-                    workout_name: string | null;
-                    workout_type: string;
-                };
-                Insert: {
-                    created_at?: string | null;
-                    day_of_week: number;
-                    id?: string;
-                    intensity?: string | null;
-                    updated_at?: string | null;
-                    user_id: string;
-                    workout_name?: string | null;
-                    workout_type: string;
-                };
-                Update: {
-                    created_at?: string | null;
-                    day_of_week?: number;
-                    id?: string;
-                    intensity?: string | null;
-                    updated_at?: string | null;
-                    user_id?: string;
-                    workout_name?: string | null;
-                    workout_type?: string;
-                };
-                Relationships: [];
+                Relationships: [
+                    {
+                        foreignKeyName: 'water_log_user_id_fkey';
+                        columns: ['user_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'users';
+                        referencedColumns: ['id'];
+                    },
+                ];
             };
             weight_history: {
                 Row: {
                     created_at: string | null;
                     date: string;
                     id: string;
-                    weight: number;
                     user_id: string;
+                    weight: number;
                 };
                 Insert: {
                     created_at?: string | null;
                     date: string;
                     id?: string;
-                    weight: number;
                     user_id: string;
+                    weight: number;
                 };
                 Update: {
                     created_at?: string | null;
                     date?: string;
                     id?: string;
-                    weight?: number;
                     user_id?: string;
+                    weight?: number;
                 };
-                Relationships: [];
+                Relationships: [
+                    {
+                        foreignKeyName: 'weight_history_user_id_fkey';
+                        columns: ['user_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'users';
+                        referencedColumns: ['id'];
+                    },
+                ];
             };
             workouts: {
                 Row: {
@@ -383,7 +370,7 @@ export type Database = {
                     created_at: string | null;
                     date: string;
                     duration: number;
-                    exercises: Json;
+                    exercises: Json | null;
                     id: string;
                     name: string;
                     notes: string | null;
@@ -397,7 +384,7 @@ export type Database = {
                     created_at?: string | null;
                     date: string;
                     duration?: number;
-                    exercises?: Json;
+                    exercises?: Json | null;
                     id?: string;
                     name: string;
                     notes?: string | null;
@@ -411,7 +398,7 @@ export type Database = {
                     created_at?: string | null;
                     date?: string;
                     duration?: number;
-                    exercises?: Json;
+                    exercises?: Json | null;
                     id?: string;
                     name?: string;
                     notes?: string | null;
@@ -420,7 +407,15 @@ export type Database = {
                     user_id?: string;
                     volume?: number | null;
                 };
-                Relationships: [];
+                Relationships: [
+                    {
+                        foreignKeyName: 'workouts_user_id_fkey';
+                        columns: ['user_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'users';
+                        referencedColumns: ['id'];
+                    },
+                ];
             };
         };
         Views: {
@@ -438,39 +433,105 @@ export type Database = {
     };
 };
 
-type PublicSchema = Database[Extract<keyof Database, 'public'>];
+type PublicSchema = Database['public'];
 
 export type Tables<
-    PublicTableNameOrOptions extends keyof (Database['public']['Tables'] &
-        Database['public']['Views']),
-> = (Database['public']['Tables'] &
-    Database['public']['Views'])[PublicTableNameOrOptions] extends {
-    Row: infer R;
-}
-    ? R
-    : never;
+    PublicTableNameOrOptions extends
+        | keyof (PublicSchema['Tables'] & PublicSchema['Views'])
+        | { schema: keyof Database },
+    TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+        ? keyof (Database[PublicTableNameOrOptions['schema']]['Tables'] &
+              Database[PublicTableNameOrOptions['schema']]['Views'])
+        : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+    ? (Database[PublicTableNameOrOptions['schema']]['Tables'] &
+          Database[PublicTableNameOrOptions['schema']]['Views'])[TableName] extends {
+          Row: infer R;
+      }
+        ? R
+        : never
+    : PublicTableNameOrOptions extends keyof (PublicSchema['Tables'] &
+            PublicSchema['Views'])
+      ? (PublicSchema['Tables'] &
+            PublicSchema['Views'])[PublicTableNameOrOptions] extends {
+            Row: infer R;
+        }
+          ? R
+          : never
+      : never;
 
 export type TablesInsert<
-    PublicTableNameOrOptions extends keyof Database['public']['Tables'],
-> = Database['public']['Tables'][PublicTableNameOrOptions] extends {
-    Insert: infer I;
-}
-    ? I
-    : never;
+    PublicTableNameOrOptions extends
+        | keyof PublicSchema['Tables']
+        | { schema: keyof Database },
+    TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+        ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
+        : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+    ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
+          Insert: infer I;
+      }
+        ? I
+        : never
+    : PublicTableNameOrOptions extends keyof PublicSchema['Tables']
+      ? PublicSchema['Tables'][PublicTableNameOrOptions] extends {
+            Insert: infer I;
+        }
+          ? I
+          : never
+      : never;
 
 export type TablesUpdate<
-    PublicTableNameOrOptions extends keyof Database['public']['Tables'],
-> = Database['public']['Tables'][PublicTableNameOrOptions] extends {
-    Update: infer U;
-}
-    ? U
-    : never;
+    PublicTableNameOrOptions extends
+        | keyof PublicSchema['Tables']
+        | { schema: keyof Database },
+    TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+        ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
+        : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+    ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
+          Update: infer U;
+      }
+        ? U
+        : never
+    : PublicTableNameOrOptions extends keyof PublicSchema['Tables']
+      ? PublicSchema['Tables'][PublicTableNameOrOptions] extends {
+            Update: infer U;
+        }
+          ? U
+          : never
+      : never;
 
 export type Enums<
-    PublicEnumNameOrOptions extends keyof Database['public']['Enums'],
-> = Database['public']['Enums'][PublicEnumNameOrOptions];
+    PublicEnumNameOrOptions extends
+        | keyof PublicSchema['Enums']
+        | { schema: keyof Database },
+    EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
+        ? keyof Database[PublicEnumNameOrOptions['schema']]['Enums']
+        : never = never,
+> = PublicEnumNameOrOptions extends { schema: keyof Database }
+    ? Database[PublicEnumNameOrOptions['schema']]['Enums'][EnumName]
+    : PublicEnumNameOrOptions extends keyof PublicSchema['Enums']
+      ? PublicSchema['Enums'][PublicEnumNameOrOptions]
+      : never;
 
 export type CompositeTypes<
     PublicCompositeTypeNameOrOptions extends
-        keyof Database['public']['CompositeTypes'],
-> = Database['public']['CompositeTypes'][PublicCompositeTypeNameOrOptions];
+        | keyof PublicSchema['CompositeTypes']
+        | { schema: keyof Database },
+    CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+        schema: keyof Database;
+    }
+        ? keyof Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+        : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+    ? Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+    : PublicCompositeTypeNameOrOptions extends keyof PublicSchema['CompositeTypes']
+      ? PublicSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+      : never;
+
+export const Constants = {
+    public: {
+        Enums: {},
+    },
+} as const;
