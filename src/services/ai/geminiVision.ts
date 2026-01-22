@@ -10,7 +10,7 @@ const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
 export const getGeminiVisionModel = (): GenerativeModel => {
     return genAI.getGenerativeModel({
-        model: 'gemini-1.5-pro',
+        model: 'gemini-3-pro-preview',
         systemInstruction: SYSTEM_PROMPT,
         generationConfig: {
             responseMimeType: 'application/json',

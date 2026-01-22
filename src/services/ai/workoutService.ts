@@ -7,7 +7,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
-const MODEL_NAME = 'gemini-1.5-pro'; // Pro for better extraction reasoning
+const MODEL_NAME = 'gemini-3-pro-preview'; // Pro for better extraction reasoning
 
 const SYSTEM_PROMPT = `Act as a Fitness Data Parser specialized in the Gravl app.
 I will provide 1 to 3 screenshots of a single gym session.
