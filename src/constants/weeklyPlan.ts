@@ -24,7 +24,7 @@ export interface PlannedWorkout {
 export const DEFAULT_WEEKLY_PLAN: Record<number, PlannedWorkout> = {
     0: { type: 'gym', name: 'Upper Body', intensity: INTENSITY.MODERATE }, // Lunes
     2: { type: 'sport', name: 'Tenis', intensity: INTENSITY.HIGH }, // Miércoles
-    3: { type: 'gym', name: 'Piernas', intensity: INTENSITY.HIGH }, // Jueves
+    3: { type: 'gym', name: 'Piernas', intensity: INTENSITY.MODERATE }, // Jueves
     5: { type: 'gym', name: 'Full Body', intensity: INTENSITY.MODERATE }, // Sábado
     // 1, 4, 6 are rest days (recovery by default)
 };

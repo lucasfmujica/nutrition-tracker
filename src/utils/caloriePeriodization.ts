@@ -53,8 +53,6 @@ export const getDayIntensity = (
                 type === 'tennis' ||
                 name.includes('tennis') ||
                 name.includes('tenis') ||
-                name.includes('pierna') ||
-                name.includes('leg') ||
                 name.includes('murph') ||
                 name.includes('futbol') ||
                 name.includes('fútbol') ||

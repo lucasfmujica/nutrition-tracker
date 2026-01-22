@@ -71,12 +71,7 @@ export const useAdaptiveCalories = (
                 w.type === 'tennis' ||
                 w.name?.toLowerCase().includes('tennis'),
         );
-        const hasHighIntensityGym = todayWorkouts.some(
-            (w) =>
-                w.type === 'gym' &&
-                (w.name?.toLowerCase().includes('leg') ||
-                    w.name?.toLowerCase().includes('pierna')),
-        );
+        const hasHighIntensityGym = false; // Standardized gym days to moderate intensity
 
         // 3. Determine if boost applies
         const isTrainingDay = isHighSteps || hasTennis || hasHighIntensityGym;
@@ -107,8 +102,7 @@ export const useAdaptiveCalories = (
         if (isTrainingDay) {
             const reasons: string[] = [];
             if (hasTennis) reasons.push('Partido de Tenis');
-            if (hasHighIntensityGym) reasons.push('Día de Piernas');
-            if (isHighSteps && !hasTennis && !hasHighIntensityGym) {
+            if (isHighSteps && !hasTennis) {
                 reasons.push(`${todaySteps.toLocaleString()} pasos`);
             }
             boostReason = reasons.join(' + ') || 'Día de Entreno';
