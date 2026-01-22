@@ -47,12 +47,12 @@ export function useActivityData(
                 'fetchWorkouts',
             );
 
-            if (error) {
-                console.error('Error fetching workouts:', error);
+            if (error || !data) {
+                if (error) console.error('Error fetching workouts:', error);
                 return [];
             }
 
-            return data.map(mappers.workoutFromDb);
+            return Array.isArray(data) ? data.map(mappers.workoutFromDb) : [];
         } catch (err) {
             console.error('fetchWorkouts failed:', err);
             return [];
@@ -162,12 +162,12 @@ export function useActivityData(
                 'fetchStepsLog',
             );
 
-            if (error) {
-                console.error('Error fetching steps:', error);
+            if (error || !data) {
+                if (error) console.error('Error fetching steps:', error);
                 return [];
             }
 
-            return data.map(mappers.stepsFromDb);
+            return Array.isArray(data) ? data.map(mappers.stepsFromDb) : [];
         } catch (err) {
             console.error('fetchStepsLog failed:', err);
             return [];
@@ -240,12 +240,12 @@ export function useActivityData(
                 'fetchOuraLog',
             );
 
-            if (error) {
-                console.error('Error fetching oura log:', error);
+            if (error || !data) {
+                if (error) console.error('Error fetching oura log:', error);
                 return [];
             }
 
-            return data.map(mappers.ouraFromDb);
+            return Array.isArray(data) ? data.map(mappers.ouraFromDb) : [];
         } catch (err) {
             console.error('fetchOuraLog failed:', err);
             return [];

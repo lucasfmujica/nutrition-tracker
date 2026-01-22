@@ -1,3 +1,4 @@
+import { PlannedWorkout } from '../constants/weeklyPlan';
 import { Workout } from '../types/domain';
 
 export const INTENSITY = {
@@ -15,47 +16,80 @@ export const CALORIE_ADJUSTMENTS: Record<Intensity, number> = {
 };
 
 /**
- * Determines the intensity level for a given date based on workout logs.
+ * Determines the intensity level for a given date based on workout logs or weekly plan.
  * @param {string} date - YYYY-MM-DD
- * @param {Array} workoutLog - List of workout entries
+ * @param {Workout[] | null} workoutLog - List of workout entries
+ * @param {Record<number, PlannedWorkout | null>} weeklyPlan - User's custom plan
  * @returns {Intensity} Intensity level (high, moderate, recovery)
  */
 export const getDayIntensity = (
     date: string,
     workoutLog: Workout[] | null,
+    weeklyPlan: Record<number, PlannedWorkout | null> = {},
 ): Intensity => {
-    if (!workoutLog || !Array.isArray(workoutLog)) return INTENSITY.RECOVERY;
+    // Normalize input date string
+    const targetDate = date.split('T')[0];
 
-    const dayWorkouts = workoutLog.filter((w) => w.date === date);
+    // 1. Check logged workouts first (Real data overrides plan)
+    const dayWorkouts =
+        workoutLog?.filter((w) => {
+            if (!w.date) return false;
+            return w.date.split('T')[0] === targetDate;
+        }) || [];
 
-    if (dayWorkouts.length === 0) return INTENSITY.RECOVERY;
+    if (dayWorkouts.length > 0) {
+        // If there are logs, we default to MODERATE (standard training)
+        // unless we find a HIGH intensity signal.
+        let intensity: Intensity = INTENSITY.MODERATE;
 
-    // Check for HIGH intensity signal
-    for (const workout of dayWorkouts) {
-        const name = (workout.name || '').toLowerCase();
-        const type = workout.type;
+        for (const workout of dayWorkouts) {
+            const name = (workout.name || '').toLowerCase();
+            const type = (workout as any).type || '';
+            const workoutIntensity = (workout as any).intensity;
 
-        // HIGH: Sport, Tennis, Leg Day, Murph, CrossFit, Cardio Intense
-        if (
-            type === 'sport' ||
-            name.includes('tennis') ||
-            name.includes('tenis') || // Spanish spelling
-            name.includes('pierna') ||
-            name.includes('leg') ||
-            name.includes('murph') ||
-            name.includes('futbol') || // Soccer
-            name.includes('fútbol') ||
-            name.includes('partido') ||
-            name.includes('crossfit') ||
-            name.includes('correr') || // Running
-            name.includes('running')
-        ) {
-            return INTENSITY.HIGH;
+            // HIGH: Sport, Tennis, Leg Day, Murph, CrossFit, Cardio Intense
+            const isHighIntensity =
+                type === 'sport' ||
+                type === 'tennis' ||
+                name.includes('tennis') ||
+                name.includes('tenis') ||
+                name.includes('pierna') ||
+                name.includes('leg') ||
+                name.includes('murph') ||
+                name.includes('futbol') ||
+                name.includes('fútbol') ||
+                name.includes('partido') ||
+                name.includes('crossfit') ||
+                name.includes('correr') ||
+                name.includes('running') ||
+                name.includes('hiit') ||
+                name.includes('tabata') ||
+                workoutIntensity === INTENSITY.HIGH;
+
+            if (isHighIntensity) {
+                return INTENSITY.HIGH;
+            }
         }
+        // If we have any workout but none matched HIGH, it stays MODERATE
+        return intensity;
     }
 
-    // If we found workouts but none were High intensity, default to Moderate
-    return INTENSITY.MODERATE;
+    // 2. Fallback to Weekly Plan if no workouts logged
+    const dayDate = new Date(targetDate + 'T12:00:00');
+    const dayOfWeek = dayDate.getDay(); // 0-6 (Sun-Sat)
+    // Map JS Sunday=0 to our Monday=0?
+    // In our app (dateUtils.ts), Monday=0, Sunday=6.
+    // getArgentinaDay returns Monday=1, Sunday=0? No.
+    // Let's use getArgentinaDay style logic.
+    const dayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Mon=0, Sun=6
+
+    const plannedWorkout = weeklyPlan[dayIndex];
+    if (plannedWorkout) {
+        return plannedWorkout.intensity || INTENSITY.MODERATE;
+    }
+
+    // 3. Absolute fallback: RECOVERY (Rest Day)
+    return INTENSITY.RECOVERY;
 };
 
 interface BaseTargets {
@@ -63,22 +97,24 @@ interface BaseTargets {
     protein: number;
     carbs: number;
     fat: number;
-    [key: string]: any; // Allow other properties
+    [key: string]: any;
 }
 
 /**
  * Calculates partial nutrition targets for a specific date.
  * @param {string} date - YYYY-MM-DD
- * @param {Array} workoutLog - List of workout entries
- * @param {Object} baseTargets - User's base custom targets { calories, protein, ... }
+ * @param {Workout[] | null} workoutLog - List of workout entries
+ * @param {Object} baseTargets - User's base custom targets
+ * @param {Record<number, PlannedWorkout | null>} weeklyPlan - User's custom plan
  * @returns {Object} Adjusted targets for that day
  */
 export const getSmartTargets = (
     date: string,
     workoutLog: Workout[] | null,
     baseTargets: BaseTargets,
+    weeklyPlan: Record<number, PlannedWorkout | null> = {},
 ): BaseTargets => {
-    const intensity = getDayIntensity(date, workoutLog);
+    const intensity = getDayIntensity(date, workoutLog, weeklyPlan);
     const adjustment = CALORIE_ADJUSTMENTS[intensity];
 
     const safeBase = baseTargets || {
@@ -91,9 +127,5 @@ export const getSmartTargets = (
     return {
         ...safeBase,
         calories: (Number(safeBase.calories) || 2100) + adjustment,
-        // We can add macro adjustments here if needed (e.g. more carbs on high days)
-        // For now keeping protein static as requested in "Safety Net" discussions,
-        // unless we want to vary carbs? periodization implied carb cycling usually.
-        // Keeping it simple to calories for now to match user request.
     };
 };

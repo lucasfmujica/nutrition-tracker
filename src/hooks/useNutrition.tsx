@@ -16,6 +16,7 @@ export const useNutrition = (
     safetyNetGetTargets: ((date: string) => CustomTargets | null) | null = null,
     shouldTagAsSafetyNetDay: ((date: string) => boolean) | null = null,
     workoutLog: Workout[] = [], // New prop for smart targeting
+    weeklyPlan: Record<number, any> = {}, // Added plan support
 ) => {
     const [foodLog, setFoodLog] = useState<FoodEntry[]>([]);
     const [waterLog, setWaterLog] = useState<WaterEntry[]>([]);
@@ -89,17 +90,20 @@ export const useNutrition = (
             // Priority 1: Check Safety Net mode (overrides everything)
             if (safetyNetGetTargets) {
                 const safetyNetTargets = safetyNetGetTargets(date);
-                // If safety net is active (returns non-null), use it
                 if (safetyNetTargets) {
                     return safetyNetTargets;
                 }
             }
 
-            // Priority 2: Smart Periodization (replaces simple Training Day logic)
-            // Uses workout intensity to determine specific calorie bonus
-            return getSmartTargets(date, workoutLog, customTargets) as CustomTargets;
+            // Priority 2: Smart Periodization (Plan aware)
+            return getSmartTargets(
+                date,
+                workoutLog,
+                customTargets,
+                weeklyPlan,
+            ) as CustomTargets;
         },
-        [customTargets, workoutLog, safetyNetGetTargets],
+        [customTargets, workoutLog, safetyNetGetTargets, weeklyPlan],
     );
 
     const isDayCompleted = useCallback(

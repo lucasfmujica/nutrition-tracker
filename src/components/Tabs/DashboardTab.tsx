@@ -97,6 +97,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         toggleSafetyNet,
         getStatusMessage,
         mealTemplates,
+        weeklyPlan,
     } = useTracker() as any;
 
     // Pattern Recognition Engine
@@ -125,9 +126,6 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
 
     // Plateau Detection Engine
     const plateauData = usePlateauDetector(weightHistory, customTargets);
-
-    // User's Custom Weekly Plan
-    const { plan: weeklyPlan } = useWeeklyPlan();
 
     // Weekly Periodization Engine
     const weeklyPeriodization = useWeeklyPeriodization(

@@ -5,6 +5,7 @@ import {
     PlannedWorkout,
 } from '../constants/weeklyPlan';
 import { CustomTargets, FoodEntry, Profile, Workout } from '../types/domain';
+import { getDayIntensity, getSmartTargets } from '../utils/caloriePeriodization';
 import {
     addDaysToDate,
     getArgentinaDateString,
@@ -90,74 +91,45 @@ export const useWeeklyPeriodization = (
         // Build week days (Mon-Sun)
         const weekDays = Array.from({ length: 7 }, (_, i) => {
             const date = addDaysToDate(monday, i);
+
+            // Get Intensity using the unified logic (Log with Plan fallback)
+            const intensity = getDayIntensity(date, workoutLog, weeklyPlan);
+
+            // Fetch day's workouts (logged or planned)
             let dayWorkouts: (Workout | PlannedWorkout)[] =
                 workoutLog?.filter((w) => w.date === date) || [];
 
-            // Fallback: Use user's custom plan or default plan if no workouts logged
-            if (dayWorkouts.length === 0) {
-                // Priority 1: User's custom plan from Supabase
-                // Priority 2: Default plan constant
-                const plannedWorkout = weeklyPlan[i] || DEFAULT_WEEKLY_PLAN[i];
+            if (dayWorkouts.length === 0 && weeklyPlan[i]) {
+                const plannedWorkout = weeklyPlan[i];
                 if (plannedWorkout) {
-                    dayWorkouts = [plannedWorkout]; // Use as virtual workout
+                    dayWorkouts = [plannedWorkout];
                 }
+            } else if (dayWorkouts.length === 0 && DEFAULT_WEEKLY_PLAN[i]) {
+                dayWorkouts = [DEFAULT_WEEKLY_PLAN[i]];
             }
 
             // Safety Net Check
-            // Check if day is logged as safety net day in food log
             const isSafetyNetDay = foodLog?.some(
                 (f) =>
                     f.date === date &&
                     (f.is_safety_net_day || f.sourceId === 'safety-net'),
             );
 
-            // Determine intensity based on workouts
-            let intensity: Intensity = INTENSITY.RECOVERY;
+            // Calculate calories using updated logic
+            const targets = getSmartTargets(
+                date,
+                workoutLog,
+                customTargets,
+                weeklyPlan,
+            );
 
-            for (const workout of dayWorkouts) {
-                const name = (workout.name || '').toLowerCase();
-                const type = (workout as any).type;
-                const workoutIntensity = (workout as any).intensity;
-
-                // HIGH: Tennis, Leg Day, or explicitly high intensity
-                if (
-                    type === 'sport' ||
-                    type === 'tennis' ||
-                    name.includes('tennis') ||
-                    name.includes('tenis') ||
-                    name.includes('pierna') ||
-                    name.includes('leg') ||
-                    workoutIntensity === INTENSITY.HIGH
-                ) {
-                    intensity = INTENSITY.HIGH;
-                    break;
-                }
-
-                // MODERATE: Any gym, cardio, or other activity
-                if (
-                    type === 'gym' ||
-                    type === 'cardio' ||
-                    type === 'other' ||
-                    workoutIntensity === INTENSITY.MODERATE ||
-                    name.length > 2 // Any actual activity log
-                ) {
-                    intensity = INTENSITY.MODERATE;
-                    // Don't break - might find HIGH later
-                }
-            }
-
-            const calorieAdjustment = CALORIE_ADJUSTMENTS[intensity];
-
-            // If Safety Net day, use TDEE (Maintenance) instead of calculated deficit
-            // TDEE ≈ baseCalories + 500
+            // If Safety Net day, use TDEE (Maintenance)
             const tdee = profile?.tdee || baseCalories + 500;
-            const dayCalories = isSafetyNetDay
-                ? tdee
-                : baseCalories + calorieAdjustment;
+            const dayCalories = isSafetyNetDay ? tdee : targets.calories;
 
             return {
                 date,
-                dayOfWeek: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][i],
+                dayOfWeek: ['Lum', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][i],
                 intensity,
                 calories: dayCalories,
                 workouts: dayWorkouts.map((w) => w.name),

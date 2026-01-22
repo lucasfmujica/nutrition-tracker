@@ -20,6 +20,7 @@ import { useTrackerActions } from '../hooks/useTrackerActions';
 import { useTrackerAnalytics } from '../hooks/useTrackerAnalytics';
 import { useTrackerSync } from '../hooks/useTrackerSync';
 import { useTrackerUIState } from '../hooks/useTrackerUIState';
+import { useWeeklyPlan } from '../hooks/useWeeklyPlan';
 import { useWeightEditing } from '../hooks/useWeightEditing';
 import { useWorkoutEntry } from '../hooks/useWorkoutEntry';
 import { useWorkouts } from '../hooks/useWorkouts';
@@ -54,6 +55,7 @@ export type TrackerContextType = ReturnType<typeof useTrackerSync> &
             entries: any[];
         };
         addStepsEntry: () => void;
+        weeklyPlan: any; // Add weeklyPlan to context type
     };
 
 const TrackerContext = createContext<TrackerContextType | null>(null);
@@ -82,6 +84,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
     // 2. Core Domains - all use the same useCloud
     const workouts = useWorkouts(supabase, useCloud);
     const biometrics = useBiometrics(supabase, useCloud);
+    const weeklyPlanHook = useWeeklyPlan();
 
     // 3. Modo Escudo (Safety Net)
     const safetyNet = useSafetyNet(
@@ -99,6 +102,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         safetyNet.getSafetyNetTargetsForDate,
         safetyNet.shouldTagAsSafetyNetDay,
         workouts.workoutLog,
+        weeklyPlanHook.plan, // Pass plan to nutrition
     );
 
     // 5. Weight Editing (extracted hook)
@@ -339,6 +343,10 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
             getWaterForDate: getWaterDataForDate,
             addStepsEntry,
 
+            // Weekly Plan
+            ...weeklyPlanHook,
+            weeklyPlan: weeklyPlanHook.plan, // Alias for backward compatibility if needed
+
             // Supabase
             supabase,
         }),
@@ -364,6 +372,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
             supabase,
             changeDate,
             addStepsEntry,
+            weeklyPlanHook,
         ],
     );
 

@@ -34,12 +34,12 @@ export function useTemplateData(
                 'fetchTemplates',
             );
 
-            if (error) {
-                console.error('Error fetching templates:', error);
+            if (error || !data) {
+                if (error) console.error('Error fetching templates:', error);
                 return [];
             }
 
-            return data.map(mappers.templateFromDb);
+            return Array.isArray(data) ? data.map(mappers.templateFromDb) : [];
         } catch (err) {
             console.error('fetchTemplates failed:', err);
             return [];

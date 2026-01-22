@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useState } from 'react';
 
 /**
  * Classifies errors to determine if retry is appropriate
@@ -77,9 +77,9 @@ export interface UseSupabaseOperationReturn {
         timeoutMs?: number,
         operationName?: string,
     ) => Promise<T>;
-    setSyncStatus: React.Dispatch<React.SetStateAction<SyncStatus>>;
-    setSyncError: React.Dispatch<React.SetStateAction<string | null>>;
-    setLastSyncTime: React.Dispatch<React.SetStateAction<Date | null>>;
+    setSyncStatus: Dispatch<SetStateAction<SyncStatus>>;
+    setSyncError: Dispatch<SetStateAction<string | null>>;
+    setLastSyncTime: Dispatch<SetStateAction<Date | null>>;
 }
 
 /**
