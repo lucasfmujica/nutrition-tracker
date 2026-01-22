@@ -7,9 +7,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
-// Use Gemini 1.5 Pro (or 3.0 preview if available) for best reasoning
-// Fallback to 1.5-pro if 3-pro-preview is not available or unstable
-const MODEL_NAME = 'gemini-1.5-pro'; // standardizing
+const MODEL_NAME = 'gemini-1.5-flash'; // Flash is balanced for OCR tasks like this
 
 const SYSTEM_PROMPT = `Act as a Fitness Data Parser specialized in the Gravl app.
 I will provide 1 to 3 screenshots of a single gym session.
@@ -90,24 +88,27 @@ export const analyzeWorkoutImages = async (
     imageFiles: File[],
 ): Promise<WorkoutParsed> => {
     try {
-        const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+        const model = genAI.getGenerativeModel({
+            model: MODEL_NAME,
+            systemInstruction: SYSTEM_PROMPT,
+            generationConfig: {
+                responseMimeType: 'application/json',
+            },
+        });
 
         const imageParts = await Promise.all(
             imageFiles.map((file) => fileToGenerativePart(file)),
         );
 
-        const result = await model.generateContent([SYSTEM_PROMPT, ...imageParts]);
+        const result = await model.generateContent([
+            'Extrae los datos de entrenamiento de estas capturas de Gravl.',
+            ...imageParts,
+        ]);
 
         const response = await result.response;
         const text = response.text();
 
-        // Clean markdown if present
-        const jsonStr = text
-            .replace(/```json/g, '')
-            .replace(/```/g, '')
-            .trim();
-
-        return JSON.parse(jsonStr);
+        return JSON.parse(text);
     } catch (error) {
         console.error('Error analyzing workout images:', error);
         throw new Error('Failed to analyze workout images. Please try again.');

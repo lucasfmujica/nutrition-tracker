@@ -5,7 +5,7 @@
  */
 
 import { useState } from 'react';
-import { getGeminiVisionModel, SYSTEM_PROMPT } from '../services/ai/geminiVision';
+import { getGeminiVisionModel } from '../services/ai/geminiVision';
 
 export interface FoodAnalysisItem {
     id: string;
@@ -80,12 +80,17 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
                 },
             };
 
-            // Generate content with system instruction and image
+            // Generate content with image (prompt is now in systemInstruction)
             const response = await model.generateContent({
                 contents: [
                     {
                         role: 'user',
-                        parts: [{ text: SYSTEM_PROMPT }, imagePart],
+                        parts: [
+                            {
+                                text: 'Describe la comida en la imagen y calcula sus macros.',
+                            },
+                            imagePart,
+                        ],
                     },
                 ],
             });
@@ -93,23 +98,20 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
             // Get response text
             const responseText = response.response.text();
 
-            // Strip markdown code fences if present (```json ... ```)
-            const cleanedText = responseText
-                .replace(/```json\s*/g, '')
-                .replace(/```\s*/g, '')
-                .trim();
-
             // Parse JSON response
-            const parsedResult = JSON.parse(cleanedText) as FoodAnalysisResult;
+            const parsedResult = JSON.parse(responseText) as FoodAnalysisResult;
 
-            // Validate response structure
-            if (
-                !parsedResult.meal_detected ||
-                !parsedResult.items ||
-                !parsedResult.total_macros
-            ) {
+            // Handle case where no meal is detected
+            if (!parsedResult.meal_detected) {
                 throw new Error(
-                    'Respuesta de IA incompleta. Por favor, intenta con otra imagen.',
+                    'No se pudo detectar comida en la imagen. Intenta con una foto más clara.',
+                );
+            }
+
+            // Validate response essentials
+            if (!parsedResult.items || !parsedResult.total_macros) {
+                throw new Error(
+                    'La IA no pudo calcular los macros correctamente. Intenta de nuevo.',
                 );
             }
 

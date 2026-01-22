@@ -9,7 +9,13 @@ import { GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
 export const getGeminiVisionModel = (): GenerativeModel => {
-    return genAI.getGenerativeModel({ model: 'gemini-1.5-pro' }); // Fallback to 1.5-pro as standard, user code says 3-pro-preview but typically that's alpha
+    return genAI.getGenerativeModel({
+        model: 'gemini-1.5-flash',
+        systemInstruction: SYSTEM_PROMPT,
+        generationConfig: {
+            responseMimeType: 'application/json',
+        },
+    });
 };
 
 export const SYSTEM_PROMPT = `Act as an Expert Nutritionist specialized in Argentine cuisine and a Vision-to-JSON parser.
@@ -43,5 +49,29 @@ CALORIC REFERENCE (use these as anchors):
 - Batata 150g al horno: 135 kcal, 2g P, 32g C, 0g F
 - Buñuelo de espinaca 1 unidad (60g): 110 kcal, 5g P, 8g C, 6g F
 
-OUTPUT FORMAT (strict JSON, no markdown, no code blocks):
-{"meal_detected":"string","items":[{"name":"string","portion":"string","calories":number}],"total_macros":{"calories":number,"protein":number,"carbs":number,"fat":number,"fiber":number}}`;
+OUTPUT FORMAT (JSON):
+{
+  "meal_detected": boolean,
+  "meal_name": "string (Short name in Spanish)",
+  "description": "string (Short summary of ingredients)",
+  "items": [
+    {
+      "id": "string (random small id)",
+      "name": "string (Spanish item name)",
+      "amount": "string (e.g. 180g, 2 unidades)",
+      "calories": number,
+      "protein": number,
+      "carbs": number,
+      "fat": number,
+      "fiber": number
+    }
+  ],
+  "total_macros": {
+    "calories": number,
+    "protein": number,
+    "carbs": number,
+    "fat": number,
+    "fiber": number
+  },
+  "confidence": number (0 to 1)
+}`;
