@@ -1,0 +1,522 @@
+src/components/Charts/WeightLineChart.tsx(31,34): error TS2339: Property 'payload' does not exist on type 'TooltipProps<number, string>'.
+src/components/Charts/WeightLineChart.tsx(31,43): error TS2339: Property 'label' does not exist on type 'TooltipProps<number, string>'.
+src/components/Charts/WeightLineChart.tsx(36,31): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/components/Charts/WeightLineChart.tsx(36,38): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/components/Charts/WeightProjectionChart.tsx(53,34): error TS2339: Property 'payload' does not exist on type 'TooltipProps<number, string>'.
+src/components/Charts/WeightProjectionChart.tsx(53,43): error TS2339: Property 'label' does not exist on type 'TooltipProps<number, string>'.
+src/components/Charts/WeightProjectionChart.tsx(60,18): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/components/Charts/WeightProjectionChart.tsx(60,25): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/components/Food/FoodCameraInput.tsx(128,33): error TS2345: Argument of type '{ id: string; date: string; time: string; meal: string; name: string; description: string; calories: number; protein: number; carbs: number; fat: number; fiber: number; source: string; }' is not assignable to parameter of type 'FoodEntry'.
+  Type '{ id: string; date: string; time: string; meal: string; name: string; description: string; calories: number; protein: number; carbs: number; fat: number; fiber: number; source: string; }' is missing the following properties from type 'FoodEntry': reviewed, confidence, sourceId
+src/components/layout/Shell/AuthShell.tsx(101,17): error TS2322: Type '{ onComplete: (profileData: any) => Promise<void>; userEmail: any; }' is not assignable to type 'IntrinsicAttributes & OnboardingWizardProps'.
+  Property 'userEmail' does not exist on type 'IntrinsicAttributes & OnboardingWizardProps'.
+src/components/Modals/FoodFormModal.tsx(60,61): error TS2322: Type 'string' is not assignable to type '"Desayuno" | "Almuerzo" | "Merienda" | "Cena" | "Snack" | "Pre-entreno" | "Post-entreno" | undefined'.
+src/components/Modals/FoodFormModal.tsx(76,33): error TS2322: Type 'string | null | undefined' is not assignable to type 'string | number | readonly string[] | undefined'.
+  Type 'null' is not assignable to type 'string | number | readonly string[] | undefined'.
+src/components/Modals/FoodFormModal.tsx(108,29): error TS2322: Type 'string | null | undefined' is not assignable to type 'string | number | readonly string[] | undefined'.
+  Type 'null' is not assignable to type 'string | number | readonly string[] | undefined'.
+src/components/Modals/WorkoutFormModal.tsx(134,33): error TS2322: Type 'number | null | undefined' is not assignable to type 'string | number | readonly string[] | undefined'.
+  Type 'null' is not assignable to type 'string | number | readonly string[] | undefined'.
+src/components/Modals/WorkoutFormModal.tsx(154,29): error TS2322: Type 'string | null | undefined' is not assignable to type 'string | number | readonly string[] | undefined'.
+  Type 'null' is not assignable to type 'string | number | readonly string[] | undefined'.
+src/components/Tabs/DashboardTab.tsx(18,10): error TS2614: Module '"../Dashboard/CoachInsight"' has no exported member 'CoachInsight'. Did you mean to use 'import CoachInsight from "../Dashboard/CoachInsight"' instead?
+src/components/Tabs/DashboardTab.tsx(208,56): error TS2339: Property 'tdee' does not exist on type 'Profile'.
+src/components/Tabs/DashboardTab.tsx(251,25): error TS2322: Type '{ steps: number; stepsTarget: number; water: number; waterTarget: number; onAddWater: () => void; onDecrease: () => void; }' is not assignable to type 'IntrinsicAttributes & ActivityCardsProps'.
+  Property 'onDecrease' does not exist on type 'IntrinsicAttributes & ActivityCardsProps'.
+src/components/Tabs/DashboardTab.tsx(271,39): error TS2322: Type '{ isInPlateau: boolean; plateauWeeks: number; suggestion: null; suggestedAction: null; weeklyAverages: { week1: null; week2: null; }; variance: null; } | { isInPlateau: boolean; plateauWeeks: number; suggestion: { ...; } | null; suggestedAction: string | null; weeklyAverages: { ...; }; variance: number; }' is not assignable to type 'PlateauData | null'.
+  Type '{ isInPlateau: boolean; plateauWeeks: number; suggestion: { type: string; message: string; options: { id: string; label: string; description: string; action: { type: string; calories: number; duration: number; }; }[]; } | null; suggestedAction: string | null; weeklyAverages: { ...; }; variance: number; }' is not assignable to type 'PlateauData'.
+    Types of property 'suggestion' are incompatible.
+      Type '{ type: string; message: string; options: { id: string; label: string; description: string; action: { type: string; calories: number; duration: number; }; }[]; } | null' is not assignable to type 'PlateauSuggestion | null'.
+        Type '{ type: string; message: string; options: { id: string; label: string; description: string; action: { type: string; calories: number; duration: number; }; }[]; }' is not assignable to type 'PlateauSuggestion'.
+          Types of property 'options' are incompatible.
+            Type '{ id: string; label: string; description: string; action: { type: string; calories: number; duration: number; }; }[]' is not assignable to type 'PlateauOption[]'.
+              Type '{ id: string; label: string; description: string; action: { type: string; calories: number; duration: number; }; }' is not assignable to type 'PlateauOption'.
+                The types of 'action.type' are incompatible between these types.
+                  Type 'string' is not assignable to type '"refeed" | "deficit"'.
+src/components/Tabs/DashboardTab.tsx(273,41): error TS2322: Type '{ weekDays: { date: string; dayOfWeek: string; intensity: string; calories: any; workouts: any; isPast: boolean; isToday: boolean; isSafetyNet: boolean; }[]; weeklyAverage: number; totalCalories: number; isOnTrack: boolean; dayDistribution: { ...; }; weekStart: string; targetAverage: number; }' is not assignable to type 'Periodization'.
+  Types of property 'weekDays' are incompatible.
+    Type '{ date: string; dayOfWeek: string; intensity: string; calories: any; workouts: any; isPast: boolean; isToday: boolean; isSafetyNet: boolean; }[]' is not assignable to type 'WeekDay[]'.
+      Type '{ date: string; dayOfWeek: string; intensity: string; calories: any; workouts: any; isPast: boolean; isToday: boolean; isSafetyNet: boolean; }' is not assignable to type 'WeekDay'.
+        Types of property 'intensity' are incompatible.
+          Type 'string' is not assignable to type '"moderate" | "high" | "recovery"'.
+src/components/Tabs/DiaryTab.tsx(291,17): error TS2322: Type '{ id: string; name: string; targetGrams: number; consumedGrams: number; progress: number; status: string; timeWindow: string; }[]' is not assignable to type 'ProteinSlot[]'.
+  Type '{ id: string; name: string; targetGrams: number; consumedGrams: number; progress: number; status: string; timeWindow: string; }' is not assignable to type 'ProteinSlot'.
+    Types of property 'status' are incompatible.
+      Type 'string' is not assignable to type '"active" | "pending" | "missed" | "complete" | "partial"'.
+src/components/Tabs/WorkoutsTab.tsx(60,60): error TS2345: Argument of type 'string' is not assignable to parameter of type 'null | undefined'.
+src/context/TrackerContext.tsx(318,34): error TS2322: Type '{ supabase: { user: User | null; loading: boolean; authError: string | null; isAuthenticated: boolean; isSupabaseConfigured: boolean; isOnline: boolean; syncStatus: SyncStatus; ... 30 more ...; onRealtimeUpdate: (table: string, callback: (payload: any) => void) => void; }; ... 154 more ...; handleLogout: () => Promi...' is not assignable to type 'TrackerContextType'.
+  Type '{ supabase: { user: User | null; loading: boolean; authError: string | null; isAuthenticated: boolean; isSupabaseConfigured: boolean; isOnline: boolean; syncStatus: SyncStatus; ... 30 more ...; onRealtimeUpdate: (table: string, callback: (payload: any) => void) => void; }; ... 154 more ...; handleLogout: () => Promi...' is not assignable to type '{ foodLog: FoodEntry[]; setFoodLog: Dispatch<SetStateAction<FoodEntry[]>>; saveFoodLog: (newLog: FoodEntry[]) => Promise<void>; ... 12 more ...; isDayCompleted: (date: string) => boolean; }'.
+    The types returned by 'removeWaterGlass(...)' are incompatible between these types.
+      Type 'Promise<string | null>' is not assignable to type 'Promise<"💧 -1 vaso" | null>'.
+        Type 'string | null' is not assignable to type '"💧 -1 vaso" | null'.
+          Type 'string' is not assignable to type '"💧 -1 vaso"'.
+src/hooks/supabase/useActivityData.ts(41,17): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useActivityData.ts(72,55): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useActivityData.ts(74,37): error TS2345: Argument of type 'Partial<{ id: string; user_id: string; date: string; type: "gym" | "cardio" | "sport" | "other"; name: string; duration: number; calories: number; volume: number | null; exercises: Json; notes: string | null; created_at: string; updated_at: string; }>' is not assignable to parameter of type 'never'.
+src/hooks/supabase/useActivityData.ts(86,55): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useActivityData.ts(130,45): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useActivityData.ts(154,17): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useActivityData.ts(182,51): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useActivityData.ts(184,33): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(values: never, options?: { onConflict?: string | undefined; ignoreDuplicates?: boolean | undefined; count?: "exact" | "planned" | "estimated" | undefined; } | undefined): PostgrestFilterBuilder<{ ...; }, ... 5 more ..., "POST">', gave the following error.
+    Argument of type 'Partial<{ id: string; user_id: string; date: string; steps: number; created_at: string; }>' is not assignable to parameter of type 'never'.
+  Overload 2 of 2, '(values: never[], options?: { onConflict?: string | undefined; ignoreDuplicates?: boolean | undefined; count?: "exact" | "planned" | "estimated" | undefined; defaultToNull?: boolean | undefined; } | undefined): PostgrestFilterBuilder<...>', gave the following error.
+    Argument of type 'Partial<{ id: string; user_id: string; date: string; steps: number; created_at: string; }>' is not assignable to parameter of type 'never[]'.
+      Type 'Partial<{ id: string; user_id: string; date: string; steps: number; created_at: string; }>' is missing the following properties from type 'never[]': length, pop, push, concat, and 28 more.
+src/hooks/supabase/useActivityData.ts(231,17): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useActivityData.ts(259,51): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useActivityData.ts(261,33): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(values: never, options?: { onConflict?: string | undefined; ignoreDuplicates?: boolean | undefined; count?: "exact" | "planned" | "estimated" | undefined; } | undefined): PostgrestFilterBuilder<{ ...; }, ... 5 more ..., "POST">', gave the following error.
+    Argument of type 'Partial<{ id: string; user_id: string; date: string; sleep_score: number | null; readiness_score: number | null; activity_score: number | null; hrv: number | null; resting_hr: number | null; sleep_hours: number | null; deep_sleep_mins: number | null; rem_sleep_mins: number | null; created_at: string; }>' is not assignable to parameter of type 'never'.
+  Overload 2 of 2, '(values: never[], options?: { onConflict?: string | undefined; ignoreDuplicates?: boolean | undefined; count?: "exact" | "planned" | "estimated" | undefined; defaultToNull?: boolean | undefined; } | undefined): PostgrestFilterBuilder<...>', gave the following error.
+    Argument of type 'Partial<{ id: string; user_id: string; date: string; sleep_score: number | null; readiness_score: number | null; activity_score: number | null; hrv: number | null; resting_hr: number | null; sleep_hours: number | null; deep_sleep_mins: number | null; rem_sleep_mins: number | null; created_at: string; }>' is not assignable to parameter of type 'never[]'.
+      Type 'Partial<{ id: string; user_id: string; date: string; sleep_score: number | null; readiness_score: number | null; activity_score: number | null; hrv: number | null; resting_hr: number | null; sleep_hours: number | null; deep_sleep_mins: number | null; rem_sleep_mins: number | null; created_at: string; }>' is missing the following properties from type 'never[]': length, pop, push, concat, and 28 more.
+src/hooks/supabase/useNutritionData.ts(37,17): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useNutritionData.ts(69,55): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useNutritionData.ts(71,37): error TS2345: Argument of type 'Partial<{ id: string; user_id: string; date: string; time: string | null; meal: "Desayuno" | "Almuerzo" | "Merienda" | "Cena" | "Snack" | "Pre-entreno" | "Post-entreno"; name: string; description: string | null; ... 10 more ...; updated_at: string; }>' is not assignable to parameter of type 'never'.
+src/hooks/supabase/useNutritionData.ts(83,55): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useNutritionData.ts(129,45): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useNutritionData.ts(153,17): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useNutritionData.ts(181,51): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useNutritionData.ts(183,33): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(values: never, options?: { onConflict?: string | undefined; ignoreDuplicates?: boolean | undefined; count?: "exact" | "planned" | "estimated" | undefined; } | undefined): PostgrestFilterBuilder<{ ...; }, ... 5 more ..., "POST">', gave the following error.
+    Argument of type 'Partial<{ id: string; user_id: string; date: string; glasses: number; ml: number; created_at: string; updated_at: string; }>' is not assignable to parameter of type 'never'.
+  Overload 2 of 2, '(values: never[], options?: { onConflict?: string | undefined; ignoreDuplicates?: boolean | undefined; count?: "exact" | "planned" | "estimated" | undefined; defaultToNull?: boolean | undefined; } | undefined): PostgrestFilterBuilder<...>', gave the following error.
+    Argument of type 'Partial<{ id: string; user_id: string; date: string; glasses: number; ml: number; created_at: string; updated_at: string; }>' is not assignable to parameter of type 'never[]'.
+      Type 'Partial<{ id: string; user_id: string; date: string; glasses: number; ml: number; created_at: string; updated_at: string; }>' is missing the following properties from type 'never[]': length, pop, push, concat, and 28 more.
+src/hooks/supabase/useProfileData.ts(53,17): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useProfileData.ts(69,29): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useProfileData.ts(109,45): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useProfileData.ts(137,41): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useProfileData.ts(182,43): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useSupabaseAuth.ts(65,43): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useSupabaseAuth.ts(73,54): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useSupabaseAuth.ts(75,22): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(values: never, options?: { count?: "exact" | "planned" | "estimated" | undefined; } | undefined): PostgrestFilterBuilder<{ PostgrestVersion: "12"; }, never, never, null, "profiles", never, "POST">', gave the following error.
+    Argument of type '{ user_id: string; }' is not assignable to parameter of type 'never'.
+  Overload 2 of 2, '(values: never[], options?: { count?: "exact" | "planned" | "estimated" | undefined; defaultToNull?: boolean | undefined; } | undefined): PostgrestFilterBuilder<{ PostgrestVersion: "12"; }, never, never, null, "profiles", never, "POST">', gave the following error.
+    Object literal may only specify known properties, and 'user_id' does not exist in type 'never[]'.
+src/hooks/supabase/useSupabaseAuth.ts(125,9): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useSupabaseAuth.ts(153,13): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useSupabaseAuth.ts(226,17): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useSupabaseAuth.ts(266,17): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useSupabaseAuth.ts(293,43): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useSupabaseAuth.ts(327,17): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useSupabaseAuth.ts(344,22): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useTemplateData.ts(28,17): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useTemplateData.ts(59,55): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useTemplateData.ts(61,37): error TS2345: Argument of type 'Partial<{ id: string; user_id: string; name: string; meal: "Desayuno" | "Almuerzo" | "Merienda" | "Cena" | "Snack" | "Pre-entreno" | "Post-entreno"; description: string | null; calories: number; ... 5 more ...; updated_at: string; }>' is not assignable to parameter of type 'never'.
+src/hooks/supabase/useTemplateData.ts(73,55): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useTemplateData.ts(99,45): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useWeightData.ts(29,17): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useWeightData.ts(57,51): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/supabase/useWeightData.ts(59,33): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(values: never, options?: { onConflict?: string | undefined; ignoreDuplicates?: boolean | undefined; count?: "exact" | "planned" | "estimated" | undefined; } | undefined): PostgrestFilterBuilder<{ ...; }, ... 5 more ..., "POST">', gave the following error.
+    Argument of type 'Partial<{ id: string; user_id: string; date: string; weight: number; created_at: string; }>' is not assignable to parameter of type 'never'.
+  Overload 2 of 2, '(values: never[], options?: { onConflict?: string | undefined; ignoreDuplicates?: boolean | undefined; count?: "exact" | "planned" | "estimated" | undefined; defaultToNull?: boolean | undefined; } | undefined): PostgrestFilterBuilder<...>', gave the following error.
+    Argument of type 'Partial<{ id: string; user_id: string; date: string; weight: number; created_at: string; }>' is not assignable to parameter of type 'never[]'.
+      Type 'Partial<{ id: string; user_id: string; date: string; weight: number; created_at: string; }>' is missing the following properties from type 'never[]': length, pop, push, concat, and 28 more.
+src/hooks/supabase/useWeightData.ts(102,45): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/useAdaptiveCalories.tsx(21,3): error TS7006: Parameter 'stepsLog' implicitly has an 'any' type.
+src/hooks/useAdaptiveCalories.tsx(22,3): error TS7006: Parameter 'workoutLog' implicitly has an 'any' type.
+src/hooks/useAdaptiveCalories.tsx(23,3): error TS7006: Parameter 'profile' implicitly has an 'any' type.
+src/hooks/useAdaptiveCalories.tsx(24,3): error TS7006: Parameter 'customTargets' implicitly has an 'any' type.
+src/hooks/useAdaptiveCalories.tsx(25,3): error TS7006: Parameter 'selectedDate' implicitly has an 'any' type.
+src/hooks/useAdaptiveCalories.tsx(44,39): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/hooks/useAdaptiveCalories.tsx(48,46): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useAdaptiveCalories.tsx(50,7): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useAdaptiveCalories.tsx(53,7): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useAnalytics.tsx(4,30): error TS7006: Parameter 'trackerData' implicitly has an 'any' type.
+src/hooks/useAnalytics.tsx(20,54): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/hooks/useAnalytics.tsx(20,73): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/hooks/useAnalytics.tsx(66,40): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/hooks/useAnalytics.tsx(130,26): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useAnalytics.tsx(156,40): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/hooks/useCorrelationAnalytics.tsx(11,41): error TS7006: Parameter 'foodLog' implicitly has an 'any' type.
+src/hooks/useCorrelationAnalytics.tsx(11,50): error TS7006: Parameter 'workoutLog' implicitly has an 'any' type.
+src/hooks/useCorrelationAnalytics.tsx(11,62): error TS7006: Parameter 'ouraLog' implicitly has an 'any' type.
+src/hooks/useCorrelationAnalytics.tsx(15,21): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/hooks/useCorrelationAnalytics.tsx(23,24): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useCorrelationAnalytics.tsx(32,21): error TS7006: Parameter 'o' implicitly has an 'any' type.
+src/hooks/useCorrelationAnalytics.tsx(42,11): error TS7034: Variable 'fuelData' implicitly has type 'any[]' in some locations where its type cannot be determined.
+src/hooks/useCorrelationAnalytics.tsx(43,11): error TS7034: Variable 'recoveryData' implicitly has type 'any[]' in some locations where its type cannot be determined.
+src/hooks/useCorrelationAnalytics.tsx(48,11): error TS7034: Variable 'disciplineData' implicitly has type 'any[]' in some locations where its type cannot be determined.
+src/hooks/useCorrelationAnalytics.tsx(79,17): error TS7005: Variable 'fuelData' implicitly has an 'any[]' type.
+src/hooks/useCorrelationAnalytics.tsx(80,21): error TS7005: Variable 'recoveryData' implicitly has an 'any[]' type.
+src/hooks/useCorrelationAnalytics.tsx(81,23): error TS7005: Variable 'disciplineData' implicitly has an 'any[]' type.
+src/hooks/useDataOperations.tsx(3,35): error TS7006: Parameter 'trackerData' implicitly has an 'any' type.
+src/hooks/useDataOperations.tsx(19,29): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/hooks/useDataOperations.tsx(38,45): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/hooks/useDataOperations.tsx(68,32): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/hooks/useDataOperations.tsx(85,48): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useDataOperations.tsx(113,24): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/hooks/useDataOperations.tsx(114,32): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/hooks/useDataOperations.tsx(118,27): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/hooks/useDataOperations.tsx(119,35): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useDataOperations.tsx(127,43): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/hooks/useDataOperations.tsx(132,41): error TS7006: Parameter 'meal' implicitly has an 'any' type.
+src/hooks/useDynamicTargets.tsx(21,35): error TS7006: Parameter 'weightAnalytics' implicitly has an 'any' type.
+src/hooks/useDynamicTargets.tsx(21,52): error TS7006: Parameter 'customTargets' implicitly has an 'any' type.
+src/hooks/useDynamicTargets.tsx(21,67): error TS7006: Parameter 'profile' implicitly has an 'any' type.
+src/hooks/useDynamicTargets.tsx(21,76): error TS7006: Parameter 'updateConfig' implicitly has an 'any' type.
+src/hooks/useDynamicTargets.tsx(48,25): error TS2345: Argument of type 'WeeklySummary' is not assignable to parameter of type 'SetStateAction<null>'.
+  Type 'WeeklySummary' provides no match for the signature '(prevState: null): null'.
+src/hooks/useDynamicTargets.tsx(68,40): error TS2339: Property 'proposal' does not exist on type 'never'.
+src/hooks/useDynamicTargets.tsx(70,46): error TS2339: Property 'proposal' does not exist on type 'never'.
+src/hooks/useEffortAnalytics.tsx(15,36): error TS7006: Parameter 'workoutLog' implicitly has an 'any' type.
+src/hooks/useEffortAnalytics.tsx(15,48): error TS7006: Parameter 'ouraLog' implicitly has an 'any' type.
+src/hooks/useEffortAnalytics.tsx(15,57): error TS7006: Parameter 'weightAnalytics' implicitly has an 'any' type.
+src/hooks/useEffortAnalytics.tsx(15,74): error TS7006: Parameter 'selectedDate' implicitly has an 'any' type.
+src/hooks/useEffortAnalytics.tsx(26,29): error TS7006: Parameter 'date' implicitly has an 'any' type.
+src/hooks/useEffortAnalytics.tsx(26,35): error TS7006: Parameter 'log' implicitly has an 'any' type.
+src/hooks/useEffortAnalytics.tsx(27,34): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useEffortAnalytics.tsx(28,30): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/hooks/useEffortAnalytics.tsx(28,37): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useEffortAnalytics.tsx(37,28): error TS7006: Parameter 'date' implicitly has an 'any' type.
+src/hooks/useEffortAnalytics.tsx(37,34): error TS7006: Parameter 'log' implicitly has an 'any' type.
+src/hooks/useEffortAnalytics.tsx(38,23): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useEffortAnalytics.tsx(64,15): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/hooks/useEffortAnalytics.tsx(65,14): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/hooks/useEffortAnalytics.tsx(65,17): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/hooks/useExport.tsx(4,27): error TS7006: Parameter 'trackerData' implicitly has an 'any' type.
+src/hooks/useExport.tsx(4,40): error TS7006: Parameter 'analyticsObject' implicitly has an 'any' type.
+src/hooks/useExport.tsx(4,57): error TS7006: Parameter 'weightAnalytics' implicitly has an 'any' type.
+src/hooks/useExport.tsx(40,31): error TS7006: Parameter 'event' implicitly has an 'any' type.
+src/hooks/useFoodAnalysis.tsx(24,30): error TS7006: Parameter 'file' implicitly has an 'any' type.
+src/hooks/useFoodAnalysis.tsx(26,16): error TS2345: Argument of type '"No se proporcionó ninguna imagen"' is not assignable to parameter of type 'SetStateAction<null>'.
+src/hooks/useFoodAnalysis.tsx(44,17): error TS18046: 'base64Image' is of type 'unknown'.
+src/hooks/useFoodAnalysis.tsx(93,11): error TS18046: 'err' is of type 'unknown'.
+src/hooks/useFoodAnalysis.tsx(95,18): error TS18046: 'err' is of type 'unknown'.
+src/hooks/useFoodAnalysis.tsx(97,18): error TS18046: 'err' is of type 'unknown'.
+src/hooks/useFoodAnalysis.tsx(97,52): error TS18046: 'err' is of type 'unknown'.
+src/hooks/useFoodAnalysis.tsx(101,16): error TS2345: Argument of type 'string' is not assignable to parameter of type 'SetStateAction<null>'.
+src/hooks/useFoodAnalysis.tsx(129,23): error TS7006: Parameter 'file' implicitly has an 'any' type.
+src/hooks/useFoodEntry.tsx(4,32): error TS7031: Binding element 'foodLog' implicitly has an 'any' type.
+src/hooks/useFoodEntry.tsx(4,41): error TS7031: Binding element 'saveFoodLog' implicitly has an 'any' type.
+src/hooks/useFoodEntry.tsx(4,54): error TS7031: Binding element 'saveFoodEntry' implicitly has an 'any' type.
+src/hooks/useFoodEntry.tsx(4,69): error TS7031: Binding element 'setSaveStatus' implicitly has an 'any' type.
+src/hooks/useFoodEntry.tsx(73,33): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/hooks/useGlobalDelete.tsx(3,33): error TS7006: Parameter 'nutrition' implicitly has an 'any' type.
+src/hooks/useGlobalDelete.tsx(3,44): error TS7006: Parameter 'workouts' implicitly has an 'any' type.
+src/hooks/useGlobalDelete.tsx(3,54): error TS7006: Parameter 'biometrics' implicitly has an 'any' type.
+src/hooks/useGlobalDelete.tsx(3,66): error TS7006: Parameter 'supabase' implicitly has an 'any' type.
+src/hooks/useGlobalDelete.tsx(3,76): error TS7006: Parameter 'useCloud' implicitly has an 'any' type.
+src/hooks/useGlobalDelete.tsx(7,26): error TS7006: Parameter 'type' implicitly has an 'any' type.
+src/hooks/useGlobalDelete.tsx(7,32): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/hooks/useGlobalDelete.tsx(7,36): error TS7006: Parameter 'name' implicitly has an 'any' type.
+src/hooks/useGlobalDelete.tsx(16,45): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/hooks/useGlobalDelete.tsx(17,49): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/hooks/useGlobalDelete.tsx(27,11): error TS2353: Object literal may only specify known properties, and 'type' does not exist in type '(prevState: null) => null'.
+src/hooks/useGlobalDelete.tsx(35,47): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useGlobalDelete.tsx(36,51): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useGlobalDelete.tsx(46,11): error TS2353: Object literal may only specify known properties, and 'type' does not exist in type '(prevState: null) => null'.
+src/hooks/useGlobalDelete.tsx(54,52): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useGlobalDelete.tsx(55,60): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useGlobalDelete.tsx(65,11): error TS2353: Object literal may only specify known properties, and 'type' does not exist in type '(prevState: null) => null'.
+src/hooks/useHydrationTarget.tsx(39,35): error TS7006: Parameter 'workoutLog' implicitly has an 'any' type.
+src/hooks/useHydrationTarget.tsx(39,47): error TS7006: Parameter 'currentDate' implicitly has an 'any' type.
+src/hooks/useHydrationTarget.tsx(67,29): error TS7006: Parameter 'weather' implicitly has an 'any' type.
+src/hooks/useHydrationTarget.tsx(96,36): error TS7006: Parameter 'workoutLog' implicitly has an 'any' type.
+src/hooks/useHydrationTarget.tsx(96,48): error TS7006: Parameter 'date' implicitly has an 'any' type.
+src/hooks/useHydrationTarget.tsx(116,20): error TS2345: Argument of type 'WeatherData | null' is not assignable to parameter of type 'SetStateAction<null>'.
+  Type 'WeatherData' is not assignable to type 'SetStateAction<null>'.
+    Type 'WeatherData' provides no match for the signature '(prevState: null): null'.
+src/hooks/useHydrationTarget.tsx(148,30): error TS2339: Property 'temperature' does not exist on type 'never'.
+src/hooks/useHydrationTarget.tsx(149,27): error TS2339: Property 'humidity' does not exist on type 'never'.
+src/hooks/useHydrationTarget.tsx(150,27): error TS2339: Property 'location' does not exist on type 'never'.
+src/hooks/useMealTemplates.tsx(5,3): error TS7031: Binding element 'mealTemplates' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(6,3): error TS7031: Binding element 'setMealTemplates' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(7,3): error TS7031: Binding element 'storage' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(8,3): error TS7031: Binding element 'setSaveStatus' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(9,3): error TS7031: Binding element 'selectedFoodDate' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(10,3): error TS7031: Binding element 'saveFoodLog' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(11,3): error TS7031: Binding element 'foodLog' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(12,3): error TS7031: Binding element 'saveFoodEntry' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(13,3): error TS7031: Binding element 'saveTemplate' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(14,3): error TS7031: Binding element 'deleteTemplateDb' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(15,3): error TS7031: Binding element 'useCloud' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(41,39): error TS7006: Parameter 'templates' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(51,34): error TS7006: Parameter 'template' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(92,26): error TS2339: Property 'name' does not exist on type 'never'.
+src/hooks/useMealTemplates.tsx(96,7): error TS2698: Spread types may only be created from object types.
+src/hooks/useMealTemplates.tsx(109,28): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(109,45): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(126,33): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(128,51): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(150,22): error TS7006: Parameter 'food' implicitly has an 'any' type.
+src/hooks/useMealTemplates.tsx(152,9): error TS2353: Object literal may only specify known properties, and 'name' does not exist in type '(prevState: null) => null'.
+src/hooks/useOuraSync.tsx(9,31): error TS7031: Binding element 'saveOuraEntry' implicitly has an 'any' type.
+src/hooks/useOuraSync.tsx(9,46): error TS7031: Binding element 'saveStepsEntry' implicitly has an 'any' type.
+src/hooks/useOuraSync.tsx(16,36): error TS7006: Parameter 'endpoint' implicitly has an 'any' type.
+src/hooks/useOuraSync.tsx(16,46): error TS7006: Parameter 'start' implicitly has an 'any' type.
+src/hooks/useOuraSync.tsx(16,53): error TS7006: Parameter 'end' implicitly has an 'any' type.
+src/hooks/useOuraSync.tsx(64,13): error TS18046: 'err' is of type 'unknown'.
+src/hooks/useOuraSync.tsx(64,41): error TS18046: 'err' is of type 'unknown'.
+src/hooks/useOuraSync.tsx(144,40): error TS18046: 'err' is of type 'unknown'.
+src/hooks/usePatternRecognition.tsx(14,39): error TS7006: Parameter 'ouraLog' implicitly has an 'any' type.
+src/hooks/usePatternRecognition.tsx(14,48): error TS7006: Parameter 'getTotalsForDate' implicitly has an 'any' type.
+src/hooks/usePatternRecognition.tsx(14,66): error TS7006: Parameter 'getTargetsForDate' implicitly has an 'any' type.
+src/hooks/usePatternRecognition.tsx(28,15): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/hooks/usePatternRecognition.tsx(35,14): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/hooks/usePatternRecognition.tsx(35,17): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/hooks/usePatternRecognition.tsx(37,47): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/hooks/usePatternRecognition.tsx(46,26): error TS7006: Parameter 'day' implicitly has an 'any' type.
+src/hooks/usePatternRecognition.tsx(67,37): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/hooks/usePerformanceForecast.tsx(16,40): error TS7006: Parameter 'ouraLog' implicitly has an 'any' type.
+src/hooks/usePerformanceForecast.tsx(16,49): error TS7006: Parameter 'workoutLog' implicitly has an 'any' type.
+src/hooks/usePerformanceForecast.tsx(33,28): error TS7006: Parameter 'daysBack' implicitly has an 'any' type.
+src/hooks/usePerformanceForecast.tsx(40,36): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/hooks/usePerformanceForecast.tsx(74,37): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/hooks/usePerformanceForecast.tsx(79,29): error TS7006: Parameter 'date' implicitly has an 'any' type.
+src/hooks/usePerformanceForecast.tsx(81,41): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/usePerformanceForecast.tsx(82,30): error TS7006: Parameter 'total' implicitly has an 'any' type.
+src/hooks/usePerformanceForecast.tsx(82,37): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/usePlateauDetector.tsx(15,36): error TS7006: Parameter 'weightHistory' implicitly has an 'any' type.
+src/hooks/usePlateauDetector.tsx(15,51): error TS7006: Parameter 'customTargets' implicitly has an 'any' type.
+src/hooks/usePlateauDetector.tsx(37,15): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/hooks/usePlateauDetector.tsx(38,14): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/hooks/usePlateauDetector.tsx(38,17): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/hooks/usePlateauDetector.tsx(42,7): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/hooks/usePlateauDetector.tsx(45,7): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/hooks/usePlateauDetector.tsx(62,43): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/hooks/usePlateauDetector.tsx(62,48): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/hooks/usePlateauDetector.tsx(63,43): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/hooks/usePlateauDetector.tsx(63,48): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/hooks/useProteinPacing.tsx(27,34): error TS7006: Parameter 'foodLog' implicitly has an 'any' type.
+src/hooks/useProteinPacing.tsx(27,43): error TS7006: Parameter 'targetProtein' implicitly has an 'any' type.
+src/hooks/useProteinPacing.tsx(27,58): error TS7006: Parameter 'selectedDate' implicitly has an 'any' type.
+src/hooks/useProteinPacing.tsx(45,38): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/hooks/useProteinPacing.tsx(60,22): error TS7006: Parameter 'food' implicitly has an 'any' type.
+src/hooks/useProteinPacing.tsx(61,22): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ Desayuno: string; Almuerzo: string; Merienda: string; Cena: string; Snack: string; 'Pre-entreno': string; 'Post-entreno': string; }'.
+src/hooks/useProteinPacing.tsx(62,7): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
+src/hooks/useProteinPacing.tsx(62,30): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
+src/hooks/useProteinPacing.tsx(68,29): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+src/hooks/useProteinPacing.tsx(75,41): error TS18047: 'slot.endHour' is possibly 'null'.
+src/hooks/useProteinPacing.tsx(76,43): error TS18047: 'slot.startHour' is possibly 'null'.
+src/hooks/useProteinPacing.tsx(76,77): error TS18047: 'slot.endHour' is possibly 'null'.
+src/hooks/useQuickLog.tsx(14,29): error TS7006: Parameter 'foodLog' implicitly has an 'any' type.
+src/hooks/useQuickLog.tsx(14,38): error TS7006: Parameter 'saveFoodEntry' implicitly has an 'any' type.
+src/hooks/useQuickLog.tsx(31,24): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/hooks/useQuickLog.tsx(40,7): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
+src/hooks/useQuickLog.tsx(40,40): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
+src/hooks/useQuickLog.tsx(43,7): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
+src/hooks/useQuickLog.tsx(61,14): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+src/hooks/useQuickLog.tsx(61,34): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+src/hooks/useQuickLog.tsx(62,9): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+src/hooks/useQuickLog.tsx(68,41): error TS18046: 'countB' is of type 'unknown'.
+src/hooks/useQuickLog.tsx(68,50): error TS18046: 'countA' is of type 'unknown'.
+src/hooks/useQuickLog.tsx(70,24): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+src/hooks/useQuickLog.tsx(77,11): error TS18046: 'items' is of type 'unknown'.
+src/hooks/useQuickLog.tsx(81,39): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(iterable?: Iterable<unknown> | null | undefined): Set<unknown>', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'Iterable<unknown> | null | undefined'.
+  Overload 2 of 2, '(values?: readonly any[] | null | undefined): Set<any>', gave the following error.
+    Argument of type 'unknown' is not assignable to parameter of type 'readonly any[] | null | undefined'.
+src/hooks/useQuickLog.tsx(88,7): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+src/hooks/useQuickLog.tsx(88,37): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+src/hooks/useQuickLog.tsx(92,30): error TS18046: 'count' is of type 'unknown'.
+src/hooks/useQuickLog.tsx(93,41): error TS18046: 'countB' is of type 'unknown'.
+src/hooks/useQuickLog.tsx(93,50): error TS18046: 'countA' is of type 'unknown'.
+src/hooks/useQuickLog.tsx(100,36): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+src/hooks/useQuickLog.tsx(101,61): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+src/hooks/useQuickLog.tsx(110,39): error TS7006: Parameter 'itemOrCombo' implicitly has an 'any' type.
+src/hooks/useQuickLog.tsx(124,31): error TS7006: Parameter 'timeStr' implicitly has an 'any' type.
+src/hooks/useSafetyNet.tsx(18,30): error TS7006: Parameter 'profile' implicitly has an 'any' type.
+src/hooks/useSafetyNet.tsx(18,39): error TS7006: Parameter 'customTargets' implicitly has an 'any' type.
+src/hooks/useSafetyNet.tsx(18,54): error TS7006: Parameter 'saveProfile' implicitly has an 'any' type.
+src/hooks/useSafetyNet.tsx(46,42): error TS7006: Parameter 'date' implicitly has an 'any' type.
+src/hooks/useSafetyNet.tsx(64,48): error TS7006: Parameter 'date' implicitly has an 'any' type.
+src/hooks/useSmartMealCompass.tsx(9,37): error TS7006: Parameter 'foodLog' implicitly has an 'any' type.
+src/hooks/useSmartMealCompass.tsx(9,46): error TS7006: Parameter 'remainingMacros' implicitly has an 'any' type.
+src/hooks/useSmartMealCompass.tsx(16,21): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/hooks/useSmartMealCompass.tsx(58,25): error TS7006: Parameter 'meal' implicitly has an 'any' type.
+src/hooks/useSmartMealCompass.tsx(58,31): error TS7006: Parameter 'limit' implicitly has an 'any' type.
+src/hooks/useTrackerAnalytics.tsx(26,3): error TS7031: Binding element 'dashboardDate' implicitly has an 'any' type.
+src/hooks/useTrackerAnalytics.tsx(27,3): error TS7031: Binding element 'biometrics' implicitly has an 'any' type.
+src/hooks/useTrackerAnalytics.tsx(28,3): error TS7031: Binding element 'nutrition' implicitly has an 'any' type.
+src/hooks/useTrackerAnalytics.tsx(29,3): error TS7031: Binding element 'workouts' implicitly has an 'any' type.
+src/hooks/useTrackerAnalytics.tsx(30,3): error TS7031: Binding element 'safetyNet' implicitly has an 'any' type.
+src/hooks/useTrackerAnalytics.tsx(31,3): error TS7031: Binding element 'updateConfig' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(20,3): error TS7031: Binding element 'supabase' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(21,3): error TS7031: Binding element 'useCloud' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(22,3): error TS7031: Binding element 'offlineMode' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(23,3): error TS7031: Binding element 'setOfflineMode' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(24,3): error TS7031: Binding element 'setProfile' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(25,3): error TS7031: Binding element 'setCustomTargets' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(26,3): error TS7031: Binding element 'setWeightHistory' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(27,3): error TS7031: Binding element 'setFoodLog' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(28,3): error TS7031: Binding element 'setWorkoutLog' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(29,3): error TS7031: Binding element 'setStepsLog' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(30,3): error TS7031: Binding element 'setOuraLog' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(31,3): error TS7031: Binding element 'setWaterLog' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(32,3): error TS7031: Binding element 'setMealTemplates' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(34,3): error TS7031: Binding element 'foodLog' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(35,3): error TS7031: Binding element 'workoutLog' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(36,3): error TS7031: Binding element 'stepsLog' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(37,3): error TS7031: Binding element 'ouraLog' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(38,3): error TS7031: Binding element 'waterLog' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(39,3): error TS7031: Binding element 'weightHistory' implicitly has an 'any' type.
+src/hooks/useTrackerSync.tsx(96,23): error TS2345: Argument of type '{ supabase: any; showAuth: null; offlineMode: any; hasInitialized: RefObject<boolean>; setProfile: any; setCustomTargets: any; setWeightHistory: any; setFoodLog: any; setWorkoutLog: any; ... 6 more ...; setCacheStale: Dispatch<...>; }' is not assignable to parameter of type 'UseInitialHydrationParams'.
+  Property 'setMealTemplates' is missing in type '{ supabase: any; showAuth: null; offlineMode: any; hasInitialized: RefObject<boolean>; setProfile: any; setCustomTargets: any; setWeightHistory: any; setFoodLog: any; setWorkoutLog: any; ... 6 more ...; setCacheStale: Dispatch<...>; }' but required in type 'UseInitialHydrationParams'.
+src/hooks/useTrackerSync.tsx(121,19): error TS2345: Argument of type 'false' is not assignable to parameter of type 'SetStateAction<null>'.
+src/hooks/useTrackerSync.tsx(124,19): error TS2345: Argument of type 'true' is not assignable to parameter of type 'SetStateAction<null>'.
+src/hooks/useTrackerSync.tsx(203,19): error TS2345: Argument of type 'true' is not assignable to parameter of type 'SetStateAction<null>'.
+src/hooks/useTrackerSync.tsx(206,19): error TS2345: Argument of type 'true' is not assignable to parameter of type 'SetStateAction<null>'.
+src/hooks/useWeeklyPeriodization.tsx(34,3): error TS7006: Parameter 'workoutLog' implicitly has an 'any' type.
+src/hooks/useWeeklyPeriodization.tsx(35,3): error TS7006: Parameter 'profile' implicitly has an 'any' type.
+src/hooks/useWeeklyPeriodization.tsx(36,3): error TS7006: Parameter 'customTargets' implicitly has an 'any' type.
+src/hooks/useWeeklyPeriodization.tsx(37,3): error TS7006: Parameter 'currentWeight' implicitly has an 'any' type.
+src/hooks/useWeeklyPeriodization.tsx(57,44): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useWeeklyPeriodization.tsx(63,32): error TS7053: Element implicitly has an 'any' type because expression of type 'number' can't be used to index type '{}'.
+  No index signature with a parameter of type 'number' was found on type '{}'.
+src/hooks/useWeeklyPeriodization.tsx(71,51): error TS2339: Property 'date' does not exist on type 'never'.
+src/hooks/useWeeklyPeriodization.tsx(71,70): error TS2339: Property 'is_safety_net_day' does not exist on type 'never'.
+src/hooks/useWeeklyPeriodization.tsx(105,35): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useWeeklyPlan.tsx(27,40): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/useWeeklyPlan.tsx(34,49): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/useWeeklyPlan.tsx(44,9): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{}'.
+src/hooks/useWeeklyPlan.tsx(44,26): error TS2339: Property 'day_of_week' does not exist on type 'never'.
+src/hooks/useWeeklyPlan.tsx(45,23): error TS2339: Property 'workout_type' does not exist on type 'never'.
+src/hooks/useWeeklyPlan.tsx(46,23): error TS2339: Property 'workout_name' does not exist on type 'never'.
+src/hooks/useWeeklyPlan.tsx(47,28): error TS2339: Property 'intensity' does not exist on type 'never'.
+src/hooks/useWeeklyPlan.tsx(59,16): error TS18046: 'err' is of type 'unknown'.
+src/hooks/useWeeklyPlan.tsx(71,44): error TS7006: Parameter 'dayIndex' implicitly has an 'any' type.
+src/hooks/useWeeklyPlan.tsx(73,40): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/useWeeklyPlan.tsx(76,44): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/useWeeklyPlan.tsx(93,16): error TS18046: 'err' is of type 'unknown'.
+src/hooks/useWeeklyPlan.tsx(103,44): error TS7006: Parameter 'dayIndex' implicitly has an 'any' type.
+src/hooks/useWeeklyPlan.tsx(103,54): error TS7006: Parameter 'workoutData' implicitly has an 'any' type.
+src/hooks/useWeeklyPlan.tsx(105,40): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/useWeeklyPlan.tsx(116,44): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/useWeeklyPlan.tsx(118,10): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(values: never, options?: { onConflict?: string | undefined; ignoreDuplicates?: boolean | undefined; count?: "exact" | "planned" | "estimated" | undefined; } | undefined): PostgrestFilterBuilder<{ ...; }, ... 5 more ..., "POST">', gave the following error.
+    Argument of type '{ user_id: string; day_of_week: any; workout_type: any; workout_name: any; intensity: any; }' is not assignable to parameter of type 'never'.
+  Overload 2 of 2, '(values: never[], options?: { onConflict?: string | undefined; ignoreDuplicates?: boolean | undefined; count?: "exact" | "planned" | "estimated" | undefined; defaultToNull?: boolean | undefined; } | undefined): PostgrestFilterBuilder<...>', gave the following error.
+    Object literal may only specify known properties, and 'user_id' does not exist in type 'never[]'.
+src/hooks/useWeeklyPlan.tsx(139,16): error TS18046: 'err' is of type 'unknown'.
+src/hooks/useWeeklyReport.tsx(23,40): error TS18047: 'supabase' is possibly 'null'.
+src/hooks/useWeeklyReport.tsx(27,18): error TS2345: Argument of type '"No se pudo obtener el usuario"' is not assignable to parameter of type 'SetStateAction<null>'.
+src/hooks/useWeeklyReport.tsx(52,16): error TS18046: 'err' is of type 'unknown'.
+src/hooks/useWeightAnalytics.tsx(25,36): error TS7006: Parameter 'weightHistory' implicitly has an 'any' type.
+src/hooks/useWeightAnalytics.tsx(25,51): error TS7006: Parameter 'foodLog' implicitly has an 'any' type.
+src/hooks/useWeightAnalytics.tsx(25,60): error TS7006: Parameter 'customTargets' implicitly has an 'any' type.
+src/hooks/useWeightAnalytics.tsx(25,75): error TS7006: Parameter 'currentWeight' implicitly has an 'any' type.
+src/hooks/useWeightAnalytics.tsx(45,48): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/hooks/useWeightAnalytics.tsx(64,32): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/hooks/useWeightAnalytics.tsx(64,45): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/hooks/useWeightAnalytics.tsx(157,41): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/hooks/useWeightAnalytics.tsx(165,41): error TS7006: Parameter 'acc' implicitly has an 'any' type.
+src/hooks/useWeightAnalytics.tsx(165,46): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/hooks/useWeightEditing.tsx(12,34): error TS7006: Parameter 'biometrics' implicitly has an 'any' type.
+src/hooks/useWeightEditing.tsx(16,28): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/hooks/useWeightEditing.tsx(17,49): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useWeightEditing.tsx(31,49): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useWeightEditing.tsx(36,55): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(26,5): error TS7006: Parameter 'weightHistory' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(27,5): error TS7006: Parameter 'foodLog' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(28,5): error TS7006: Parameter 'stepsLog' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(29,5): error TS7006: Parameter 'customTargets' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(30,5): error TS7006: Parameter 'profile' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(42,49): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(62,14): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(133,34): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(138,22): error TS7006: Parameter 'acc' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(138,27): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(161,46): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(270,22): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(271,20): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(271,23): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(272,19): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/hooks/useWeightProjection.tsx(292,17): error TS18047: 'realistTrend' is possibly 'null'.
+src/hooks/useWorkoutAnalysis.tsx(10,36): error TS7006: Parameter 'workoutLog' implicitly has an 'any' type.
+src/hooks/useWorkoutAnalysis.tsx(17,51): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useWorkoutAnalysis.tsx(19,49): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useWorkoutAnalysis.tsx(22,52): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useWorkoutAnalysis.tsx(29,55): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/hooks/useWorkoutAnalysis.tsx(29,60): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useWorkoutEntry.tsx(4,35): error TS7031: Binding element 'workoutLog' implicitly has an 'any' type.
+src/hooks/useWorkoutEntry.tsx(4,47): error TS7031: Binding element 'saveWorkoutLog' implicitly has an 'any' type.
+src/hooks/useWorkoutEntry.tsx(4,63): error TS7031: Binding element 'saveWorkoutEntry' implicitly has an 'any' type.
+src/hooks/useWorkoutEntry.tsx(18,30): error TS7006: Parameter 'workout' implicitly has an 'any' type.
+src/hooks/useWorkoutEntry.tsx(37,27): error TS2339: Property 'id' does not exist on type 'never'.
+src/hooks/useWorkoutEntry.tsx(47,31): error TS2339: Property 'source' does not exist on type 'never'.
+src/hooks/useWorkoutEntry.tsx(49,35): error TS2339: Property 'confidence' does not exist on type 'never'.
+src/hooks/useWorkoutEntry.tsx(50,33): error TS2339: Property 'sourceId' does not exist on type 'never'.
+src/hooks/useWorkoutEntry.tsx(68,38): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/hooks/useWorkoutEntry.tsx(68,67): error TS2339: Property 'id' does not exist on type 'never'.
+src/hooks/useWorkouts.tsx(5,29): error TS7006: Parameter 'supabase' implicitly has an 'any' type.
+src/hooks/useWorkouts.tsx(5,39): error TS7006: Parameter 'useCloud' implicitly has an 'any' type.
+src/hooks/useWorkouts.tsx(8,33): error TS7006: Parameter 'newLog' implicitly has an 'any' type.
+src/hooks/useWorkouts.tsx(17,35): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+src/hooks/useWorkouts.tsx(41,18): error TS18046: 'err' is of type 'unknown'.
+src/hooks/useWorkouts.tsx(42,18): error TS18046: 'err' is of type 'unknown'.
+src/hooks/useWorkouts.tsx(55,37): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/hooks/useWorkouts.tsx(59,38): error TS7006: Parameter 'date' implicitly has an 'any' type.
+src/hooks/useWorkouts.tsx(61,35): error TS2339: Property 'date' does not exist on type 'never'.
+src/hooks/useWorkouts.tsx(61,45): error TS2339: Property 'date' does not exist on type 'never'.
+src/lib/database.types.ts(14,9): error TS2353: Object literal may only specify known properties, and 'step_goal' does not exist in type '{ id?: string | undefined; user_id: string; display_name?: string | null | undefined; avatar_url?: string | null | undefined; height?: number | undefined; current_weight?: number | undefined; ... 15 more ...; renpho_last_sync?: string | ... 1 more ... | undefined; }'.
+src/lib/database.types.ts(27,29): error TS2339: Property 'step_goal' does not exist on type '{ id: string; user_id: string; display_name: string | null; avatar_url: string | null; height: number; current_weight: number; target_weight: number; age: number; activity_level: "sedentary" | "light" | "moderate" | "active" | "very_active"; ... 12 more ...; renpho_last_sync: string | null; }'.
+src/NutritionTracker.tsx(131,33): error TS2322: Type '{ dashboardDate: any; setDashboardDate: any; changeDate: any; dashboardTotals: any; dashboardTargets: any; getStepsForDate: any; getWaterForDate: any; addWaterGlass: any; removeWaterGlass: any; ... 9 more ...; getTargetsForDate: any; }' is not assignable to type 'IntrinsicAttributes & DashboardTabProps'.
+  Property 'weightProjection' does not exist on type 'IntrinsicAttributes & DashboardTabProps'.
+src/NutritionTracker.tsx(138,30): error TS2741: Property 'newFood' is missing in type '{ selectedFoodDate: any; setSelectedFoodDate: any; changeDate: any; getFoodsForDate: any; getTotalsForDate: any; getTargetsForDate: any; getWaterForDate: any; hydrationTarget: any; addWaterGlass: any; confirmDelete: any; setNewFood: any; setShowFoodForm: any; setEditingFoodId: any; }' but required in type 'DiaryTabProps'.
+src/NutritionTracker.tsx(160,33): error TS2322: Type '{ selectedWorkoutDate: any; setSelectedWorkoutDate: any; changeDate: any; workoutLog: any; workoutAnalysis: any; weightAnalytics: any; ouraLog: any; currentWeight: any; getWorkoutsForDate: any; confirmDelete: any; confirmWorkout: any; }' is not assignable to type 'IntrinsicAttributes & WorkoutsTabProps'.
+  Property 'workoutAnalysis' does not exist on type 'IntrinsicAttributes & WorkoutsTabProps'.
+src/utils/storageUtils.ts(96,33): error TS2345: Argument of type 'StorageResult<string> | null' is not assignable to parameter of type 'StorageItem<null> | null'.
+  Type 'StorageResult<string>' is not assignable to type 'StorageItem<null>'.
+    Types of property 'value' are incompatible.
+      Type 'string | null' is not assignable to type 'string'.
+        Type 'null' is not assignable to type 'string'.
+src/utils/storageUtils.ts(97,32): error TS2345: Argument of type 'StorageResult<string> | null' is not assignable to parameter of type 'StorageItem<never[]> | null'.
+  Type 'StorageResult<string>' is not assignable to type 'StorageItem<never[]>'.
+    Types of property 'value' are incompatible.
+      Type 'string | null' is not assignable to type 'string'.
+        Type 'null' is not assignable to type 'string'.
+src/utils/storageUtils.ts(98,30): error TS2345: Argument of type 'StorageResult<string> | null' is not assignable to parameter of type 'StorageItem<never[]> | null'.
+  Type 'StorageResult<string>' is not assignable to type 'StorageItem<never[]>'.
+    Types of property 'value' are incompatible.
+      Type 'string | null' is not assignable to type 'string'.
+        Type 'null' is not assignable to type 'string'.
+src/utils/storageUtils.ts(99,33): error TS2345: Argument of type 'StorageResult<string> | null' is not assignable to parameter of type 'StorageItem<never[]> | null'.
+  Type 'StorageResult<string>' is not assignable to type 'StorageItem<never[]>'.
+    Types of property 'value' are incompatible.
+      Type 'string | null' is not assignable to type 'string'.
+        Type 'null' is not assignable to type 'string'.
+src/utils/storageUtils.ts(100,31): error TS2345: Argument of type 'StorageResult<string> | null' is not assignable to parameter of type 'StorageItem<never[]> | null'.
+  Type 'StorageResult<string>' is not assignable to type 'StorageItem<never[]>'.
+    Types of property 'value' are incompatible.
+      Type 'string | null' is not assignable to type 'string'.
+        Type 'null' is not assignable to type 'string'.
+src/utils/storageUtils.ts(101,33): error TS2345: Argument of type 'StorageResult<string> | null' is not assignable to parameter of type 'StorageItem<null> | null'.
+  Type 'StorageResult<string>' is not assignable to type 'StorageItem<null>'.
+    Types of property 'value' are incompatible.
+      Type 'string | null' is not assignable to type 'string'.
+        Type 'null' is not assignable to type 'string'.
+src/utils/storageUtils.ts(102,30): error TS2345: Argument of type 'StorageResult<string> | null' is not assignable to parameter of type 'StorageItem<never[]> | null'.
+  Type 'StorageResult<string>' is not assignable to type 'StorageItem<never[]>'.
+    Types of property 'value' are incompatible.
+      Type 'string | null' is not assignable to type 'string'.
+        Type 'null' is not assignable to type 'string'.
+src/utils/storageUtils.ts(103,31): error TS2345: Argument of type 'StorageResult<string> | null' is not assignable to parameter of type 'StorageItem<never[]> | null'.
+  Type 'StorageResult<string>' is not assignable to type 'StorageItem<never[]>'.
+    Types of property 'value' are incompatible.
+      Type 'string | null' is not assignable to type 'string'.
+        Type 'null' is not assignable to type 'string'.
+src/utils/storageUtils.ts(104,35): error TS2345: Argument of type 'StorageResult<string> | null' is not assignable to parameter of type 'StorageItem<never[]> | null'.
+  Type 'StorageResult<string>' is not assignable to type 'StorageItem<never[]>'.
+    Types of property 'value' are incompatible.
+      Type 'string | null' is not assignable to type 'string'.
+        Type 'null' is not assignable to type 'string'.
+src/utils/storageUtils.ts(372,26): error TS2345: Argument of type 'StorageResult<string> | null' is not assignable to parameter of type 'StorageItem<never[]> | null'.
+  Type 'StorageResult<string>' is not assignable to type 'StorageItem<never[]>'.
+    Types of property 'value' are incompatible.
+      Type 'string | null' is not assignable to type 'string'.
+        Type 'null' is not assignable to type 'string'.

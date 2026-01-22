@@ -1,0 +1,184 @@
+import { Database } from './supabase';
+
+// App-level interfaces (CamelCase)
+// These generally match what the mappers produce from the raw DB rows.
+
+export interface Profile {
+    id: string;
+    userId: string;
+    name: string | null;
+    avatar: string | null;
+    height: number;
+    currentWeight: number;
+    targetWeight: number;
+    stepGoal: number;
+    age: number;
+    activityLevel: 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active';
+    goal: 'cut' | 'maintain' | 'bulk';
+    targetCalories: number;
+    targetProtein: number;
+    targetCarbs: number;
+    targetFat: number;
+    targetFiber: number;
+    trainingDayCaloriesBonus: number;
+    trainingDayCarbs: number;
+    tdee?: number;
+    createdAt: string;
+    updatedAt: string;
+    safety_net_enabled?: boolean;
+}
+
+export interface WeightEntry {
+    id: string;
+    date: string;
+    weight: number;
+    timestamp: number;
+}
+
+export interface FoodEntry {
+    id: string;
+    date: string;
+    time: string | null;
+    meal:
+        | 'Desayuno'
+        | 'Almuerzo'
+        | 'Merienda'
+        | 'Cena'
+        | 'Snack'
+        | 'Pre-entreno'
+        | 'Post-entreno';
+    name: string;
+    description: string | null;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber: number;
+    source: 'manual' | 'ai-photo' | 'ai-text' | 'barcode' | 'recipe' | 'template';
+    reviewed: boolean;
+    confidence: number;
+    sourceId: string | null;
+    is_safety_net_day?: boolean;
+}
+
+export interface Exercise {
+    name: string;
+    sets: number;
+    reps: number | string;
+    weight: number | string;
+}
+
+export interface Workout {
+    id: string;
+    date: string;
+    type: 'gym' | 'cardio' | 'sport' | 'other' | 'tennis';
+    name: string;
+    duration: number;
+    calories: number;
+    volume: number | null;
+    exercises: Exercise[];
+    notes: string | null;
+    source?: 'manual' | 'ai-text' | 'oura';
+    reviewed?: boolean;
+    confidence?: number;
+    sourceId?: string | null;
+}
+
+export interface StepsEntry {
+    id: string;
+    date: string;
+    steps: number;
+}
+
+export interface OuraEntry {
+    id: string;
+    date: string;
+    sleepScore: number | null;
+    readinessScore: number | null;
+    activityScore: number | null;
+    hrv: number | null;
+    restingHr: number | null;
+    sleepHours: number | null;
+    deepSleepMins: number | null;
+    remSleepMins: number | null;
+    bedtime: string | null;
+    wakeTime: string | null;
+}
+
+export interface WaterEntry {
+    id: string;
+    date: string;
+    glasses: number;
+    ml: number;
+}
+
+export interface MealTemplate {
+    id: string;
+    name: string;
+    meal:
+        | 'Desayuno'
+        | 'Almuerzo'
+        | 'Merienda'
+        | 'Cena'
+        | 'Snack'
+        | 'Pre-entreno'
+        | 'Post-entreno';
+    description: string | null;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber: number;
+}
+
+export interface CustomTargets {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber: number;
+    trainingDayCaloriesBonus: number;
+    trainingDayCarbs: number;
+}
+
+export interface Macros {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber: number;
+}
+
+export interface WeightAnalytics {
+    currentTrend: number | null;
+    weeklyAdherence: number;
+    estimatedGoalDate: string | null;
+    remainingWeight: number;
+}
+
+export interface CoachInsight {
+    message: string;
+    description?: string;
+    icon: string;
+    type?: 'success' | 'warning' | 'caution' | 'info';
+    gradient?: string;
+}
+
+export interface WeightProjection {
+    realistTrend: number | null;
+    adjustedTrend: number | null;
+    remainingWeight: number;
+    adherencePercent: number;
+    adherenceDetails: any;
+    projectedGoalDate: string | null;
+    formattedGoalDate: string | null;
+    weeksToGoal: string | null;
+    daysToGoal: number | null;
+    projectionStatus: 'goal_reached' | 'not_losing' | 'on_track';
+    actualPath: Array<{ date: string; actualWeight: number }>;
+    projectedPath: Array<{ date: string; projectedWeight: number }>;
+    targetWeight: number;
+    coachMessage: { emoji: string; text: string };
+    dataPoints: number;
+    daysCovered: number;
+}
