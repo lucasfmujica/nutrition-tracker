@@ -142,7 +142,7 @@ export function useProfileData(
                         target_weight: onboardingData.goal_weight,
                         height: onboardingData.height,
                         age: onboardingData.age,
-                        // gender: onboardingData.gender, // gender not in schema? let's check profile schema
+                        gender: onboardingData.gender,
                         activity_level: onboardingData.activity_level as any,
                         goal:
                             onboardingData.primary_goal === 'lose'
@@ -154,8 +154,9 @@ export function useProfileData(
                         target_protein: onboardingData.protein_goal,
                         target_carbs: onboardingData.carbs_goal,
                         target_fat: onboardingData.fat_goal,
-                        // step_goal: 8000, // step_goal removed from schema?
-                        // training_days_per_week: onboardingData.training_days_per_week, // checking schema...
+                        training_days_per_week:
+                            onboardingData.training_days_per_week,
+                        onboarding_completed: true,
                         updated_at: new Date().toISOString(),
                     } as any,
                     {
@@ -182,7 +183,7 @@ export function useProfileData(
             // Let's re-verify schema.
             const { data, error } = await supabase!
                 .from('profiles')
-                .select('current_weight' as any) // Selecting something we know exists, or checking if row exists?
+                .select('onboarding_completed')
                 // Original code: select('onboarding_completed')
                 // Schema: profiles doesn't seem to have onboarding_completed?
                 // Let's assume the user knows what they are doing or the schema I saw was partial.
