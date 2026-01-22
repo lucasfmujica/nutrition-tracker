@@ -153,7 +153,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = ({
         <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden transition-all hover:shadow-2xl hover:shadow-slate-200/60">
             {/* Header / Engine Status */}
             <div className="px-6 pt-6 pb-2">
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-200">
                             <Activity className="w-5 h-5 text-white animate-pulse" />
@@ -165,13 +165,13 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = ({
                             <div className="flex items-center gap-1.5">
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                                    Predictive Analysis Active
+                                    Predictive Analysis Engine
                                 </span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex gap-4">
+                    <div className="flex flex-wrap gap-x-4 gap-y-2">
                         <div className="flex items-center gap-1.5 group cursor-default">
                             <span className="w-2 h-2 rounded-full bg-indigo-500 group-hover:scale-125 transition-transform" />
                             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">
