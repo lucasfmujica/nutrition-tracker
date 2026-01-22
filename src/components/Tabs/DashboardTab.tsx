@@ -280,6 +280,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                             profile.currentWeight
                         }
                         targetWeight={profile.targetWeight}
+                        weeklyTrend={weightProjection.adjustedTrend}
                     />
 
                     <WeightProjectionCard projection={weightProjection} />
