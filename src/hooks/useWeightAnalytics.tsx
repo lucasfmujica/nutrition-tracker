@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import {
     CustomTargets,
     FoodEntry,
+    Profile,
     WeightAnalytics,
     WeightEntry,
 } from '../types/domain';
@@ -39,6 +40,8 @@ export const useWeightAnalytics = (
     customTargets: CustomTargets,
     currentWeight: number,
     targetWeight: number = 75,
+    profile?: Profile,
+    getTargetsForDate?: (date: string) => CustomTargets,
 ): WeightAnalytics => {
     const TARGET_WEIGHT = targetWeight;
 
@@ -175,6 +178,13 @@ export const useWeightAnalytics = (
 
             totalDays++;
 
+            // Get targets for this specific date
+            const dayTarget = getTargetsForDate
+                ? getTargetsForDate(date)
+                : customTargets;
+            const calorieTarget = dayTarget.calories;
+            const proteinTarget = dayTarget.protein;
+
             // Get all food entries for this date
             // Safety Net: Filter out days marked as safety net days from adherence check
             const dayEntries = foodLog.filter(
@@ -198,19 +208,21 @@ export const useWeightAnalytics = (
                 { calories: 0, protein: 0 },
             );
 
-            // Check adherence (within ±10%)
-            const calorieTarget = customTargets.calories;
-            const proteinTarget = customTargets.protein;
+            // Check adherence (Goal-aware)
+            const calDiffPercent = (totals.calories - calorieTarget) / calorieTarget;
 
-            const calorieDiff = Math.abs(totals.calories - calorieTarget);
-            const proteinDiff = Math.abs(totals.protein - proteinTarget);
+            let caloriesOk = false;
+            if (profile?.goal === 'cut') {
+                caloriesOk = calDiffPercent <= 0.1 && calDiffPercent >= -0.4;
+            } else if (profile?.goal === 'bulk') {
+                caloriesOk = calDiffPercent >= -0.1 && calDiffPercent <= 0.5;
+            } else {
+                caloriesOk = Math.abs(calDiffPercent) <= 0.15;
+            }
 
-            const caloriesOk = calorieDiff <= calorieTarget * 0.1;
-            const proteinOk = proteinDiff <= proteinTarget * 0.1;
+            const proteinOk = totals.protein >= proteinTarget * 0.85;
 
-            const isAdherent = caloriesOk && proteinOk;
-
-            if (isAdherent) {
+            if (caloriesOk && proteinOk) {
                 adherentDays++;
             }
         });
@@ -220,7 +232,7 @@ export const useWeightAnalytics = (
             totalDays > 0 ? (adherentDays / totalDays) * 100 : 0;
 
         return Math.round(adherencePercentage);
-    }, [foodLog, customTargets]);
+    }, [foodLog, customTargets, profile?.goal, getTargetsForDate]);
 
     return {
         currentTrend, // kg/week (negative = losing, positive = gaining, null = no data)

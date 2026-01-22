@@ -32,6 +32,7 @@ export const useWeightProjection = (
     stepsLog: StepsEntry[],
     customTargets: CustomTargets,
     profile: Profile,
+    getTargetsForDate: (date: string) => CustomTargets,
 ): WeightProjection => {
     const TARGET_WEIGHT = profile?.targetWeight || 75;
     const STEP_GOAL = profile?.stepGoal || 10000;
@@ -120,19 +121,23 @@ export const useWeightProjection = (
      */
     const adherenceData = useMemo(() => {
         const today = getArgentinaDateString();
-        const sevenDaysAgo = addDaysToDate(today, -6); // Include today = 7 days
 
         let caloriesOkCount = 0;
         let proteinOkCount = 0;
         let stepsOkCount = 0;
-        let daysWithData = 0;
 
         for (let i = 0; i < 7; i++) {
             const date = addDaysToDate(today, -i);
-            if (date < sevenDaysAgo) break;
 
-            // Calories & Protein check
-            // CRITICAL: Filter out safety net days from adherence calculation
+            // 1. Get targets for this specific date (periodization aware)
+            const dayTarget = getTargetsForDate(date);
+            const calorieTarget =
+                dayTarget?.calories || customTargets?.calories || 2200;
+            const proteinTarget =
+                dayTarget?.protein || customTargets?.protein || 160;
+
+            // 2. Nutrition check
+            // CRITICAL: Filter out safety net days
             const dayFoods =
                 foodLog?.filter(
                     (f) =>
@@ -140,8 +145,8 @@ export const useWeightProjection = (
                         !(f as any).is_safety_net_day &&
                         f.sourceId !== 'safety-net',
                 ) || [];
+
             if (dayFoods.length > 0) {
-                daysWithData++;
                 const totals = dayFoods.reduce(
                     (acc, f) => ({
                         calories: acc.calories + (Number(f.calories) || 0),
@@ -150,22 +155,34 @@ export const useWeightProjection = (
                     { calories: 0, protein: 0 },
                 );
 
-                const calorieTarget = customTargets?.calories || 2200;
-                const proteinTarget = customTargets?.protein || 160;
+                const calDiffPercent =
+                    (totals.calories - calorieTarget) / calorieTarget;
 
-                // Within ±15% for more forgiving adherence
-                if (
-                    Math.abs(totals.calories - calorieTarget) <=
-                    calorieTarget * 0.15
-                ) {
+                // Calorie Adherence: Goal-aware logic
+                let isCalOk = false;
+                if (profile?.goal === 'cut') {
+                    // For cutting: staying under is the goal. Allow up to 10% over.
+                    // Lower bound of -40% to avoid extreme starvation being "adherent"
+                    isCalOk = calDiffPercent <= 0.1 && calDiffPercent >= -0.4;
+                } else if (profile?.goal === 'bulk') {
+                    // For bulking: staying over is the goal. Allow up to 10% under.
+                    isCalOk = calDiffPercent >= -0.1 && calDiffPercent <= 0.5;
+                } else {
+                    // Maintenance: Standard ±15% range
+                    isCalOk = Math.abs(calDiffPercent) <= 0.15;
+                }
+
+                if (isCalOk) {
                     caloriesOkCount++;
                 }
+
+                // Protein Adherence: >= 85% of target is always good
                 if (totals.protein >= proteinTarget * 0.85) {
                     proteinOkCount++;
                 }
             }
 
-            // Steps check (not affected by safety net - activity still matters!)
+            // 3. Steps check (always counts if logged)
             const daySteps = stepsLog?.find((s) => s.date === date)?.steps || 0;
             if (daySteps >= STEP_GOAL * 0.8) {
                 // 80% of goal counts as adherent
@@ -173,11 +190,10 @@ export const useWeightProjection = (
             }
         }
 
-        const totalPossible = daysWithData * 3;
+        // Denominator is always 21 (7 days * 3 metrics) to reflect consistency
+        const totalPossible = 7 * 3;
         const adherenceScore =
-            totalPossible > 0
-                ? (caloriesOkCount + proteinOkCount + stepsOkCount) / totalPossible
-                : 0.5; // Default to 50% if no data
+            (caloriesOkCount + proteinOkCount + stepsOkCount) / totalPossible;
 
         return {
             adherenceScore,
@@ -185,9 +201,16 @@ export const useWeightProjection = (
             caloriesOkCount,
             proteinOkCount,
             stepsOkCount,
-            daysWithData,
+            totalChecks: totalPossible,
         };
-    }, [foodLog, stepsLog, customTargets, STEP_GOAL]);
+    }, [
+        foodLog,
+        stepsLog,
+        customTargets,
+        STEP_GOAL,
+        profile?.goal,
+        getTargetsForDate,
+    ]);
 
     /**
      * Calculate Adjusted Rate and Projected Goal Date

@@ -79,6 +79,8 @@ export const useTrackerAnalytics = ({
         biometrics.customTargets,
         biometrics.profile.currentWeight,
         biometrics.profile.targetWeight,
+        biometrics.profile,
+        nutrition.getTargetsForDate,
     );
 
     // Metabolic Auto-Pilot (Dynamic Targets)
@@ -103,6 +105,7 @@ export const useTrackerAnalytics = ({
         biometrics.stepsLog,
         biometrics.customTargets,
         biometrics.profile,
+        nutrition.getTargetsForDate,
     );
 
     // Workout Analysis (now date-reactive)
