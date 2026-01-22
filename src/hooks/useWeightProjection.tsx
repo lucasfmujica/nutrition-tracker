@@ -121,13 +121,14 @@ export const useWeightProjection = (
      */
     const adherenceData = useMemo(() => {
         const today = getArgentinaDateString();
+        const startFrom = addDaysToDate(today, -1); // Exclude today to avoid partial data noise
 
         let caloriesOkCount = 0;
         let proteinOkCount = 0;
         let stepsOkCount = 0;
 
         for (let i = 0; i < 7; i++) {
-            const date = addDaysToDate(today, -i);
+            const date = addDaysToDate(startFrom, -i);
 
             // 1. Get targets for this specific date (periodization aware)
             const dayTarget = getTargetsForDate(date);

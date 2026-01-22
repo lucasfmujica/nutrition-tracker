@@ -173,8 +173,8 @@ export const useWeightAnalytics = (
         let totalDays = 0;
 
         weekDays.forEach((date) => {
-            // Don't count future days
-            if (date > today) return;
+            // Don't count future days OR today (avoid partial data noise)
+            if (date >= today) return;
 
             totalDays++;
 

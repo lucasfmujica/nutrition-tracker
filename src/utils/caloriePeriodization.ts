@@ -10,7 +10,7 @@ export const INTENSITY = {
 export type Intensity = (typeof INTENSITY)[keyof typeof INTENSITY];
 
 export const CALORIE_ADJUSTMENTS: Record<Intensity, number> = {
-    [INTENSITY.HIGH]: 300, // +300 kcal for high demand
+    [INTENSITY.HIGH]: 150, // +150 kcal for high demand (e.g. Tennis)
     [INTENSITY.MODERATE]: 0, // Base maintenance for standard training
     [INTENSITY.RECOVERY]: -150, // -150 kcal for rest days to deepen deficit
 };
