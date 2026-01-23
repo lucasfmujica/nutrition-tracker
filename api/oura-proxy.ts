@@ -44,12 +44,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
     }
 
-    // Get Oura API token: Prioritize Authorization header from client, fallback to environment variable
+    // Get Oura API token: ONLY allow Authorization header from client
     const authHeader = req.headers.authorization;
     let token =
         authHeader && authHeader.startsWith('Bearer ')
             ? authHeader.substring(7)
-            : process.env.VITE_OURA_TOKEN;
+            : null;
 
     if (!token) {
         console.error(

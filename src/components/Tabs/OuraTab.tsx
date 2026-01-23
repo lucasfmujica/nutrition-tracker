@@ -1,4 +1,4 @@
-import { RefreshCw } from 'lucide-react';
+import { AlertCircle, RefreshCw } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTracker } from '../../context/TrackerContext';
 import { OuraEntry, Profile } from '../../types/domain';
@@ -14,13 +14,21 @@ interface OuraTabProps {
  * OuraTab - Automated Oura Ring Dashboard
  */
 export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
-    const { syncOuraData, isSyncing, syncStatus, getStepsForDate, profile } =
-        useTracker() as any;
+    const {
+        syncOuraData,
+        isSyncing,
+        syncStatus,
+        getStepsForDate,
+        profile,
+        setActiveTab,
+    } = useTracker() as any;
     const [selectedDate, setSelectedDate] = useState(getArgentinaDateString());
     const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
 
     const dailyOuraData = ouraLog.find((e) => e.date === selectedDate);
     const steps = getStepsForDate(selectedDate);
+
+    const hasToken = !!profile?.ouraPersonalToken;
 
     const dailyData = dailyOuraData
         ? ({
@@ -87,9 +95,19 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
                         </div>
                         <button
                             onClick={() => syncOuraData(true)}
-                            disabled={isSyncing}
-                            className={`p-2 rounded-lg transition-all ${isSyncing ? 'bg-purple-50 text-purple-500' : 'bg-gray-50 text-gray-500 hover:bg-purple-50 hover:text-purple-600'}`}
-                            title="Sincronizar ahora">
+                            disabled={isSyncing || !hasToken}
+                            className={`p-2 rounded-lg transition-all ${
+                                isSyncing
+                                    ? 'bg-purple-50 text-purple-500'
+                                    : !hasToken
+                                      ? 'bg-gray-50 text-gray-300 cursor-not-allowed'
+                                      : 'bg-gray-50 text-gray-500 hover:bg-purple-50 hover:text-purple-600'
+                            }`}
+                            title={
+                                !hasToken
+                                    ? 'Configurá tu token en Configuración'
+                                    : 'Sincronizar ahora'
+                            }>
                             <RefreshCw
                                 className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`}
                             />
@@ -98,7 +116,34 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
                 </div>
             </div>
 
-            <OuraBentoGrid data={dailyData} stepGoal={profile?.stepGoal || 8000} />
+            {!hasToken && (
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center space-y-4">
+                    <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto">
+                        <AlertCircle className="w-6 h-6 text-amber-600" />
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-bold text-amber-900">
+                            Token no configurado
+                        </h3>
+                        <p className="text-sm text-amber-700 max-w-md mx-auto mt-1">
+                            Para ver tus datos de Oura Ring, necesitas configurar tu
+                            Personal Access Token en la pestaña de configuración.
+                        </p>
+                    </div>
+                    <button
+                        onClick={() => setActiveTab('config')}
+                        className="px-6 py-2.5 bg-amber-600 text-white rounded-xl font-bold text-sm hover:bg-amber-700 transition-colors shadow-sm active:scale-95">
+                        Ir a Configuración
+                    </button>
+                </div>
+            )}
+
+            {hasToken && (
+                <OuraBentoGrid
+                    data={dailyData}
+                    stepGoal={profile?.stepGoal || 8000}
+                />
+            )}
 
             {isSyncing && (
                 <div className="text-center text-xs text-purple-500 font-medium animate-pulse">

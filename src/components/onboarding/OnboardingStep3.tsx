@@ -41,9 +41,24 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                     {[
-                        { value: 'lose', label: 'Bajar', emoji: '📉', desc: 'Perder peso' },
-                        { value: 'maintain', label: 'Mantener', emoji: '⚖️', desc: 'Mantener peso' },
-                        { value: 'gain', label: 'Subir', emoji: '📈', desc: 'Ganar músculo' },
+                        {
+                            value: 'lose',
+                            label: 'Bajar',
+                            emoji: '📉',
+                            desc: 'Perder peso',
+                        },
+                        {
+                            value: 'maintain',
+                            label: 'Mantener',
+                            emoji: '⚖️',
+                            desc: 'Mantener peso',
+                        },
+                        {
+                            value: 'gain',
+                            label: 'Subir',
+                            emoji: '📈',
+                            desc: 'Ganar músculo',
+                        },
                     ].map((goal) => (
                         <button
                             key={goal.value}
@@ -86,7 +101,9 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
                     <input
                         type="checkbox"
                         checked={data.hasOuraRing || false}
-                        onChange={(e) => updateField('hasOuraRing', e.target.checked)}
+                        onChange={(e) =>
+                            updateField('hasOuraRing', e.target.checked)
+                        }
                         className="w-5 h-5 rounded border-gray-500 text-blue-500 focus:ring-blue-500 bg-gray-700"
                     />
                     <div className="flex-1">
@@ -125,8 +142,11 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
                     </div>
                     <div className="text-gray-400">Objetivo:</div>
                     <div className="text-white font-medium">
-                        {data.primaryGoal === 'lose' ? '📉 Bajar peso' :
-                         data.primaryGoal === 'gain' ? '📈 Subir peso' : '⚖️ Mantener'}
+                        {data.primaryGoal === 'lose'
+                            ? '📉 Bajar peso'
+                            : data.primaryGoal === 'gain'
+                              ? '📈 Subir peso'
+                              : '⚖️ Mantener'}
                     </div>
                     <div className="text-gray-400">Entrenos/semana:</div>
                     <div className="text-white font-medium">
@@ -136,7 +156,7 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
                         <>
                             <div className="text-gray-400">Oura Ring:</div>
                             <div className="text-green-400 font-medium">
-                                ✓ Conectado
+                                ✓ Activado (token requerido)
                             </div>
                         </>
                     )}

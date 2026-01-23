@@ -42,20 +42,12 @@ export const useOuraSync = ({
     // Detect production environment
     const isProduction = import.meta.env.PROD;
 
-    // Per-user token takes priority over env var
+    // Per-user token takes priority
     const getOuraToken = (): string | null => {
         // Core Logic: Always use personal token if present
         if (ouraPersonalToken) return ouraPersonalToken;
 
-        // Fallback to env var for legacy/system support, but logged as fallback
-        const envToken = import.meta.env.VITE_OURA_TOKEN;
-        if (envToken) {
-            console.warn(
-                '[OuraSync] Personal token not found, falling back to system token.',
-            );
-            return envToken;
-        }
-
+        // No fallback to system token - users MUST provide their own
         return null;
     };
 
