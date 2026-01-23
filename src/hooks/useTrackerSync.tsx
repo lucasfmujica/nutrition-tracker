@@ -88,15 +88,20 @@ export const useTrackerSync = ({
     // SWR PATTERN: Monitor cache staleness for UI indicator
     // Checks every minute if any critical data is stale
     useEffect(() => {
+        let isMounted = true;
+
         const checkStaleness = async () => {
             try {
-                const checks = await Promise.all([
+                // Parallelize checks but be mindful of resource impact
+                const [foodStale, workoutStale, weightStale] = await Promise.all([
                     isCacheStale('food'),
                     isCacheStale('workouts'),
                     isCacheStale('weight'),
                 ]);
-                const isStale = checks.some((stale) => stale);
-                setCacheStale(isStale);
+
+                if (isMounted) {
+                    setCacheStale(foodStale || workoutStale || weightStale);
+                }
             } catch (err) {
                 console.error('[Sync] Error checking staleness:', err);
             }
@@ -107,7 +112,11 @@ export const useTrackerSync = ({
 
         // Check every minute
         const interval = setInterval(checkStaleness, 60000);
-        return () => clearInterval(interval);
+
+        return () => {
+            isMounted = false;
+            clearInterval(interval);
+        };
     }, []);
 
     // NOTE: useCloud is now passed from TrackerContext (single source of truth)

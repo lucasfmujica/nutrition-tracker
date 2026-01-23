@@ -1,3 +1,4 @@
+import gsap from 'gsap';
 import {
     BarChart2,
     BookOpen,
@@ -7,12 +8,16 @@ import {
     Home,
     Import,
     Moon,
-    PlusCircle,
+    Plus,
     Star,
     Utensils,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTracker } from '../../../context/TrackerContext';
+
+// =====================================================
+// BOTTOM NAVIGATION - PERFORMANCE LAB EDITION
+// =====================================================
 
 interface BottomNavProps {
     activeTab: string;
@@ -21,6 +26,7 @@ interface BottomNavProps {
 
 export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
     const {
         setShowFoodForm,
         setShowWorkoutForm,
@@ -34,96 +40,105 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab })
         setShowFoodScanModal,
     } = useTracker() as any;
 
+    useEffect(() => {
+        if (isMenuOpen) {
+            gsap.fromTo(
+                menuRef.current,
+                { y: 50, opacity: 0, scale: 0.9 },
+                { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: 'power4.out' },
+            );
+        }
+    }, [isMenuOpen]);
+
     const actions = [
         {
-            icon: <Utensils size={24} />,
-            label: 'Comida',
-            sublabel: 'Agregar manual',
+            icon: <Utensils size={22} />,
+            label: 'COMIDA',
+            sublabel: 'MANUAL',
             onClick: () => {
                 setNewFood({ ...newFood, date: dashboardDate });
                 setShowFoodForm(true);
             },
-            color: 'text-cyan-500',
-            bg: 'bg-cyan-50',
+            color: 'text-accent-blue',
+            bg: 'bg-accent-blue/10',
         },
         {
-            icon: <Dumbbell size={24} />,
-            label: 'Entreno',
-            sublabel: 'Agregar manual',
+            icon: <Dumbbell size={22} />,
+            label: 'ENTRENO',
+            sublabel: 'MANUAL',
             onClick: () => {
                 setNewWorkout({ ...newWorkout, date: dashboardDate });
                 setShowWorkoutForm(true);
             },
-            color: 'text-orange-500',
-            bg: 'bg-orange-50',
+            color: 'text-fat',
+            bg: 'bg-fat/10',
         },
         {
-            icon: <Star size={24} />,
-            label: 'Favoritos',
-            sublabel: 'Plantillas rápidas',
+            icon: <Star size={22} />,
+            label: 'FAVORITOS',
+            sublabel: 'TEMPLATES',
             onClick: () => setShowTemplatesModal(true),
-            color: 'text-purple-500',
-            bg: 'bg-purple-50',
+            color: 'text-purple-400',
+            bg: 'bg-purple-400/10',
         },
         {
             icon: <Camera size={20} />,
-            label: 'Escanear',
-            sublabel: 'Alimentos',
+            label: 'ESCANEAR',
+            sublabel: 'VISION IA',
             onClick: () => setShowFoodScanModal(true),
-            color: 'text-blue-500',
-            bg: 'bg-blue-50',
+            color: 'text-primary',
+            bg: 'bg-primary/10',
         },
         {
             icon: <Import size={20} />,
-            label: 'Imp. Gravl',
-            sublabel: 'Gemini AI',
+            label: 'IMP. GRAVL',
+            sublabel: 'GEMINI AI',
             onClick: () => setShowImportWorkoutModal(true),
-            color: 'text-amber-500',
-            bg: 'bg-amber-50',
+            color: 'text-carbs',
+            bg: 'bg-carbs/10',
         },
     ];
 
-    const handleAction = (action: any) => {
-        action.onClick();
-        setIsMenuOpen(false);
-    };
-
     const tabs = [
-        { id: 'dashboard', icon: Home, label: 'Diario' },
-        { id: 'comidas', icon: BookOpen, label: 'Comidas' },
-        { id: 'entrenos', icon: Dumbbell, label: 'Entrenos' },
-        { id: 'add', icon: PlusCircle, label: '', isAction: true },
-        { id: 'peso', icon: BarChart2, label: 'Peso' },
-        { id: 'pasos', icon: Footprints, label: 'Pasos' },
-        { id: 'oura', icon: Moon, label: 'Oura' },
+        { id: 'dashboard', icon: Home, label: 'LAB' },
+        { id: 'comidas', icon: BookOpen, label: 'FUEL' },
+        { id: 'entrenos', icon: Dumbbell, label: 'TRAIN' },
+        { id: 'add', icon: Plus, label: '', isAction: true },
+        { id: 'peso', icon: BarChart2, label: 'WEIGHT' },
+        { id: 'pasos', icon: Footprints, label: 'STEPS' },
+        { id: 'oura', icon: Moon, label: 'BIO' },
     ];
 
     return (
         <>
-            {/* Menu Overlay */}
+            {/* Action Menu Overlay */}
             {isMenuOpen && (
                 <>
                     <div
-                        className="fixed inset-0 bg-slate-900/60 z-40 transition-all duration-300 backdrop-blur-md"
+                        className="fixed inset-0 bg-background/80 z-40 backdrop-blur-2xl transition-all duration-500"
                         onClick={() => setIsMenuOpen(false)}
                     />
-                    <div className="fixed inset-x-4 bottom-24 z-50 animate-slide-up">
-                        <div className="bg-white rounded-[2rem] p-5 shadow-2xl border border-gray-100 max-w-sm mx-auto">
-                            <div className="grid grid-cols-1 gap-3">
+                    <div ref={menuRef} className="fixed inset-x-4 bottom-28 z-50">
+                        <div className="glass rounded-[2.5rem] p-6 shadow-2xl border border-white/5 max-w-sm mx-auto overflow-hidden">
+                            <div className="absolute inset-0 bg-noise opacity-[0.03] pointer-events-none" />
+                            <div className="flex flex-col gap-3 relative z-10">
                                 {actions.map((action, i) => (
                                     <button
                                         key={i}
-                                        onClick={() => handleAction(action)}
-                                        className="group flex items-center gap-4 p-3 rounded-2xl hover:bg-white hover:shadow-lg hover:shadow-blue-500/5 hover:border-blue-100 transition-all active:scale-95 border border-transparent">
+                                        onClick={() => {
+                                            action.onClick();
+                                            setIsMenuOpen(false);
+                                        }}
+                                        className="group flex items-center gap-4 p-4 rounded-2xl bg-slate-50/50 hover:bg-slate-100/50 border border-slate-100 hover:border-slate-200 transition-all active:scale-95">
                                         <div
-                                            className={`${action.bg} ${action.color} w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm`}>
+                                            className={`${action.bg} ${action.color} w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
                                             {action.icon}
                                         </div>
-                                        <div className="text-left min-w-0 flex-1">
-                                            <div className="text-sm font-bold text-gray-900 truncate">
+                                        <div className="text-left flex-1">
+                                            <div className="text-sm font-satoshi text-slate-900 font-black tracking-tight">
                                                 {action.label}
                                             </div>
-                                            <div className="text-xs text-gray-500 font-medium truncate">
+                                            <div className="text-[9px] text-slate-400 font-black uppercase tracking-widest">
                                                 {action.sublabel}
                                             </div>
                                         </div>
@@ -135,61 +150,76 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab })
                 </>
             )}
 
-            {/* Navigation Bar */}
-            <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] pb-[env(safe-area-inset-bottom)] z-50">
-                <div className="flex items-center justify-between h-auto min-h-[64px] py-1 max-w-md mx-auto px-2 xs:px-6 md:justify-around text-[10px] md:text-xs">
+            {/* Main Navigation Island */}
+            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-sm z-50">
+                <nav className="glass rounded-full px-6 h-14 flex items-center justify-between border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.15)] relative overflow-visible">
+                    <div className="absolute inset-0 bg-noise opacity-[0.02] pointer-events-none rounded-full" />
+
                     {tabs.map((tab) => {
                         const isActive = activeTab === tab.id;
 
                         if (tab.isAction) {
                             return (
-                                <div
+                                <button
                                     key={tab.id}
-                                    className="relative -top-6 flex-shrink-0 z-10">
-                                    <button
-                                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                        className={`w-14 h-14 rounded-full flex items-center justify-center text-white shadow-xl transition-all duration-300 ring-4 ring-white ${
-                                            isMenuOpen
-                                                ? 'bg-slate-800 rotate-45 scale-105 shadow-slate-800/40'
-                                                : 'bg-gradient-to-tr from-blue-600 to-cyan-500 hover:scale-110 hover:-translate-y-1 hover:shadow-blue-500/50 hover:shadow-2xl active:scale-95 shadow-blue-500/30'
-                                        }`}>
-                                        <PlusCircle size={28} strokeWidth={2.5} />
-                                    </button>
-                                </div>
+                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                    className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 relative -top-7 z-20 shadow-2xl ${
+                                        isMenuOpen
+                                            ? 'bg-slate-900 text-white rotate-45 scale-110'
+                                            : 'bg-primary text-white shadow-primary/40 hover:scale-110 hover:-translate-y-1'
+                                    }`}>
+                                    <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-black/20 to-transparent pointer-events-none" />
+                                    <Plus
+                                        size={28}
+                                        strokeWidth={3}
+                                        className="relative z-10"
+                                    />
+
+                                    {/* Glass reflection on button */}
+                                    <div className="absolute top-1 left-2 right-2 h-1/2 bg-white/10 rounded-t-full filter blur-[1px] pointer-events-none" />
+                                </button>
                             );
                         }
 
                         return (
                             <button
                                 key={tab.id}
-                                onClick={() => {
-                                    setActiveTab(tab.id as string);
-                                    setIsMenuOpen(false);
-                                }}
-                                className={`flex-shrink-0 flex flex-col items-center justify-center py-2 min-w-[48px] xs:min-w-[64px] transition-colors duration-200 ${
+                                onClick={() => setActiveTab(tab.id as string)}
+                                className={`flex flex-col items-center justify-center transition-all duration-300 relative group min-w-[40px] h-full ${
                                     isActive
-                                        ? 'text-blue-600'
-                                        : 'text-gray-400 hover:text-gray-600'
+                                        ? 'text-primary'
+                                        : 'text-slate-400 hover:text-slate-600'
                                 }`}>
-                                {tab.icon &&
-                                    React.createElement(tab.icon, {
-                                        size: isActive ? 24 : 22,
-                                        strokeWidth: isActive ? 2.5 : 2,
-                                        className: `transition-all duration-200 ${isActive ? '-translate-y-1' : ''}`,
-                                    })}
-                                <span
-                                    className={`text-[10px] font-medium mt-1 transition-all ${
-                                        isActive
-                                            ? 'opacity-100 font-semibold'
-                                            : 'opacity-80 hidden xs:block'
-                                    }`}>
-                                    {tab.label}
-                                </span>
+                                <div className="relative z-10 flex flex-col items-center">
+                                    {tab.icon &&
+                                        React.createElement(tab.icon, {
+                                            size: 20,
+                                            strokeWidth: isActive ? 2.5 : 2,
+                                            className: `transition-all duration-300 ${isActive ? '-translate-y-1 scale-110' : 'group-hover:scale-105'}`,
+                                        })}
+
+                                    <div
+                                        className={`flex flex-col items-center transition-all duration-300 overflow-hidden ${
+                                            isActive
+                                                ? 'max-h-6 opacity-100 mt-1'
+                                                : 'max-h-0 opacity-0'
+                                        }`}>
+                                        <span className="w-1 h-1 bg-primary rounded-full mb-1 shadow-[0_0_8px_rgba(0,102,238,0.5)]" />
+                                        <span className="text-[8px] font-black tracking-[0.05em] uppercase leading-none">
+                                            {tab.label}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Hover background effect */}
+                                {!isActive && (
+                                    <span className="absolute inset-x-0 inset-y-2 bg-slate-100/0 group-hover:bg-slate-100/50 rounded-xl transition-colors duration-300 -z-0" />
+                                )}
                             </button>
                         );
                     })}
-                </div>
-            </nav>
+                </nav>
+            </div>
         </>
     );
 };

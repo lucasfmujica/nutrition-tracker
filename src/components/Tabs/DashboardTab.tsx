@@ -1,5 +1,5 @@
 import { FileImage } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTracker } from '../../context/TrackerContext';
 import { useCorrelationAnalytics } from '../../hooks/useCorrelationAnalytics';
 import { usePatternRecognition } from '../../hooks/usePatternRecognition';
@@ -148,6 +148,39 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         await fetchStats();
     };
 
+    // Memoized periodization and targets for the current date
+    const { periodizedTargets, periodizationIntensity } = useMemo(() => {
+        const periodizedDay = weeklyPeriodization?.weekDays?.find(
+            (d: any) => d.date === dashboardDate,
+        );
+
+        const intensity = periodizedDay?.intensity;
+
+        let calculatedTargets = dashboardTargets;
+        if (safetyNetActive) {
+            calculatedTargets = {
+                ...dashboardTargets,
+                calories: profile?.tdee || 2500,
+            };
+        } else if (periodizedDay) {
+            calculatedTargets = {
+                ...dashboardTargets,
+                calories: periodizedDay.calories,
+            };
+        }
+
+        return {
+            periodizedTargets: calculatedTargets,
+            periodizationIntensity: intensity,
+        };
+    }, [
+        dashboardDate,
+        weeklyPeriodization,
+        dashboardTargets,
+        safetyNetActive,
+        profile?.tdee,
+    ]);
+
     return (
         <div className="space-y-6 pb-8 lg:pb-8">
             {/* Date Navigator - Clean Desktop Design */}
@@ -196,33 +229,9 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
 
                     <SummaryCard
                         totals={dashboardTotals}
-                        targets={(() => {
-                            if (safetyNetActive) {
-                                return {
-                                    ...dashboardTargets,
-                                    calories: profile?.tdee || 2500,
-                                };
-                            }
-
-                            const periodizedDay =
-                                weeklyPeriodization?.weekDays?.find(
-                                    (d: any) => d.date === dashboardDate,
-                                );
-                            if (periodizedDay) {
-                                return {
-                                    ...dashboardTargets,
-                                    calories: periodizedDay.calories,
-                                };
-                            }
-
-                            return dashboardTargets;
-                        })()}
+                        targets={periodizedTargets}
                         safetyNetActive={safetyNetActive}
-                        periodizationState={
-                            weeklyPeriodization?.weekDays?.find(
-                                (d: any) => d.date === dashboardDate,
-                            )?.intensity
-                        }
+                        periodizationState={periodizationIntensity}
                     />
 
                     <FoodCameraInput />
