@@ -17,7 +17,7 @@ export const TutorialSpotlight: React.FC<TutorialSpotlightProps> = ({
         // Full overlay without spotlight (for centered modals)
         return (
             <div
-                className="absolute inset-0 bg-black/60 transition-opacity duration-300"
+                className="absolute inset-0 bg-black/60 backdrop-blur-[2px] transition-opacity duration-300"
                 style={{ pointerEvents: 'none' }}
             />
         );
@@ -36,8 +36,7 @@ export const TutorialSpotlight: React.FC<TutorialSpotlightProps> = ({
             {/* SVG mask for spotlight effect */}
             <svg
                 className="absolute inset-0 w-full h-full"
-                style={{ pointerEvents: 'none' }}
-            >
+                style={{ pointerEvents: 'none' }}>
                 <defs>
                     <mask id="spotlight-mask">
                         {/* White = visible, Black = cut out */}
