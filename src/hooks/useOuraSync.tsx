@@ -214,11 +214,14 @@ export const useOuraSync = ({
                 setIsSyncing(false);
             }
         },
-        [isSyncing, saveOuraEntry, saveStepsEntry],
+        [isSyncing, saveOuraEntry, saveStepsEntry, supabase.user?.id],
     );
 
     // --- AUTO SYNC LOGIC ---
     useEffect(() => {
+        const userId = supabase.user?.id;
+        if (!userId) return; // Wait for user to be hydrated to avoid using legacy keys
+
         const triggerAutoSync = async () => {
             // Only trigger if we are not already syncing
             if (isSyncing || syncStatus === 'success') return;
@@ -227,15 +230,11 @@ export const useOuraSync = ({
             const currentTimestamp = now.getTime();
 
             // Define sync target: 11:00 AM Argentina (UTC-3)
-            // We use the local time since the user and app are aligned to Argentina
             const syncTimeToday = new Date();
             syncTimeToday.setHours(11, 0, 0, 0);
 
-            const userId = supabase.user?.id;
-            const keys = userId ? getCacheKeys(userId) : null;
-            const storageKey = keys
-                ? `${keys.METADATA}_oura_sync`
-                : STORAGE_KEY_LAST_SYNC_LEGACY;
+            const keys = getCacheKeys(userId);
+            const storageKey = `${keys.METADATA}_oura_sync`;
 
             const lastSyncStr = localStorage.getItem(storageKey);
             const lastSync = lastSyncStr ? parseInt(lastSyncStr, 10) : 0;
@@ -248,7 +247,7 @@ export const useOuraSync = ({
                 lastSync < syncTimeToday.getTime()
             ) {
                 console.log(
-                    '[OuraSync] Auto-triggering sync (Daily 11 AM schedule)',
+                    `[OuraSync] Auto-triggering sync (Schedule: 11 AM | User: ${userId.substring(0, 8)})`,
                 );
                 await syncOuraData();
             }
@@ -257,7 +256,7 @@ export const useOuraSync = ({
         // Delay slightly to give the app time to settle
         const timer = setTimeout(triggerAutoSync, 2000);
         return () => clearTimeout(timer);
-    }, [syncOuraData, isSyncing, syncStatus]);
+    }, [syncOuraData, isSyncing, syncStatus, supabase.user?.id]);
 
     return {
         syncOuraData,
