@@ -91,7 +91,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = React.memo(
 
                     <div className="flex items-end gap-2 mb-4">
                         <span
-                            className={`text-4xl font-bold tracking-tight ${statusColor}`}>
+                            className={`text-3xl sm:text-4xl font-bold tracking-tight ${statusColor}`}>
                             {caloriesRemaining}
                         </span>
                         <span className="text-gray-400 text-sm mb-1.5 font-medium">

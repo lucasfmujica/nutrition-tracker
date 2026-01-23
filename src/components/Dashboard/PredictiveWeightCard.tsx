@@ -168,7 +168,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                                 <Activity className="w-6 h-6 text-primary animate-pulse" />
                             </div>
                             <div>
-                                <h3 className="text-slate-900 font-satoshi text-2xl tracking-tight leading-none mb-1">
+                                <h3 className="text-slate-900 font-satoshi text-xl sm:text-2xl tracking-tight leading-none mb-1">
                                     ANALYTICS ENGINE
                                 </h3>
                                 <div className="flex items-center gap-1.5">
@@ -206,12 +206,12 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                             </span>
                         </div>
                         <div className="flex items-baseline justify-between gap-4">
-                            <p className="text-5xl font-satoshi text-slate-900 tracking-tight group-hover:text-primary transition-colors duration-500">
+                            <p className="text-3xl sm:text-5xl font-satoshi text-slate-900 tracking-tight group-hover:text-primary transition-colors duration-500">
                                 {formattedGoalDate?.toUpperCase() || 'CALCULANDO...'}
                             </p>
                             <div className="flex flex-col items-end">
-                                <span className="text-2xl font-satoshi text-accent leading-none">
-                                    {weeksToGoal}W
+                                <span className="text-xl sm:text-2xl font-satoshi text-accent leading-none">
+                                    {weeksToGoal} sem
                                 </span>
                                 <span className="text-[9px] font-bold text-slate-400 uppercase">
                                     ESTIMADO
@@ -264,13 +264,13 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                             </span>
                             <TrendIcon className={`w-4 h-4 ${trend.color}`} />
                         </div>
-                        <div className="flex items-baseline gap-2">
+                        <div className="flex items-baseline gap-1.5">
                             <span
-                                className={`text-4xl font-satoshi ${trend.color} leading-none`}>
+                                className={`text-2xl sm:text-4xl font-satoshi ${trend.color} leading-none`}>
                                 {trend.text}
                             </span>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase">
-                                KG/WK
+                            <span className="text-[9px] font-bold text-slate-400 uppercase">
+                                kg/sem
                             </span>
                         </div>
                     </div>
@@ -283,12 +283,12 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                             </span>
                             <Target className="w-4 h-4 text-primary opacity-60" />
                         </div>
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-4xl font-satoshi text-slate-900 leading-none">
+                        <div className="flex items-baseline gap-1.5">
+                            <span className="text-2xl sm:text-4xl font-satoshi text-slate-900 leading-none">
                                 {remainingWeight?.toFixed(1) || '—'}
                             </span>
-                            <span className="text-[10px] font-bold text-primary uppercase decoration-primary/20 decoration-2 underline-offset-4">
-                                KG TO GO
+                            <span className="text-[9px] font-bold text-primary uppercase whitespace-nowrap">
+                                kg pend.
                             </span>
                         </div>
                     </div>
