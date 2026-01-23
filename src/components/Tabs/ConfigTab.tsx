@@ -170,7 +170,9 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     </div>
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
-                            Peso Actual (kg)
+                            {weightHistory && weightHistory.length > 0
+                                ? 'Peso Inicial (kg)'
+                                : 'Peso Actual (kg)'}
                         </label>
                         <input
                             type="number"

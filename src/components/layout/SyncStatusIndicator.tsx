@@ -32,16 +32,6 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
     }, [lastSyncTime]);
 
     const getStatusConfig = () => {
-        if (cacheStale) {
-            return {
-                Icon: RefreshCw,
-                color: 'text-amber-500',
-                bgColor: 'bg-amber-50',
-                label: 'Actualizando...',
-                animate: true,
-            };
-        }
-
         switch (syncStatus) {
             case 'syncing':
                 return {
@@ -50,14 +40,7 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
                     bgColor: 'bg-yellow-50',
                     label: 'Sincronizando...',
                     animate: true,
-                };
-            case 'success':
-                return {
-                    Icon: Cloud,
-                    color: 'text-green-500',
-                    bgColor: 'bg-green-50',
-                    label: relativeTime || 'Sincronizado',
-                    animate: false,
+                    visible: true,
                 };
             case 'error':
                 return {
@@ -66,7 +49,9 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
                     bgColor: 'bg-red-50',
                     label: syncError || 'Error de sincronización',
                     animate: false,
+                    visible: true,
                 };
+            case 'success':
             case 'idle':
             default:
                 return {
@@ -75,11 +60,14 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
                     bgColor: 'bg-green-50',
                     label: relativeTime || 'Sincronizado',
                     animate: false,
+                    visible: false,
                 };
         }
     };
 
-    const { Icon, color, bgColor, label, animate } = getStatusConfig();
+    const { Icon, color, bgColor, label, animate, visible } = getStatusConfig();
+
+    if (!visible) return null;
 
     return (
         <div className="flex items-center gap-2 px-2 sm:px-3 py-1.5 rounded-full bg-white border border-gray-100 shadow-sm max-w-[140px] sm:max-w-none transition-all">
