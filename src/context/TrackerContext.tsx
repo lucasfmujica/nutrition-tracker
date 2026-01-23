@@ -259,6 +259,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
     const ouraSync = useOuraSync({
         saveOuraEntry: biometrics.saveOuraEntry,
         saveStepsEntry: biometrics.saveStepsEntry,
+        ouraPersonalToken: biometrics.profile?.ouraPersonalToken,
     });
 
     // 17. UI Helpers

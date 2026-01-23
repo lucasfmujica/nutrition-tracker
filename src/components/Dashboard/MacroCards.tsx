@@ -60,7 +60,7 @@ export const MacroCards: React.FC<MacroCardsProps> = React.memo(
         if (!targets || !totals) return null; // Safety check
 
         return (
-            <div className="flex gap-3 mb-6">
+            <div className="flex gap-3 mb-6" data-tutorial="macro-bars">
                 <MacroCard
                     label="Proteína"
                     current={totals.protein}

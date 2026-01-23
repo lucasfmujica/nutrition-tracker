@@ -16,6 +16,8 @@ const STORAGE_KEY_LAST_SYNC = 'oura_last_sync';
 interface UseOuraSyncParams {
     saveOuraEntry: (entry: OuraEntry) => Promise<any>;
     saveStepsEntry: (entry: StepsEntry) => Promise<any>;
+    /** Per-user Oura token. Falls back to VITE_OURA_TOKEN env var if not provided. */
+    ouraPersonalToken?: string;
 }
 
 interface SyncResult {
@@ -27,6 +29,7 @@ interface SyncResult {
 export const useOuraSync = ({
     saveOuraEntry,
     saveStepsEntry,
+    ouraPersonalToken,
 }: UseOuraSyncParams) => {
     const [isSyncing, setIsSyncing] = useState(false);
     const [syncStatus, setSyncStatus] = useState<
@@ -36,13 +39,18 @@ export const useOuraSync = ({
     // Detect production environment
     const isProduction = import.meta.env.PROD;
 
+    // Per-user token takes priority over env var
+    const getOuraToken = (): string | null => {
+        return ouraPersonalToken || import.meta.env.VITE_OURA_TOKEN || null;
+    };
+
     const fetchOuraEndpoint = async (
         endpoint: string,
         start: string,
         end: string,
     ): Promise<any> => {
-        const token = import.meta.env.VITE_OURA_TOKEN;
-        if (!token) throw new Error('VITE_OURA_TOKEN is not configured');
+        const token = getOuraToken();
+        if (!token) throw new Error('Oura token not configured. Set up your personal token in Settings.');
 
         // Use proxy in production, direct API in development
         if (isProduction) {

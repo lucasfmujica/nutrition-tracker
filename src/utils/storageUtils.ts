@@ -11,7 +11,15 @@ import {
 } from '../types/domain';
 import { storage } from './storage';
 
-export const CACHE_KEYS = {
+// ============================================================================
+// MULTI-USER STORAGE KEY SYSTEM
+// ============================================================================
+
+/**
+ * Legacy cache keys for migration (pre-multi-user)
+ * Used to migrate existing user data to new user-specific keys
+ */
+export const LEGACY_CACHE_KEYS = {
     PROFILE: 'lucas-profile-v5',
     WEIGHT: 'lucas-weight-history-v5',
     FOOD: 'lucas-food-log-v5',
@@ -21,8 +29,99 @@ export const CACHE_KEYS = {
     OURA: 'lucas-oura-log-v5',
     WATER: 'lucas-water-log-v5',
     TEMPLATES: 'lucas-meal-templates-v1',
-    PENDING_SYNC: 'lucas-pending-sync-v1', // The Vault - offline resilience queue
-    METADATA: 'lucas-cache-metadata-v1', // SWR: Track sync timestamps & schema version
+    PENDING_SYNC: 'lucas-pending-sync-v1',
+    METADATA: 'lucas-cache-metadata-v1',
+};
+
+/**
+ * Generate user-specific cache keys
+ * Uses first 8 chars of userId for brevity while maintaining uniqueness
+ * @param userId - Full user ID from Supabase auth
+ * @returns Object with all cache keys for this user
+ */
+export const getCacheKeys = (userId: string) => {
+    const shortId = userId.substring(0, 8);
+    return {
+        PROFILE: `lf-${shortId}-profile-v5`,
+        WEIGHT: `lf-${shortId}-weight-v5`,
+        FOOD: `lf-${shortId}-food-v5`,
+        WORKOUT: `lf-${shortId}-workout-v5`,
+        STEPS: `lf-${shortId}-steps-v5`,
+        TARGETS: `lf-${shortId}-targets-v5`,
+        OURA: `lf-${shortId}-oura-v5`,
+        WATER: `lf-${shortId}-water-v5`,
+        TEMPLATES: `lf-${shortId}-templates-v1`,
+        PENDING_SYNC: `lf-${shortId}-pending-v1`,
+        METADATA: `lf-${shortId}-metadata-v1`,
+    };
+};
+
+/**
+ * Backward compatibility: Export CACHE_KEYS as alias to LEGACY_CACHE_KEYS
+ * @deprecated Use getCacheKeys(userId) instead
+ */
+export const CACHE_KEYS = LEGACY_CACHE_KEYS;
+
+/**
+ * Migrate legacy storage keys to user-specific keys
+ * Called once on login to preserve existing user data
+ * @param userId - User ID to migrate data to
+ * @returns Promise<boolean> - True if migration occurred, false if no legacy data
+ */
+export const migrateUserStorage = async (userId: string): Promise<boolean> => {
+    try {
+        const userKeys = getCacheKeys(userId);
+
+        // Check if legacy data exists
+        const legacyProfile = await storage.get(LEGACY_CACHE_KEYS.PROFILE).catch(() => null);
+        if (!legacyProfile?.value) {
+            console.log('[Migration] No legacy data found, skipping migration');
+            return false;
+        }
+
+        // Check if user already has migrated data (prevent double migration)
+        const existingUserData = await storage.get(userKeys.PROFILE).catch(() => null);
+        if (existingUserData?.value) {
+            console.log('[Migration] User already has data, skipping migration');
+            return false;
+        }
+
+        console.log('[Migration] Starting legacy data migration for user:', userId.substring(0, 8));
+
+        // Migrate all data types
+        const migrationPairs = [
+            { legacy: LEGACY_CACHE_KEYS.PROFILE, user: userKeys.PROFILE },
+            { legacy: LEGACY_CACHE_KEYS.WEIGHT, user: userKeys.WEIGHT },
+            { legacy: LEGACY_CACHE_KEYS.FOOD, user: userKeys.FOOD },
+            { legacy: LEGACY_CACHE_KEYS.WORKOUT, user: userKeys.WORKOUT },
+            { legacy: LEGACY_CACHE_KEYS.STEPS, user: userKeys.STEPS },
+            { legacy: LEGACY_CACHE_KEYS.TARGETS, user: userKeys.TARGETS },
+            { legacy: LEGACY_CACHE_KEYS.OURA, user: userKeys.OURA },
+            { legacy: LEGACY_CACHE_KEYS.WATER, user: userKeys.WATER },
+            { legacy: LEGACY_CACHE_KEYS.TEMPLATES, user: userKeys.TEMPLATES },
+            { legacy: LEGACY_CACHE_KEYS.PENDING_SYNC, user: userKeys.PENDING_SYNC },
+            { legacy: LEGACY_CACHE_KEYS.METADATA, user: userKeys.METADATA },
+        ];
+
+        for (const pair of migrationPairs) {
+            const legacyData = await storage.get(pair.legacy).catch(() => null);
+            if (legacyData?.value) {
+                await storage.set(pair.user, legacyData.value);
+                console.log(`[Migration] Migrated ${pair.legacy} → ${pair.user}`);
+            }
+        }
+
+        // Clear legacy keys after successful migration
+        for (const key of Object.values(LEGACY_CACHE_KEYS)) {
+            await storage.remove(key).catch(() => {});
+        }
+        console.log('[Migration] Legacy keys cleared');
+
+        return true;
+    } catch (err) {
+        console.error('[Migration] Failed to migrate user storage:', err);
+        return false;
+    }
 };
 
 // ============================================================================
@@ -69,7 +168,9 @@ interface CachedData {
     localTemplates: MealTemplate[];
 }
 
-export const loadCachedData = async (): Promise<CachedData> => {
+export const loadCachedData = async (userId?: string): Promise<CachedData> => {
+    const keys = userId ? getCacheKeys(userId) : LEGACY_CACHE_KEYS;
+
     const [
         profileData,
         weightData,
@@ -81,15 +182,15 @@ export const loadCachedData = async (): Promise<CachedData> => {
         waterData,
         templatesData,
     ] = await Promise.all([
-        storage.get(CACHE_KEYS.PROFILE).catch(() => null),
-        storage.get(CACHE_KEYS.WEIGHT).catch(() => null),
-        storage.get(CACHE_KEYS.FOOD).catch(() => null),
-        storage.get(CACHE_KEYS.WORKOUT).catch(() => null),
-        storage.get(CACHE_KEYS.STEPS).catch(() => null),
-        storage.get(CACHE_KEYS.TARGETS).catch(() => null),
-        storage.get(CACHE_KEYS.OURA).catch(() => null),
-        storage.get(CACHE_KEYS.WATER).catch(() => null),
-        storage.get(CACHE_KEYS.TEMPLATES).catch(() => null),
+        storage.get(keys.PROFILE).catch(() => null),
+        storage.get(keys.WEIGHT).catch(() => null),
+        storage.get(keys.FOOD).catch(() => null),
+        storage.get(keys.WORKOUT).catch(() => null),
+        storage.get(keys.STEPS).catch(() => null),
+        storage.get(keys.TARGETS).catch(() => null),
+        storage.get(keys.OURA).catch(() => null),
+        storage.get(keys.WATER).catch(() => null),
+        storage.get(keys.TEMPLATES).catch(() => null),
     ]);
 
     return {
@@ -117,50 +218,51 @@ interface CacheDataInput {
     mealTemplates?: MealTemplate[];
 }
 
-export const cacheData = async (data: CacheDataInput): Promise<boolean> => {
+export const cacheData = async (data: CacheDataInput, userId?: string): Promise<boolean> => {
     try {
+        const keys = userId ? getCacheKeys(userId) : LEGACY_CACHE_KEYS;
         const promises: Promise<any>[] = [];
 
         // Profile & Targets: only if they exist
         if (data.profile)
             promises.push(
-                storage.set(CACHE_KEYS.PROFILE, JSON.stringify(data.profile)),
+                storage.set(keys.PROFILE, JSON.stringify(data.profile)),
             );
         if (data.targets)
             promises.push(
-                storage.set(CACHE_KEYS.TARGETS, JSON.stringify(data.targets)),
+                storage.set(keys.TARGETS, JSON.stringify(data.targets)),
             );
 
         // CRITICAL FIX: Arrays - ALWAYS update cache to reflect Supabase (even if empty)
         // This ensures cache is a mirror of the cloud, not a competitor
         if (data.weightHistory !== undefined)
             promises.push(
-                storage.set(CACHE_KEYS.WEIGHT, JSON.stringify(data.weightHistory)),
+                storage.set(keys.WEIGHT, JSON.stringify(data.weightHistory)),
             );
         if (data.foodLog !== undefined)
             promises.push(
-                storage.set(CACHE_KEYS.FOOD, JSON.stringify(data.foodLog)),
+                storage.set(keys.FOOD, JSON.stringify(data.foodLog)),
             );
         if (data.workouts !== undefined)
             promises.push(
-                storage.set(CACHE_KEYS.WORKOUT, JSON.stringify(data.workouts)),
+                storage.set(keys.WORKOUT, JSON.stringify(data.workouts)),
             );
         if (data.stepsLog !== undefined)
             promises.push(
-                storage.set(CACHE_KEYS.STEPS, JSON.stringify(data.stepsLog)),
+                storage.set(keys.STEPS, JSON.stringify(data.stepsLog)),
             );
         if (data.ouraLog !== undefined)
             promises.push(
-                storage.set(CACHE_KEYS.OURA, JSON.stringify(data.ouraLog)),
-            ); // ← FIX
+                storage.set(keys.OURA, JSON.stringify(data.ouraLog)),
+            );
         if (data.waterLog !== undefined)
             promises.push(
-                storage.set(CACHE_KEYS.WATER, JSON.stringify(data.waterLog)),
+                storage.set(keys.WATER, JSON.stringify(data.waterLog)),
             );
         if (data.mealTemplates !== undefined)
             promises.push(
                 storage.set(
-                    CACHE_KEYS.TEMPLATES,
+                    keys.TEMPLATES,
                     JSON.stringify(data.mealTemplates),
                 ),
             );
@@ -173,9 +275,9 @@ export const cacheData = async (data: CacheDataInput): Promise<boolean> => {
     }
 };
 
-export const clearCache = async (): Promise<void> => {
-    const keys = Object.values(CACHE_KEYS);
-    for (const key of keys) {
+export const clearCache = async (userId?: string): Promise<void> => {
+    const keys = userId ? getCacheKeys(userId) : LEGACY_CACHE_KEYS;
+    for (const key of Object.values(keys)) {
         await storage.remove(key);
     }
 };
@@ -193,12 +295,14 @@ interface CacheMetadata {
 
 /**
  * Get cache metadata containing sync timestamps and schema versions
+ * @param userId - Optional user ID for user-specific metadata
  * @returns {Promise<Object>} Metadata object with structure:
  *   { dataType: { lastSynced: timestamp, schemaVersion: 'v6' } }
  */
-export const getCacheMetadata = async (): Promise<CacheMetadata> => {
+export const getCacheMetadata = async (userId?: string): Promise<CacheMetadata> => {
     try {
-        const item = await storage.get(CACHE_KEYS.METADATA);
+        const keys = userId ? getCacheKeys(userId) : LEGACY_CACHE_KEYS;
+        const item = await storage.get(keys.METADATA);
         if (!item?.value) return {};
         return JSON.parse(item.value);
     } catch (e) {
@@ -211,20 +315,23 @@ export const getCacheMetadata = async (): Promise<CacheMetadata> => {
  * Update cache metadata after successful Supabase sync
  * Uses Argentina timezone (browser local time already in -03:00)
  * @param {string} dataType - Data type key (e.g., 'food', 'weight', 'profile')
+ * @param {string} userId - Optional user ID for user-specific metadata
  * @param {number} syncTimestamp - Optional timestamp (defaults to now)
  * @returns {Promise<boolean>} Success status
  */
 export const updateCacheMetadata = async (
     dataType: string,
+    userId?: string,
     syncTimestamp: number = Date.now(),
 ): Promise<boolean> => {
     try {
-        const metadata = await getCacheMetadata();
+        const keys = userId ? getCacheKeys(userId) : LEGACY_CACHE_KEYS;
+        const metadata = await getCacheMetadata(userId);
         metadata[dataType] = {
             lastSynced: syncTimestamp,
             schemaVersion: SCHEMA_VERSION,
         };
-        await storage.set(CACHE_KEYS.METADATA, JSON.stringify(metadata));
+        await storage.set(keys.METADATA, JSON.stringify(metadata));
         return true;
     } catch (err) {
         console.error('[Cache] Failed to update metadata:', err);
@@ -236,11 +343,12 @@ export const updateCacheMetadata = async (
  * Check if cached data is stale (older than TTL or schema mismatch)
  * CRITICAL: Prevents race condition where stale cache renders before Supabase fetch
  * @param {string} dataType - Data type key to check
+ * @param {string} userId - Optional user ID for user-specific check
  * @returns {Promise<boolean>} True if stale, false if fresh
  */
-export const isCacheStale = async (dataType: string): Promise<boolean> => {
+export const isCacheStale = async (dataType: string, userId?: string): Promise<boolean> => {
     try {
-        const metadata = await getCacheMetadata();
+        const metadata = await getCacheMetadata(userId);
         const dataMetadata = metadata[dataType];
 
         // No metadata = stale (first load or corrupted cache)
@@ -281,7 +389,7 @@ export interface PendingWrite {
  * CRITICAL: Enforces MAX_QUEUE_SIZE and MAX_RETRY_COUNT limits
  * @param {string} table - Table name (e.g., 'oura_log', 'food_log')
  * @param {object} data - Entry data to sync
- * @param {string} userId - User ID for deduplication
+ * @param {string} userId - User ID for deduplication and storage key
  * @returns {Promise<boolean>} Success status
  */
 export const addPendingWrite = async (
@@ -304,7 +412,8 @@ export const addPendingWrite = async (
             return false;
         }
 
-        let queue = await getPendingWrites();
+        const keys = getCacheKeys(userId);
+        let queue = await getPendingWrites(userId);
 
         // PROTECTION 1: Remove entries that exceeded max retry count
         const initialLength = queue.length;
@@ -353,7 +462,7 @@ export const addPendingWrite = async (
             queue.push(pendingWrite);
         }
 
-        await storage.set(CACHE_KEYS.PENDING_SYNC, JSON.stringify(queue));
+        await storage.set(keys.PENDING_SYNC, JSON.stringify(queue));
 
         return true;
     } catch (err) {
@@ -364,11 +473,13 @@ export const addPendingWrite = async (
 
 /**
  * Get all pending writes from the queue
+ * @param {string} userId - Optional user ID for user-specific queue
  * @returns {Promise<Array>} Array of pending write objects
  */
-export const getPendingWrites = async (): Promise<PendingWrite[]> => {
+export const getPendingWrites = async (userId?: string): Promise<PendingWrite[]> => {
     try {
-        const item = await storage.get(CACHE_KEYS.PENDING_SYNC);
+        const keys = userId ? getCacheKeys(userId) : LEGACY_CACHE_KEYS;
+        const item = await storage.get(keys.PENDING_SYNC);
         return safeParse(item, []);
     } catch (err) {
         console.error('[Vault] Failed to get pending writes:', err);
@@ -379,14 +490,16 @@ export const getPendingWrites = async (): Promise<PendingWrite[]> => {
 /**
  * Remove a successfully synced write from the queue
  * @param {string} id - Pending write ID
+ * @param {string} userId - Optional user ID for user-specific queue
  * @returns {Promise<boolean>} Success status
  */
-export const removePendingWrite = async (id: string): Promise<boolean> => {
+export const removePendingWrite = async (id: string, userId?: string): Promise<boolean> => {
     try {
-        const queue = await getPendingWrites();
+        const keys = userId ? getCacheKeys(userId) : LEGACY_CACHE_KEYS;
+        const queue = await getPendingWrites(userId);
         const filtered = queue.filter((item) => item.id !== id);
 
-        await storage.set(CACHE_KEYS.PENDING_SYNC, JSON.stringify(filtered));
+        await storage.set(keys.PENDING_SYNC, JSON.stringify(filtered));
         return true;
     } catch (err) {
         console.error('[Vault] Failed to remove pending write:', err);
@@ -397,16 +510,18 @@ export const removePendingWrite = async (id: string): Promise<boolean> => {
 /**
  * Increment retry count for a pending write
  * @param {string} id - Pending write ID
+ * @param {string} userId - Optional user ID for user-specific queue
  * @returns {Promise<boolean>} Success status
  */
-export const incrementRetryCount = async (id: string): Promise<boolean> => {
+export const incrementRetryCount = async (id: string, userId?: string): Promise<boolean> => {
     try {
-        const queue = await getPendingWrites();
+        const keys = userId ? getCacheKeys(userId) : LEGACY_CACHE_KEYS;
+        const queue = await getPendingWrites(userId);
         const item = queue.find((w) => w.id === id);
 
         if (item) {
             item.retryCount = (item.retryCount || 0) + 1;
-            await storage.set(CACHE_KEYS.PENDING_SYNC, JSON.stringify(queue));
+            await storage.set(keys.PENDING_SYNC, JSON.stringify(queue));
             return true;
         }
         return false;
@@ -420,15 +535,17 @@ export const incrementRetryCount = async (id: string): Promise<boolean> => {
  * Remove multiple pending writes in a single operation (reduces localStorage writes)
  * CRITICAL: Batching prevents UI blocking from multiple setItem() calls
  * @param {string[]} ids - Array of pending write IDs to remove
+ * @param {string} userId - Optional user ID for user-specific queue
  * @returns {Promise<boolean>} Success status
  */
-export const removePendingWritesBatch = async (ids: string[]): Promise<boolean> => {
+export const removePendingWritesBatch = async (ids: string[], userId?: string): Promise<boolean> => {
     try {
-        const queue = await getPendingWrites();
+        const keys = userId ? getCacheKeys(userId) : LEGACY_CACHE_KEYS;
+        const queue = await getPendingWrites(userId);
         const idsSet = new Set(ids);
         const filtered = queue.filter((item) => !idsSet.has(item.id));
 
-        await storage.set(CACHE_KEYS.PENDING_SYNC, JSON.stringify(filtered));
+        await storage.set(keys.PENDING_SYNC, JSON.stringify(filtered));
         return true;
     } catch (err) {
         console.error('[Vault] Failed to batch remove pending writes:', err);
@@ -440,11 +557,13 @@ export const removePendingWritesBatch = async (ids: string[]): Promise<boolean> 
  * Increment retry counts for multiple pending writes in a single operation
  * CRITICAL: Batching prevents UI blocking from multiple setItem() calls
  * @param {string[]} ids - Array of pending write IDs
+ * @param {string} userId - Optional user ID for user-specific queue
  * @returns {Promise<boolean>} Success status
  */
-export const incrementRetryCountsBatch = async (ids: string[]): Promise<boolean> => {
+export const incrementRetryCountsBatch = async (ids: string[], userId?: string): Promise<boolean> => {
     try {
-        const queue = await getPendingWrites();
+        const keys = userId ? getCacheKeys(userId) : LEGACY_CACHE_KEYS;
+        const queue = await getPendingWrites(userId);
         const idsSet = new Set(ids);
 
         queue.forEach((item) => {
@@ -453,7 +572,7 @@ export const incrementRetryCountsBatch = async (ids: string[]): Promise<boolean>
             }
         });
 
-        await storage.set(CACHE_KEYS.PENDING_SYNC, JSON.stringify(queue));
+        await storage.set(keys.PENDING_SYNC, JSON.stringify(queue));
         return true;
     } catch (err) {
         console.error('[Vault] Failed to batch increment retry counts:', err);
@@ -463,11 +582,13 @@ export const incrementRetryCountsBatch = async (ids: string[]): Promise<boolean>
 
 /**
  * Clear all pending writes (use on logout or reset)
+ * @param {string} userId - Optional user ID for user-specific queue
  * @returns {Promise<boolean>} Success status
  */
-export const clearPendingWrites = async (): Promise<boolean> => {
+export const clearPendingWrites = async (userId?: string): Promise<boolean> => {
     try {
-        await storage.remove(CACHE_KEYS.PENDING_SYNC);
+        const keys = userId ? getCacheKeys(userId) : LEGACY_CACHE_KEYS;
+        await storage.remove(keys.PENDING_SYNC);
         return true;
     } catch (err) {
         console.error('[Vault] Failed to clear pending writes:', err);

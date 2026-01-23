@@ -28,7 +28,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = React.memo(
         }
 
         return (
-            <div className="card bg-white p-5 shadow-sm rounded-2xl mb-4 relative overflow-hidden">
+            <div className="card bg-white p-5 shadow-sm rounded-2xl mb-4 relative overflow-hidden" data-tutorial="calorie-ring">
                 {/* Background decoration */}
                 <div
                     className={`absolute top-0 right-0 w-32 h-32 rounded-full -mr-10 -mt-10 opacity-50 pointer-events-none ${

@@ -100,11 +100,11 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab })
     ];
 
     const tabs = [
-        { id: 'dashboard', icon: Home, label: 'LAB' },
-        { id: 'comidas', icon: BookOpen, label: 'FUEL' },
-        { id: 'entrenos', icon: Dumbbell, label: 'TRAIN' },
-        { id: 'add', icon: Plus, label: '', isAction: true },
-        { id: 'peso', icon: BarChart2, label: 'WEIGHT' },
+        { id: 'dashboard', icon: Home, label: 'LAB', tutorialId: 'dashboard-tab' },
+        { id: 'comidas', icon: BookOpen, label: 'FUEL', tutorialId: 'diary-tab' },
+        { id: 'entrenos', icon: Dumbbell, label: 'TRAIN', tutorialId: 'workouts-tab' },
+        { id: 'add', icon: Plus, label: '', isAction: true, tutorialId: 'fab-button' },
+        { id: 'peso', icon: BarChart2, label: 'WEIGHT', tutorialId: 'weight-tab' },
         { id: 'pasos', icon: Footprints, label: 'STEPS' },
         { id: 'oura', icon: Moon, label: 'BIO' },
     ];
@@ -163,6 +163,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab })
                                 <button
                                     key={tab.id}
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                    data-tutorial={tab.tutorialId}
                                     className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 relative -top-7 z-20 shadow-2xl ${
                                         isMenuOpen
                                             ? 'bg-slate-900 text-white rotate-45 scale-110'
@@ -185,6 +186,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab })
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as string)}
+                                data-tutorial={tab.tutorialId}
                                 className={`flex flex-col items-center justify-center transition-all duration-300 relative group min-w-[40px] h-full ${
                                     isActive
                                         ? 'text-primary'

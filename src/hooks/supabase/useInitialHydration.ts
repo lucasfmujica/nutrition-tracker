@@ -96,18 +96,19 @@ export const useInitialHydration = ({
 
         const loadData = async () => {
             setIsLoading(true);
+            const userId = supabase.user?.id;
             try {
                 // SWR PATTERN: Check staleness before loading cache
                 const stalenessChecks = await Promise.all([
-                    isCacheStale('profile'),
-                    isCacheStale('targets'),
-                    isCacheStale('weight'),
-                    isCacheStale('food'),
-                    isCacheStale('workouts'),
-                    isCacheStale('steps'),
-                    isCacheStale('oura'),
-                    isCacheStale('water'),
-                    isCacheStale('templates'),
+                    isCacheStale('profile', userId),
+                    isCacheStale('targets', userId),
+                    isCacheStale('weight', userId),
+                    isCacheStale('food', userId),
+                    isCacheStale('workouts', userId),
+                    isCacheStale('steps', userId),
+                    isCacheStale('oura', userId),
+                    isCacheStale('water', userId),
+                    isCacheStale('templates', userId),
                 ]);
 
                 const [
@@ -122,7 +123,7 @@ export const useInitialHydration = ({
                     templatesStale,
                 ] = stalenessChecks;
 
-                const cached = await loadCachedData();
+                const cached = await loadCachedData(userId);
 
                 // SWR: Only hydrate if cache is fresh (within 5-minute TTL)
                 // Stale cache is ignored to prevent showing outdated data
@@ -271,21 +272,21 @@ export const useInitialHydration = ({
                         if (data.mealTemplates !== undefined)
                             setMealTemplates(data.mealTemplates);
 
-                        await cacheData(data);
+                        await cacheData(data, userId);
 
                         // SWR PATTERN: Update metadata timestamps after successful sync
                         const argentinaTimestamp = Date.now();
 
                         await Promise.all([
-                            updateCacheMetadata('profile', argentinaTimestamp),
-                            updateCacheMetadata('targets', argentinaTimestamp),
-                            updateCacheMetadata('weight', argentinaTimestamp),
-                            updateCacheMetadata('food', argentinaTimestamp),
-                            updateCacheMetadata('workouts', argentinaTimestamp),
-                            updateCacheMetadata('steps', argentinaTimestamp),
-                            updateCacheMetadata('oura', argentinaTimestamp),
-                            updateCacheMetadata('water', argentinaTimestamp),
-                            updateCacheMetadata('templates', argentinaTimestamp),
+                            updateCacheMetadata('profile', userId, argentinaTimestamp),
+                            updateCacheMetadata('targets', userId, argentinaTimestamp),
+                            updateCacheMetadata('weight', userId, argentinaTimestamp),
+                            updateCacheMetadata('food', userId, argentinaTimestamp),
+                            updateCacheMetadata('workouts', userId, argentinaTimestamp),
+                            updateCacheMetadata('steps', userId, argentinaTimestamp),
+                            updateCacheMetadata('oura', userId, argentinaTimestamp),
+                            updateCacheMetadata('water', userId, argentinaTimestamp),
+                            updateCacheMetadata('templates', userId, argentinaTimestamp),
                         ]);
 
                         // SWR: Clear stale flag immediately after successful sync

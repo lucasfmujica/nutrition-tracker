@@ -119,7 +119,8 @@ export const useVaultWorker = ({
             return { success: false, synced: 0, failed: 0 };
         }
 
-        const queue = await getPendingWrites();
+        const userId = supabase?.user?.id;
+        const queue = await getPendingWrites(userId);
         if (queue.length === 0) {
             return { success: true, synced: 0, failed: 0 };
         }
@@ -162,10 +163,10 @@ export const useVaultWorker = ({
 
             // CRITICAL: Batch update localStorage to prevent multiple blocking setItem() calls
             if (successIds.length > 0) {
-                await removePendingWritesBatch(successIds);
+                await removePendingWritesBatch(successIds, userId);
             }
             if (failedIds.length > 0) {
-                await incrementRetryCountsBatch(failedIds);
+                await incrementRetryCountsBatch(failedIds, userId);
             }
 
             // Yield to browser between batches
@@ -196,6 +197,7 @@ export const useVaultWorker = ({
                 if (result.synced > 0) {
                     // Delay refresh to allow UI to recover from queue processing
                     setTimeout(async () => {
+                        const userId = supabase?.user?.id;
                         const data = await supabase.fetchAllData();
                         if (data) {
                             if (data.profile) setProfile(data.profile);
@@ -212,20 +214,20 @@ export const useVaultWorker = ({
                                 setWaterLog(data.waterLog);
                             if (data.mealTemplates !== undefined)
                                 setMealTemplates(data.mealTemplates);
-                            await cacheData(data);
+                            await cacheData(data, userId);
 
                             // SWR PATTERN: Update metadata after Vault sync
                             const argentinaTimestamp = Date.now();
                             await Promise.all([
-                                updateCacheMetadata('profile', argentinaTimestamp),
-                                updateCacheMetadata('targets', argentinaTimestamp),
-                                updateCacheMetadata('weight', argentinaTimestamp),
-                                updateCacheMetadata('food', argentinaTimestamp),
-                                updateCacheMetadata('workouts', argentinaTimestamp),
-                                updateCacheMetadata('steps', argentinaTimestamp),
-                                updateCacheMetadata('oura', argentinaTimestamp),
-                                updateCacheMetadata('water', argentinaTimestamp),
-                                updateCacheMetadata('templates', argentinaTimestamp),
+                                updateCacheMetadata('profile', userId, argentinaTimestamp),
+                                updateCacheMetadata('targets', userId, argentinaTimestamp),
+                                updateCacheMetadata('weight', userId, argentinaTimestamp),
+                                updateCacheMetadata('food', userId, argentinaTimestamp),
+                                updateCacheMetadata('workouts', userId, argentinaTimestamp),
+                                updateCacheMetadata('steps', userId, argentinaTimestamp),
+                                updateCacheMetadata('oura', userId, argentinaTimestamp),
+                                updateCacheMetadata('water', userId, argentinaTimestamp),
+                                updateCacheMetadata('templates', userId, argentinaTimestamp),
                             ]);
                         }
                     }, 1000); // 1s delay allows UI to breathe

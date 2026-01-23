@@ -18,6 +18,8 @@ export interface OnboardingData {
     carbs_goal: number;
     fat_goal: number;
     training_days_per_week: number;
+    has_oura_ring?: boolean;
+    onboarding_completed?: boolean;
 }
 
 export interface UseProfileDataReturn {
@@ -156,6 +158,7 @@ export function useProfileData(
                         target_fat: onboardingData.fat_goal,
                         training_days_per_week:
                             onboardingData.training_days_per_week,
+                        has_oura_ring: onboardingData.has_oura_ring ?? false,
                         onboarding_completed: true,
                         updated_at: new Date().toISOString(),
                     } as any,

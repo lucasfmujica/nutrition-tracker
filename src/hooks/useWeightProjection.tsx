@@ -216,9 +216,35 @@ export const useWeightProjection = (
     /**
      * Calculate Adjusted Rate and Projected Goal Date
      * R_adjusted = R_realist * (0.6 + 0.4 * A)
+     *
+     * GOAL-AWARE LOGIC:
+     * - Cut: remainingWeight = currentWeight - TARGET (positive means still losing)
+     * - Bulk: remainingWeight = TARGET - currentWeight (positive means still gaining)
+     * - Maintain: No projection needed
      */
     const projection = useMemo(() => {
-        if (!currentWeight || currentWeight <= TARGET_WEIGHT) {
+        const isGainingGoal = profile?.goal === 'bulk';
+        const isMaintainGoal = profile?.goal === 'maintain';
+
+        // For maintain mode, no weight projection needed
+        if (isMaintainGoal) {
+            return {
+                projectedGoalDate: null,
+                adjustedTrend: realistTrend,
+                weeksToGoal: null,
+                daysToGoal: null,
+                remainingWeight: currentWeight ? Math.abs(currentWeight - TARGET_WEIGHT) : 0,
+                status: 'not_losing' as const, // We use 'not_losing' to indicate no projection
+            };
+        }
+
+        // Calculate remaining weight based on goal direction
+        const remainingWeight = isGainingGoal
+            ? TARGET_WEIGHT - (currentWeight || 0)
+            : (currentWeight || 0) - TARGET_WEIGHT;
+
+        // Check if goal is reached
+        if (!currentWeight || remainingWeight <= 0) {
             return {
                 projectedGoalDate: 'Meta alcanzada! 🎉',
                 adjustedTrend: 0,
@@ -229,14 +255,18 @@ export const useWeightProjection = (
             };
         }
 
-        if (realistTrend === null || realistTrend >= 0) {
-            // Not losing weight
+        // Check if trend is moving in the correct direction
+        const trendIsCorrect = isGainingGoal
+            ? realistTrend !== null && realistTrend > 0 // Bulk: positive trend is good
+            : realistTrend !== null && realistTrend < 0; // Cut: negative trend is good
+
+        if (realistTrend === null || !trendIsCorrect) {
             return {
                 projectedGoalDate: null,
                 adjustedTrend: realistTrend,
                 weeksToGoal: null,
                 daysToGoal: null,
-                remainingWeight: currentWeight - TARGET_WEIGHT,
+                remainingWeight,
                 status: 'not_losing' as const,
             };
         }
@@ -245,7 +275,6 @@ export const useWeightProjection = (
         const adherenceModifier = 0.6 + 0.4 * adherenceData.adherenceScore;
         const adjustedTrend = realistTrend * adherenceModifier;
 
-        const remainingWeight = currentWeight - TARGET_WEIGHT;
         const weeksToGoal = remainingWeight / Math.abs(adjustedTrend);
         const daysToGoal = Math.round(weeksToGoal * 7);
 
@@ -260,34 +289,48 @@ export const useWeightProjection = (
             remainingWeight,
             status: 'on_track' as const,
         };
-    }, [currentWeight, realistTrend, adherenceData.adherenceScore, TARGET_WEIGHT]);
+    }, [currentWeight, realistTrend, adherenceData.adherenceScore, TARGET_WEIGHT, profile?.goal]);
 
     /**
      * Generate projected path for chart visualization
      * Returns array of { date, projectedWeight } from today to goal
+     * GOAL-AWARE: Handles both cut (losing) and bulk (gaining) directions
      */
     const projectedPath = useMemo(() => {
         if (projection.status !== 'on_track' || !projection.daysToGoal) {
             return [];
         }
 
+        const isGainingGoal = profile?.goal === 'bulk';
         const today = getArgentinaDateString();
         const path: Array<{ date: string; projectedWeight: number }> = [];
-        const dailyLoss = Math.abs(projection.adjustedTrend || 0) / 7;
+        const dailyChange = Math.abs(projection.adjustedTrend || 0) / 7;
 
         // Generate weekly points to goal (max 52 weeks)
         const maxPoints = Math.min(Math.ceil(projection.daysToGoal / 7), 52);
         for (let week = 0; week <= maxPoints; week++) {
             const date = addDaysToDate(today, week * 7);
-            const projected = (currentWeight || 0) - dailyLoss * week * 7;
-            path.push({
-                date,
-                projectedWeight: Math.max(projected, TARGET_WEIGHT),
-            });
+            let projected: number;
+
+            if (isGainingGoal) {
+                // Bulk: weight increases over time
+                projected = (currentWeight || 0) + dailyChange * week * 7;
+                path.push({
+                    date,
+                    projectedWeight: Math.min(projected, TARGET_WEIGHT),
+                });
+            } else {
+                // Cut: weight decreases over time
+                projected = (currentWeight || 0) - dailyChange * week * 7;
+                path.push({
+                    date,
+                    projectedWeight: Math.max(projected, TARGET_WEIGHT),
+                });
+            }
         }
 
         return path;
-    }, [projection, currentWeight, TARGET_WEIGHT]);
+    }, [projection, currentWeight, TARGET_WEIGHT, profile?.goal]);
 
     /**
      * Generate actual weight data for last 90 days for chart (increased from 14 to show more context)
@@ -308,10 +351,12 @@ export const useWeightProjection = (
     }, [weightHistory]);
 
     /**
-     * Generate coach message based on adherence and trend
+     * Generate coach message based on adherence, trend, and goal type
      */
     const coachMessage = useMemo(() => {
         const { adherencePercent } = adherenceData;
+        const isGainingGoal = profile?.goal === 'bulk';
+        const isMaintainGoal = profile?.goal === 'maintain';
 
         if (projection.status === 'goal_reached') {
             return {
@@ -320,17 +365,50 @@ export const useWeightProjection = (
             };
         }
 
-        if (projection.status === 'not_losing') {
-            if (realistTrend && realistTrend > 0) {
+        if (isMaintainGoal) {
+            // Maintain mode messaging
+            if (realistTrend === null) {
                 return {
-                    emoji: '⚠️',
-                    text: 'Tendencia al alza. Revisa tu déficit calórico.',
+                    emoji: '📊',
+                    text: 'Registra más datos para ver tu estabilidad.',
                 };
             }
-            return {
-                emoji: '📊',
-                text: 'Registra más datos para generar tu proyección.',
-            };
+            const absWeeklyChange = Math.abs(realistTrend || 0);
+            if (absWeeklyChange <= 0.2) {
+                return { emoji: '✅', text: 'Peso estable. ¡Excelente mantenimiento!' };
+            } else if (realistTrend && realistTrend > 0) {
+                return { emoji: '📈', text: 'Tendencia al alza. Ajusta si no es deseado.' };
+            } else {
+                return { emoji: '📉', text: 'Tendencia a la baja. Ajusta si no es deseado.' };
+            }
+        }
+
+        if (projection.status === 'not_losing') {
+            if (isGainingGoal) {
+                // Bulk mode: not gaining is the issue
+                if (realistTrend && realistTrend < 0) {
+                    return {
+                        emoji: '⚠️',
+                        text: 'Tendencia a la baja. Aumenta tus calorías.',
+                    };
+                }
+                return {
+                    emoji: '📊',
+                    text: 'Registra más datos para generar tu proyección.',
+                };
+            } else {
+                // Cut mode: not losing is the issue
+                if (realistTrend && realistTrend > 0) {
+                    return {
+                        emoji: '⚠️',
+                        text: 'Tendencia al alza. Revisa tu déficit calórico.',
+                    };
+                }
+                return {
+                    emoji: '📊',
+                    text: 'Registra más datos para generar tu proyección.',
+                };
+            }
         }
 
         if (adherencePercent >= 80) {
@@ -345,7 +423,7 @@ export const useWeightProjection = (
         } else {
             return { emoji: '🎯', text: 'Retoma el ritmo. Tu meta te espera.' };
         }
-    }, [adherenceData, projection.status, realistTrend]);
+    }, [adherenceData, projection.status, realistTrend, profile?.goal]);
 
     /**
      * Format goal date in Argentine locale

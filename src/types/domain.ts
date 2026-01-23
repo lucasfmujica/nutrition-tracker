@@ -26,6 +26,12 @@ export interface Profile {
     createdAt: string;
     updatedAt: string;
     safety_net_enabled?: boolean;
+    // Multi-user support fields
+    hasOuraRing?: boolean;
+    ouraPersonalToken?: string;
+    onboardingCompleted?: boolean;
+    tutorialCompleted?: boolean;
+    iosShortcutsConfigured?: boolean;
 }
 
 export interface WeightEntry {

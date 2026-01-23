@@ -13,6 +13,7 @@ import {
     clearCache,
     clearPendingWrites,
     isCacheStale,
+    migrateUserStorage,
     updateCacheMetadata,
 } from '../utils/storageUtils';
 import { useInitialHydration } from './supabase/useInitialHydration';
@@ -85,6 +86,20 @@ export const useTrackerSync = ({
 
     const hasInitialized = useRef(false);
 
+    // Get userId for user-specific storage operations
+    const userId = supabase.user?.id;
+
+    // MULTI-USER: Migrate legacy storage on first login
+    useEffect(() => {
+        if (userId && supabase.isAuthenticated) {
+            migrateUserStorage(userId).then((migrated) => {
+                if (migrated) {
+                    console.log('[Sync] Legacy storage migrated for user:', userId.substring(0, 8));
+                }
+            });
+        }
+    }, [userId, supabase.isAuthenticated]);
+
     // SWR PATTERN: Monitor cache staleness for UI indicator
     // Checks every minute if any critical data is stale
     useEffect(() => {
@@ -94,9 +109,9 @@ export const useTrackerSync = ({
             try {
                 // Parallelize checks but be mindful of resource impact
                 const [foodStale, workoutStale, weightStale] = await Promise.all([
-                    isCacheStale('food'),
-                    isCacheStale('workouts'),
-                    isCacheStale('weight'),
+                    isCacheStale('food', userId),
+                    isCacheStale('workouts', userId),
+                    isCacheStale('weight', userId),
                 ]);
 
                 if (isMounted) {
@@ -117,7 +132,7 @@ export const useTrackerSync = ({
             isMounted = false;
             clearInterval(interval);
         };
-    }, []);
+    }, [userId]);
 
     // NOTE: useCloud is now passed from TrackerContext (single source of truth)
 
@@ -197,15 +212,15 @@ export const useTrackerSync = ({
                     // SWR PATTERN: Update metadata after manual refresh
                     const argentinaTimestamp = Date.now();
                     await Promise.all([
-                        updateCacheMetadata('profile', argentinaTimestamp),
-                        updateCacheMetadata('targets', argentinaTimestamp),
-                        updateCacheMetadata('weight', argentinaTimestamp),
-                        updateCacheMetadata('food', argentinaTimestamp),
-                        updateCacheMetadata('workouts', argentinaTimestamp),
-                        updateCacheMetadata('steps', argentinaTimestamp),
-                        updateCacheMetadata('oura', argentinaTimestamp),
-                        updateCacheMetadata('water', argentinaTimestamp),
-                        updateCacheMetadata('templates', argentinaTimestamp),
+                        updateCacheMetadata('profile', userId, argentinaTimestamp),
+                        updateCacheMetadata('targets', userId, argentinaTimestamp),
+                        updateCacheMetadata('weight', userId, argentinaTimestamp),
+                        updateCacheMetadata('food', userId, argentinaTimestamp),
+                        updateCacheMetadata('workouts', userId, argentinaTimestamp),
+                        updateCacheMetadata('steps', userId, argentinaTimestamp),
+                        updateCacheMetadata('oura', userId, argentinaTimestamp),
+                        updateCacheMetadata('water', userId, argentinaTimestamp),
+                        updateCacheMetadata('templates', userId, argentinaTimestamp),
                     ]);
 
                     // Clear stale flag immediately
@@ -235,8 +250,8 @@ export const useTrackerSync = ({
             setOfflineMode(false);
             setIsLoading(false);
 
-            await clearCache();
-            await clearPendingWrites(); // CRITICAL: Prevent cross-user data corruption
+            await clearCache(userId);
+            await clearPendingWrites(userId); // CRITICAL: Prevent cross-user data corruption
 
             // Reset state (setters)
             setProfile({

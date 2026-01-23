@@ -225,6 +225,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                         actualPath={weightProjection.actualPath}
                         projectedPath={weightProjection.projectedPath}
                         targetWeight={weightProjection.targetWeight}
+                        goal={profile?.goal}
                     />
 
                     <SummaryCard

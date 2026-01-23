@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useCallback } from 'react';
 import { TrackerFAB } from './components/layout/FAB/TrackerFAB';
 import { TrackerHeader } from './components/layout/Header/TrackerHeader';
 import { ModalsManager } from './components/layout/Modals/ModalsManager';
@@ -6,6 +6,7 @@ import { ModalsManager } from './components/layout/Modals/ModalsManager';
 import { AuthShell } from './components/layout/Shell/AuthShell';
 import { Layout } from './components/layout/Shell/Layout';
 import { UndoToast } from './components/shared/UndoToast';
+import { TutorialOverlay, TutorialProvider } from './components/Tutorial';
 
 // Lazy load heavy tab components
 const ConfigTab = lazy(() =>
@@ -103,29 +104,53 @@ const NutritionTrackerContent = () => {
         showOnboarding,
         setNewFood,
         newFood,
+        supabase,
     } = useTracker();
 
     // Derived state for Dashboard
     const dashboardTotals = getTotalsForDate(dashboardDate);
     const dashboardTargets = getTargetsForDate(dashboardDate);
 
+    // Tutorial: Map tab index to tab ID
+    const tabIndexToId = ['dashboard', 'comidas', 'peso', 'entrenos', 'config'];
+    const handleTutorialNavigate = useCallback(
+        (tabIndex: number) => {
+            const tabId = tabIndexToId[tabIndex];
+            if (tabId) {
+                setActiveTab(tabId);
+            }
+        },
+        [setActiveTab],
+    );
+
+    // Tutorial: Mark tutorial as complete
+    const handleTutorialComplete = useCallback(() => {
+        updateConfig({ ...profile, tutorialCompleted: true }, customTargets);
+    }, [profile, customTargets, updateConfig]);
+
     return (
         <AuthShell>
-            <Layout
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-                profile={profile}
-                showNav={!showOnboarding}>
-                <style>{`
+            <TutorialProvider
+                tutorialCompleted={profile?.tutorialCompleted ?? false}
+                onComplete={handleTutorialComplete}
+                onNavigate={handleTutorialNavigate}
+            >
+                <Layout
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    profile={profile}
+                    showNav={!showOnboarding}>
+                    <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
           * { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
           .scrollbar-hide::-webkit-scrollbar{display:none}
           .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
         `}</style>
 
-                <ModalsManager />
-                <UndoToast undoAction={undoAction} setUndoAction={setUndoAction} />
-                <TrackerHeader />
+                    <ModalsManager />
+                    <UndoToast undoAction={undoAction} setUndoAction={setUndoAction} />
+                    <TrackerHeader />
+                    <TutorialOverlay />
 
                 <PullToRefresh onRefresh={handleRefresh} isRefreshing={isRefreshing}>
                     <main className="p-4 lg:p-6 xl:p-8 pb-32 md:pb-36 w-full max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto">
@@ -237,14 +262,16 @@ const NutritionTrackerContent = () => {
                                     exportForNutritionist={exportForNutritionist}
                                     exportBackup={exportBackup}
                                     importBackup={importBackup}
+                                    userId={supabase?.user?.id}
                                 />
                             ) : null}
                         </Suspense>
                     </main>
-                </PullToRefresh>
+                    </PullToRefresh>
 
-                <TrackerFAB />
-            </Layout>
+                    <TrackerFAB />
+                </Layout>
+            </TutorialProvider>
         </AuthShell>
     );
 };

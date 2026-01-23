@@ -200,8 +200,12 @@ export type Database = {
                     current_weight: number | null;
                     display_name: string | null;
                     goal: string | null;
+                    has_oura_ring: boolean | null;
                     height: number | null;
                     id: string;
+                    ios_shortcuts_configured: boolean | null;
+                    onboarding_completed: boolean | null;
+                    oura_personal_token: string | null;
                     target_calories: number | null;
                     target_carbs: number | null;
                     target_fat: number | null;
@@ -210,6 +214,7 @@ export type Database = {
                     target_weight: number | null;
                     training_day_calories_bonus: number | null;
                     training_day_carbs: number | null;
+                    tutorial_completed: boolean | null;
                     updated_at: string | null;
                     user_id: string;
                 };
@@ -221,8 +226,12 @@ export type Database = {
                     current_weight?: number | null;
                     display_name?: string | null;
                     goal?: string | null;
+                    has_oura_ring?: boolean | null;
                     height?: number | null;
                     id?: string;
+                    ios_shortcuts_configured?: boolean | null;
+                    onboarding_completed?: boolean | null;
+                    oura_personal_token?: string | null;
                     target_calories?: number | null;
                     target_carbs?: number | null;
                     target_fat?: number | null;
@@ -231,6 +240,7 @@ export type Database = {
                     target_weight?: number | null;
                     training_day_calories_bonus?: number | null;
                     training_day_carbs?: number | null;
+                    tutorial_completed?: boolean | null;
                     updated_at?: string | null;
                     user_id: string;
                 };
@@ -242,8 +252,12 @@ export type Database = {
                     current_weight?: number | null;
                     display_name?: string | null;
                     goal?: string | null;
+                    has_oura_ring?: boolean | null;
                     height?: number | null;
                     id?: string;
+                    ios_shortcuts_configured?: boolean | null;
+                    onboarding_completed?: boolean | null;
+                    oura_personal_token?: string | null;
                     target_calories?: number | null;
                     target_carbs?: number | null;
                     target_fat?: number | null;
@@ -252,6 +266,7 @@ export type Database = {
                     target_weight?: number | null;
                     training_day_calories_bonus?: number | null;
                     training_day_carbs?: number | null;
+                    tutorial_completed?: boolean | null;
                     updated_at?: string | null;
                     user_id?: string;
                 };

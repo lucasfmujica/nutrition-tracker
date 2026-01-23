@@ -26,10 +26,11 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         proteinGoal: '',
         carbsGoal: '',
         fatGoal: '',
-        // Step 3: Training
+        // Step 3: Training & Devices
         trainingDaysPerWeek: 4,
         primaryGoal: 'maintain',
         activityLevel: 'moderate',
+        hasOuraRing: false, // Multi-user: Oura Ring support
     });
 
     const totalSteps = 3;
@@ -109,6 +110,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                 training_days_per_week: formData.trainingDaysPerWeek,
                 primary_goal: formData.primaryGoal, // string
                 activity_level: formData.activityLevel, // string
+                has_oura_ring: formData.hasOuraRing, // Multi-user: Oura Ring support
                 onboarding_completed: true,
             });
         } catch (err) {

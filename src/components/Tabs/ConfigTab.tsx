@@ -7,6 +7,8 @@ import {
     WeightEntry,
     Workout,
 } from '../../types/domain';
+import { IOSShortcutQR } from '../Settings/iOSShortcutQR';
+import { OuraTokenSetup } from '../Settings/OuraTokenSetup';
 
 interface ConfigTabProps {
     // Profile
@@ -23,6 +25,8 @@ interface ConfigTabProps {
     exportForNutritionist: () => void;
     exportBackup: () => void;
     importBackup: (e: ChangeEvent<HTMLInputElement>) => void;
+    // User ID for iOS Shortcuts
+    userId?: string;
 }
 
 /**
@@ -44,6 +48,8 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
     exportForNutritionist,
     exportBackup,
     importBackup,
+    // User ID
+    userId,
 }) => {
     return (
         <div className="w-full max-w-none space-y-6">
@@ -401,6 +407,37 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     kcal · {customTargets.trainingDayCarbs}g carbs
                 </p>
             </div>
+
+            {/* Oura Ring Integration */}
+            <OuraTokenSetup
+                hasOuraRing={profile.hasOuraRing ?? false}
+                currentToken={profile.ouraPersonalToken}
+                onSaveToken={async (token) => {
+                    await updateConfig(
+                        { ...profile, ouraPersonalToken: token },
+                        customTargets,
+                    );
+                }}
+                onToggleOura={async (enabled) => {
+                    await updateConfig(
+                        { ...profile, hasOuraRing: enabled },
+                        customTargets,
+                    );
+                }}
+            />
+
+            {/* iOS Shortcuts QR Code */}
+            {userId && (
+                <IOSShortcutQR
+                    userId={userId}
+                    onConfigured={() =>
+                        updateConfig(
+                            { ...profile, iosShortcutsConfigured: true },
+                            customTargets,
+                        )
+                    }
+                />
+            )}
 
             {/* Sync Status */}
             <div className="bg-blue-50/50 border border-blue-100 border-dashed rounded-2xl p-4 flex items-center justify-between">

@@ -25,6 +25,7 @@ interface PredictiveWeightCardProps {
     projectedPath: any[];
     targetWeight: number;
     coachMessage?: CoachMessage | null;
+    goal?: 'cut' | 'maintain' | 'bulk'; // Goal type for context-aware messaging
 }
 
 /**
@@ -44,7 +45,9 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
         projectedPath,
         targetWeight,
         coachMessage,
+        goal = 'cut',
     }) => {
+        const isGainingGoal = goal === 'bulk';
         // Loading / insufficient data state
         if (
             projectionStatus === undefined ||
@@ -88,7 +91,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
             );
         }
 
-        // Trend display logic
+        // Trend display logic - GOAL-AWARE
         const getTrendDisplay = () => {
             if (adjustedTrend === null || adjustedTrend === undefined) {
                 return {
@@ -99,22 +102,44 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                     label: 'STABLE',
                 };
             }
-            if (adjustedTrend < 0) {
+
+            if (isGainingGoal) {
+                // BULK MODE: Positive trend is good (green), negative is bad (red)
+                if (adjustedTrend > 0) {
+                    return {
+                        icon: TrendingUp,
+                        text: `+${adjustedTrend.toFixed(1)}`,
+                        color: 'text-accent',
+                        bg: 'bg-accent/10',
+                        label: 'GANANDO',
+                    };
+                }
                 return {
                     icon: TrendingDown,
-                    text: `${Math.abs(adjustedTrend).toFixed(1)}`,
-                    color: 'text-accent',
-                    bg: 'bg-accent/10',
-                    label: 'BURNING',
+                    text: `${adjustedTrend.toFixed(1)}`,
+                    color: 'text-fat',
+                    bg: 'bg-fat/10',
+                    label: 'PERDIENDO',
+                };
+            } else {
+                // CUT MODE: Negative trend is good (green), positive is bad (red)
+                if (adjustedTrend < 0) {
+                    return {
+                        icon: TrendingDown,
+                        text: `${Math.abs(adjustedTrend).toFixed(1)}`,
+                        color: 'text-accent',
+                        bg: 'bg-accent/10',
+                        label: 'QUEMANDO',
+                    };
+                }
+                return {
+                    icon: TrendingUp,
+                    text: `+${adjustedTrend.toFixed(1)}`,
+                    color: 'text-fat',
+                    bg: 'bg-fat/10',
+                    label: 'GANANDO',
                 };
             }
-            return {
-                icon: TrendingUp,
-                text: `+${adjustedTrend.toFixed(1)}`,
-                color: 'text-fat',
-                bg: 'bg-fat/10',
-                label: 'GAINING',
-            };
         };
 
         // Adherence color (traffic light)
@@ -279,7 +304,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                     <div className="rounded-2xl p-5 bg-white border border-slate-100 shadow-sm flex flex-col justify-between transition-all duration-300 hover:border-primary/20 hover:-translate-y-1">
                         <div className="flex justify-between items-start mb-3">
                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                                DELTA RESTANTE
+                                {isGainingGoal ? 'KG POR GANAR' : 'KG POR PERDER'}
                             </span>
                             <Target className="w-4 h-4 text-primary opacity-60" />
                         </div>

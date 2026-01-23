@@ -82,15 +82,17 @@ export const ActivityCards: React.FC<ActivityCardsProps> = React.memo(
         return (
             <div className="flex gap-3 mb-6">
                 {/* Steps Card */}
-                <ActivityCard
-                    title="Pasos"
-                    value={steps}
-                    target={stepsTarget}
-                    unit="Pasos"
-                    icon={Footprints}
-                    color="bg-orange-500"
-                    subtext={`Meta: ${stepsTarget}`}
-                />
+                <div data-tutorial="steps-card" className="flex-1">
+                    <ActivityCard
+                        title="Pasos"
+                        value={steps}
+                        target={stepsTarget}
+                        unit="Pasos"
+                        icon={Footprints}
+                        color="bg-orange-500"
+                        subtext={`Meta: ${stepsTarget}`}
+                    />
+                </div>
 
                 {/* Water Card */}
                 <ActivityCard

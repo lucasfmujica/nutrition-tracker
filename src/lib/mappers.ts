@@ -37,6 +37,12 @@ export const mappers = {
         age: profile.age,
         activity_level: profile.activityLevel,
         goal: profile.goal,
+        // Multi-user support fields
+        has_oura_ring: profile.hasOuraRing,
+        oura_personal_token: profile.ouraPersonalToken,
+        onboarding_completed: profile.onboardingCompleted,
+        tutorial_completed: profile.tutorialCompleted,
+        ios_shortcuts_configured: profile.iosShortcutsConfigured,
     }),
 
     // Profile: Supabase -> localStorage format (for compatibility)
@@ -61,6 +67,12 @@ export const mappers = {
         trainingDayCarbs: dbProfile.training_day_carbs,
         createdAt: dbProfile.created_at || new Date().toISOString(),
         updatedAt: dbProfile.updated_at || new Date().toISOString(),
+        // Multi-user support fields
+        hasOuraRing: dbProfile.has_oura_ring ?? false,
+        ouraPersonalToken: dbProfile.oura_personal_token ?? undefined,
+        onboardingCompleted: dbProfile.onboarding_completed ?? false,
+        tutorialCompleted: dbProfile.tutorial_completed ?? false,
+        iosShortcutsConfigured: dbProfile.ios_shortcuts_configured ?? false,
     }),
 
     // Targets: localStorage -> Supabase (stored in profiles table)

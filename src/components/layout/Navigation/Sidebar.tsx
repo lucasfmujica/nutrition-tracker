@@ -15,12 +15,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
     const menuItems = [
         { id: 'dashboard', icon: Home, label: 'Dashboard' },
-        { id: 'comidas', icon: Utensils, label: 'Comidas' },
-        { id: 'entrenos', icon: Dumbbell, label: 'Entrenos' },
-        { id: 'peso', icon: Scale, label: 'Peso' },
+        { id: 'comidas', icon: Utensils, label: 'Comidas', tutorialId: 'diary-tab' },
+        { id: 'entrenos', icon: Dumbbell, label: 'Entrenos', tutorialId: 'workouts-tab' },
+        { id: 'peso', icon: Scale, label: 'Peso', tutorialId: 'weight-tab' },
         { id: 'pasos', icon: Activity, label: 'Pasos' },
         { id: 'oura', icon: Link, label: 'Oura' },
-        { id: 'config', icon: User, label: 'Perfil' },
+        { id: 'config', icon: User, label: 'Perfil', tutorialId: 'config-tab' },
     ];
 
     return (
@@ -74,6 +74,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         <button
                             key={item.id}
                             onClick={() => setActiveTab(item.id)}
+                            data-tutorial={item.tutorialId}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
                                 isActive
                                     ? 'bg-gradient-to-r from-blue-600/10 to-cyan-500/10 text-blue-700 shadow-sm font-bold'
