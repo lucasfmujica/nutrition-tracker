@@ -94,7 +94,10 @@ export const useTrackerSync = ({
         if (userId && supabase.isAuthenticated) {
             migrateUserStorage(userId).then((migrated) => {
                 if (migrated) {
-                    console.log('[Sync] Legacy storage migrated for user:', userId.substring(0, 8));
+                    console.log(
+                        '[Sync] Legacy storage migrated for user:',
+                        userId.substring(0, 8),
+                    );
                 }
             });
         }
@@ -257,7 +260,7 @@ export const useTrackerSync = ({
             setProfile({
                 id: 'default',
                 userId: 'default',
-                name: 'Lucas Mujica',
+                name: 'Usuario',
                 avatar: null,
                 height: 173,
                 currentWeight: 84.9,

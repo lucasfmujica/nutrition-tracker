@@ -44,12 +44,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
     }
 
-    // Get Oura API token from environment
-    const token = process.env.VITE_OURA_TOKEN;
+    // Get Oura API token: Prioritize Authorization header from client, fallback to environment variable
+    const authHeader = req.headers.authorization;
+    let token =
+        authHeader && authHeader.startsWith('Bearer ')
+            ? authHeader.substring(7)
+            : process.env.VITE_OURA_TOKEN;
+
     if (!token) {
-        console.error('[Oura Proxy] VITE_OURA_TOKEN not configured');
-        return res.status(500).json({
-            error: 'Server configuration error: API token not set',
+        console.error(
+            '[Oura Proxy] No Oura token provided in header or environment',
+        );
+        return res.status(401).json({
+            error: 'Authentication error: Oura API token not provided. Please configure it in Settings.',
         });
     }
 

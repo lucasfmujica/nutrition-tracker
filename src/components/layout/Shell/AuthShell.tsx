@@ -69,10 +69,23 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
 
                 setProfile((prev) => ({
                     ...prev,
+                    name: profileData.name || prev.name,
+                    currentWeight: profileData.current_weight || prev.currentWeight,
+                    targetWeight: profileData.goal_weight || prev.targetWeight,
+                    height: profileData.height || prev.height,
+                    age: profileData.age || prev.age,
+                    goal:
+                        profileData.primary_goal === 'lose'
+                            ? 'cut'
+                            : profileData.primary_goal === 'gain'
+                              ? 'bulk'
+                              : 'maintain',
+                    activityLevel: profileData.activity_level || prev.activityLevel,
                     targetCalories: profileData.calorie_goal,
                     targetProtein: profileData.protein_goal || 150,
                     targetCarbs: profileData.carbs_goal || 220,
                     targetFat: profileData.fat_goal || 73,
+                    onboardingCompleted: true,
                 }));
             }
         } catch (err) {

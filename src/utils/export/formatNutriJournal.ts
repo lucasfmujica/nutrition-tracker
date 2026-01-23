@@ -41,7 +41,7 @@ export const generateFoodJournal = ({
     journal += '═══════════════════════════════════════════════════════════════\n';
     journal += '                    DIARIO DE ALIMENTACIÓN\n';
     journal += '═══════════════════════════════════════════════════════════════\n\n';
-    journal += `Nombre: ${profile?.name || 'Lucas Mujica'}\n`;
+    journal += `Nombre: ${profile?.name || 'Usuario'}\n`;
     journal += `Período: ${capitalizeFirst(formatFullDateSpanish(startDate))} → ${capitalizeFirst(formatFullDateSpanish(today))}\n`;
     journal += `Generado: ${formatArgentinaTimestamp(new Date())}\n\n`;
 

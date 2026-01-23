@@ -41,6 +41,7 @@ export const useBiometrics = (
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         safety_net_enabled: false,
+        onboardingCompleted: false,
     };
 
     const defaultTargets: CustomTargets = {

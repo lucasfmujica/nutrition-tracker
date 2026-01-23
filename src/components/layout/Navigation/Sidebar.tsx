@@ -16,7 +16,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
     const menuItems = [
         { id: 'dashboard', icon: Home, label: 'Dashboard' },
         { id: 'comidas', icon: Utensils, label: 'Comidas', tutorialId: 'diary-tab' },
-        { id: 'entrenos', icon: Dumbbell, label: 'Entrenos', tutorialId: 'workouts-tab' },
+        {
+            id: 'entrenos',
+            icon: Dumbbell,
+            label: 'Entrenos',
+            tutorialId: 'workouts-tab',
+        },
         { id: 'peso', icon: Scale, label: 'Peso', tutorialId: 'weight-tab' },
         { id: 'pasos', icon: Activity, label: 'Pasos' },
         { id: 'oura', icon: Link, label: 'Oura' },
@@ -107,13 +112,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     ) : (
                         <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-sm shadow-sm">
                             {profile?.avatar ||
-                                profile?.name?.substring(0, 2).toUpperCase() ||
-                                'LM'}
+                                profile?.name?.substring(0, 1).toUpperCase() ||
+                                'U'}
                         </div>
                     )}
                     <div className="overflow-hidden">
                         <p className="text-sm font-bold text-gray-900 truncate">
-                            {profile?.name || 'Lucas Mujica'}
+                            {profile?.name || 'Usuario'}
                         </p>
                         <p className="text-xs text-gray-500 truncate">
                             Premium Member

@@ -69,7 +69,7 @@ export const generateClaudeReport = ({
     // ===== HEADER SECTION =====
     report += '# LukenFit Health & Fitness Report\n\n';
     report += `**Generated**: ${formatArgentinaTimestamp(new Date())}\n`;
-    report += `**User**: ${profile?.name || 'Lucas Mujica'}\n`;
+    report += `**User**: ${profile?.name || 'Usuario'}\n`;
     report += `**Current Status**: ${currentWeight} kg → Goal: ${profile.targetWeight} kg (${profile.height} cm tall, ${profile.age} years)\n\n`;
     report += '---\n\n';
 

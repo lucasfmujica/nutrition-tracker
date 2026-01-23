@@ -15,7 +15,8 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
     const [step, setStep] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
-        // Step 1: Physical stats (no defaults for critical numbers)
+        // Step 1: Physical stats
+        name: '',
         currentWeight: '',
         goalWeight: '',
         height: '',
@@ -98,6 +99,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         try {
             // Maps to snake_case for Supabase
             await onComplete({
+                name: formData.name,
                 current_weight: parseFloat(formData.currentWeight) || null,
                 goal_weight: parseFloat(formData.goalWeight) || null,
                 height: parseFloat(formData.height) || null,
@@ -122,7 +124,12 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
 
     const canProceed = () => {
         if (step === 1)
-            return formData.currentWeight && formData.height && formData.age;
+            return (
+                formData.name &&
+                formData.currentWeight &&
+                formData.height &&
+                formData.age
+            );
         if (step === 2) return formData.calorieGoal;
         return true;
     };

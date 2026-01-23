@@ -2,6 +2,7 @@ import React from 'react';
 
 interface OnboardingStep1Props {
     data: {
+        name: string;
         currentWeight: string;
         goalWeight: string;
         height: string;
@@ -22,11 +23,30 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
     return (
         <div className="space-y-5">
             <div className="text-center mb-6">
-                <span className="text-3xl mb-2 block">📊</span>
-                <h2 className="text-xl font-bold text-white">Tus datos físicos</h2>
+                <span className="text-3xl mb-2 block">👋</span>
+                <h2 className="text-xl font-bold text-white">
+                    ¡Hola! ¿Cómo te llamas?
+                </h2>
                 <p className="text-sm text-gray-400 mt-1">
-                    Para calcular tus metas personalizadas
+                    Queremos conocerte un poco mejor
                 </p>
+            </div>
+
+            <div>
+                <label className="block text-sm text-gray-400 mb-1.5">
+                    Nombre completo *
+                </label>
+                <input
+                    type="text"
+                    value={data.name}
+                    onChange={(e) => updateField('name', e.target.value)}
+                    placeholder="Escribe tu nombre"
+                    className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white text-lg"
+                />
+            </div>
+
+            <div className="text-center mt-8 mb-4 pt-4 border-t border-gray-700/50">
+                <h2 className="text-lg font-bold text-white">Tus datos físicos</h2>
             </div>
 
             <div className="grid grid-cols-2 gap-4">

@@ -44,7 +44,19 @@ export const useOuraSync = ({
 
     // Per-user token takes priority over env var
     const getOuraToken = (): string | null => {
-        return ouraPersonalToken || import.meta.env.VITE_OURA_TOKEN || null;
+        // Core Logic: Always use personal token if present
+        if (ouraPersonalToken) return ouraPersonalToken;
+
+        // Fallback to env var for legacy/system support, but logged as fallback
+        const envToken = import.meta.env.VITE_OURA_TOKEN;
+        if (envToken) {
+            console.warn(
+                '[OuraSync] Personal token not found, falling back to system token.',
+            );
+            return envToken;
+        }
+
+        return null;
     };
 
     const fetchOuraEndpoint = async (
@@ -68,6 +80,7 @@ export const useOuraSync = ({
                 const response = await fetch(proxyUrl, {
                     method: 'GET',
                     headers: {
+                        Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     },
                 });

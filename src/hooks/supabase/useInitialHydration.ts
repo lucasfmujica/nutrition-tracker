@@ -128,12 +128,16 @@ export const useInitialHydration = ({
                 // SWR: Only hydrate if cache is fresh (within 5-minute TTL)
                 // Stale cache is ignored to prevent showing outdated data
                 if (cached.localProfile && !profileStale) {
-                    setProfile(cached.localProfile);
+                    // Only hydrate from cache if it's a completed profile or we have no other choice
+                    if (cached.localProfile.onboardingCompleted) {
+                        setProfile(cached.localProfile);
+                    }
                 } else if (profileStale && cached.localProfile) {
                     setSaveStatus('⚡ Cargando perfil actualizado...');
                 }
 
                 if (cached.localTargets && !targetsStale) {
+                    // Only hydrate if profile is likely completed or we have targets
                     setCustomTargets(cached.localTargets);
                 }
 
@@ -186,9 +190,17 @@ export const useInitialHydration = ({
                         console.warn(
                             '[Data] Supabase slow (>3s), falling back to stale cache',
                         );
-                        if (cached.localProfile && profileStale)
+                        if (
+                            cached.localProfile &&
+                            profileStale &&
+                            cached.localProfile.onboardingCompleted
+                        )
                             setProfile(cached.localProfile);
-                        if (cached.localTargets && targetsStale)
+                        if (
+                            cached.localTargets &&
+                            targetsStale &&
+                            cached.localProfile?.onboardingCompleted
+                        )
                             setCustomTargets(cached.localTargets);
                         if (cached.localWeight.length && weightStale)
                             setWeightHistory(cached.localWeight);
@@ -256,9 +268,14 @@ export const useInitialHydration = ({
                         // Clear fallback timer since fresh data arrived
                         if (fallbackTimer) clearTimeout(fallbackTimer);
 
-                        // CRITICAL FIX: Supabase is the single source of truth
-                        if (data.profile) setProfile(data.profile);
-                        if (data.targets) setCustomTargets(data.targets);
+                        // CRITICAL FIX: Supabase is the single source of truth,
+                        // but only if onboarding is completed to avoid overwriting with DB defaults
+                        if (data.profile && data.profile.onboardingCompleted) {
+                            setProfile(data.profile);
+                        }
+                        if (data.targets && data.profile?.onboardingCompleted) {
+                            setCustomTargets(data.targets);
+                        }
 
                         // Arrays: Always sync from cloud (even if empty)
                         if (data.weightHistory !== undefined)
@@ -278,15 +295,35 @@ export const useInitialHydration = ({
                         const argentinaTimestamp = Date.now();
 
                         await Promise.all([
-                            updateCacheMetadata('profile', userId, argentinaTimestamp),
-                            updateCacheMetadata('targets', userId, argentinaTimestamp),
-                            updateCacheMetadata('weight', userId, argentinaTimestamp),
+                            updateCacheMetadata(
+                                'profile',
+                                userId,
+                                argentinaTimestamp,
+                            ),
+                            updateCacheMetadata(
+                                'targets',
+                                userId,
+                                argentinaTimestamp,
+                            ),
+                            updateCacheMetadata(
+                                'weight',
+                                userId,
+                                argentinaTimestamp,
+                            ),
                             updateCacheMetadata('food', userId, argentinaTimestamp),
-                            updateCacheMetadata('workouts', userId, argentinaTimestamp),
+                            updateCacheMetadata(
+                                'workouts',
+                                userId,
+                                argentinaTimestamp,
+                            ),
                             updateCacheMetadata('steps', userId, argentinaTimestamp),
                             updateCacheMetadata('oura', userId, argentinaTimestamp),
                             updateCacheMetadata('water', userId, argentinaTimestamp),
-                            updateCacheMetadata('templates', userId, argentinaTimestamp),
+                            updateCacheMetadata(
+                                'templates',
+                                userId,
+                                argentinaTimestamp,
+                            ),
                         ]);
 
                         // SWR: Clear stale flag immediately after successful sync

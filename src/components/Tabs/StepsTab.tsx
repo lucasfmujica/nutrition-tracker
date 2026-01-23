@@ -11,6 +11,7 @@ interface StepsTabProps {
     addStepsEntry: () => void;
     weeklyData: any[];
     stepsLog: StepsEntry[];
+    stepGoal: number;
 }
 
 /**
@@ -24,6 +25,7 @@ export const StepsTab: React.FC<StepsTabProps> = ({
     addStepsEntry,
     weeklyData,
     stepsLog,
+    stepGoal,
 }) => {
     return (
         <div className="w-full space-y-6">
@@ -65,7 +67,7 @@ export const StepsTab: React.FC<StepsTabProps> = ({
             <SimpleBarChart
                 data={weeklyData}
                 dataKey="steps"
-                target={8000}
+                target={stepGoal}
                 color="bg-cyan-500"
                 label="Pasos 7 días"
             />
@@ -87,7 +89,7 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                                     {entry.date}
                                 </span>
                                 <span
-                                    className={`font-black text-base ${entry.steps >= 8000 ? 'text-cyan-600' : 'text-slate-400'}`}>
+                                    className={`font-black text-base ${entry.steps >= stepGoal ? 'text-cyan-600' : 'text-slate-400'}`}>
                                     {entry.steps.toLocaleString()}
                                     <span className="text-[10px] font-bold ml-1 text-slate-300 uppercase">
                                         pasos
