@@ -1,4 +1,4 @@
-import { PlannedWorkout } from '../constants/weeklyPlan';
+import { DEFAULT_WEEKLY_PLAN, PlannedWorkout } from '../constants/weeklyPlan';
 import { Workout } from '../types/domain';
 
 export const INTENSITY = {
@@ -78,7 +78,12 @@ export const getDayIntensity = (
     // Map JS Sunday=0 to our internal Monday=0 plan structure
     const dayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Mon=0, Sun=6
 
-    const plannedWorkout = weeklyPlan[dayIndex];
+    // 2. Fallback to Weekly Plan if no workouts logged
+    // First check user's custom plan, then fallback to default
+    const plannedWorkout = weeklyPlan.hasOwnProperty(dayIndex)
+        ? weeklyPlan[dayIndex]
+        : DEFAULT_WEEKLY_PLAN[dayIndex];
+
     if (plannedWorkout) {
         return plannedWorkout.intensity || INTENSITY.MODERATE;
     }

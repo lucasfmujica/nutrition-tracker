@@ -99,13 +99,13 @@ export const useWeeklyPeriodization = (
             let dayWorkouts: (Workout | PlannedWorkout)[] =
                 workoutLog?.filter((w) => w.date === date) || [];
 
-            if (dayWorkouts.length === 0 && weeklyPlan[i]) {
-                const plannedWorkout = weeklyPlan[i];
+            if (dayWorkouts.length === 0) {
+                const plannedWorkout = weeklyPlan.hasOwnProperty(i)
+                    ? weeklyPlan[i]
+                    : DEFAULT_WEEKLY_PLAN[i];
                 if (plannedWorkout) {
                     dayWorkouts = [plannedWorkout];
                 }
-            } else if (dayWorkouts.length === 0 && DEFAULT_WEEKLY_PLAN[i]) {
-                dayWorkouts = [DEFAULT_WEEKLY_PLAN[i]];
             }
 
             // Safety Net Check
