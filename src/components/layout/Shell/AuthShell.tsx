@@ -87,6 +87,12 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
                     targetFat: profileData.fat_goal || 73,
                     onboardingCompleted: true,
                 }));
+            } else {
+                // If skipped or no goals provided, still mark as completed
+                setProfile((prev) => ({
+                    ...prev,
+                    onboardingCompleted: true,
+                }));
             }
         } catch (err) {
             console.error('Error completing onboarding:', err);
