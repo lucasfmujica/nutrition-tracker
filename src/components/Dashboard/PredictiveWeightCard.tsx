@@ -124,27 +124,27 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                     color: 'text-accent',
                     bg: 'bg-accent/10',
                     bar: 'bg-accent',
-                    label: 'OPTIMAL',
+                    label: 'ESTADO ÓPTIMO',
                 };
             if (adherencePercent >= 70)
                 return {
                     color: 'text-primary',
                     bg: 'bg-primary/10',
                     bar: 'bg-primary',
-                    label: 'SYSTEM NOMINAL',
+                    label: 'SISTEMA ESTABLE',
                 };
             if (adherencePercent >= 50)
                 return {
                     color: 'text-carbs',
                     bg: 'bg-carbs/10',
                     bar: 'bg-carbs',
-                    label: 'MARGINAL',
+                    label: 'INCONSISTENTE',
                 };
             return {
                 color: 'text-fat',
                 bg: 'bg-fat/10',
                 bar: 'bg-fat',
-                label: 'CRITICAL',
+                label: 'ESTADO CRÍTICO',
             };
         };
 
@@ -205,11 +205,11 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                                 PROYECCIÓN DE OBJETIVO
                             </span>
                         </div>
-                        <div className="flex items-baseline justify-between gap-4">
+                        <div className="flex flex-col gap-2">
                             <p className="text-3xl sm:text-5xl font-satoshi text-slate-900 tracking-tight group-hover:text-primary transition-colors duration-500">
                                 {formattedGoalDate?.toUpperCase() || 'CALCULANDO...'}
                             </p>
-                            <div className="flex flex-col items-end">
+                            <div className="flex items-center gap-2">
                                 <span className="text-xl sm:text-2xl font-satoshi text-accent leading-none">
                                     {weeksToGoal} sem
                                 </span>
