@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { Workout } from '../types/domain';
 import { storage } from '../utils/storage';
-import { addPendingWrite } from '../utils/storageUtils';
+import { addPendingWrite, getCacheKeys } from '../utils/storageUtils';
 import { useSupabase } from './useSupabase';
 
 type SupabaseClient = ReturnType<typeof useSupabase>;
@@ -12,7 +12,13 @@ export const useWorkouts = (supabase: SupabaseClient, useCloud: boolean) => {
     const saveWorkoutLog = async (newLog: Workout[]) => {
         setWorkoutLog(newLog);
         try {
-            await storage.set('lucas-workout-log-v5', JSON.stringify(newLog));
+            const userId = supabase.user?.id;
+            const keys = userId ? getCacheKeys(userId) : null;
+            if (keys) {
+                await storage.set(keys.WORKOUT, JSON.stringify(newLog));
+            } else {
+                await storage.set('lucas-workout-log-v5', JSON.stringify(newLog));
+            }
         } catch (err) {
             console.error('Error saving workout log:', err);
         }

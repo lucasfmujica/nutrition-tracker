@@ -69,14 +69,16 @@ export function useSupabaseAuth(): SupabaseAuthReturn {
                 .maybeSingle();
 
             if (!data && !error) {
-                console.log('[Auth] Creating profile for user:', userId);
-                const { error: insertError } = await supabase!
+                const { error: upsertError } = await supabase!
                     .from('profiles')
-                    .insert({ user_id: userId });
+                    .upsert({ user_id: userId }, { onConflict: 'user_id' });
 
-                if (insertError) {
-                    console.error('[Auth] Error creating profile:', insertError);
-                    return { success: false, error: insertError };
+                if (upsertError) {
+                    console.error(
+                        '[Auth] Error fixing/creating profile:',
+                        upsertError,
+                    );
+                    return { success: false, error: upsertError };
                 }
                 return { success: true, created: true };
             }

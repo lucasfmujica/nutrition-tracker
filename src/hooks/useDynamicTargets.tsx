@@ -5,6 +5,8 @@ import {
 } from '../services/targetAdjustmentService';
 import { CustomTargets, Profile, WeightAnalytics } from '../types/domain';
 import { getArgentinaDateString, getArgentinaDay } from '../utils/dateUtils';
+import { getCacheKeys } from '../utils/storageUtils';
+import { useSupabase } from './useSupabase';
 
 const BRIEFING_STORAGE_KEY = 'lukenfit_last_briefing_monday';
 
@@ -28,6 +30,7 @@ export const useDynamicTargets = (
     profile: Profile,
     updateConfig: (profile: Profile, targets: CustomTargets) => Promise<void>,
 ) => {
+    const supabase = useSupabase();
     const [showMondayBriefing, setShowMondayBriefing] = useState(false);
     const [briefingData, setBriefingData] = useState<any>(null);
 
@@ -52,7 +55,13 @@ export const useDynamicTargets = (
             if (!isMonday) return;
 
             // 2. Have we shown it today?
-            const lastBriefingDate = localStorage.getItem(BRIEFING_STORAGE_KEY);
+            const userId = supabase.user?.id;
+            const keys = userId ? getCacheKeys(userId) : null;
+            const storageKey = keys
+                ? `${keys.METADATA}_last_briefing`
+                : BRIEFING_STORAGE_KEY;
+
+            const lastBriefingDate = localStorage.getItem(storageKey);
             if (lastBriefingDate === today) return;
 
             // 3. Generate Data
@@ -74,9 +83,15 @@ export const useDynamicTargets = (
     // Action: Mark as reviewed (dismiss)
     const markBriefingReviewed = useCallback(() => {
         const today = getArgentinaDateString();
-        localStorage.setItem(BRIEFING_STORAGE_KEY, today);
+        const userId = supabase.user?.id;
+        const keys = userId ? getCacheKeys(userId) : null;
+        const storageKey = keys
+            ? `${keys.METADATA}_last_briefing`
+            : BRIEFING_STORAGE_KEY;
+
+        localStorage.setItem(storageKey, today);
         setShowMondayBriefing(false);
-    }, []);
+    }, [supabase.user?.id]);
 
     // Action: Accept Targets
     const acceptProposedTargets = useCallback(async () => {

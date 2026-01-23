@@ -15,6 +15,7 @@ export const TrackerHeader: React.FC = () => {
         getMostRecentWeight,
         setOfflineMode,
         setShowAuth,
+        setActiveTab,
         isTrainingDay,
         cacheStale,
     } = useTracker() as any;
@@ -160,6 +161,27 @@ export const TrackerHeader: React.FC = () => {
                                         d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                                     />
                                 </svg>
+                            </button>
+
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setActiveTab('config');
+                                }}
+                                className="lg:hidden w-10 h-10 flex items-center justify-center rounded-2xl bg-white hover:bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 transition-all shadow-sm active:scale-90"
+                                title="Mi Perfil">
+                                {profile?.avatar && profile.avatar.length > 4 ? (
+                                    <img
+                                        src={profile.avatar}
+                                        alt="Profile"
+                                        className="w-full h-full object-cover rounded-2xl"
+                                    />
+                                ) : (
+                                    <span className="text-lg">
+                                        {profile?.avatar || '👤'}
+                                    </span>
+                                )}
                             </button>
 
                             <button

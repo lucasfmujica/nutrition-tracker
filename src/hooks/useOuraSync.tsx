@@ -8,10 +8,12 @@ import {
     mapOuraSleepDetails,
     mergeOuraData,
 } from '../utils/ouraMappers';
+import { getCacheKeys } from '../utils/storageUtils';
+import { useSupabase } from './useSupabase';
 
 const OURA_API_BASE = 'https://api.ouraring.com/v2/usercollection';
 const SYNC_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 hours
-const STORAGE_KEY_LAST_SYNC = 'oura_last_sync';
+const STORAGE_KEY_LAST_SYNC_LEGACY = 'oura_last_sync';
 
 interface UseOuraSyncParams {
     saveOuraEntry: (entry: OuraEntry) => Promise<any>;
@@ -31,6 +33,7 @@ export const useOuraSync = ({
     saveStepsEntry,
     ouraPersonalToken,
 }: UseOuraSyncParams) => {
+    const supabase = useSupabase();
     const [isSyncing, setIsSyncing] = useState(false);
     const [syncStatus, setSyncStatus] = useState<
         'idle' | 'syncing' | 'success' | 'error'
@@ -50,7 +53,10 @@ export const useOuraSync = ({
         end: string,
     ): Promise<any> => {
         const token = getOuraToken();
-        if (!token) throw new Error('Oura token not configured. Set up your personal token in Settings.');
+        if (!token)
+            throw new Error(
+                'Oura token not configured. Set up your personal token in Settings.',
+            );
 
         // Use proxy in production, direct API in development
         if (isProduction) {
@@ -118,7 +124,13 @@ export const useOuraSync = ({
             if (isSyncing) return { status: 'skipped', reason: 'already_syncing' };
 
             // Frequency Control
-            const lastSyncStr = localStorage.getItem(STORAGE_KEY_LAST_SYNC);
+            const userId = supabase.user?.id;
+            const keys = userId ? getCacheKeys(userId) : null;
+            const storageKey = keys
+                ? `${keys.METADATA}_oura_sync`
+                : STORAGE_KEY_LAST_SYNC_LEGACY;
+
+            const lastSyncStr = localStorage.getItem(storageKey);
             const lastSync = lastSyncStr ? parseInt(lastSyncStr, 10) : 0;
             const now = Date.now();
 
@@ -177,7 +189,12 @@ export const useOuraSync = ({
                 */
 
                 // Success
-                localStorage.setItem(STORAGE_KEY_LAST_SYNC, now.toString());
+                const userId = supabase.user?.id;
+                const keys = userId ? getCacheKeys(userId) : null;
+                const storageKey = keys
+                    ? `${keys.METADATA}_oura_sync`
+                    : STORAGE_KEY_LAST_SYNC_LEGACY;
+                localStorage.setItem(storageKey, now.toString());
                 setSyncStatus('success');
 
                 setTimeout(() => setSyncStatus('idle'), 3000);
@@ -209,7 +226,13 @@ export const useOuraSync = ({
             const syncTimeToday = new Date();
             syncTimeToday.setHours(11, 0, 0, 0);
 
-            const lastSyncStr = localStorage.getItem(STORAGE_KEY_LAST_SYNC);
+            const userId = supabase.user?.id;
+            const keys = userId ? getCacheKeys(userId) : null;
+            const storageKey = keys
+                ? `${keys.METADATA}_oura_sync`
+                : STORAGE_KEY_LAST_SYNC_LEGACY;
+
+            const lastSyncStr = localStorage.getItem(storageKey);
             const lastSync = lastSyncStr ? parseInt(lastSyncStr, 10) : 0;
 
             // Trigger criteria:

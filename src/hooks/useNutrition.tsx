@@ -3,7 +3,7 @@ import { CustomTargets, FoodEntry, WaterEntry, Workout } from '../types/domain';
 import { getSmartTargets } from '../utils/caloriePeriodization';
 import { getArgentinaDateString } from '../utils/dateUtils';
 import { storage } from '../utils/storage';
-import { addPendingWrite } from '../utils/storageUtils';
+import { addPendingWrite, getCacheKeys } from '../utils/storageUtils';
 import { useSupabase } from './useSupabase';
 
 type SupabaseClient = ReturnType<typeof useSupabase>;
@@ -123,11 +123,15 @@ export const useNutrition = (
     // Persistence
     useEffect(() => {
         if (foodLog?.length > 0) {
+            const userId = supabase.user?.id;
+            const keys = userId ? getCacheKeys(userId) : null;
+            const storageKey = keys ? keys.FOOD : 'lucas-food-log-v5';
+
             storage
-                .set('lucas-food-log-v5', JSON.stringify(foodLog))
+                .set(storageKey, JSON.stringify(foodLog))
                 .catch((err) => console.error('Error auto-saving food log:', err));
         }
-    }, [foodLog]);
+    }, [foodLog, supabase.user?.id]);
 
     // Actions
     const saveFoodLog = useCallback(async (newLog: FoodEntry[]) => {
@@ -237,14 +241,23 @@ export const useNutrition = (
         [useCloud, supabase],
     );
 
-    const saveWaterLog = useCallback(async (newLog: WaterEntry[]) => {
-        setWaterLog(newLog);
-        try {
-            await storage.set('lucas-water-log-v5', JSON.stringify(newLog));
-        } catch (err) {
-            console.error('Error saving water log:', err);
-        }
-    }, []);
+    const saveWaterLog = useCallback(
+        async (newLog: WaterEntry[]) => {
+            setWaterLog(newLog);
+            try {
+                const userId = supabase.user?.id;
+                const keys = userId ? getCacheKeys(userId) : null;
+                if (keys) {
+                    await storage.set(keys.WATER, JSON.stringify(newLog));
+                } else {
+                    await storage.set('lucas-water-log-v5', JSON.stringify(newLog));
+                }
+            } catch (err) {
+                console.error('Error saving water log:', err);
+            }
+        },
+        [supabase.user?.id],
+    );
 
     const saveWaterEntry = useCallback(
         async (entry: WaterEntry) => {

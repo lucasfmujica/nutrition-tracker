@@ -7,7 +7,7 @@ import {
     WeightEntry,
 } from '../types/domain';
 import { storage } from '../utils/storage';
-import { addPendingWrite } from '../utils/storageUtils';
+import { addPendingWrite, getCacheKeys } from '../utils/storageUtils';
 import { useSupabase } from './useSupabase';
 
 type SupabaseClient = ReturnType<typeof useSupabase>;
@@ -67,7 +67,13 @@ export const useBiometrics = (
     const saveProfile = async (newProfile: Profile) => {
         setProfile(newProfile);
         try {
-            await storage.set('lucas-profile-v5', JSON.stringify(newProfile));
+            const userId = supabase.user?.id;
+            const keys = userId ? getCacheKeys(userId) : null;
+            if (keys) {
+                await storage.set(keys.PROFILE, JSON.stringify(newProfile));
+            } else {
+                await storage.set('lucas-profile-v5', JSON.stringify(newProfile));
+            }
             if (useCloud) {
                 await supabase.saveProfile(newProfile, customTargets);
             }
@@ -80,7 +86,13 @@ export const useBiometrics = (
     const saveTargets = async (newTargets: CustomTargets) => {
         setCustomTargets(newTargets);
         try {
-            await storage.set('lucas-targets-v5', JSON.stringify(newTargets));
+            const userId = supabase.user?.id;
+            const keys = userId ? getCacheKeys(userId) : null;
+            if (keys) {
+                await storage.set(keys.TARGETS, JSON.stringify(newTargets));
+            } else {
+                await storage.set('lucas-targets-v5', JSON.stringify(newTargets));
+            }
             if (useCloud) {
                 await supabase.saveProfile(profile, newTargets);
             }
@@ -113,7 +125,13 @@ export const useBiometrics = (
         const sorted = sortWeightHistory(newHistory);
         setWeightHistory(sorted);
         try {
-            await storage.set('lucas-weight-history-v5', JSON.stringify(sorted));
+            const userId = supabase.user?.id;
+            const keys = userId ? getCacheKeys(userId) : null;
+            if (keys) {
+                await storage.set(keys.WEIGHT, JSON.stringify(sorted));
+            } else {
+                await storage.set('lucas-weight-history-v5', JSON.stringify(sorted));
+            }
             const mostRecent = getMostRecentWeight(sorted);
             if (mostRecent) {
                 saveProfile({ ...profile, currentWeight: mostRecent.weight });
@@ -169,7 +187,13 @@ export const useBiometrics = (
     const saveStepsLog = async (newLog: StepsEntry[]) => {
         setStepsLog(newLog);
         try {
-            await storage.set('lucas-steps-log-v5', JSON.stringify(newLog));
+            const userId = supabase.user?.id;
+            const keys = userId ? getCacheKeys(userId) : null;
+            if (keys) {
+                await storage.set(keys.STEPS, JSON.stringify(newLog));
+            } else {
+                await storage.set('lucas-steps-log-v5', JSON.stringify(newLog));
+            }
         } catch (err) {
             console.error('Error saving steps log:', err);
         }
@@ -224,7 +248,13 @@ export const useBiometrics = (
     const saveOuraLog = async (newLog: OuraEntry[]) => {
         setOuraLog(newLog);
         try {
-            await storage.set('lucas-oura-log-v5', JSON.stringify(newLog));
+            const userId = supabase.user?.id;
+            const keys = userId ? getCacheKeys(userId) : null;
+            if (keys) {
+                await storage.set(keys.OURA, JSON.stringify(newLog));
+            } else {
+                await storage.set('lucas-oura-log-v5', JSON.stringify(newLog));
+            }
         } catch (err) {
             console.error('Error saving oura log: ', err);
         }

@@ -70,7 +70,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         };
     }, []);
 
-    // Auto-recalculate on Step 2 entry
+    // Auto-recalculate on Step 2 entry or goal/activity change
     useEffect(() => {
         if (
             step === 2 &&
@@ -80,7 +80,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         ) {
             handleAutoCalculate();
         }
-    }, [step]);
+    }, [step, formData.primaryGoal, formData.activityLevel]);
 
     const handleAutoCalculate = () => {
         const suggested = calculateMacros(formData);
