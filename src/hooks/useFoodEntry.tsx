@@ -71,11 +71,13 @@ export const useFoodEntry = ({
         const isEditing = !!editingFoodId;
 
         try {
-            const sourceId = `manual-${newFood.date}-${Date.now()}`;
+            // Find existing entry if editing to preserve data lineage
+            const existingEntry = isEditing
+                ? foodLog.find((f) => f.id === editingFoodId)
+                : null;
+
             const entry: FoodEntry = {
-                id: isEditing
-                    ? (editingFoodId as string)
-                    : `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                id: isEditing ? (editingFoodId as string) : crypto.randomUUID(),
                 date: newFood.date || getArgentinaDateString(),
                 time: newFood.time || '',
                 meal: newFood.meal || 'Snack',
@@ -86,37 +88,29 @@ export const useFoodEntry = ({
                 carbs: parseInt(newFood.carbs) || 0,
                 fat: parseInt(newFood.fat) || 0,
                 fiber: parseInt(newFood.fiber) || 0,
-                source: 'manual',
+                source: existingEntry?.source || 'manual',
                 reviewed: true,
                 confidence: 1,
-                sourceId,
+                sourceId:
+                    existingEntry?.sourceId ||
+                    `manual-${newFood.date}-${Date.now()}`,
             };
 
             // Close form immediately for better UX
             setShowFoodForm(false);
             setEditingFoodId(null);
 
-            // Save to Supabase
-            let finalEntry = entry;
+            // Save to Supabase (this also handles optimistic update and ID sync)
             try {
-                const savedEntry = await saveFoodEntry(entry);
-                if (savedEntry?.id) {
-                    finalEntry = savedEntry;
-                }
+                await saveFoodEntry(entry);
+                setSaveStatus(
+                    isEditing ? '✓ Comida actualizada' : '✓ Comida agregada',
+                );
             } catch (saveErr) {
                 console.error('Error saving to Supabase:', saveErr);
+                setSaveStatus('❌ Error al guardar');
             }
 
-            // Update or add to local state
-            if (isEditing) {
-                saveFoodLog(
-                    foodLog.map((f) => (f.id === editingFoodId ? finalEntry : f)),
-                );
-                setSaveStatus('✓ Comida actualizada');
-            } else {
-                saveFoodLog([...foodLog, finalEntry]);
-                setSaveStatus('✓ Comida agregada');
-            }
             setTimeout(() => setSaveStatus(''), 2000);
 
             // Reset form

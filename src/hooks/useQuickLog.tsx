@@ -148,7 +148,7 @@ export const useQuickLog = (
                 const smartMeal = getSmartMealType(timeString);
 
                 const entry: FoodEntry = {
-                    id: `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                    id: crypto.randomUUID(),
                     date: today,
                     time: timeString,
                     meal: smartMeal, // Use Smart Guess

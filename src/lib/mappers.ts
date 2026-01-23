@@ -105,23 +105,31 @@ export const mappers = {
     }),
 
     // Food: localStorage -> Supabase
-    foodToDb: (entry: Partial<FoodEntry>, userId: string): Partial<DbFood> => ({
-        user_id: userId,
-        date: entry.date,
-        time: entry.time || null,
-        meal: entry.meal,
-        name: entry.name,
-        description: entry.description || null,
-        calories: entry.calories,
-        protein: entry.protein,
-        carbs: entry.carbs,
-        fat: entry.fat,
-        fiber: entry.fiber || 0,
-        source: entry.source || 'manual',
-        reviewed: entry.reviewed ?? true,
-        confidence: entry.confidence ?? 1.0,
-        source_id: entry.sourceId || null,
-    }),
+    foodToDb: (entry: Partial<FoodEntry>, userId: string): Partial<DbFood> => {
+        const dbEntry: Partial<DbFood> = {
+            user_id: userId,
+            date: entry.date,
+            time: entry.time || null,
+            meal: entry.meal,
+            name: entry.name,
+            description: entry.description || null,
+            calories: entry.calories,
+            protein: entry.protein,
+            carbs: entry.carbs,
+            fat: entry.fat,
+            fiber: entry.fiber || 0,
+            source: entry.source || 'manual',
+            reviewed: entry.reviewed ?? true,
+            confidence: entry.confidence ?? 1.0,
+            source_id: entry.sourceId || null,
+        };
+
+        if (entry.id && !entry.id.toString().startsWith('f-')) {
+            dbEntry.id = entry.id;
+        }
+
+        return dbEntry;
+    },
 
     // Food: Supabase -> localStorage format
     foodFromDb: (dbEntry: DbFood): FoodEntry => ({

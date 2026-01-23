@@ -191,6 +191,14 @@ export const useNutrition = (
                         throw new Error(result.error.message);
                     }
 
+                    if (result?.data) {
+                        setFoodLog((prevLog) =>
+                            prevLog.map((e) =>
+                                e.id === entryToSave.id ? result.data! : e,
+                            ),
+                        );
+                    }
+
                     console.log(
                         '[Nutrition] saveFoodEntry successful:',
                         entryToSave.date,

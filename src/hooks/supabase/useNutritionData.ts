@@ -64,35 +64,17 @@ export function useNutritionData(
                 async () => {
                     if (!user || !supabase)
                         throw new Error('No user or Supabase client');
-                    const isUpdate = entry.id && !entry.id.startsWith('f-');
+                    const { data, error } = await supabase!
+                        .from('food_log')
+                        .upsert(mappers.foodToDb(entry, user.id) as any)
+                        .select()
+                        .single();
 
-                    if (isUpdate) {
-                        const { data, error } = await supabase!
-                            .from('food_log')
-                            .update(mappers.foodToDb(entry, user.id))
-                            .eq('id', entry.id!)
-                            .eq('user_id', user.id)
-                            .select()
-                            .single();
-
-                        if (error) throw error;
-                        return {
-                            data: data ? mappers.foodFromDb(data) : null,
-                            error: null,
-                        };
-                    } else {
-                        const { data, error } = await supabase!
-                            .from('food_log')
-                            .insert(mappers.foodToDb(entry, user.id) as any) // Type assertion might be needed if insert strictness mismatches
-                            .select()
-                            .single();
-
-                        if (error) throw error;
-                        return {
-                            data: data ? mappers.foodFromDb(data) : null,
-                            error: null,
-                        };
-                    }
+                    if (error) throw error;
+                    return {
+                        data: data ? mappers.foodFromDb(data) : null,
+                        error: null,
+                    };
                 },
                 { canUseSupabase, errorMessage: 'Error guardando comida' },
             );

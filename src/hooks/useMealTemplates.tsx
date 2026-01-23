@@ -75,7 +75,7 @@ export const useMealTemplates = ({
         });
 
         const entry: FoodEntry = {
-            id: `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            id: crypto.randomUUID(),
             date: selectedFoodDate,
             time,
             meal: template.meal,
@@ -94,18 +94,13 @@ export const useMealTemplates = ({
                 : `tpl-${template.id}`,
         };
 
-        // Save to Supabase
-        let finalEntry = entry;
+        // Save to Supabase (this also handles optimistic update and ID sync)
         try {
-            const savedEntry = await saveFoodEntry(entry);
-            if (savedEntry?.id) {
-                finalEntry = savedEntry;
-            }
+            await saveFoodEntry(entry);
         } catch (saveErr) {
             console.error('Error saving template food to Supabase:', saveErr);
         }
 
-        saveFoodLog([...foodLog, finalEntry]);
         setShowTemplatesModal(false);
         setSaveStatus(`✓ ${template.name}`);
         setTimeout(() => setSaveStatus(''), 2000);
