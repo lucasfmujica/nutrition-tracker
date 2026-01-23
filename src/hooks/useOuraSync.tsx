@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { OuraEntry, StepsEntry } from '../types/domain';
 import { addDaysToDate, getArgentinaDateString } from '../utils/dateUtils';
 import {
@@ -161,10 +161,12 @@ export const useOuraSync = ({
                     await saveOuraEntry(entry);
                 }
 
-                // 2. Activity (Steps Log)
+                /*
+                // 2. Activity (Steps Log) - DISABLED as per user request
                 for (const entry of stepsLogEntries) {
                     await saveStepsEntry(entry);
                 }
+                */
 
                 // Success
                 localStorage.setItem(STORAGE_KEY_LAST_SYNC, now.toString());
@@ -184,6 +186,42 @@ export const useOuraSync = ({
         },
         [isSyncing, saveOuraEntry, saveStepsEntry],
     );
+
+    // --- AUTO SYNC LOGIC ---
+    useEffect(() => {
+        const triggerAutoSync = async () => {
+            // Only trigger if we are not already syncing
+            if (isSyncing || syncStatus === 'success') return;
+
+            const now = new Date();
+            const currentTimestamp = now.getTime();
+
+            // Define sync target: 11:00 AM Argentina (UTC-3)
+            // We use the local time since the user and app are aligned to Argentina
+            const syncTimeToday = new Date();
+            syncTimeToday.setHours(11, 0, 0, 0);
+
+            const lastSyncStr = localStorage.getItem(STORAGE_KEY_LAST_SYNC);
+            const lastSync = lastSyncStr ? parseInt(lastSyncStr, 10) : 0;
+
+            // Trigger criteria:
+            // 1. Current time is after 11:00 AM
+            // 2. Last sync was before today's 11:00 AM target
+            if (
+                currentTimestamp >= syncTimeToday.getTime() &&
+                lastSync < syncTimeToday.getTime()
+            ) {
+                console.log(
+                    '[OuraSync] Auto-triggering sync (Daily 11 AM schedule)',
+                );
+                await syncOuraData();
+            }
+        };
+
+        // Delay slightly to give the app time to settle
+        const timer = setTimeout(triggerAutoSync, 2000);
+        return () => clearTimeout(timer);
+    }, [syncOuraData, isSyncing, syncStatus]);
 
     return {
         syncOuraData,
