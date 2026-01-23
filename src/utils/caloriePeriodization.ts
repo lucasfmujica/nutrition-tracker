@@ -75,10 +75,7 @@ export const getDayIntensity = (
     // 2. Fallback to Weekly Plan if no workouts logged
     const dayDate = new Date(targetDate + 'T12:00:00');
     const dayOfWeek = dayDate.getDay(); // 0-6 (Sun-Sat)
-    // Map JS Sunday=0 to our Monday=0?
-    // In our app (dateUtils.ts), Monday=0, Sunday=6.
-    // getArgentinaDay returns Monday=1, Sunday=0? No.
-    // Let's use getArgentinaDay style logic.
+    // Map JS Sunday=0 to our internal Monday=0 plan structure
     const dayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Mon=0, Sun=6
 
     const plannedWorkout = weeklyPlan[dayIndex];
