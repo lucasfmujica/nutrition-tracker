@@ -1,35 +1,40 @@
-import React, { lazy, Suspense, useCallback } from 'react';
+import React, { Suspense, useCallback } from 'react';
 import { TrackerFAB } from './components/layout/FAB/TrackerFAB';
 import { TrackerHeader } from './components/layout/Header/TrackerHeader';
 import { ModalsManager } from './components/layout/Modals/ModalsManager';
+import { lazyWithRetry } from './utils/lazyUtils';
 
 import { AuthShell } from './components/layout/Shell/AuthShell';
 import { Layout } from './components/layout/Shell/Layout';
 import { UndoToast } from './components/shared/UndoToast';
 import { TutorialOverlay, TutorialProvider } from './components/Tutorial';
 
-// Lazy load heavy tab components
-const ConfigTab = lazy(() =>
-    import('./components/Tabs/ConfigTab').then((m) => ({ default: m.ConfigTab })),
+// Lazy load heavy tab components with retry logic to handle Vercel deployment chunk mismatches
+const ConfigTab = lazyWithRetry(() =>
+    import('./components/Tabs/ConfigTab').then((m) => ({
+        default: m.ConfigTab,
+    })),
 );
-const DashboardTab = lazy(() =>
+const DashboardTab = lazyWithRetry(() =>
     import('./components/Tabs/DashboardTab').then((m) => ({
         default: m.DashboardTab,
     })),
 );
-const DiaryTab = lazy(() =>
+const DiaryTab = lazyWithRetry(() =>
     import('./components/Tabs/DiaryTab').then((m) => ({ default: m.DiaryTab })),
 );
-const OuraTab = lazy(() =>
+const OuraTab = lazyWithRetry(() =>
     import('./components/Tabs/OuraTab').then((m) => ({ default: m.OuraTab })),
 );
-const StepsTab = lazy(() =>
+const StepsTab = lazyWithRetry(() =>
     import('./components/Tabs/StepsTab').then((m) => ({ default: m.StepsTab })),
 );
-const WeightTab = lazy(() =>
-    import('./components/Tabs/WeightTab').then((m) => ({ default: m.WeightTab })),
+const WeightTab = lazyWithRetry(() =>
+    import('./components/Tabs/WeightTab').then((m) => ({
+        default: m.WeightTab,
+    })),
 );
-const WorkoutsTab = lazy(() =>
+const WorkoutsTab = lazyWithRetry(() =>
     import('./components/Tabs/WorkoutsTab').then((m) => ({
         default: m.WorkoutsTab,
     })),

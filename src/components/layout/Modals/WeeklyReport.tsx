@@ -6,6 +6,7 @@ import {
     WeightEntry,
     Workout,
 } from '../../../types/domain';
+import { importWithRetry } from '../../../utils/lazyUtils';
 
 interface WeeklyReportProps {
     foodLog: FoodEntry[];
@@ -168,7 +169,8 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
         setIsExporting(true);
 
         try {
-            const html2canvas = (await import('html2canvas')).default;
+            const html2canvas = (await importWithRetry(() => import('html2canvas')))
+                .default;
             const canvas = await html2canvas(reportRef.current, {
                 backgroundColor: '#ffffff',
                 scale: 2,
