@@ -1,6 +1,6 @@
-import { ChevronDown, ChevronUp, Copy, Check, Smartphone } from 'lucide-react';
-import React, { useState } from 'react';
+import { Check, ChevronDown, ChevronUp, Copy, Smartphone } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import React, { useState } from 'react';
 
 interface iOSShortcutQRProps {
     userId: string;
@@ -48,7 +48,9 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                         <Smartphone className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                        <h3 className="font-semibold text-slate-900">iOS Shortcuts</h3>
+                        <h3 className="font-semibold text-slate-900">
+                            iOS Shortcuts
+                        </h3>
                         <p className="text-xs text-slate-500">
                             Registra peso y pasos desde tu iPhone
                         </p>
@@ -67,8 +69,7 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                     <button
                         onClick={copyUserId}
                         className="p-1.5 hover:bg-slate-200 rounded-lg transition-colors"
-                        title="Copiar ID completo"
-                    >
+                        title="Copiar ID completo">
                         {copiedId ? (
                             <Check className="w-4 h-4 text-green-600" />
                         ) : (
@@ -90,9 +91,19 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                             />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-slate-800">⚖️ Peso</p>
-                            <p className="text-xs text-slate-500">Apple Health → App</p>
+                            <p className="text-sm font-medium text-slate-800">
+                                ⚖️ Peso
+                            </p>
+                            <p className="text-xs text-slate-500">
+                                Apple Health → App
+                            </p>
                         </div>
+                        <a
+                            href={weightShortcutUrl}
+                            className="inline-flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-100 transition-all active:scale-95 shadow-sm">
+                            <Smartphone className="w-3 h-3" />
+                            Instalar
+                        </a>
                     </div>
 
                     {/* Steps Shortcut */}
@@ -106,25 +117,34 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                             />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-slate-800">👟 Pasos</p>
-                            <p className="text-xs text-slate-500">Apple Health → App</p>
+                            <p className="text-sm font-medium text-slate-800">
+                                👟 Pasos
+                            </p>
+                            <p className="text-xs text-slate-500">
+                                Apple Health → App
+                            </p>
                         </div>
+                        <a
+                            href={stepsShortcutUrl}
+                            className="inline-flex items-center gap-1.5 px-3 py-2 bg-purple-50 text-purple-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-purple-100 transition-all active:scale-95 shadow-sm">
+                            <Smartphone className="w-3 h-3" />
+                            Instalar
+                        </a>
                     </div>
                 </div>
 
                 {/* Quick Instructions */}
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-3">
+                <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-center sm:text-left">
                     <p className="text-sm text-blue-800">
-                        <strong>Cómo usar:</strong> Escaneá el QR con tu iPhone para
-                        agregar el shortcut. Ejecutalo cuando quieras sincronizar.
+                        <strong>Cómo usar:</strong> Tocá &ldquo;Instalar&rdquo; si
+                        estás en tu iPhone, o escaneá el QR desde otro dispositivo.
                     </p>
                 </div>
 
                 {/* Expandable Instructions */}
                 <button
                     onClick={() => setShowInstructions(!showInstructions)}
-                    className="w-full flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors"
-                >
+                    className="w-full flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors">
                     <span className="text-sm text-slate-600">
                         Instrucciones detalladas
                     </span>
@@ -151,8 +171,8 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                                 Paso 2: Agregar Shortcut
                             </p>
                             <p>
-                                Tocá &ldquo;Agregar Shortcut&rdquo;. El ID de usuario ya está
-                                configurado automáticamente.
+                                Tocá &ldquo;Agregar Shortcut&rdquo;. El ID de usuario
+                                ya está configurado automáticamente.
                             </p>
                         </div>
                         <div>
@@ -169,8 +189,8 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                                 Paso 4: Ejecutar
                             </p>
                             <p>
-                                Podés ejecutarlo manualmente o crear una automatización
-                                para que corra todos los días.
+                                Podés ejecutarlo manualmente o crear una
+                                automatización para que corra todos los días.
                             </p>
                         </div>
 
@@ -178,8 +198,7 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                         {onConfigured && (
                             <button
                                 onClick={onConfigured}
-                                className="w-full mt-2 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors"
-                            >
+                                className="w-full mt-2 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">
                                 Marcar como configurado
                             </button>
                         )}
