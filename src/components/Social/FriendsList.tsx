@@ -20,15 +20,16 @@ export const FriendsList: React.FC<FriendsListProps> = ({
     return (
         <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
             {/* Header */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-cyan-50 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-xl bg-cyan-50 flex items-center justify-center border border-cyan-100">
                         <Users size={20} className="text-cyan-500" />
                     </div>
                     <div>
-                        <h2 className="font-bold text-slate-900">Amigos</h2>
-                        <p className="text-xs text-slate-500">
-                            {friends.length} {friends.length === 1 ? 'amigo' : 'amigos'}
+                        <h2 className="font-bold text-slate-900 text-lg">Amigos</h2>
+                        <p className="text-xs text-slate-500 font-medium">
+                            {friends.length}{' '}
+                            {friends.length === 1 ? 'amigo' : 'amigos'}
                         </p>
                     </div>
                 </div>
@@ -36,19 +37,29 @@ export const FriendsList: React.FC<FriendsListProps> = ({
 
             {/* Friends List */}
             {loading ? (
-                <div className="flex items-center justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <div className="space-y-3">
+                    {[1, 2].map((i) => (
+                        <div
+                            key={i}
+                            className="flex items-center gap-3 size-full p-2 animate-pulse">
+                            <div className="w-12 h-12 rounded-full bg-slate-100" />
+                            <div className="flex-1 space-y-2">
+                                <div className="h-4 bg-slate-100 rounded w-1/3" />
+                                <div className="h-3 bg-slate-100 rounded w-1/4" />
+                            </div>
+                        </div>
+                    ))}
                 </div>
             ) : friends.length === 0 ? (
                 <EmptyState
                     icon={Users}
                     title="Sin amigos aún"
-                    description="Agrega amigos para ver sus progresos y competir en el leaderboard"
+                    description="Agrega amigos para ver sus progresos y competir en el Ranking"
                     actionLabel="Agregar amigo"
                     onAction={onAddFriend}
                 />
             ) : (
-                <div className="space-y-2">
+                <div className="space-y-3">
                     {friends.map((friend) => (
                         <FriendCard
                             key={friend.id}

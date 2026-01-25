@@ -16,20 +16,32 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
     return (
         <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
             {/* Header */}
-            <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
+            <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
                     <Sparkles size={20} className="text-indigo-500" />
                 </div>
                 <div>
-                    <h2 className="font-bold text-slate-900">Actividad</h2>
-                    <p className="text-xs text-slate-500">Últimos 7 días</p>
+                    <h2 className="font-bold text-slate-900 text-lg">Actividad</h2>
+                    <p className="text-xs text-slate-500 font-medium">
+                        Últimos 7 días
+                    </p>
                 </div>
             </div>
 
             {/* Feed */}
             {loading ? (
-                <div className="flex items-center justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <div className="space-y-4">
+                    {[1, 2, 3, 4].map((i) => (
+                        <div
+                            key={i}
+                            className="flex items-start gap-3 py-2 animate-pulse">
+                            <div className="w-10 h-10 rounded-xl bg-slate-100" />
+                            <div className="flex-1 space-y-2 py-1">
+                                <div className="h-4 bg-slate-100 rounded w-3/4" />
+                                <div className="h-3 bg-slate-100 rounded w-1/4" />
+                            </div>
+                        </div>
+                    ))}
                 </div>
             ) : activities.length === 0 ? (
                 <EmptyState
@@ -38,9 +50,12 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                     description="Cuando tú o tus amigos registren actividades, aparecerán aquí"
                 />
             ) : (
-                <div className="max-h-80 overflow-y-auto -mx-1 px-1">
+                <div className="max-h-96 overflow-y-auto -mx-2 px-2 space-y-1 custom-scrollbar">
                     {activities.map((activity) => (
-                        <ActivityItemComponent key={activity.id} activity={activity} />
+                        <ActivityItemComponent
+                            key={activity.id}
+                            activity={activity}
+                        />
                     ))}
                 </div>
             )}
