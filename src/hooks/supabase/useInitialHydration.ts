@@ -1,4 +1,4 @@
-import { MutableRefObject, useEffect } from 'react';
+import { MutableRefObject, useEffect, useRef } from 'react';
 import {
     CustomTargets,
     FoodEntry,
@@ -59,6 +59,9 @@ export const useInitialHydration = ({
     setShowOnboarding,
     setCacheStale, // SWR: Setter to clear stale state immediately
 }: UseInitialHydrationParams) => {
+    // Ref to track fallback timer for cleanup
+    const fallbackTimerRef = useRef<NodeJS.Timeout | null>(null);
+
     // Load data effect
     useEffect(() => {
         // Basic guards
@@ -97,6 +100,23 @@ export const useInitialHydration = ({
         const loadData = async () => {
             setIsLoading(true);
             const userId = supabase.user?.id;
+
+            // CRITICAL FIX: Handle loading state correctly
+            // Track if we've already set loading to false to prevent double-setting
+            // Defined at function level so it's accessible in catch block
+            let loadingResolved = false;
+
+            const resolveLoading = (source: string) => {
+                if (loadingResolved) return;
+                loadingResolved = true;
+                if (fallbackTimerRef.current) {
+                    clearTimeout(fallbackTimerRef.current);
+                    fallbackTimerRef.current = null;
+                }
+                console.log(`[Data] Loading resolved via: ${source}`);
+                setIsLoading(false);
+            };
+
             try {
                 // SWR PATTERN: Check staleness before loading cache
                 const stalenessChecks = await Promise.all([
@@ -179,16 +199,16 @@ export const useInitialHydration = ({
                     cached.localWeight.length > 0;
                 const hasAnyStaleness = stalenessChecks.some((stale) => stale);
 
-                // CRITICAL FIX: Handle loading state correctly
-                let fallbackTimer: NodeJS.Timeout | null = null;
-
                 if (hasCachedData && !hasAnyStaleness) {
-                    setIsLoading(false); // Instant load with fresh cache
+                    resolveLoading('fresh-cache'); // Instant load with fresh cache
                 } else if (hasCachedData && hasAnyStaleness) {
                     // We have stale cache - set fallback timer to show it if Supabase is too slow
-                    fallbackTimer = setTimeout(() => {
+                    // INCREASED to 8 seconds to give Supabase more time on cold starts/PWA resume
+                    fallbackTimerRef.current = setTimeout(() => {
+                        if (loadingResolved) return; // Already resolved, skip fallback
+
                         console.warn(
-                            '[Data] Supabase slow (>3s), falling back to stale cache',
+                            '[Data] Supabase slow (>8s), falling back to stale cache',
                         );
                         if (
                             cached.localProfile &&
@@ -216,11 +236,11 @@ export const useInitialHydration = ({
                             setWaterLog(cached.localWater);
                         if (cached.localTemplates.length && templatesStale)
                             setMealTemplates(cached.localTemplates);
-                        setIsLoading(false);
+                        resolveLoading('stale-cache-fallback');
                         setSaveStatus(
                             '⚠️ Mostrando datos antiguos - Actualizando en segundo plano...',
                         );
-                    }, 3000); // 3-second grace period
+                    }, 8000); // 8-second grace period (increased from 3s)
                 }
 
                 // Fetch from Supabase if authenticated and online
@@ -265,9 +285,6 @@ export const useInitialHydration = ({
                     }
 
                     if (data) {
-                        // Clear fallback timer since fresh data arrived
-                        if (fallbackTimer) clearTimeout(fallbackTimer);
-
                         // CRITICAL FIX: Supabase is the single source of truth,
                         // but only if onboarding is completed to avoid overwriting with DB defaults
                         if (data.profile && data.profile.onboardingCompleted) {
@@ -329,11 +346,14 @@ export const useInitialHydration = ({
                         // SWR: Clear stale flag immediately after successful sync
                         if (setCacheStale) setCacheStale(false);
 
+                        // Resolve loading with fresh Supabase data
+                        resolveLoading('supabase-fresh');
                         setSaveStatus('✓ Sincronizado');
                         setTimeout(() => setSaveStatus(''), 2000);
                     } else {
                         // 🔒 IMPROVED TIMEOUT FEEDBACK: Clear action message for user
                         if (timeoutOccurred && !hasCachedData) {
+                            resolveLoading('supabase-timeout-no-cache');
                             setSaveStatus(
                                 '❌ Error de conexión - Recargá la página para reintentar',
                             );
@@ -342,6 +362,11 @@ export const useInitialHydration = ({
                                 '[Data] Failed to load from Supabase after 3 attempts. No cached data available.',
                             );
                         } else if (timeoutOccurred && hasCachedData) {
+                            // Don't resolve loading here - let fallback timer handle it
+                            // or it may have already been resolved by fallback
+                            if (!loadingResolved) {
+                                resolveLoading('supabase-timeout-with-cache');
+                            }
                             setSaveStatus(
                                 '⚠️ Mostrando datos en caché - Sin conexión a Supabase',
                             );
@@ -350,19 +375,36 @@ export const useInitialHydration = ({
                                 '[Data] Timeout occurred but showing cached data',
                             );
                         } else if (!hasCachedData) {
+                            resolveLoading('supabase-no-data-no-cache');
                             setSaveStatus('⚠️ Sin conexión');
                             setTimeout(() => setSaveStatus(''), 3000);
                         }
                     }
                 }
+
+                // Ensure loading is resolved even if we skipped Supabase fetch
+                if (!loadingResolved) {
+                    resolveLoading('final-fallback');
+                }
             } catch (err) {
                 console.error('[Data] Error loading data:', err);
-            } finally {
-                setIsLoading(false);
+                // Ensure loading is resolved on error
+                if (!loadingResolved) {
+                    resolveLoading('error-fallback');
+                }
             }
+            // Note: No finally block needed - resolveLoading handles all cases
         };
 
         loadData();
+
+        // Cleanup: Clear fallback timer if effect re-runs or component unmounts
+        return () => {
+            if (fallbackTimerRef.current) {
+                clearTimeout(fallbackTimerRef.current);
+                fallbackTimerRef.current = null;
+            }
+        };
     }, [
         supabase.loading,
         showAuth,

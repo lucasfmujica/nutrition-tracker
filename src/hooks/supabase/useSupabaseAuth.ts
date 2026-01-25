@@ -57,6 +57,40 @@ export function useSupabaseAuth(): SupabaseAuthReturn {
         };
     }, []);
 
+    // PWA Visibility Change Handler - Refresh auth when app comes back from background
+    // This fixes the issue where iOS PWAs resume with stale auth state
+    useEffect(() => {
+        if (typeof document === 'undefined' || !supabase) return;
+
+        const handleVisibilityChange = async () => {
+            if (document.visibilityState === 'visible' && !loading && supabase) {
+                console.log('[Auth] App became visible, checking session...');
+                try {
+                    const { data: { session }, error } = await supabase.auth.getSession();
+                    if (error) {
+                        console.error('[Auth] Visibility check error:', error);
+                        return;
+                    }
+
+                    const currentUserId = currentUserIdRef.current;
+                    const newUserId = session?.user?.id ?? null;
+
+                    // Only update if user actually changed (login/logout while backgrounded)
+                    if (currentUserId !== newUserId) {
+                        console.log('[Auth] Session changed while backgrounded, updating state');
+                        currentUserIdRef.current = newUserId;
+                        setUser(session?.user ?? null);
+                    }
+                } catch (err) {
+                    console.error('[Auth] Visibility check failed:', err);
+                }
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    }, [loading]);
+
     // Helper: Ensure profile exists
     const ensureProfileExists = async (userId: string) => {
         if (!supabase) return { success: false };
@@ -115,13 +149,14 @@ export function useSupabaseAuth(): SupabaseAuthReturn {
             setLoading(false);
         };
 
-        // Timeout safety
+        // Timeout safety - extended to 10s for cold starts and slow networks
+        // PWA apps especially need more time after being backgrounded
         timeoutId = setTimeout(() => {
             if (mounted && !authResolved) {
-                console.warn('[Auth] Session check timed out');
+                console.warn('[Auth] Session check timed out after 10s');
                 resolveAuth('timeout');
             }
-        }, 5000);
+        }, 10000);
 
         // Get initial session
         supabase!.auth
