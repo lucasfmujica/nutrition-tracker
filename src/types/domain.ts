@@ -188,3 +188,71 @@ export interface WeightProjection {
     dataPoints: number;
     daysCovered: number;
 }
+
+// =====================================================
+// SOCIAL FEATURE TYPES
+// =====================================================
+
+export interface Friend {
+    id: string;
+    odId: string;
+    name: string;
+    avatar: string | null;
+    friendCode: string;
+    connectedAt: string;
+    weeklyStats?: WeeklySummary;
+}
+
+export interface FriendRequest {
+    id: string;
+    fromUserId: string;
+    fromName: string;
+    fromAvatar: string | null;
+    fromFriendCode: string;
+    createdAt: string;
+}
+
+export interface WeeklySummary {
+    weightDelta: number | null;
+    workoutCount: number;
+    consistencyStreak: number;
+    avgDeficit: number;
+}
+
+export type ActivityType =
+    | 'workout_logged'
+    | 'weight_milestone'
+    | 'streak_achieved'
+    | 'goal_reached'
+    | 'friend_added'
+    | 'weekly_summary';
+
+export interface ActivityItem {
+    id: string;
+    userId: string;
+    userName: string;
+    userAvatar: string | null;
+    activityType: ActivityType;
+    metadata: Record<string, any>;
+    createdAt: string;
+}
+
+export interface LeaderboardEntry {
+    rank: number;
+    userId: string;
+    name: string;
+    avatar: string | null;
+    value: number;
+    isCurrentUser: boolean;
+}
+
+export type LeaderboardMetric = 'streak' | 'workouts' | 'weight';
+
+export interface Friendship {
+    id: string;
+    userId: string;
+    friendId: string;
+    status: 'pending' | 'accepted' | 'blocked';
+    createdAt: string;
+    acceptedAt: string | null;
+}

@@ -1,4 +1,4 @@
-import { Activity, Dumbbell, Home, Link, Scale, User, Utensils } from 'lucide-react';
+import { Activity, Dumbbell, Home, Link, Scale, User, Users, Utensils } from 'lucide-react';
 import React from 'react';
 import { Profile } from '../../../types/domain';
 
@@ -23,6 +23,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             tutorialId: 'workouts-tab',
         },
         { id: 'peso', icon: Scale, label: 'Peso', tutorialId: 'weight-tab' },
+        { id: 'social', icon: Users, label: 'Crew', tutorialId: 'social-tab' },
         { id: 'pasos', icon: Activity, label: 'Pasos' },
         { id: 'oura', icon: Link, label: 'Oura' },
         { id: 'config', icon: User, label: 'Perfil', tutorialId: 'config-tab' },

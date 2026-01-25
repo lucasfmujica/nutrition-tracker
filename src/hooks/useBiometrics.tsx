@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { checkWeightMilestone } from '../services/activityTriggerService';
 import {
     CustomTargets,
     OuraEntry,
@@ -160,6 +161,16 @@ export const useBiometrics = (
                         userId: supabase.user?.id,
                     });
                     throw new Error(result.error.message);
+                }
+
+                // Check for weight milestones (fire and forget)
+                if (supabase.user?.id) {
+                    checkWeightMilestone(
+                        supabase.user.id,
+                        entry.weight,
+                        weightHistory,
+                        profile.targetWeight
+                    ).catch(() => {});
                 }
 
                 return result;

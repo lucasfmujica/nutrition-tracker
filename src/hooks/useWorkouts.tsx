@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { triggerWorkoutActivity } from '../services/activityTriggerService';
 import { Workout } from '../types/domain';
 import { storage } from '../utils/storage';
 import { addPendingWrite, getCacheKeys } from '../utils/storageUtils';
@@ -57,6 +58,12 @@ export const useWorkouts = (supabase: SupabaseClient, useCloud: boolean) => {
                     entry.date,
                     entry.name,
                 );
+
+                // Post activity to social feed (fire and forget)
+                if (supabase.user?.id) {
+                    triggerWorkoutActivity(supabase.user.id, entry).catch(() => {});
+                }
+
                 return result.data;
             } catch (err: any) {
                 console.error('[Workouts] saveWorkoutEntry FAILED:', {

@@ -15,6 +15,8 @@ import { useNutrition } from '../hooks/useNutrition';
 import { useOuraSync } from '../hooks/useOuraSync';
 import { useQuickLog } from '../hooks/useQuickLog';
 import { useSafetyNet } from '../hooks/useSafetyNet';
+import { useSocial } from '../hooks/useSocial';
+import { useWeeklySnapshot } from '../hooks/useWeeklySnapshot';
 import { useSupabase } from '../hooks/useSupabase';
 import { useTrackerActions } from '../hooks/useTrackerActions';
 import { useTrackerAnalytics } from '../hooks/useTrackerAnalytics';
@@ -45,7 +47,8 @@ export type TrackerContextType = ReturnType<typeof useTrackerSync> &
     ReturnType<typeof useOuraSync> &
     ReturnType<typeof useQuickLog> &
     ReturnType<typeof useSafetyNet> &
-    ReturnType<typeof useExport> & {
+    ReturnType<typeof useExport> &
+    ReturnType<typeof useSocial> & {
         supabase: ReturnType<typeof useSupabase>;
         updateConfig: (newProfile: any, newTargets: any) => Promise<void>;
         changeDate: (days: number) => void;
@@ -262,7 +265,25 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         ouraPersonalToken: biometrics.profile?.ouraPersonalToken,
     });
 
-    // 17. UI Helpers
+    // 17. Social Feature
+    const social = useSocial({
+        supabase: {
+            user: supabase.user,
+            isOnline: supabase.isOnline,
+            isAuthenticated: supabase.isAuthenticated,
+        },
+        useCloud,
+    });
+
+    // 18. Weekly Snapshot Generation (for leaderboards)
+    useWeeklySnapshot({
+        userId: supabase.user?.id,
+        weightHistory: biometrics.weightHistory,
+        workoutLog: workouts.workoutLog,
+        useCloud,
+    });
+
+    // 19. UI Helpers
     const changeDate = (days: number) => {
         const targetTab = uiState.activeTab;
         if (targetTab === 'dashboard') {
@@ -339,6 +360,9 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
             // Modo Escudo (Safety Net)
             ...safetyNet,
 
+            // Social Feature
+            ...social,
+
             // UI Helpers
             changeDate,
             getWaterForDate: getWaterDataForDate,
@@ -370,6 +394,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
             exportDoc,
             quickLog,
             safetyNet,
+            social,
             supabase,
             changeDate,
             addStepsEntry,

@@ -39,6 +39,11 @@ const WorkoutsTab = lazyWithRetry(() =>
         default: m.WorkoutsTab,
     })),
 );
+const SocialTab = lazyWithRetry(() =>
+    import('./components/Tabs/SocialTab').then((m) => ({
+        default: m.SocialTab,
+    })),
+);
 
 import { PullToRefresh } from './components/UI/PullToRefresh';
 import { TrackerProvider, useTracker } from './context/TrackerContext';
@@ -110,6 +115,22 @@ const NutritionTrackerContent = () => {
         setNewFood,
         newFood,
         supabase,
+        // Social Feature
+        friends,
+        friendRequests,
+        activityFeed,
+        leaderboard,
+        userFriendCode,
+        socialLoading,
+        leaderboardMetric,
+        setLeaderboardMetric,
+        showAddFriendModal,
+        setShowAddFriendModal,
+        sendFriendRequest,
+        acceptFriendRequest,
+        rejectFriendRequest,
+        removeFriend,
+        refreshSocial,
     } = useTracker();
 
     // Derived state for Dashboard
@@ -258,6 +279,25 @@ const NutritionTrackerContent = () => {
                                         weeklyData={getWeeklyData}
                                         stepsLog={stepsLog}
                                         stepGoal={profile.stepGoal || 8000}
+                                    />
+                                ) : null}
+                                {activeTab === 'social' ? (
+                                    <SocialTab
+                                        friends={friends}
+                                        friendRequests={friendRequests}
+                                        activityFeed={activityFeed}
+                                        leaderboard={leaderboard}
+                                        userFriendCode={userFriendCode}
+                                        socialLoading={socialLoading}
+                                        leaderboardMetric={leaderboardMetric}
+                                        onLeaderboardMetricChange={setLeaderboardMetric}
+                                        showAddFriendModal={showAddFriendModal}
+                                        onShowAddFriendModal={setShowAddFriendModal}
+                                        onSendFriendRequest={sendFriendRequest}
+                                        onAcceptFriendRequest={acceptFriendRequest}
+                                        onRejectFriendRequest={rejectFriendRequest}
+                                        onRemoveFriend={removeFriend}
+                                        onRefresh={refreshSocial}
                                     />
                                 ) : null}
                                 {activeTab === 'oura' ? (

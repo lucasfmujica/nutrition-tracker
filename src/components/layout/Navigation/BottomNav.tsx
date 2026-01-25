@@ -10,6 +10,7 @@ import {
     Moon,
     Plus,
     Star,
+    Users,
     Utensils,
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
@@ -105,7 +106,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab })
         { id: 'entrenos', icon: Dumbbell, label: 'TRAIN', tutorialId: 'workouts-tab' },
         { id: 'add', icon: Plus, label: '', isAction: true, tutorialId: 'fab-button' },
         { id: 'peso', icon: BarChart2, label: 'WEIGHT', tutorialId: 'weight-tab' },
-        { id: 'pasos', icon: Footprints, label: 'STEPS' },
+        { id: 'social', icon: Users, label: 'CREW', tutorialId: 'social-tab' },
         { id: 'oura', icon: Moon, label: 'BIO' },
     ];
 
