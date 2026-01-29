@@ -437,13 +437,18 @@ const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
                         return (
                             <div key={day} className="relative">
                                 <select
-                                    value={plannedWorkout?.type || 'rest'}
-                                    onChange={(e) =>
-                                        handleTypeChange(i, e.target.value)
+                                    value={
+                                        !plannedWorkout ||
+                                        plannedWorkout.type === 'rest' ||
+                                        plannedWorkout.type === 'other'
+                                            ? 'rest'
+                                            : plannedWorkout.type
                                     }
+                                    onChange={(e) => {
+                                        handleTypeChange(i, e.target.value);
+                                    }}
                                     className="w-full p-2 rounded-xl border-2 border-blue-400 bg-white text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-lg transition-all cursor-pointer appearance-none text-center"
                                     autoFocus
-                                    onBlur={() => setEditingDay(null)}
                                     style={{
                                         backgroundImage:
                                             "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234B5563' d='M6 9L1 4h10z'/%3E%3C/svg%3E\")",

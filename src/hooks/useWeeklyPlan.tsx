@@ -124,12 +124,26 @@ export const useWeeklyPlan = () => {
                 } = await supabase.auth.getUser();
                 if (!user) throw new Error('Usuario no autenticado');
 
-                // If setting to rest, save it explicitly with type='rest'
-                const dataToSave = workoutData || {
-                    type: 'other' as const,
-                    name: 'Descanso',
-                    intensity: 'recovery' as const,
-                };
+                // If setting to rest, delete the day from the plan
+                if (workoutData === null) {
+                    const { error: deleteError } = await supabase
+                        .from('weekly_plan')
+                        .delete()
+                        .eq('user_id', user.id)
+                        .eq('day_of_week', dayIndex);
+
+                    if (deleteError) throw deleteError;
+
+                    // Update local state - set to null for rest day
+                    setPlan((prev) => ({
+                        ...prev,
+                        [dayIndex]: null,
+                    }));
+
+                    return true;
+                }
+
+                const dataToSave = workoutData;
 
                 // Upsert (insert or update)
                 const { error: upsertError } = await supabase
@@ -152,7 +166,7 @@ export const useWeeklyPlan = () => {
                 // Update local state
                 setPlan((prev) => ({
                     ...prev,
-                    [dayIndex]: workoutData === null ? null : dataToSave,
+                    [dayIndex]: dataToSave,
                 }));
 
                 return true;
