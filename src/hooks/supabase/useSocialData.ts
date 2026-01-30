@@ -23,6 +23,7 @@ export interface UseSocialDataReturn {
     fetchLeaderboard: (metric: LeaderboardMetric) => Promise<LeaderboardEntry[]>;
     postActivity: (activityType: ActivityType, metadata?: Record<string, any>) => Promise<void>;
     fetchUserFriendCode: () => Promise<string | null>;
+    toggleReaction: (activityId: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 export function useSocialData(user: User | null, isOnline: boolean): UseSocialDataReturn {
@@ -368,8 +369,26 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                 .select('user_id, display_name, avatar_url')
                 .in('user_id', allUserIds);
 
+            // Fetch reactions count for each activity
+            const activityIds = activities.map((a: any) => a.id);
+            const { data: reactions } = await supabase
+                .from('activity_reactions')
+                .select('activity_id, user_id')
+                .in('activity_id', activityIds);
+
+            // Build reaction map: { activityId: { count, hasUserReacted } }
+            const reactionMap: Record<string, { count: number; hasReacted: boolean }> = {};
+            activityIds.forEach((activityId: string) => {
+                const activityReactions = reactions?.filter((r: any) => r.activity_id === activityId) || [];
+                reactionMap[activityId] = {
+                    count: activityReactions.length,
+                    hasReacted: activityReactions.some((r: any) => r.user_id === user.id),
+                };
+            });
+
             return activities.map((activity: any) => {
                 const profile = profiles?.find((p: any) => p.user_id === activity.user_id);
+                const reactionData = reactionMap[activity.id] || { count: 0, hasReacted: false };
                 return {
                     id: activity.id,
                     userId: activity.user_id,
@@ -378,6 +397,8 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                     activityType: activity.activity_type,
                     metadata: activity.metadata || {},
                     createdAt: activity.created_at,
+                    reactionCount: reactionData.count,
+                    hasReacted: reactionData.hasReacted,
                 };
             });
         } catch (err) {
@@ -438,6 +459,9 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                         case 'weight':
                             // For weight loss, more negative is better
                             return (a.weight_delta || 0) - (b.weight_delta || 0);
+                        case 'deficit':
+                            // For deficit, higher is better (more deficit = ate less)
+                            return (b.avg_deficit || 0) - (a.avg_deficit || 0);
                         default:
                             return 0;
                     }
@@ -455,6 +479,9 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                             break;
                         case 'weight':
                             value = snapshot.weight_delta || 0;
+                            break;
+                        case 'deficit':
+                            value = snapshot.avg_deficit || 0;
                             break;
                         default:
                             value = 0;
@@ -518,6 +545,65 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
         }
     }, [canUseSupabase, user]);
 
+    /**
+     * Toggle reaction on an activity (add if not reacted, remove if already reacted)
+     */
+    const toggleReaction = useCallback(
+        async (activityId: string): Promise<{ success: boolean; error?: string }> => {
+            if (!canUseSupabase || !user || !supabase) {
+                return { success: false, error: 'No autenticado o sin conexión' };
+            }
+
+            try {
+                // Check if user already reacted
+                const { data: existing, error: checkError } = await supabase
+                    .from('activity_reactions')
+                    .select('id')
+                    .eq('activity_id', activityId)
+                    .eq('user_id', user.id)
+                    .maybeSingle();
+
+                if (checkError && checkError.code !== 'PGRST116') {
+                    // PGRST116 = no rows returned (not an error in this case)
+                    throw checkError;
+                }
+
+                if (existing) {
+                    // Remove reaction
+                    const { error: deleteError } = await supabase
+                        .from('activity_reactions')
+                        .delete()
+                        .eq('id', existing.id);
+
+                    if (deleteError) {
+                        console.error('[useSocialData] Error removing reaction:', deleteError);
+                        return { success: false, error: 'Error al quitar reacción' };
+                    }
+                } else {
+                    // Add reaction
+                    const { error: insertError } = await supabase
+                        .from('activity_reactions')
+                        .insert({
+                            activity_id: activityId,
+                            user_id: user.id,
+                            reaction_type: 'fire',
+                        });
+
+                    if (insertError) {
+                        console.error('[useSocialData] Error adding reaction:', insertError);
+                        return { success: false, error: 'Error al agregar reacción' };
+                    }
+                }
+
+                return { success: true };
+            } catch (err: any) {
+                console.error('[useSocialData] toggleReaction failed:', err);
+                return { success: false, error: err.message };
+            }
+        },
+        [canUseSupabase, user]
+    );
+
     return {
         fetchFriends,
         fetchFriendRequests,
@@ -529,6 +615,7 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
         fetchLeaderboard,
         postActivity,
         fetchUserFriendCode,
+        toggleReaction,
     };
 }
 

@@ -49,6 +49,7 @@ export interface UseSocialReturn {
     removeFriend: (id: string) => Promise<void>;
     refreshSocial: () => Promise<void>;
     refreshLeaderboard: (metric?: LeaderboardMetric) => Promise<void>;
+    toggleReaction: (activityId: string) => Promise<void>;
 
     // Request count for badges
     pendingRequestCount: number;
@@ -224,6 +225,46 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
         }
     }, [friends, socialData]);
 
+    /**
+     * Toggle reaction on activity with optimistic update
+     */
+    const toggleReaction = useCallback(async (activityId: string) => {
+        // Optimistic: Update activity feed immediately
+        const activity = activityFeed.find(a => a.id === activityId);
+        if (!activity) return;
+
+        const previousHasReacted = activity.hasReacted || false;
+        const previousCount = activity.reactionCount || 0;
+
+        setActivityFeed(prev => prev.map(a =>
+            a.id === activityId
+                ? {
+                    ...a,
+                    hasReacted: !previousHasReacted,
+                    reactionCount: previousHasReacted
+                        ? Math.max(0, previousCount - 1)
+                        : previousCount + 1,
+                }
+                : a
+        ));
+
+        const result = await socialData.toggleReaction(activityId);
+
+        if (!result.success) {
+            // Revert optimistic update
+            setActivityFeed(prev => prev.map(a =>
+                a.id === activityId
+                    ? {
+                        ...a,
+                        hasReacted: previousHasReacted,
+                        reactionCount: previousCount,
+                    }
+                    : a
+            ));
+            setSocialError(result.error || 'Error al reaccionar');
+        }
+    }, [activityFeed, socialData]);
+
     // Initial load when authenticated
     useEffect(() => {
         if (useCloud && supabase.isAuthenticated) {
@@ -269,6 +310,7 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
         removeFriend,
         refreshSocial,
         refreshLeaderboard,
+        toggleReaction,
 
         // Computed
         pendingRequestCount: friendRequests.length,

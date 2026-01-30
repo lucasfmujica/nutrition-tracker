@@ -7,11 +7,13 @@ import { EmptyState } from './EmptyState';
 interface ActivityFeedProps {
     activities: ActivityItemType[];
     loading?: boolean;
+    onToggleReaction?: (activityId: string) => void;
 }
 
 export const ActivityFeed: React.FC<ActivityFeedProps> = ({
     activities,
     loading = false,
+    onToggleReaction,
 }) => {
     return (
         <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
@@ -55,6 +57,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                         <ActivityItemComponent
                             key={activity.id}
                             activity={activity}
+                            onToggleReaction={onToggleReaction}
                         />
                     ))}
                 </div>

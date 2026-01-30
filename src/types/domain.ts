@@ -235,6 +235,8 @@ export interface ActivityItem {
     activityType: ActivityType;
     metadata: Record<string, any>;
     createdAt: string;
+    reactionCount?: number;
+    hasReacted?: boolean;
 }
 
 export interface LeaderboardEntry {
@@ -246,7 +248,7 @@ export interface LeaderboardEntry {
     isCurrentUser: boolean;
 }
 
-export type LeaderboardMetric = 'streak' | 'workouts' | 'weight';
+export type LeaderboardMetric = 'streak' | 'workouts' | 'weight' | 'deficit';
 
 export interface Friendship {
     id: string;

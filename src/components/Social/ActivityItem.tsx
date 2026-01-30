@@ -4,9 +4,10 @@ import { ActivityItem as ActivityItemType, ActivityType } from '../../types/doma
 
 interface ActivityItemProps {
     activity: ActivityItemType;
+    onToggleReaction?: (activityId: string) => void;
 }
 
-export const ActivityItemComponent: React.FC<ActivityItemProps> = ({ activity }) => {
+export const ActivityItemComponent: React.FC<ActivityItemProps> = ({ activity, onToggleReaction }) => {
     const getActivityConfig = (type: ActivityType) => {
         switch (type) {
             case 'workout_logged':
@@ -91,6 +92,9 @@ export const ActivityItemComponent: React.FC<ActivityItemProps> = ({ activity })
     const Icon = config.icon;
     const detailText = getDetailText(activity);
 
+    const reactionCount = activity.reactionCount || 0;
+    const hasReacted = activity.hasReacted || false;
+
     return (
         <div className="flex items-start gap-3 py-3 border-b border-slate-50 last:border-0">
             {/* Activity Icon */}
@@ -108,9 +112,32 @@ export const ActivityItemComponent: React.FC<ActivityItemProps> = ({ activity })
                         <span className="font-semibold text-slate-600"> - {detailText}</span>
                     )}
                 </p>
-                <p className="text-xs text-slate-400 mt-0.5">
-                    {formatRelativeTime(activity.createdAt)}
-                </p>
+                <div className="flex items-center gap-3 mt-1">
+                    <p className="text-xs text-slate-400">
+                        {formatRelativeTime(activity.createdAt)}
+                    </p>
+                    {/* Reaction Button */}
+                    {onToggleReaction && (
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onToggleReaction(activity.id);
+                            }}
+                            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold transition-all active:scale-95 ${
+                                hasReacted
+                                    ? 'bg-orange-50 text-orange-600 hover:bg-orange-100'
+                                    : 'bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-orange-500'
+                            }`}>
+                            <Flame
+                                size={14}
+                                className={hasReacted ? 'fill-orange-500' : ''}
+                            />
+                            {reactionCount > 0 && (
+                                <span>{reactionCount}</span>
+                            )}
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* Avatar */}

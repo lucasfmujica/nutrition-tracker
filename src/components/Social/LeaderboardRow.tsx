@@ -23,6 +23,9 @@ export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ entry, metric })
             case 'weight':
                 const sign = value < 0 ? '' : '+';
                 return `${sign}${value.toFixed(1)} kg`;
+            case 'deficit':
+                const deficitSign = value > 0 ? '-' : '+';
+                return `${deficitSign}${Math.abs(value).toFixed(0)} kcal`;
             default:
                 return String(value);
         }
@@ -83,7 +86,13 @@ export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ entry, metric })
                             : entry.value > 0
                               ? 'text-red-500'
                               : 'text-slate-400'
-                        : 'text-slate-700'
+                        : metric === 'deficit'
+                          ? entry.value > 0
+                              ? 'text-green-600' // Déficit positivo (comió menos)
+                              : entry.value < 0
+                                ? 'text-red-500' // Superávit (comió más)
+                                : 'text-slate-400'
+                          : 'text-slate-700'
                 }`}>
                 {formatValue(entry.value, metric)}
             </div>

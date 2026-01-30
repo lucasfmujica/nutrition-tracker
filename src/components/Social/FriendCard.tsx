@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp, Dumbbell, Flame, Scale, Trash2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, Dumbbell, Flame, Scale, Trash2, TrendingDown } from 'lucide-react';
 import React, { useState } from 'react';
 import { Friend } from '../../types/domain';
 
@@ -21,6 +21,19 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
         if (delta === null || delta === undefined) return 'text-slate-400';
         if (delta < 0) return 'text-green-600';
         if (delta > 0) return 'text-red-500';
+        return 'text-slate-400';
+    };
+
+    const formatAvgDeficit = (deficit: number | null | undefined): string => {
+        if (deficit === null || deficit === undefined) return 'N/A';
+        const sign = deficit > 0 ? '-' : '+';
+        return `${sign}${Math.abs(deficit).toFixed(0)} kcal`;
+    };
+
+    const getDeficitColor = (deficit: number | null | undefined): string => {
+        if (deficit === null || deficit === undefined) return 'text-slate-400';
+        if (deficit > 0) return 'text-green-600'; // Déficit = comió menos (bueno)
+        if (deficit < 0) return 'text-red-500'; // Superávit = comió más (malo)
         return 'text-slate-400';
     };
 
@@ -76,7 +89,7 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
             {expanded && (
                 <div className="px-4 pb-4 border-t border-slate-50 pt-3">
                     {friend.weeklyStats ? (
-                        <div className="grid grid-cols-3 gap-3 mb-4">
+                        <div className="grid grid-cols-2 gap-3 mb-4">
                             {/* Weight Delta */}
                             <div className="bg-slate-50 rounded-lg p-3 text-center">
                                 <Scale size={16} className="mx-auto mb-1 text-slate-400" />
@@ -103,6 +116,16 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
                                     {friend.weeklyStats.consistencyStreak}
                                 </p>
                                 <p className="text-[10px] text-slate-400 uppercase">Racha</p>
+                            </div>
+
+                            {/* Avg Deficit */}
+                            <div className="bg-slate-50 rounded-lg p-3 text-center">
+                                <TrendingDown size={16} className="mx-auto mb-1 text-slate-400" />
+                                <p
+                                    className={`font-black text-sm ${getDeficitColor(friend.weeklyStats.avgDeficit)}`}>
+                                    {formatAvgDeficit(friend.weeklyStats.avgDeficit)}
+                                </p>
+                                <p className="text-[10px] text-slate-400 uppercase">Déficit</p>
                             </div>
                         </div>
                     ) : (

@@ -6,12 +6,14 @@ interface SidebarProps {
     activeTab: string;
     setActiveTab: (tab: string) => void;
     profile: Profile;
+    pendingRequestCount?: number;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
     activeTab,
     setActiveTab,
     profile,
+    pendingRequestCount = 0,
 }) => {
     const menuItems = [
         { id: 'dashboard', icon: Home, label: 'Dashboard' },
@@ -77,24 +79,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {menuItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = activeTab === item.id;
+                    const showBadge = item.id === 'social' && pendingRequestCount > 0;
                     return (
                         <button
                             key={item.id}
                             onClick={() => setActiveTab(item.id)}
                             data-tutorial={item.tutorialId}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative ${
                                 isActive
                                     ? 'bg-gradient-to-r from-blue-600/10 to-cyan-500/10 text-blue-700 shadow-sm font-bold'
                                     : 'text-gray-500 hover:bg-gray-50 hover:text-blue-600 hover:translate-x-1'
                             }`}>
-                            <Icon
-                                size={20}
-                                className={`transition-colors ${
-                                    isActive
-                                        ? 'text-blue-600'
-                                        : 'text-gray-400 group-hover:text-gray-600'
-                                }`}
-                            />
+                            <div className="relative">
+                                <Icon
+                                    size={20}
+                                    className={`transition-colors ${
+                                        isActive
+                                            ? 'text-blue-600'
+                                            : 'text-gray-400 group-hover:text-gray-600'
+                                    }`}
+                                />
+                                {showBadge && (
+                                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center shadow-lg">
+                                        <span className="text-[8px] font-black text-white">
+                                            {pendingRequestCount > 9 ? '9+' : pendingRequestCount}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
                             <span className="font-medium">{item.label}</span>
                         </button>
                     );

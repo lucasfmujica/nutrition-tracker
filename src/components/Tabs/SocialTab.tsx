@@ -40,6 +40,7 @@ interface SocialTabProps {
     onRejectFriendRequest: (id: string) => void;
     onRemoveFriend: (id: string) => void;
     onRefresh: () => void;
+    onToggleReaction: (activityId: string) => void;
 }
 
 export const SocialTab: React.FC<SocialTabProps> = ({
@@ -58,6 +59,7 @@ export const SocialTab: React.FC<SocialTabProps> = ({
     onRejectFriendRequest,
     onRemoveFriend,
     onRefresh,
+    onToggleReaction,
 }) => {
     const [requestsExpanded, setRequestsExpanded] = useState(true);
 
@@ -148,7 +150,11 @@ export const SocialTab: React.FC<SocialTabProps> = ({
             />
 
             {/* Activity Feed */}
-            <ActivityFeed activities={activityFeed} loading={socialLoading} />
+            <ActivityFeed
+                activities={activityFeed}
+                loading={socialLoading}
+                onToggleReaction={onToggleReaction}
+            />
 
             {/* Friends List */}
             <FriendsList

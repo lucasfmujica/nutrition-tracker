@@ -1,4 +1,4 @@
-import { Dumbbell, Flame, Scale, Trophy } from 'lucide-react';
+import { Dumbbell, Flame, Scale, Trophy, TrendingDown } from 'lucide-react';
 import React from 'react';
 import { LeaderboardEntry, LeaderboardMetric } from '../../types/domain';
 import { EmptyState } from './EmptyState';
@@ -21,6 +21,7 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
         { id: 'streak', label: 'Racha', icon: Flame },
         { id: 'workouts', label: 'Entrenos', icon: Dumbbell },
         { id: 'weight', label: 'Peso', icon: Scale },
+        { id: 'deficit', label: 'Déficit', icon: TrendingDown },
     ];
 
     return (
@@ -40,7 +41,7 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
             </div>
 
             {/* Metric Tabs */}
-            <div className="grid grid-cols-3 gap-1.5 mb-5 bg-slate-50 rounded-xl p-1.5 border border-slate-100">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-5 bg-slate-50 rounded-xl p-1.5 border border-slate-100">
                 {metrics.map(({ id, label, icon: Icon }) => {
                     const isActive = metric === id;
                     return (

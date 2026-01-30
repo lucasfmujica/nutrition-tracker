@@ -24,9 +24,10 @@ import { useTracker } from '../../../context/TrackerContext';
 interface BottomNavProps {
     activeTab: string;
     setActiveTab: (tab: string) => void;
+    pendingRequestCount?: number;
 }
 
-export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab }) => {
+export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, pendingRequestCount = 0 }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const {
@@ -195,12 +196,23 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab })
                                         : 'text-slate-400 hover:text-slate-600'
                                 }`}>
                                 <div className="relative z-10 flex flex-col items-center">
-                                    {tab.icon &&
-                                        React.createElement(tab.icon, {
-                                            size: 20,
-                                            strokeWidth: isActive ? 2.5 : 2,
-                                            className: `transition-all duration-300 ${isActive ? '-translate-y-1 scale-110' : 'group-hover:scale-105'}`,
-                                        })}
+                                    <div className="relative">
+                                        {tab.icon &&
+                                            React.createElement(tab.icon, {
+                                                size: 20,
+                                                strokeWidth: isActive ? 2.5 : 2,
+                                                className: `transition-all duration-300 ${isActive ? '-translate-y-1 scale-110' : 'group-hover:scale-105'}`,
+                                            })}
+
+                                        {/* Notification Badge for Social Tab */}
+                                        {tab.id === 'social' && pendingRequestCount > 0 && (
+                                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                                                <span className="text-[8px] font-black text-white">
+                                                    {pendingRequestCount > 9 ? '9+' : pendingRequestCount}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
 
                                     <div
                                         className={`flex flex-col items-center transition-all duration-300 overflow-hidden ${

@@ -9,6 +9,7 @@ interface LayoutProps {
     setActiveTab: (tab: string) => void;
     profile: Profile;
     showNav?: boolean;
+    pendingRequestCount?: number;
 }
 
 export const Layout: React.FC<LayoutProps> = ({
@@ -17,6 +18,7 @@ export const Layout: React.FC<LayoutProps> = ({
     setActiveTab,
     profile,
     showNav = true,
+    pendingRequestCount = 0,
 }) => {
     return (
         <div className="min-h-screen bg-gray-50 text-gray-900 font-sans flex text-base lg:text-sm">
@@ -25,6 +27,7 @@ export const Layout: React.FC<LayoutProps> = ({
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
                 profile={profile}
+                pendingRequestCount={pendingRequestCount}
             />
 
             {/* Main Content Area */}
@@ -38,6 +41,7 @@ export const Layout: React.FC<LayoutProps> = ({
                             <BottomNav
                                 activeTab={activeTab}
                                 setActiveTab={setActiveTab}
+                                pendingRequestCount={pendingRequestCount}
                             />
                         </div>
                     </div>
