@@ -19,14 +19,14 @@ export interface PlannedWorkout {
 
 /**
  * Default weekly plan (Monday = 0, Sunday = 6)
- * This represents the user's recurring weekly training schedule
+ * Generic plan for new users - can be customized in Dashboard
  */
 export const DEFAULT_WEEKLY_PLAN: Record<number, PlannedWorkout> = {
-    0: { type: 'gym', name: 'Upper Body', intensity: INTENSITY.MODERATE }, // Lunes
-    2: { type: 'sport', name: 'Tenis', intensity: INTENSITY.HIGH }, // Miércoles
-    3: { type: 'gym', name: 'Piernas', intensity: INTENSITY.MODERATE }, // Jueves
-    5: { type: 'gym', name: 'Full Body', intensity: INTENSITY.MODERATE }, // Sábado
-    // 1, 4, 6 are rest days (recovery by default)
+    0: { type: 'gym', name: 'Entrenamiento', intensity: INTENSITY.MODERATE }, // Lunes
+    2: { type: 'gym', name: 'Entrenamiento', intensity: INTENSITY.MODERATE }, // Miércoles
+    4: { type: 'gym', name: 'Entrenamiento', intensity: INTENSITY.MODERATE }, // Viernes
+    // 1, 3, 5, 6 are rest days (recovery by default)
+    // Users can customize this plan in Dashboard → Weekly Planning Card
 };
 
 /**
