@@ -188,7 +188,7 @@ const NutritionTrackerContent = () => {
                     <PullToRefresh
                         onRefresh={handleRefresh}
                         isRefreshing={isRefreshing}>
-                        <main className="p-4 lg:p-6 xl:p-8 pb-32 md:pb-36 w-full max-w-7xl xl:max-w-[1600px] 2xl:max-w-[1800px] mx-auto">
+                        <main className="p-4 lg:p-6 xl:p-8 pb-32 md:pb-36 w-full">
                             <Suspense
                                 fallback={
                                     <div className="flex items-center justify-center min-h-[400px]">

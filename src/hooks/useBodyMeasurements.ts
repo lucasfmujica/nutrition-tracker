@@ -92,13 +92,28 @@ export const useBodyMeasurements = ({
                 .eq('user_id', userId)
                 .order('date', { ascending: false });
 
-            if (fetchError) throw fetchError;
+            if (fetchError) {
+                // Check if table doesn't exist
+                if (fetchError.code === '42P01' || fetchError.message?.includes('does not exist')) {
+                    console.warn('[useBodyMeasurements] Table does not exist yet');
+                    setMeasurements([]);
+                    setError(null); // Don't show error, just empty state
+                    return;
+                }
+                throw fetchError;
+            }
 
             const mapped = (data || []).map(mapDbToMeasurement);
             setMeasurements(mapped);
         } catch (err: any) {
             console.error('[useBodyMeasurements] Fetch error:', err);
-            setError('Error al cargar medidas');
+            // Don't show error for missing table
+            if (err?.code === '42P01' || err?.message?.includes('does not exist')) {
+                setMeasurements([]);
+                setError(null);
+            } else {
+                setError('Error al cargar medidas');
+            }
         } finally {
             setIsLoading(false);
         }

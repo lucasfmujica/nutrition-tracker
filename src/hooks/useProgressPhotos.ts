@@ -122,13 +122,28 @@ export const useProgressPhotos = ({
                 .eq('user_id', userId)
                 .order('date', { ascending: false });
 
-            if (fetchError) throw fetchError;
+            if (fetchError) {
+                // Check if table doesn't exist
+                if (fetchError.code === '42P01' || fetchError.message?.includes('does not exist')) {
+                    console.warn('[useProgressPhotos] Table does not exist yet');
+                    setPhotos([]);
+                    setError(null); // Don't show error, just empty state
+                    return;
+                }
+                throw fetchError;
+            }
 
             const mapped = (data || []).map(mapDbToPhoto);
             setPhotos(mapped);
         } catch (err: any) {
             console.error('[useProgressPhotos] Fetch error:', err);
-            setError('Error al cargar fotos');
+            // Don't show error for missing table
+            if (err?.code === '42P01' || err?.message?.includes('does not exist')) {
+                setPhotos([]);
+                setError(null);
+            } else {
+                setError('Error al cargar fotos');
+            }
         } finally {
             setIsLoading(false);
         }
