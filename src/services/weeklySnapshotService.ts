@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import { WeightEntry, Workout } from '../types/domain';
+import { WeightEntry, Workout, FoodEntry } from '../types/domain';
 
 /**
  * Weekly Snapshot Service
@@ -149,13 +149,59 @@ export function calculateConsistencyStreak(
 }
 
 /**
+ * Calculate average calorie deficit/surplus for the week
+ * Positive = surplus, Negative = deficit
+ */
+export function calculateAvgDeficit(
+    foodLog: FoodEntry[],
+    targetCalories: number,
+    weekStart: string
+): number {
+    if (foodLog.length === 0 || !targetCalories) return 0;
+
+    const weekStartDate = new Date(weekStart);
+    const weekEndDate = new Date(weekStart);
+    weekEndDate.setDate(weekEndDate.getDate() + 6); // Sunday
+
+    // Group foods by date and sum calories
+    const dailyTotals: Record<string, number> = {};
+
+    foodLog.forEach((food) => {
+        const date = new Date(food.date);
+        if (date >= weekStartDate && date <= weekEndDate) {
+            if (!dailyTotals[food.date]) {
+                dailyTotals[food.date] = 0;
+            }
+            dailyTotals[food.date] += food.calories || 0;
+        }
+    });
+
+    // Calculate deficit for each logged day
+    const deficits: number[] = [];
+    Object.values(dailyTotals).forEach((actualCalories) => {
+        // deficit = target - actual
+        // Positive deficit = ate less than target (good for weight loss)
+        // Negative deficit = ate more than target (surplus)
+        deficits.push(targetCalories - actualCalories);
+    });
+
+    if (deficits.length === 0) return 0;
+
+    // Calculate average
+    const avgDeficit = deficits.reduce((sum, d) => sum + d, 0) / deficits.length;
+
+    return Number(avgDeficit.toFixed(1));
+}
+
+/**
  * Generate or update weekly snapshot for a user
  */
 export async function generateWeeklySnapshot(
     userId: string,
     weightHistory: WeightEntry[],
     workoutLog: Workout[],
-    _foodLog?: any[] // Reserved for future avgDeficit calculation
+    foodLog: FoodEntry[],
+    targetCalories: number
 ): Promise<void> {
     if (!supabase || !userId) return;
 
@@ -167,7 +213,7 @@ export async function generateWeeklySnapshot(
             weightDelta: calculateWeightDelta(weightHistory, weekStart),
             workoutCount: countWeeklyWorkouts(workoutLog, weekStart),
             consistencyStreak: calculateConsistencyStreak(workoutLog, weightHistory),
-            avgDeficit: 0, // TODO: Calculate from food log
+            avgDeficit: calculateAvgDeficit(foodLog, targetCalories, weekStart),
         };
 
         // Upsert the snapshot

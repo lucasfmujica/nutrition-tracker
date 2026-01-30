@@ -280,6 +280,8 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         userId: supabase.user?.id,
         weightHistory: biometrics.weightHistory,
         workoutLog: workouts.workoutLog,
+        foodLog: nutrition.foodLog,
+        targetCalories: profile?.targetCalories || 2000,
         useCloud,
     });
 

@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { generateWeeklySnapshot, getWeekStart } from '../services/weeklySnapshotService';
-import { WeightEntry, Workout } from '../types/domain';
+import { WeightEntry, Workout, FoodEntry } from '../types/domain';
 
 interface UseWeeklySnapshotProps {
     userId: string | undefined;
     weightHistory: WeightEntry[];
     workoutLog: Workout[];
+    foodLog: FoodEntry[];
+    targetCalories: number;
     useCloud: boolean;
 }
 
@@ -17,6 +19,8 @@ export function useWeeklySnapshot({
     userId,
     weightHistory,
     workoutLog,
+    foodLog,
+    targetCalories,
     useCloud,
 }: UseWeeklySnapshotProps) {
     const lastGeneratedWeek = useRef<string | null>(null);
@@ -30,9 +34,9 @@ export function useWeeklySnapshot({
         // Skip if already generated for this week in this session
         if (lastGeneratedWeek.current === currentWeek) return;
 
-        await generateWeeklySnapshot(userId, weightHistory, workoutLog);
+        await generateWeeklySnapshot(userId, weightHistory, workoutLog, foodLog, targetCalories);
         lastGeneratedWeek.current = currentWeek;
-    }, [userId, weightHistory, workoutLog, useCloud]);
+    }, [userId, weightHistory, workoutLog, foodLog, targetCalories, useCloud]);
 
     // Generate on mount and when data changes (debounced)
     useEffect(() => {
@@ -52,7 +56,7 @@ export function useWeeklySnapshot({
                 clearTimeout(debounceTimer.current);
             }
         };
-    }, [userId, weightHistory.length, workoutLog.length, useCloud, generate]);
+    }, [userId, weightHistory.length, workoutLog.length, foodLog.length, useCloud, generate]);
 
     // Force regenerate (for manual refresh)
     const forceGenerate = useCallback(async () => {
