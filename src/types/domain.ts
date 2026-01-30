@@ -256,3 +256,47 @@ export interface Friendship {
     createdAt: string;
     acceptedAt: string | null;
 }
+
+// =====================================================
+// PROGRESS PHOTOS & BODY MEASUREMENTS
+// =====================================================
+
+export type PhotoAngle = 'front' | 'side' | 'back' | 'other';
+
+export interface ProgressPhoto {
+    id: string;
+    date: string;
+    photoUrl: string;
+    thumbnailUrl?: string;
+    angle?: PhotoAngle;
+    notes?: string;
+    weight?: number; // Weight at time of photo
+    createdAt: string;
+    updatedAt?: string;
+}
+
+export interface BodyMeasurement {
+    id: string;
+    date: string;
+    // Upper body (cm)
+    chest?: number;
+    shoulders?: number;
+    bicepsLeft?: number;
+    bicepsRight?: number;
+    forearmLeft?: number;
+    forearmRight?: number;
+    // Core (cm)
+    waist?: number;
+    hips?: number;
+    // Lower body (cm)
+    thighLeft?: number;
+    thighRight?: number;
+    calfLeft?: number;
+    calfRight?: number;
+    // Additional
+    neck?: number;
+    bodyFatPercent?: number;
+    notes?: string;
+    createdAt: string;
+    updatedAt?: string;
+}

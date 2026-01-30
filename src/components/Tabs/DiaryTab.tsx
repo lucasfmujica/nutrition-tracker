@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Search, ScanBarcode, Plus, Camera } from 'lucide-react';
 import { useTracker } from '../../context/TrackerContext';
 import { useProteinPacing } from '../../hooks/useProteinPacing';
 import { useSmartMealCompass } from '../../hooks/useSmartMealCompass';
@@ -13,6 +14,7 @@ import { DaySummary } from '../Diary/DaySummary';
 import { CompassSuggestion, MealCompassCard } from '../Diary/MealCompassCard';
 import { MealSection } from '../Diary/MealSection';
 import { ProteinTimeline } from '../Diary/ProteinTimeline';
+import { WeeklyCalendarNav } from '../Diary/WeeklyCalendarNav';
 import { FoodCameraInput } from '../Food/FoodCameraInput';
 import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
@@ -89,6 +91,9 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
         setTemplateToSave,
         mealTemplates,
         deleteTemplate,
+        setShowFoodSearchModal,
+        setShowBarcodeModal,
+        setShowFoodScanModal,
     } = useTracker() as any;
 
     const foods = getFoodsForDate(selectedFoodDate);
@@ -214,11 +219,44 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
     return (
         <div className="w-full space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Diario</h1>
-                    <p className="text-sm text-gray-500">Registro de alimentos</p>
+                <div className="flex items-center gap-4">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">Diario</h1>
+                        <p className="text-sm text-gray-500">Registro de alimentos</p>
+                    </div>
+                    {/* Quick Action Buttons */}
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setShowFoodSearchModal(true)}
+                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 active:bg-blue-200 transition-colors"
+                            title="Buscar alimento"
+                        >
+                            <Search size={20} />
+                        </button>
+                        <button
+                            onClick={() => setShowBarcodeModal(true)}
+                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 active:bg-emerald-200 transition-colors"
+                            title="Escanear código de barras"
+                        >
+                            <ScanBarcode size={20} />
+                        </button>
+                        <button
+                            onClick={() => setShowFoodScanModal(true)}
+                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-purple-50 text-purple-600 hover:bg-purple-100 active:bg-purple-200 transition-colors"
+                            title="Escanear con cámara AI"
+                        >
+                            <Camera size={20} />
+                        </button>
+                        <button
+                            onClick={() => handleAddFood('Almuerzo')}
+                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300 transition-colors"
+                            title="Agregar manualmente"
+                        >
+                            <Plus size={20} />
+                        </button>
+                    </div>
                 </div>
-                <div className="w-full md:w-auto">
+                <div className="w-full md:w-auto hidden md:block">
                     <LukenFitDatePicker
                         selectedDate={selectedFoodDate}
                         onChange={setSelectedFoodDate}
@@ -226,6 +264,14 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                     />
                 </div>
             </div>
+
+            {/* Weekly Calendar Navigation */}
+            <WeeklyCalendarNav
+                selectedDate={selectedFoodDate}
+                onDateSelect={setSelectedFoodDate}
+                getFoodsForDate={getFoodsForDate}
+                getTargetsForDate={getTargetsForDate}
+            />
 
             <FoodCameraInput />
 

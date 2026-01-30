@@ -1,0 +1,260 @@
+/**
+ * WeeklyCalendarNav - Week view navigation for DiaryTab
+ * Shows Mon-Sun with daily macro summaries and visual indicators
+ */
+
+import React, { useMemo } from 'react';
+import { ChevronLeft, ChevronRight, Utensils, Target, CheckCircle2 } from 'lucide-react';
+import { getMondayOfWeek, addDaysToDate, getArgentinaDateString } from '../../utils/dateUtils';
+import type { FoodEntry, Macros } from '../../types/domain';
+
+interface WeeklyCalendarNavProps {
+    selectedDate: string;
+    onDateSelect: (date: string) => void;
+    getFoodsForDate: (date: string) => FoodEntry[];
+    getTargetsForDate: (date: string) => Macros | null;
+}
+
+const DAY_NAMES = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+export const WeeklyCalendarNav: React.FC<WeeklyCalendarNavProps> = ({
+    selectedDate,
+    onDateSelect,
+    getFoodsForDate,
+    getTargetsForDate,
+}) => {
+    const today = getArgentinaDateString();
+
+    // Calculate week data
+    const weekData = useMemo(() => {
+        const monday = getMondayOfWeek(selectedDate);
+        const days: Array<{
+            date: string;
+            dayNum: number;
+            dayName: string;
+            isToday: boolean;
+            isSelected: boolean;
+            isFuture: boolean;
+            calories: number;
+            targetCalories: number;
+            hasFood: boolean;
+            isOnTrack: boolean;
+        }> = [];
+
+        for (let i = 0; i < 7; i++) {
+            const date = addDaysToDate(monday, i);
+            const foods = getFoodsForDate(date);
+            const targets = getTargetsForDate(date);
+            const calories = foods.reduce((sum, f) => sum + (f.calories || 0), 0);
+            const targetCalories = targets?.calories || 2000;
+            const hasFood = foods.length > 0;
+            const isFuture = date > today;
+
+            // Consider "on track" if within 10% of target
+            const isOnTrack = hasFood && Math.abs(calories - targetCalories) <= targetCalories * 0.1;
+
+            days.push({
+                date,
+                dayNum: parseInt(date.split('-')[2], 10),
+                dayName: DAY_NAMES[i],
+                isToday: date === today,
+                isSelected: date === selectedDate,
+                isFuture,
+                calories,
+                targetCalories,
+                hasFood,
+                isOnTrack,
+            });
+        }
+
+        return days;
+    }, [selectedDate, getFoodsForDate, getTargetsForDate, today]);
+
+    // Week navigation
+    const goToPreviousWeek = () => {
+        const newDate = addDaysToDate(selectedDate, -7);
+        onDateSelect(newDate);
+    };
+
+    const goToNextWeek = () => {
+        const newDate = addDaysToDate(selectedDate, 7);
+        onDateSelect(newDate);
+    };
+
+    const goToToday = () => {
+        onDateSelect(today);
+    };
+
+    // Format week range for display
+    const weekRange = useMemo(() => {
+        const monday = weekData[0];
+        const sunday = weekData[6];
+        const startMonth = new Date(monday.date + 'T12:00:00').toLocaleDateString('es-AR', {
+            month: 'short',
+            timeZone: 'America/Argentina/Buenos_Aires',
+        });
+        const endMonth = new Date(sunday.date + 'T12:00:00').toLocaleDateString('es-AR', {
+            month: 'short',
+            timeZone: 'America/Argentina/Buenos_Aires',
+        });
+
+        if (startMonth === endMonth) {
+            return `${monday.dayNum} - ${sunday.dayNum} ${startMonth}`;
+        }
+        return `${monday.dayNum} ${startMonth} - ${sunday.dayNum} ${endMonth}`;
+    }, [weekData]);
+
+    return (
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            {/* Week Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50">
+                <button
+                    onClick={goToPreviousWeek}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 transition-colors"
+                >
+                    <ChevronLeft size={20} />
+                </button>
+
+                <div className="text-center">
+                    <p className="text-sm font-bold text-slate-900 capitalize">{weekRange}</p>
+                    {selectedDate !== today && (
+                        <button
+                            onClick={goToToday}
+                            className="text-xs text-blue-600 hover:text-blue-700 font-medium mt-0.5"
+                        >
+                            Ir a hoy
+                        </button>
+                    )}
+                </div>
+
+                <button
+                    onClick={goToNextWeek}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 transition-colors"
+                >
+                    <ChevronRight size={20} />
+                </button>
+            </div>
+
+            {/* Days Grid */}
+            <div className="grid grid-cols-7 gap-1 p-2">
+                {weekData.map((day) => (
+                    <DayCell
+                        key={day.date}
+                        day={day}
+                        onSelect={() => onDateSelect(day.date)}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+};
+
+// Day cell sub-component
+interface DayCellProps {
+    day: {
+        date: string;
+        dayNum: number;
+        dayName: string;
+        isToday: boolean;
+        isSelected: boolean;
+        isFuture: boolean;
+        calories: number;
+        targetCalories: number;
+        hasFood: boolean;
+        isOnTrack: boolean;
+    };
+    onSelect: () => void;
+}
+
+const DayCell: React.FC<DayCellProps> = ({ day, onSelect }) => {
+    const {
+        dayNum,
+        dayName,
+        isToday,
+        isSelected,
+        isFuture,
+        calories,
+        targetCalories,
+        hasFood,
+        isOnTrack,
+    } = day;
+
+    // Calculate calorie progress percentage (capped at 100%)
+    const progress = Math.min((calories / targetCalories) * 100, 100);
+
+    // Determine status color
+    const getStatusColor = () => {
+        if (isFuture) return 'bg-slate-100';
+        if (!hasFood) return 'bg-slate-50';
+        if (isOnTrack) return 'bg-emerald-50';
+        if (calories > targetCalories * 1.1) return 'bg-red-50';
+        return 'bg-amber-50';
+    };
+
+    const getBorderColor = () => {
+        if (isSelected) return 'border-blue-500 ring-2 ring-blue-500/20';
+        if (isToday) return 'border-blue-300';
+        return 'border-transparent';
+    };
+
+    return (
+        <button
+            onClick={onSelect}
+            disabled={isFuture}
+            className={`
+                relative flex flex-col items-center py-2 px-1 rounded-xl border-2 transition-all
+                ${getStatusColor()}
+                ${getBorderColor()}
+                ${isFuture ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-100 active:scale-95'}
+            `}
+        >
+            {/* Day name */}
+            <span className={`text-[10px] font-bold uppercase ${isToday ? 'text-blue-600' : 'text-slate-400'}`}>
+                {dayName}
+            </span>
+
+            {/* Day number */}
+            <span className={`text-lg font-bold ${isSelected ? 'text-blue-600' : 'text-slate-900'}`}>
+                {dayNum}
+            </span>
+
+            {/* Status indicator */}
+            {!isFuture && (
+                <div className="mt-1">
+                    {hasFood ? (
+                        isOnTrack ? (
+                            <CheckCircle2 size={14} className="text-emerald-500" />
+                        ) : (
+                            <div className="flex items-center gap-0.5">
+                                <Utensils size={10} className="text-slate-400" />
+                                <span className={`text-[9px] font-bold ${
+                                    calories > targetCalories ? 'text-red-500' : 'text-slate-500'
+                                }`}>
+                                    {calories > 0 ? Math.round(calories / 100) * 100 : '-'}
+                                </span>
+                            </div>
+                        )
+                    ) : (
+                        <span className="text-[10px] text-slate-300">—</span>
+                    )}
+                </div>
+            )}
+
+            {/* Progress bar */}
+            {hasFood && !isFuture && (
+                <div className="absolute bottom-0 left-1 right-1 h-1 bg-slate-200 rounded-full overflow-hidden">
+                    <div
+                        className={`h-full transition-all ${
+                            isOnTrack
+                                ? 'bg-emerald-500'
+                                : calories > targetCalories
+                                    ? 'bg-red-500'
+                                    : 'bg-amber-500'
+                        }`}
+                        style={{ width: `${progress}%` }}
+                    />
+                </div>
+            )}
+        </button>
+    );
+};

@@ -3,6 +3,8 @@ import { useTracker } from '../../../context/TrackerContext';
 import { DeleteConfirmModal } from '../../Modals/DeleteConfirmModal';
 import { FoodCameraModal } from '../../Modals/FoodCameraModal';
 import { FoodFormModal } from '../../Modals/FoodFormModal';
+import { FoodSearchModal } from '../../Modals/FoodSearchModal';
+import { BarcodeScannerModal } from '../../Modals/BarcodeScannerModal';
 import { ImportModal } from '../../Modals/ImportModal';
 import { MondayBriefingModal } from '../../Modals/MondayBriefingModal';
 import { WorkoutFormModal } from '../../Modals/WorkoutFormModal';
@@ -48,6 +50,10 @@ export const ModalsManager: React.FC = () => {
         handleImportFood,
         showFoodScanModal,
         setShowFoodScanModal,
+        showFoodSearchModal,
+        setShowFoodSearchModal,
+        showBarcodeModal,
+        setShowBarcodeModal,
 
         // Meal Templates Modal
         showTemplatesModal,
@@ -157,6 +163,20 @@ export const ModalsManager: React.FC = () => {
             <FoodCameraModal
                 isOpen={showFoodScanModal}
                 onClose={() => setShowFoodScanModal(false)}
+            />
+
+            <FoodSearchModal
+                isOpen={showFoodSearchModal}
+                onClose={() => setShowFoodSearchModal(false)}
+            />
+
+            <BarcodeScannerModal
+                isOpen={showBarcodeModal}
+                onClose={() => setShowBarcodeModal(false)}
+                onOpenFoodSearch={() => {
+                    setShowBarcodeModal(false);
+                    setShowFoodSearchModal(true);
+                }}
             />
 
             {showTemplatesModal && (

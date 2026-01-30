@@ -22,7 +22,9 @@ export const useTrackerUIState = () => {
 
     const [showImportFoodModal, setShowImportFoodModal] = useState(false);
     const [showImportWorkoutModal, setShowImportWorkoutModal] = useState(false);
-    const [showFoodScanModal, setShowFoodScanModal] = useState(false); // New state for AI Scanner Modal
+    const [showFoodScanModal, setShowFoodScanModal] = useState(false); // AI Scanner Modal
+    const [showFoodSearchModal, setShowFoodSearchModal] = useState(false); // Food Search Modal
+    const [showBarcodeModal, setShowBarcodeModal] = useState(false); // Barcode Scanner Modal
 
     const [showFab, setShowFab] = useState(true);
     const [newSteps, setNewSteps] = useState('');
@@ -43,7 +45,11 @@ export const useTrackerUIState = () => {
         showImportWorkoutModal,
         setShowImportWorkoutModal,
         showFoodScanModal,
-        setShowFoodScanModal, // Return new state
+        setShowFoodScanModal,
+        showFoodSearchModal,
+        setShowFoodSearchModal,
+        showBarcodeModal,
+        setShowBarcodeModal,
         showFab,
         setShowFab,
         newSteps,
