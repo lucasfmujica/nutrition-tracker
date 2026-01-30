@@ -13,7 +13,6 @@ import React, { useState } from 'react';
 import { DEFAULT_WEEKLY_PLAN } from '../../constants/weeklyPlan';
 import { useTracker } from '../../context/TrackerContext';
 import { useEffortAnalytics } from '../../hooks/useEffortAnalytics';
-import { useWeeklyPlan } from '../../hooks/useWeeklyPlan';
 import { useWorkoutAnalysis } from '../../hooks/useWorkoutAnalysis';
 import { OuraEntry, Profile, WeightAnalytics, Workout } from '../../types/domain';
 import {
@@ -358,7 +357,8 @@ interface EditableWeeklyPlanProps {
 const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
     setSelectedWorkoutDate,
 }) => {
-    const { plan, isEditing, setIsEditing, updateDayPlan } = useWeeklyPlan() as any;
+    // Use plan from TrackerContext to ensure calorie calculations update correctly
+    const { plan, isEditing, setIsEditing, updateDayPlan } = useTracker();
     const [editingDay, setEditingDay] = useState<number | null>(null);
     const [isSaving, setIsSaving] = useState(false);
 
