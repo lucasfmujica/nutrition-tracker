@@ -5,7 +5,7 @@
  */
 
 import { useState, useCallback, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../lib/supabase';
 import type { ProgressPhoto, PhotoAngle } from '../types/domain';
 import { getArgentinaDateString } from '../utils/dateUtils';
 

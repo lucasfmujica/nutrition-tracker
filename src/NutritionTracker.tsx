@@ -44,6 +44,11 @@ const SocialTab = lazyWithRetry(() =>
         default: m.SocialTab,
     })),
 );
+const ProgressTab = lazyWithRetry(() =>
+    import('./components/Tabs/ProgressTab').then((m) => ({
+        default: m.ProgressTab,
+    })),
+);
 
 import { PullToRefresh } from './components/UI/PullToRefresh';
 import { TrackerProvider, useTracker } from './context/TrackerContext';
@@ -299,6 +304,9 @@ const NutritionTrackerContent = () => {
                                         onRemoveFriend={removeFriend}
                                         onRefresh={refreshSocial}
                                     />
+                                ) : null}
+                                {activeTab === 'progreso' ? (
+                                    <ProgressTab />
                                 ) : null}
                                 {activeTab === 'oura' ? (
                                     <OuraTab ouraLog={ouraLog} />

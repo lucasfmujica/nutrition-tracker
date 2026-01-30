@@ -15,6 +15,7 @@ import { CompassSuggestion, MealCompassCard } from '../Diary/MealCompassCard';
 import { MealSection } from '../Diary/MealSection';
 import { ProteinTimeline } from '../Diary/ProteinTimeline';
 import { WeeklyCalendarNav } from '../Diary/WeeklyCalendarNav';
+import { WeeklyMealPlanView } from '../Diary/WeeklyMealPlanView';
 import { FoodCameraInput } from '../Food/FoodCameraInput';
 import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
@@ -115,6 +116,12 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
 
     const handleAddFood = (meal: string) => {
         setNewFood({ ...newFood, date: selectedFoodDate, meal });
+        setShowFoodForm(true);
+    };
+
+    const handleAddFoodForDate = (date: string, meal: string) => {
+        setSelectedFoodDate(date);
+        setNewFood({ ...newFood, date, meal });
         setShowFoodForm(true);
     };
 
@@ -271,6 +278,15 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                 onDateSelect={setSelectedFoodDate}
                 getFoodsForDate={getFoodsForDate}
                 getTargetsForDate={getTargetsForDate}
+            />
+
+            {/* Weekly Meal Plan View - Shows meals in a grid format */}
+            <WeeklyMealPlanView
+                selectedDate={selectedFoodDate}
+                onDateSelect={setSelectedFoodDate}
+                getFoodsForDate={getFoodsForDate}
+                getTargetsForDate={getTargetsForDate}
+                onAddFood={handleAddFoodForDate}
             />
 
             <FoodCameraInput />

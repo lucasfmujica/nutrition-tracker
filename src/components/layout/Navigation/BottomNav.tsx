@@ -6,6 +6,7 @@ import {
     Dumbbell,
     Footprints,
     Home,
+    Image,
     Import,
     Moon,
     Plus,
@@ -106,8 +107,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab })
         { id: 'entrenos', icon: Dumbbell, label: 'TRAIN', tutorialId: 'workouts-tab' },
         { id: 'add', icon: Plus, label: '', isAction: true, tutorialId: 'fab-button' },
         { id: 'peso', icon: BarChart2, label: 'WEIGHT', tutorialId: 'weight-tab' },
+        { id: 'progreso', icon: Image, label: 'PICS' },
         { id: 'social', icon: Users, label: 'CREW', tutorialId: 'social-tab' },
-        { id: 'oura', icon: Moon, label: 'BIO' },
     ];
 
     return (
