@@ -86,15 +86,13 @@ export const getSafetyNetTargets = (
  * Checks if a date is a safety net day
  *
  * @param {string} date - Date string (YYYY-MM-DD)
- * @param {boolean} safetyNetActive - Current safety net status
- * @param {string} today - Today's date (YYYY-MM-DD)
+ * @param {string[]} safetyNetDays - Array of dates where Safety Net is active
  * @returns {boolean}
  */
 export const isSafetyNetDay = (
     date: string,
-    safetyNetActive: boolean,
-    today: string,
+    safetyNetDays: string[] = [],
 ): boolean => {
-    // Safety net only applies to current day when active
-    return safetyNetActive && date === today;
+    // Check if this specific date has Safety Net activated
+    return safetyNetDays.includes(date);
 };

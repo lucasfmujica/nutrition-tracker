@@ -93,7 +93,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         workoutLog,
         customTargets,
         weightProjection,
-        safetyNetActive,
+        isSafetyNetActive,
         toggleSafetyNet,
         getStatusMessage,
         mealTemplates,
@@ -194,9 +194,9 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                 <div className="flex flex-col-reverse lg:flex-row items-center gap-3 w-full lg:w-auto">
                     <div className="w-full lg:w-auto">
                         <SafetyNetToggle
-                            isActive={safetyNetActive}
-                            onToggle={toggleSafetyNet}
-                            statusMessage={getStatusMessage()}
+                            isActive={isSafetyNetActive(dashboardDate)}
+                            onToggle={() => toggleSafetyNet(dashboardDate)}
+                            statusMessage={getStatusMessage(dashboardDate)}
                         />
                     </div>
 
@@ -231,7 +231,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                     <SummaryCard
                         totals={dashboardTotals}
                         targets={periodizedTargets}
-                        safetyNetActive={safetyNetActive}
+                        safetyNetActive={isSafetyNetActive(dashboardDate)}
                         periodizationState={periodizationIntensity}
                     />
 

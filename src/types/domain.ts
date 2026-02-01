@@ -25,7 +25,7 @@ export interface Profile {
     tdee?: number;
     createdAt: string;
     updatedAt: string;
-    safety_net_enabled?: boolean;
+    safety_net_days?: string[]; // Array of dates (YYYY-MM-DD) where Safety Net is active
     // Multi-user support fields
     hasOuraRing?: boolean;
     ouraPersonalToken?: string;

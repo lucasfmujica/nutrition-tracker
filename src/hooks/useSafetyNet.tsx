@@ -7,7 +7,7 @@ import { getArgentinaDateString } from '../utils/dateUtils';
  * useSafetyNet - Modo Escudo (Safety Net) state management
  *
  * Provides:
- * - Safety net activation state
+ * - Safety net activation state per day
  * - Maintenance mode calorie targets
  * - Food entry tagging for analytics filtering
  *
@@ -21,30 +21,40 @@ export const useSafetyNet = (
     customTargets: CustomTargets,
     saveProfile: (p: Profile) => Promise<void>,
 ) => {
-    const safetyNetActive = profile?.safety_net_enabled || false;
+    const safetyNetDays = profile?.safety_net_days || [];
 
     /**
-     * Toggle Safety Net mode
+     * Toggle Safety Net mode for a specific date
+     * @param {string} date - Date to toggle (YYYY-MM-DD)
      */
-    const toggleSafetyNet = useCallback(async () => {
-        const newStatus = !safetyNetActive;
+    const toggleSafetyNet = useCallback(async (date: string) => {
+        const isActive = safetyNetDays.includes(date);
+
+        let updatedDays: string[];
+        if (isActive) {
+            // Remove date from array
+            updatedDays = safetyNetDays.filter(d => d !== date);
+        } else {
+            // Add date to array
+            updatedDays = [...safetyNetDays, date];
+        }
 
         // Update profile
         const updatedProfile: Profile = {
             ...profile,
-            safety_net_enabled: newStatus,
+            safety_net_days: updatedDays,
         };
 
         await saveProfile(updatedProfile);
 
         console.log(
-            `[SafetyNet] ${newStatus ? 'ACTIVATED' : 'DEACTIVATED'} - Modo Escudo ${newStatus ? 'ON' : 'OFF'}`,
+            `[SafetyNet] ${!isActive ? 'ACTIVATED' : 'DEACTIVATED'} for ${date} - Modo Escudo ${!isActive ? 'ON' : 'OFF'}`,
         );
-    }, [profile, safetyNetActive, saveProfile]);
+    }, [profile, safetyNetDays, saveProfile]);
 
     /**
      * Get targets for a specific date
-     * Returns maintenance targets if safety net is active for today
+     * Returns maintenance targets if safety net is active for that date
      *
      * @param {string} date - Date string (YYYY-MM-DD)
      * @param {CustomTargets} baseTargets - Base targets (can include training day adjustments)
@@ -52,17 +62,15 @@ export const useSafetyNet = (
      */
     const getTargetsForDate = useCallback(
         (date: string, baseTargets: CustomTargets = customTargets) => {
-            const today = getArgentinaDateString();
-
-            // Safety Net only applies to current day
-            if (isSafetyNetDay(date, safetyNetActive, today)) {
+            // Check if this specific date has Safety Net activated
+            if (isSafetyNetDay(date, safetyNetDays)) {
                 return getSafetyNetTargets(profile, customTargets);
             }
 
             // Return null to indicate no override (allow Smart Periodization to work)
             return null;
         },
-        [profile, customTargets, safetyNetActive],
+        [profile, customTargets, safetyNetDays],
     );
 
     /**
@@ -73,25 +81,39 @@ export const useSafetyNet = (
      */
     const shouldTagAsSafetyNetDay = useCallback(
         (date: string) => {
-            const today = getArgentinaDateString();
-            return isSafetyNetDay(date, safetyNetActive, today);
+            return isSafetyNetDay(date, safetyNetDays);
         },
-        [safetyNetActive],
+        [safetyNetDays],
     );
 
     /**
-     * Get status message for UI
+     * Check if a specific date is a safety net day (for UI indicators)
+     *
+     * @param {string} date - Date string (YYYY-MM-DD)
+     * @returns {boolean}
      */
-    const getStatusMessage = useCallback(() => {
-        if (safetyNetActive) {
+    const isSafetyNetActive = useCallback(
+        (date: string) => {
+            return safetyNetDays.includes(date);
+        },
+        [safetyNetDays],
+    );
+
+    /**
+     * Get status message for UI for a specific date
+     * @param {string} date - Date to check (YYYY-MM-DD)
+     */
+    const getStatusMessage = useCallback((date: string) => {
+        if (safetyNetDays.includes(date)) {
             const targets = getSafetyNetTargets(profile, customTargets);
             return `🛡️ Modo Escudo activo - ${targets.calories} kcal (Mantenimiento)`;
         }
         return null;
-    }, [safetyNetActive, profile, customTargets]);
+    }, [safetyNetDays, profile, customTargets]);
 
     return {
-        safetyNetActive,
+        safetyNetDays,
+        isSafetyNetActive,
         toggleSafetyNet,
         getSafetyNetTargetsForDate: getTargetsForDate,
         shouldTagAsSafetyNetDay,
