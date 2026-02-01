@@ -108,12 +108,8 @@ export const useWeeklyPeriodization = (
                 }
             }
 
-            // Safety Net Check
-            const isSafetyNetDay = foodLog?.some(
-                (f) =>
-                    f.date === date &&
-                    (f.is_safety_net_day || f.sourceId === 'safety-net'),
-            );
+            // Safety Net Check - Use profile.safety_net_days array
+            const isSafetyNetDay = profile?.safety_net_days?.includes(date) || false;
 
             // Calculate calories using updated logic
             const targets = getSmartTargets(
