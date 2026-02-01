@@ -281,7 +281,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         weightHistory: biometrics.weightHistory,
         workoutLog: workouts.workoutLog,
         foodLog: nutrition.foodLog,
-        targetCalories: profile?.targetCalories || 2000,
+        targetCalories: biometrics.profile?.targetCalories || 2000,
         useCloud,
     });
 
