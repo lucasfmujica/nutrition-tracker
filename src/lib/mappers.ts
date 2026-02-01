@@ -37,6 +37,7 @@ export const mappers = {
         age: profile.age,
         activity_level: profile.activityLevel,
         goal: profile.goal,
+        safety_net_days: profile.safety_net_days || [],
         // Multi-user support fields
         has_oura_ring: profile.hasOuraRing,
         oura_personal_token: profile.ouraPersonalToken,
@@ -65,6 +66,7 @@ export const mappers = {
         targetFiber: dbProfile.target_fiber,
         trainingDayCaloriesBonus: dbProfile.training_day_calories_bonus,
         trainingDayCarbs: dbProfile.training_day_carbs,
+        safety_net_days: (dbProfile as any).safety_net_days || [],
         createdAt: dbProfile.created_at || new Date().toISOString(),
         updatedAt: dbProfile.updated_at || new Date().toISOString(),
         // Multi-user support fields
