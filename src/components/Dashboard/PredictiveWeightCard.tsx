@@ -1,5 +1,5 @@
-import { Activity, Calendar, Target, TrendingDown, TrendingUp } from 'lucide-react';
-import React from 'react';
+import { Activity, Calendar, Info, Target, TrendingDown, TrendingUp } from 'lucide-react';
+import React, { useState } from 'react';
 import { WeightProjectionChart } from '../Charts/WeightProjectionChart';
 
 interface PathPoint {
@@ -47,6 +47,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
         coachMessage,
         goal = 'cut',
     }) => {
+        const [showAdherenceTooltip, setShowAdherenceTooltip] = useState(false);
         const isGainingGoal = goal === 'bulk';
         // Loading / insufficient data state
         if (
@@ -249,14 +250,70 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                 {/* Visual Adherence Bar */}
                 <div className="px-8 mb-6 relative z-10">
                     <div className="flex justify-between items-end mb-2.5">
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                            ADHERENCIA AL SISTEMA
-                        </span>
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                ADHERENCIA AL SISTEMA
+                            </span>
+                            <button
+                                onClick={() => setShowAdherenceTooltip(!showAdherenceTooltip)}
+                                className="w-4 h-4 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center transition-colors group relative">
+                                <Info size={10} className="text-slate-500 group-hover:text-slate-700" />
+                            </button>
+                        </div>
                         <span
                             className={`text-[10px] font-black uppercase tracking-widest ${adherence.color} px-2 py-0.5 rounded-md ${adherence.bg} border border-slate-100`}>
                             {adherence.label} // {adherencePercent}%
                         </span>
                     </div>
+
+                    {/* Adherence Tooltip */}
+                    {showAdherenceTooltip && (
+                        <div className="mb-3 p-4 bg-blue-50 border border-blue-100 rounded-xl text-xs">
+                            <div className="flex justify-between items-start mb-2">
+                                <h4 className="font-black text-blue-900 uppercase tracking-wide text-[10px]">
+                                    CÓMO SE CALCULA
+                                </h4>
+                                <button
+                                    onClick={() => setShowAdherenceTooltip(false)}
+                                    className="text-blue-400 hover:text-blue-600 transition-colors">
+                                    ×
+                                </button>
+                            </div>
+                            <p className="text-blue-800 mb-3">
+                                Tu adherencia se calcula promediando 3 métricas de los últimos 7 días:
+                            </p>
+                            <div className="space-y-2 mb-3">
+                                <div className="flex items-start gap-2">
+                                    <span className="text-blue-600 font-bold">1.</span>
+                                    <div>
+                                        <span className="font-bold text-blue-900">Calorías:</span>
+                                        <span className="text-blue-700"> Dentro del rango según tu objetivo ({goal === 'cut' ? '-40% a +10%' : goal === 'bulk' ? '-10% a +50%' : '±15%'})</span>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-2">
+                                    <span className="text-blue-600 font-bold">2.</span>
+                                    <div>
+                                        <span className="font-bold text-blue-900">Proteína:</span>
+                                        <span className="text-blue-700"> Mínimo 85% del objetivo</span>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-2">
+                                    <span className="text-blue-600 font-bold">3.</span>
+                                    <div>
+                                        <span className="font-bold text-blue-900">Pasos:</span>
+                                        <span className="text-blue-700"> Mínimo 80% del objetivo (6,400 pasos)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p className="text-blue-800 font-bold text-[11px]">
+                                Score = (checks OK) / 21 días × 100
+                            </p>
+                            <p className="text-blue-700 mt-2 text-[10px]">
+                                Mejorá tu adherencia cumpliendo más días con tus metas de calorías, proteína y pasos.
+                            </p>
+                        </div>
+                    )}
+
                     <div className="h-2 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100 relative">
                         <div
                             className={`h-full ${adherence.bar} transition-all duration-[2000ms] ease-out shadow-sm relative overflow-hidden`}
