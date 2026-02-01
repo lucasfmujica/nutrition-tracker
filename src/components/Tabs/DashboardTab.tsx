@@ -108,7 +108,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
     );
 
     // Coach Insight Logic (Safety Net Override)
-    const insight = safetyNetActive
+    const insight = isSafetyNetActive(dashboardDate)
         ? {
               icon: 'Shield',
               message: 'Modo Escudo activado. Prioriza tu bienestar hoy.',
@@ -157,7 +157,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         const intensity = periodizedDay?.intensity;
 
         let calculatedTargets = dashboardTargets;
-        if (safetyNetActive) {
+        if (isSafetyNetActive(dashboardDate)) {
             calculatedTargets = {
                 ...dashboardTargets,
                 calories: profile?.tdee || 2500,
@@ -177,7 +177,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         dashboardDate,
         weeklyPeriodization,
         dashboardTargets,
-        safetyNetActive,
+        isSafetyNetActive,
         profile?.tdee,
     ]);
 

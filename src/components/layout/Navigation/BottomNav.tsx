@@ -40,6 +40,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
         newWorkout,
         setNewWorkout,
         dashboardDate,
+        selectedFoodDate,
+        selectedWorkoutDate,
         setShowFoodScanModal,
     } = useTracker() as any;
 
@@ -53,13 +55,20 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
         }
     }, [isMenuOpen]);
 
+    // Determine which date to use based on active tab
+    const getContextualDate = () => {
+        if (activeTab === 'comidas') return selectedFoodDate;
+        if (activeTab === 'entrenos') return selectedWorkoutDate;
+        return dashboardDate; // Default for dashboard, peso, progreso, social, etc.
+    };
+
     const actions = [
         {
             icon: <Utensils size={22} />,
             label: 'COMIDA',
             sublabel: 'MANUAL',
             onClick: () => {
-                setNewFood({ ...newFood, date: dashboardDate });
+                setNewFood({ ...newFood, date: getContextualDate() });
                 setShowFoodForm(true);
             },
             color: 'text-accent-blue',
@@ -70,7 +79,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
             label: 'ENTRENO',
             sublabel: 'MANUAL',
             onClick: () => {
-                setNewWorkout({ ...newWorkout, date: dashboardDate });
+                setNewWorkout({ ...newWorkout, date: getContextualDate() });
                 setShowWorkoutForm(true);
             },
             color: 'text-fat',

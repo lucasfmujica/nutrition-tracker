@@ -21,6 +21,8 @@ export const TrackerFAB: React.FC = () => {
         newWorkout,
         setNewWorkout,
         dashboardDate,
+        selectedFoodDate,
+        selectedWorkoutDate,
         setShowFoodScanModal,
     } = useTracker() as TrackerContextType;
 
@@ -48,15 +50,22 @@ export const TrackerFAB: React.FC = () => {
     )
         return null;
 
+    // Determine which date to use based on active tab
+    const getContextualDate = () => {
+        if (activeTab === 'comidas') return selectedFoodDate;
+        if (activeTab === 'entrenos') return selectedWorkoutDate;
+        return dashboardDate; // Default for dashboard, peso, pasos, oura, config
+    };
+
     return (
         <div className="hidden lg:block">
             <FloatingActionButton
                 onAddFood={() => {
-                    setNewFood({ ...newFood, date: dashboardDate });
+                    setNewFood({ ...newFood, date: getContextualDate() });
                     setShowFoodForm(true);
                 }}
                 onAddWorkout={() => {
-                    setNewWorkout({ ...newWorkout, date: dashboardDate });
+                    setNewWorkout({ ...newWorkout, date: getContextualDate() });
                     setShowWorkoutForm(true);
                 }}
                 onImportFood={() => setShowImportFoodModal(true)}
