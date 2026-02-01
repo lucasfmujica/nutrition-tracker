@@ -144,7 +144,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                             {isAnalyzing ? (
                                 <>
                                     <Loader2 className="animate-spin" size={20} />
-                                    Analizando con Gemini Pro...
+                                    Analizando con Gemini IA...
                                 </>
                             ) : (
                                 <>
