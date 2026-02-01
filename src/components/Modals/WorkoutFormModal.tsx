@@ -52,7 +52,22 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                 </div>
 
                 <div className="space-y-4">
-                    {/* Row 1: Type */}
+                    {/* Row 1: Date */}
+                    <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
+                            Fecha
+                        </label>
+                        <input
+                            type="date"
+                            value={workout.date || ''}
+                            onChange={(e) =>
+                                onWorkoutChange({ ...workout, date: e.target.value })
+                            }
+                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all"
+                        />
+                    </div>
+
+                    {/* Row 2: Type */}
                     <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
                             Tipo
@@ -73,7 +88,7 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                         </select>
                     </div>
 
-                    {/* Row 2: Name */}
+                    {/* Row 3: Name */}
                     <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
                             Nombre *
@@ -89,7 +104,7 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                         />
                     </div>
 
-                    {/* Row 3: Stats */}
+                    {/* Row 4: Stats */}
                     <div className="grid grid-cols-3 gap-3">
                         <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
@@ -144,7 +159,7 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                         </div>
                     </div>
 
-                    {/* Row 4: Notes */}
+                    {/* Row 5: Notes */}
                     <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
                             Notas
@@ -163,7 +178,7 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                         />
                     </div>
 
-                    {/* Row 5: Exercises (Gym only) */}
+                    {/* Row 6: Exercises (Gym only) */}
                     {isGymWorkout && (
                         <div className="pt-4 border-t border-slate-100">
                             <ExerciseForm
