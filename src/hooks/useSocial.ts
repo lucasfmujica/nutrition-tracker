@@ -303,11 +303,19 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
         [activityFeed, socialData],
     );
 
-    // Initial load when authenticated
+    // 🔒 CRITICAL FIX: Defer social data load to prevent blocking initial app load
+    // Execute in background AFTER main data hydration completes
     useEffect(() => {
-        if (useCloud && supabase.isAuthenticated) {
+        if (!useCloud || !supabase.isAuthenticated) return;
+
+        // Delay social fetch by 3 seconds to ensure main app loads first
+        // This prevents social query timeouts from blocking the entire app
+        const timer = setTimeout(() => {
+            console.log('[useSocial] Background social data load starting...');
             refreshSocial();
-        }
+        }, 3000);
+
+        return () => clearTimeout(timer);
     }, [useCloud, supabase.isAuthenticated]); // Only on auth changes, not refreshSocial
 
     // Refresh leaderboard when metric changes
