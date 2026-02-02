@@ -10,6 +10,7 @@ interface MealSectionProps {
     onAddFood: () => void;
     onEditFood: (food: FoodEntry) => void;
     onDeleteFood: (food: FoodEntry) => void;
+    onDuplicateFood?: (food: FoodEntry) => void;
     onToggleFavorite: (food: FoodEntry) => void;
     favoriteMap: Map<string, string>;
 }
@@ -21,6 +22,7 @@ export const MealSection: React.FC<MealSectionProps> = ({
     onAddFood,
     onEditFood,
     onDeleteFood,
+    onDuplicateFood,
     onToggleFavorite,
     favoriteMap,
 }) => {
@@ -63,6 +65,7 @@ export const MealSection: React.FC<MealSectionProps> = ({
                         onEdit={() => onEditFood(food)}
                         onTemplate={() => onToggleFavorite(food)}
                         onDelete={() => onDeleteFood(food)}
+                        onDuplicate={onDuplicateFood ? () => onDuplicateFood(food) : undefined}
                     />
                 ))}
                 {foods.length === 0 && (

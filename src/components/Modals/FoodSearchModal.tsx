@@ -6,6 +6,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, X, Loader2, Database, Globe, ChevronDown } from 'lucide-react';
 import { useFoodSearch } from '../../hooks/useFoodSearch';
+import { useSmartMealType } from '../../hooks/useSmartMealType';
 import { useTracker } from '../../context/TrackerContext';
 import type { FoodSearchResult } from '../../services/foodApi/types';
 import { FoodEntry } from '../../types/domain';
@@ -39,10 +40,11 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
     } = useFoodSearch();
 
     const { saveFoodEntry, setSaveStatus, selectedFoodDate } = useTracker();
+    const { getAutoMealType } = useSmartMealType();
     const inputRef = useRef<HTMLInputElement>(null);
 
-    // Meal selection
-    const [selectedMeal, setSelectedMeal] = useState<FoodEntry['meal']>('Almuerzo');
+    // Meal selection - auto-detect based on current time
+    const [selectedMeal, setSelectedMeal] = useState<FoodEntry['meal']>(getAutoMealType());
     const [isSaving, setIsSaving] = useState(false);
 
     // Focus input when modal opens
@@ -57,9 +59,9 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
         if (!isOpen) {
             clearSearch();
             clearSelection();
-            setSelectedMeal('Almuerzo');
+            setSelectedMeal(getAutoMealType());
         }
-    }, [isOpen, clearSearch, clearSelection]);
+    }, [isOpen, clearSearch, clearSelection, getAutoMealType]);
 
     const handleSave = async () => {
         if (!selectedFood || !calculatedMacros) return;

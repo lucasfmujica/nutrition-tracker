@@ -8,6 +8,7 @@ interface FoodItemProps {
     onEdit: () => void;
     onDelete: () => void;
     onTemplate: () => void;
+    onDuplicate?: () => void;
     isFavorite: boolean;
 }
 
@@ -16,13 +17,14 @@ export const FoodItem: React.FC<FoodItemProps> = ({
     onEdit,
     onDelete,
     onTemplate,
+    onDuplicate,
     isFavorite,
 }) => {
     const needsReview =
         !food.reviewed || (food.confidence !== undefined && food.confidence < 0.7);
 
     return (
-        <SwipeableItem onDelete={onDelete}>
+        <SwipeableItem onDelete={onDelete} onDuplicate={onDuplicate}>
             <div
                 className={`p-3 bg-white border-b border-gray-50 flex justify-between items-center ${needsReview ? 'bg-amber-50/50' : ''}`}>
                 <div className="flex-1 min-w-0 pr-3">

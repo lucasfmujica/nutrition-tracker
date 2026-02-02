@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
-import { Search, ScanBarcode, Plus, Camera } from 'lucide-react';
+import { Search, ScanBarcode, Plus, Camera, Clock } from 'lucide-react';
 import { useTracker } from '../../context/TrackerContext';
+import { useSmartMealType } from '../../hooks/useSmartMealType';
 import { useProteinPacing } from '../../hooks/useProteinPacing';
 import { useSmartMealCompass } from '../../hooks/useSmartMealCompass';
 import { FoodEntry, Macros, MealTemplate, WaterEntry } from '../../types/domain';
@@ -92,10 +93,16 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
         setTemplateToSave,
         mealTemplates,
         deleteTemplate,
+        quickSaveTemplate,
+        getFoodTemplate,
         setShowFoodSearchModal,
         setShowBarcodeModal,
         setShowFoodScanModal,
+        setShowFoodHistoryPanel,
+        saveFoodEntry,
     } = useTracker() as any;
+
+    const { getAutoMealType } = useSmartMealType();
 
     const foods = getFoodsForDate(selectedFoodDate);
     const hasFoods = foods.length > 0;
@@ -153,21 +160,36 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
     };
 
     const handleToggleFavorite = (food: FoodEntry) => {
-        const normalizedName = food.name.toLowerCase().trim();
-        if (favoriteMap.has(normalizedName)) {
-            const templateId = favoriteMap.get(normalizedName);
-            if (templateId) deleteTemplate(templateId);
+        // Check if food matches an existing template
+        const existingTemplate = getFoodTemplate(food);
+
+        if (existingTemplate) {
+            // Already favorited - remove it
+            deleteTemplate(existingTemplate.id);
         } else {
-            setTemplateToSave({
-                name: food.name,
-                meal: food.meal || 'Snack',
-                calories: food.calories || 0,
-                protein: food.protein || 0,
-                carbs: food.carbs || 0,
-                fat: food.fat || 0,
-                description: food.description || '',
-            });
-            setShowSaveTemplateModal(true);
+            // Not favorited - quick save without modal
+            quickSaveTemplate(food);
+        }
+    };
+
+    const handleDuplicateFood = async (food: FoodEntry) => {
+        const duplicatedEntry: FoodEntry = {
+            ...food,
+            id: crypto.randomUUID(),
+            date: selectedFoodDate,
+            time: new Date().toLocaleTimeString('es-AR', {
+                timeZone: 'America/Argentina/Buenos_Aires',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+            }),
+            meal: getAutoMealType(),
+        };
+
+        try {
+            await saveFoodEntry(duplicatedEntry);
+        } catch (err) {
+            console.error('[DiaryTab] Error duplicating food:', err);
         }
     };
 
@@ -233,6 +255,13 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                     </div>
                     {/* Quick Action Buttons */}
                     <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setShowFoodHistoryPanel(true)}
+                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 active:bg-indigo-200 transition-colors"
+                            title="Historial de comidas"
+                        >
+                            <Clock size={20} />
+                        </button>
                         <button
                             onClick={() => setShowFoodSearchModal(true)}
                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 active:bg-blue-200 transition-colors"
@@ -320,6 +349,7 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                                 onAddFood={() => handleAddFood(group.type)}
                                 onEditFood={handleEditFood}
                                 onToggleFavorite={handleToggleFavorite}
+                                onDuplicateFood={handleDuplicateFood}
                                 favoriteMap={favoriteMap}
                                 onDeleteFood={(food) =>
                                     confirmDelete('food', food.id, food.name)

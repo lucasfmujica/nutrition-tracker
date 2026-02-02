@@ -2,6 +2,7 @@ import { FileImage } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { useTracker } from '../../context/TrackerContext';
 import { useCorrelationAnalytics } from '../../hooks/useCorrelationAnalytics';
+import { useMealTimingAnalytics } from '../../hooks/useMealTimingAnalytics';
 import { usePatternRecognition } from '../../hooks/usePatternRecognition';
 import { usePlateauDetector } from '../../hooks/usePlateauDetector';
 import { useWeeklyPeriodization } from '../../hooks/useWeeklyPeriodization';
@@ -20,6 +21,7 @@ import CoachInsight from '../Dashboard/CoachInsight';
 import { CorrelationSection } from '../Dashboard/CorrelationSection';
 import { MacroCards } from '../Dashboard/MacroCards';
 import { MacroCloserCard } from '../Dashboard/MacroCloserCard';
+import { MealTimingCard } from '../Dashboard/MealTimingCard';
 import { PerformanceForecastCard } from '../Dashboard/PerformanceForecastCard';
 import { PlateauAlertCard } from '../Dashboard/PlateauAlertCard';
 import { PredictiveWeightCard } from '../Dashboard/PredictiveWeightCard';
@@ -137,6 +139,9 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         foodLog,
         weeklyPlan,
     );
+
+    // Meal Timing Analytics Engine
+    const mealTimingInsights = useMealTimingAnalytics(foodLog, ouraLog, workoutLog);
 
     // Weekly Report Modal State
     const [showWeeklyReport, setShowWeeklyReport] = useState(false);
@@ -280,6 +285,8 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                     <PlateauAlertCard plateauData={plateauData} />
 
                     <WeeklyPlanningCard periodization={weeklyPeriodization} />
+
+                    <MealTimingCard insights={mealTimingInsights} />
 
                     <PerformanceForecastCard />
 

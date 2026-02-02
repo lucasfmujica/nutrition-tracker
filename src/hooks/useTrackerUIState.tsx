@@ -25,6 +25,7 @@ export const useTrackerUIState = () => {
     const [showFoodScanModal, setShowFoodScanModal] = useState(false); // AI Scanner Modal
     const [showFoodSearchModal, setShowFoodSearchModal] = useState(false); // Food Search Modal
     const [showBarcodeModal, setShowBarcodeModal] = useState(false); // Barcode Scanner Modal
+    const [showFoodHistoryPanel, setShowFoodHistoryPanel] = useState(false); // Food History Panel
 
     const [showFab, setShowFab] = useState(true);
     const [newSteps, setNewSteps] = useState('');
@@ -50,6 +51,8 @@ export const useTrackerUIState = () => {
         setShowFoodSearchModal,
         showBarcodeModal,
         setShowBarcodeModal,
+        showFoodHistoryPanel,
+        setShowFoodHistoryPanel,
         showFab,
         setShowFab,
         newSteps,

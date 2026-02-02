@@ -8,6 +8,7 @@ import { Camera, Loader2, Save, X } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { useTracker } from '../../context/TrackerContext';
 import { useFoodAnalysis } from '../../hooks/useFoodAnalysis';
+import { useSmartMealType } from '../../hooks/useSmartMealType';
 import { getArgentinaDateString } from '../../utils/dateUtils';
 
 interface FoodItem {
@@ -27,6 +28,7 @@ export const FoodCameraInput: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { analyzeFood, isLoading, result, error, resetResult } = useFoodAnalysis();
     const { saveFoodEntry } = useTracker();
+    const { getAutoMealType } = useSmartMealType();
 
     // Editable state for AI results
     const [editableMeal, setEditableMeal] = useState('');
@@ -39,25 +41,6 @@ export const FoodCameraInput: React.FC = () => {
         fiber: 0,
     });
     const [selectedMealType, setSelectedMealType] = useState('');
-
-    /**
-     * Auto-select meal type based on current device hour (Argentina TZ)
-     */
-    const getAutoMealType = (): string => {
-        const now = new Date();
-        const hour = parseInt(
-            now.toLocaleTimeString('es-AR', {
-                hour: '2-digit',
-                hour12: false,
-                timeZone: 'America/Argentina/Buenos_Aires',
-            }),
-        );
-
-        if (hour >= 6 && hour < 11) return 'Desayuno';
-        if (hour >= 11 && hour < 16) return 'Almuerzo';
-        if (hour >= 16 && hour < 20) return 'Merienda';
-        return 'Cena';
-    };
 
     /**
      * Handle file selection from camera/gallery

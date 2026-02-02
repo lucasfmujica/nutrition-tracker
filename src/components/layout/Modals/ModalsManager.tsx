@@ -5,11 +5,14 @@ import { FoodCameraModal } from '../../Modals/FoodCameraModal';
 import { FoodFormModal } from '../../Modals/FoodFormModal';
 import { FoodSearchModal } from '../../Modals/FoodSearchModal';
 import { BarcodeScannerModal } from '../../Modals/BarcodeScannerModal';
+import { FoodHistoryPanel } from '../../Food/FoodHistoryPanel';
 import { ImportModal } from '../../Modals/ImportModal';
 import { MondayBriefingModal } from '../../Modals/MondayBriefingModal';
 import { WorkoutFormModal } from '../../Modals/WorkoutFormModal';
 import { WorkoutScanner } from '../../Workouts/WorkoutScanner';
 import { WeeklyReport } from './WeeklyReport';
+import { FoodEntry } from '../../../types/domain';
+import { useSmartMealType } from '../../../hooks/useSmartMealType';
 
 export const ModalsManager: React.FC = () => {
     const {
@@ -54,6 +57,8 @@ export const ModalsManager: React.FC = () => {
         setShowFoodSearchModal,
         showBarcodeModal,
         setShowBarcodeModal,
+        showFoodHistoryPanel,
+        setShowFoodHistoryPanel,
 
         // Meal Templates Modal
         showTemplatesModal,
@@ -84,7 +89,35 @@ export const ModalsManager: React.FC = () => {
         acceptProposedTargets,
         briefingData,
         dashboardDate,
+
+        // Food actions
+        saveFoodEntry,
+        selectedFoodDate,
     } = useTracker() as any;
+
+    const { getAutoMealType } = useSmartMealType();
+
+    // Handler for selecting a food from history - duplicates it to today
+    const handleSelectFoodFromHistory = async (food: FoodEntry) => {
+        const newEntry: FoodEntry = {
+            ...food,
+            id: crypto.randomUUID(),
+            date: selectedFoodDate,
+            time: new Date().toLocaleTimeString('es-AR', {
+                timeZone: 'America/Argentina/Buenos_Aires',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+            }),
+            meal: getAutoMealType(), // Auto-detect meal type based on current time
+        };
+
+        try {
+            await saveFoodEntry(newEntry);
+        } catch (err) {
+            console.error('[ModalsManager] Error duplicating food from history:', err);
+        }
+    };
 
     return (
         <>
@@ -177,6 +210,13 @@ export const ModalsManager: React.FC = () => {
                     setShowBarcodeModal(false);
                     setShowFoodSearchModal(true);
                 }}
+            />
+
+            <FoodHistoryPanel
+                isOpen={showFoodHistoryPanel}
+                onClose={() => setShowFoodHistoryPanel(false)}
+                foodLog={foodLog}
+                onSelectFood={handleSelectFoodFromHistory}
             />
 
             {showTemplatesModal && (

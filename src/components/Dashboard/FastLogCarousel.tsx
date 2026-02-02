@@ -103,7 +103,7 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
                         <div className="text-left min-w-0">
                             <h3
                                 className={`font-bold text-sm leading-tight truncate ${successId === combo.id ? 'text-white' : 'text-white'}`}>
-                                {successId === combo.id ? '¡Listo!' : 'Mi Combo'}
+                                {successId === combo.id ? '¡Listo!' : (combo.name || 'Mi Combo')}
                             </h3>
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="bg-white/20 px-1.5 py-0.5 rounded text-[10px] text-white font-bold backdrop-blur-sm">

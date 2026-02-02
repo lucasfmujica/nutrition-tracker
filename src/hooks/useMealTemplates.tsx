@@ -157,6 +157,65 @@ export const useMealTemplates = ({
         setTimeout(() => setSaveStatus(''), 2000);
     };
 
+    // Quick save template - no confirmation modal
+    const quickSaveTemplate = async (food: FoodEntry) => {
+        const newTemplate: MealTemplate = {
+            id: `tpl-${Date.now()}`,
+            name: food.name,
+            meal: food.meal,
+            description: food.description || '',
+            calories: food.calories,
+            protein: food.protein,
+            carbs: food.carbs,
+            fat: food.fat,
+            fiber: food.fiber || 0,
+        };
+
+        // Optimistic update
+        const updatedTemplates = [...mealTemplates, newTemplate];
+        saveTemplatesToLocal(updatedTemplates);
+
+        // Save to Supabase if cloud enabled
+        if (useCloud && saveTemplate) {
+            try {
+                const result = await saveTemplate(newTemplate);
+                if (result?.data) {
+                    // Replace optimistic temp ID with DB ID
+                    setMealTemplates((prev) =>
+                        prev.map((t) =>
+                            t.id === newTemplate.id ? result.data! : t,
+                        ),
+                    );
+                    // Update local storage again with DB ID
+                    const finalTemplates = updatedTemplates.map((t) =>
+                        t.id === newTemplate.id ? result.data! : t,
+                    );
+                    storage.set(
+                        'lucas-meal-templates-v1',
+                        JSON.stringify(finalTemplates),
+                    );
+                }
+            } catch (err) {
+                console.error('Error saving template to Supabase:', err);
+            }
+        }
+
+        setSaveStatus('⭐ Guardado en favoritos');
+        setTimeout(() => setSaveStatus(''), 2000);
+    };
+
+    // Check if a food entry matches an existing template (is favorited)
+    const getFoodTemplate = (food: FoodEntry): MealTemplate | undefined => {
+        return mealTemplates.find(
+            (t) =>
+                t.name === food.name &&
+                t.calories === food.calories &&
+                t.protein === food.protein &&
+                t.carbs === food.carbs &&
+                t.fat === food.fat,
+        );
+    };
+
     // Delete template
     const deleteTemplate = async (id: string) => {
         // Optimistic delete
@@ -171,6 +230,9 @@ export const useMealTemplates = ({
                 console.error('Error deleting template from Supabase:', err);
             }
         }
+
+        setSaveStatus('🗑️ Eliminado de favoritos');
+        setTimeout(() => setSaveStatus(''), 2000);
     };
 
     return {
@@ -196,6 +258,8 @@ export const useMealTemplates = ({
             setShowSaveTemplateModal(true);
         },
         confirmSaveTemplate,
+        quickSaveTemplate,
+        getFoodTemplate,
         deleteTemplate,
         addFromTemplate,
     };
