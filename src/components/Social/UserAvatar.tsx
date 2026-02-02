@@ -15,7 +15,17 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
 }) => {
     const [error, setError] = useState(false);
 
-    // If src exists and no error has occurred, try to show the image
+    // If src is a short string (likely an emoji), render it as text
+    if (src && src.length <= 4 && !src.startsWith('http')) {
+        return (
+            <div
+                className={`${className} rounded-full bg-slate-100 flex items-center justify-center text-2xl border-2 border-white shadow-sm ring-1 ring-slate-50`}>
+                {src}
+            </div>
+        );
+    }
+
+    // If src exists (is a URL) and no error has occurred, try to show the image
     if (src && !error) {
         return (
             <img
