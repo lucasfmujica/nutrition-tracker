@@ -136,30 +136,33 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
         );
     }
 
-    // Insufficient data
-    const hasEnoughData = waistData.length >= 3 || bodyFatData.length >= 3;
-    if (!hasEnoughData) {
+    // Empty state - need at least 3 measurements with different weights
+    if (
+        waistData.length < 3 &&
+        bodyFatData.length < 3 &&
+        chestData.length < 3 &&
+        hipsData.length < 3
+    ) {
         return (
             <div className="bg-white rounded-2xl p-8 text-center border border-slate-100">
                 <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <BarChart3 size={28} className="text-purple-400" />
                 </div>
-                <h3 className="font-bold text-slate-900 mb-1">
-                    Necesitás más datos
+                <h3 className="font-bold text-slate-900 mb-2">
+                    Datos insuficientes
                 </h3>
-                <p className="text-sm text-slate-500 mb-4">
-                    Registrá al menos 3 mediciones con peso para ver análisis
-                    predictivo.
+                <p className="text-sm text-slate-600 mb-4 max-w-md mx-auto">
+                    Necesitás al menos{' '}
+                    <strong>3 mediciones con diferentes pesos</strong> para calcular
+                    correlaciones y predicciones.
                 </p>
-                <div className="bg-slate-50 rounded-xl p-4 text-left">
-                    <p className="text-xs text-slate-600 mb-2 font-bold">
-                        Datos actuales:
+                <div className="bg-blue-50 rounded-xl p-4 max-w-md mx-auto">
+                    <p className="text-xs text-blue-700 leading-relaxed">
+                        💡 <strong>Tip:</strong> Registrá tus medidas cada semana
+                        mientras tu peso cambia. Por ejemplo: Semana 1 (105kg),
+                        Semana 2 (104kg), Semana 3 (103kg). Así podremos predecir
+                        cómo cambiarán tus medidas a medida que alcanzás tu meta.
                     </p>
-                    <div className="space-y-1 text-xs text-slate-500">
-                        <p>• Fotos con peso: {weightData.length}</p>
-                        <p>• Medidas de cintura: {waistData.length}</p>
-                        <p>• Medidas de grasa corporal: {bodyFatData.length}</p>
-                    </div>
                 </div>
             </div>
         );

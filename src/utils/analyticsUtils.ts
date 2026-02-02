@@ -46,8 +46,15 @@ export function calculateLinearRegression(
     const meanX = sumX / n;
     const meanY = sumY / n;
 
+    // Check if all X values are the same (would cause division by zero)
+    const denominator = n * sumX2 - sumX * sumX;
+    if (Math.abs(denominator) < 0.0001) {
+        // All weights are identical - cannot calculate correlation
+        return null;
+    }
+
     // Calculate slope (m) and intercept (b) for y = mx + b
-    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const slope = (n * sumXY - sumX * sumY) / denominator;
     const intercept = meanY - slope * meanX;
 
     // Calculate R² (coefficient of determination)
