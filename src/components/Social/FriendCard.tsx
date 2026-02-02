@@ -1,6 +1,16 @@
-import { ChevronDown, ChevronUp, Dumbbell, Flame, Scale, Trash2, TrendingDown } from 'lucide-react';
+import {
+    ChevronDown,
+    ChevronUp,
+    Dumbbell,
+    Flame,
+    Scale,
+    Trash2,
+    TrendingDown,
+} from 'lucide-react';
 import React, { useState } from 'react';
 import { Friend } from '../../types/domain';
+
+import { UserAvatar } from './UserAvatar';
 
 interface FriendCardProps {
     friend: Friend;
@@ -53,25 +63,26 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
                 className="flex items-center gap-3 p-4 cursor-pointer hover:bg-slate-50 transition-colors"
                 onClick={() => setExpanded(!expanded)}>
                 {/* Avatar */}
-                {friend.avatar ? (
-                    <img
-                        src={friend.avatar}
-                        alt={friend.name}
-                        className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
-                    />
-                ) : (
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-primary/80 to-cyan-400 flex items-center justify-center text-white font-bold text-lg shadow-sm">
-                        {friend.name.charAt(0).toUpperCase()}
-                    </div>
-                )}
+                <UserAvatar
+                    src={friend.avatar}
+                    name={friend.name}
+                    className="w-12 h-12"
+                    textSize="text-lg"
+                />
 
                 {/* Name & Stats Preview */}
                 <div className="flex-1 min-w-0">
-                    <p className="font-bold text-slate-900 truncate">{friend.name}</p>
+                    <p className="font-bold text-slate-900 truncate">
+                        {friend.name}
+                    </p>
                     <p className="text-xs text-slate-400">
                         {friend.weeklyStats ? (
-                            <span className={getWeightDeltaColor(friend.weeklyStats.weightDelta)}>
-                                {formatWeightDelta(friend.weeklyStats.weightDelta)} esta semana
+                            <span
+                                className={getWeightDeltaColor(
+                                    friend.weeklyStats.weightDelta,
+                                )}>
+                                {formatWeightDelta(friend.weeklyStats.weightDelta)}{' '}
+                                esta semana
                             </span>
                         ) : (
                             'Sin datos esta semana'
@@ -92,40 +103,62 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
                         <div className="grid grid-cols-2 gap-3 mb-4">
                             {/* Weight Delta */}
                             <div className="bg-slate-50 rounded-lg p-3 text-center">
-                                <Scale size={16} className="mx-auto mb-1 text-slate-400" />
+                                <Scale
+                                    size={16}
+                                    className="mx-auto mb-1 text-slate-400"
+                                />
                                 <p
                                     className={`font-black text-sm ${getWeightDeltaColor(friend.weeklyStats.weightDelta)}`}>
-                                    {formatWeightDelta(friend.weeklyStats.weightDelta)}
+                                    {formatWeightDelta(
+                                        friend.weeklyStats.weightDelta,
+                                    )}
                                 </p>
-                                <p className="text-[10px] text-slate-400 uppercase">Peso</p>
+                                <p className="text-[10px] text-slate-400 uppercase">
+                                    Peso
+                                </p>
                             </div>
 
                             {/* Workouts */}
                             <div className="bg-slate-50 rounded-lg p-3 text-center">
-                                <Dumbbell size={16} className="mx-auto mb-1 text-slate-400" />
+                                <Dumbbell
+                                    size={16}
+                                    className="mx-auto mb-1 text-slate-400"
+                                />
                                 <p className="font-black text-sm text-slate-700">
                                     {friend.weeklyStats.workoutCount}
                                 </p>
-                                <p className="text-[10px] text-slate-400 uppercase">Entrenos</p>
+                                <p className="text-[10px] text-slate-400 uppercase">
+                                    Entrenos
+                                </p>
                             </div>
 
                             {/* Streak */}
                             <div className="bg-slate-50 rounded-lg p-3 text-center">
-                                <Flame size={16} className="mx-auto mb-1 text-slate-400" />
+                                <Flame
+                                    size={16}
+                                    className="mx-auto mb-1 text-slate-400"
+                                />
                                 <p className="font-black text-sm text-orange-500">
                                     {friend.weeklyStats.consistencyStreak}
                                 </p>
-                                <p className="text-[10px] text-slate-400 uppercase">Racha</p>
+                                <p className="text-[10px] text-slate-400 uppercase">
+                                    Racha
+                                </p>
                             </div>
 
                             {/* Avg Deficit */}
                             <div className="bg-slate-50 rounded-lg p-3 text-center">
-                                <TrendingDown size={16} className="mx-auto mb-1 text-slate-400" />
+                                <TrendingDown
+                                    size={16}
+                                    className="mx-auto mb-1 text-slate-400"
+                                />
                                 <p
                                     className={`font-black text-sm ${getDeficitColor(friend.weeklyStats.avgDeficit)}`}>
                                     {formatAvgDeficit(friend.weeklyStats.avgDeficit)}
                                 </p>
-                                <p className="text-[10px] text-slate-400 uppercase">Déficit</p>
+                                <p className="text-[10px] text-slate-400 uppercase">
+                                    Déficit
+                                </p>
                             </div>
                         </div>
                     ) : (

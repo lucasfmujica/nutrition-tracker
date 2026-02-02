@@ -20,7 +20,7 @@ import { ActivityCards } from '../Dashboard/ActivityCards';
 import CoachInsight from '../Dashboard/CoachInsight';
 import { CorrelationSection } from '../Dashboard/CorrelationSection';
 import { MacroCards } from '../Dashboard/MacroCards';
-import { MacroCloserCard } from '../Dashboard/MacroCloserCard';
+
 import { MealTimingCard } from '../Dashboard/MealTimingCard';
 import { PerformanceForecastCard } from '../Dashboard/PerformanceForecastCard';
 import { PlateauAlertCard } from '../Dashboard/PlateauAlertCard';
@@ -245,13 +245,6 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                     <MacroCards
                         totals={dashboardTotals}
                         targets={dashboardTargets}
-                    />
-
-                    <MacroCloserCard
-                        totals={dashboardTotals}
-                        targets={dashboardTargets}
-                        foodLog={foodLog}
-                        mealTemplates={mealTemplates}
                     />
 
                     <ActivityCards

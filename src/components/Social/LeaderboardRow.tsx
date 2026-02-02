@@ -1,6 +1,8 @@
 import React from 'react';
 import { LeaderboardEntry, LeaderboardMetric } from '../../types/domain';
 
+import { UserAvatar } from './UserAvatar';
+
 interface LeaderboardRowProps {
     entry: LeaderboardEntry;
     metric: LeaderboardMetric;
@@ -8,9 +10,12 @@ interface LeaderboardRowProps {
 
 export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ entry, metric }) => {
     const getRankDisplay = (rank: number) => {
-        if (rank === 1) return { emoji: '🥇', bg: 'bg-amber-50', text: 'text-amber-600' };
-        if (rank === 2) return { emoji: '🥈', bg: 'bg-slate-100', text: 'text-slate-500' };
-        if (rank === 3) return { emoji: '🥉', bg: 'bg-orange-50', text: 'text-orange-500' };
+        if (rank === 1)
+            return { emoji: '🥇', bg: 'bg-amber-50', text: 'text-amber-600' };
+        if (rank === 2)
+            return { emoji: '🥈', bg: 'bg-slate-100', text: 'text-slate-500' };
+        if (rank === 3)
+            return { emoji: '🥉', bg: 'bg-orange-50', text: 'text-orange-500' };
         return { emoji: `${rank}`, bg: 'bg-slate-50', text: 'text-slate-400' };
     };
 
@@ -50,17 +55,12 @@ export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ entry, metric })
             </div>
 
             {/* Avatar */}
-            {entry.avatar ? (
-                <img
-                    src={entry.avatar}
-                    alt={entry.name}
-                    className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
-                />
-            ) : (
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary/80 to-cyan-400 flex items-center justify-center text-white font-bold text-sm shadow-sm">
-                    {entry.name.charAt(0).toUpperCase()}
-                </div>
-            )}
+            <UserAvatar
+                src={entry.avatar}
+                name={entry.name}
+                className="w-10 h-10"
+                textSize="text-sm"
+            />
 
             {/* Name */}
             <div className="flex-1 min-w-0">

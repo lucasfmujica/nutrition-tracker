@@ -2,6 +2,8 @@ import { Check, X } from 'lucide-react';
 import React from 'react';
 import { FriendRequest } from '../../types/domain';
 
+import { UserAvatar } from './UserAvatar';
+
 interface FriendRequestCardProps {
     request: FriendRequest;
     onAccept: (requestId: string) => void;
@@ -28,21 +30,17 @@ export const FriendRequestCard: React.FC<FriendRequestCardProps> = ({
     return (
         <div className="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100">
             {/* Avatar */}
-            {request.fromAvatar ? (
-                <img
-                    src={request.fromAvatar}
-                    alt={request.fromName}
-                    className="w-11 h-11 rounded-full object-cover border-2 border-white shadow-sm"
-                />
-            ) : (
-                <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center text-white font-bold">
-                    {request.fromName.charAt(0).toUpperCase()}
-                </div>
-            )}
+            <UserAvatar
+                src={request.fromAvatar}
+                name={request.fromName}
+                className="w-11 h-11"
+            />
 
             {/* Info */}
             <div className="flex-1 min-w-0">
-                <p className="font-bold text-slate-900 truncate">{request.fromName}</p>
+                <p className="font-bold text-slate-900 truncate">
+                    {request.fromName}
+                </p>
                 <p className="text-xs text-slate-400">
                     Solicitud enviada {formatDate(request.createdAt)}
                 </p>

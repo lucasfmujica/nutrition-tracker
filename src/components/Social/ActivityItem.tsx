@@ -2,12 +2,17 @@ import { Dumbbell, Flag, Flame, Scale, UserPlus } from 'lucide-react';
 import React from 'react';
 import { ActivityItem as ActivityItemType, ActivityType } from '../../types/domain';
 
+import { UserAvatar } from './UserAvatar';
+
 interface ActivityItemProps {
     activity: ActivityItemType;
     onToggleReaction?: (activityId: string) => void;
 }
 
-export const ActivityItemComponent: React.FC<ActivityItemProps> = ({ activity, onToggleReaction }) => {
+export const ActivityItemComponent: React.FC<ActivityItemProps> = ({
+    activity,
+    onToggleReaction,
+}) => {
     const getActivityConfig = (type: ActivityType) => {
         switch (type) {
             case 'workout_logged':
@@ -106,10 +111,15 @@ export const ActivityItemComponent: React.FC<ActivityItemProps> = ({ activity, o
             {/* Content */}
             <div className="flex-1 min-w-0">
                 <p className="text-sm text-slate-700">
-                    <span className="font-bold text-slate-900">{activity.userName}</span>{' '}
+                    <span className="font-bold text-slate-900">
+                        {activity.userName}
+                    </span>{' '}
                     {config.verb}
                     {detailText && (
-                        <span className="font-semibold text-slate-600"> - {detailText}</span>
+                        <span className="font-semibold text-slate-600">
+                            {' '}
+                            - {detailText}
+                        </span>
                     )}
                 </p>
                 <div className="flex items-center gap-3 mt-1">
@@ -132,26 +142,19 @@ export const ActivityItemComponent: React.FC<ActivityItemProps> = ({ activity, o
                                 size={14}
                                 className={hasReacted ? 'fill-orange-500' : ''}
                             />
-                            {reactionCount > 0 && (
-                                <span>{reactionCount}</span>
-                            )}
+                            {reactionCount > 0 && <span>{reactionCount}</span>}
                         </button>
                     )}
                 </div>
             </div>
 
             {/* Avatar */}
-            {activity.userAvatar ? (
-                <img
-                    src={activity.userAvatar}
-                    alt={activity.userName}
-                    className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-                />
-            ) : (
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary/80 to-cyan-400 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                    {activity.userName.charAt(0).toUpperCase()}
-                </div>
-            )}
+            <UserAvatar
+                src={activity.userAvatar}
+                name={activity.userName}
+                className="w-8 h-8 flex-shrink-0"
+                textSize="text-xs"
+            />
         </div>
     );
 };
