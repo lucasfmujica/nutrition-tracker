@@ -43,7 +43,9 @@ export interface UseSocialReturn {
     setShowAddFriendModal: (show: boolean) => void;
 
     // Actions
-    sendFriendRequest: (code: string) => Promise<{ success: boolean; error?: string }>;
+    sendFriendRequest: (
+        code: string,
+    ) => Promise<{ success: boolean; error?: string }>;
     acceptFriendRequest: (id: string) => Promise<void>;
     rejectFriendRequest: (id: string) => Promise<void>;
     removeFriend: (id: string) => Promise<void>;
@@ -72,16 +74,14 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
     const [socialError, setSocialError] = useState<string | null>(null);
 
     // Leaderboard metric
-    const [leaderboardMetric, setLeaderboardMetric] = useState<LeaderboardMetric>('streak');
+    const [leaderboardMetric, setLeaderboardMetric] =
+        useState<LeaderboardMetric>('streak');
 
     // Modal states
     const [showAddFriendModal, setShowAddFriendModal] = useState(false);
 
     // Data layer hook
-    const socialData = useSocialData(
-        supabase.user as any,
-        supabase.isOnline
-    );
+    const socialData = useSocialData(supabase.user as any, supabase.isOnline);
 
     /**
      * Refresh all social data
@@ -112,6 +112,14 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
             setActivityFeed(fetchedFeed);
             setLeaderboard(fetchedLeaderboard);
             setUserFriendCode(fetchedCode);
+
+            console.log('[useSocial] refreshSocial complete:', {
+                friendsCount: fetchedFriends.length,
+                requestsCount: fetchedRequests.length,
+                feedCount: fetchedFeed.length,
+                leaderboardCount: fetchedLeaderboard.length,
+                userFriendCode: fetchedCode,
+            });
         } catch (err: any) {
             console.error('[useSocial] refreshSocial failed:', err);
             setSocialError('Error al cargar datos sociales');
@@ -123,147 +131,172 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
     /**
      * Refresh just the leaderboard with a new metric
      */
-    const refreshLeaderboard = useCallback(async (metric?: LeaderboardMetric) => {
-        if (!useCloud) return;
+    const refreshLeaderboard = useCallback(
+        async (metric?: LeaderboardMetric) => {
+            if (!useCloud) return;
 
-        const targetMetric = metric || leaderboardMetric;
-        if (metric) {
-            setLeaderboardMetric(metric);
-        }
+            const targetMetric = metric || leaderboardMetric;
+            if (metric) {
+                setLeaderboardMetric(metric);
+            }
 
-        try {
-            const fetchedLeaderboard = await socialData.fetchLeaderboard(targetMetric);
-            setLeaderboard(fetchedLeaderboard);
-        } catch (err) {
-            console.error('[useSocial] refreshLeaderboard failed:', err);
-        }
-    }, [useCloud, leaderboardMetric, socialData]);
+            try {
+                const fetchedLeaderboard =
+                    await socialData.fetchLeaderboard(targetMetric);
+                setLeaderboard(fetchedLeaderboard);
+            } catch (err) {
+                console.error('[useSocial] refreshLeaderboard failed:', err);
+            }
+        },
+        [useCloud, leaderboardMetric, socialData],
+    );
 
     /**
      * Send friend request with optimistic updates
      */
-    const sendFriendRequest = useCallback(async (code: string) => {
-        setSocialError(null);
-        const result = await socialData.sendFriendRequest(code);
+    const sendFriendRequest = useCallback(
+        async (code: string) => {
+            setSocialError(null);
+            const result = await socialData.sendFriendRequest(code);
 
-        if (!result.success && result.error) {
-            setSocialError(result.error);
-        }
+            if (!result.success && result.error) {
+                setSocialError(result.error);
+            }
 
-        // Refresh friends list after sending
-        if (result.success) {
-            setShowAddFriendModal(false);
-        }
+            // Refresh friends list after sending
+            if (result.success) {
+                setShowAddFriendModal(false);
+            }
 
-        return result;
-    }, [socialData]);
+            return result;
+        },
+        [socialData],
+    );
 
     /**
      * Accept friend request with optimistic update
      */
-    const acceptFriendRequest = useCallback(async (requestId: string) => {
-        // Optimistic: Remove from requests immediately
-        const request = friendRequests.find(r => r.id === requestId);
-        setFriendRequests(prev => prev.filter(r => r.id !== requestId));
+    const acceptFriendRequest = useCallback(
+        async (requestId: string) => {
+            // Optimistic: Remove from requests immediately
+            const request = friendRequests.find((r) => r.id === requestId);
+            setFriendRequests((prev) => prev.filter((r) => r.id !== requestId));
 
-        const result = await socialData.acceptFriendRequest(requestId);
+            const result = await socialData.acceptFriendRequest(requestId);
 
-        if (!result.success) {
-            // Revert optimistic update
-            if (request) {
-                setFriendRequests(prev => [...prev, request]);
+            if (!result.success) {
+                // Revert optimistic update
+                if (request) {
+                    setFriendRequests((prev) => [...prev, request]);
+                }
+                setSocialError(result.error || 'Error al aceptar solicitud');
+                return;
             }
-            setSocialError(result.error || 'Error al aceptar solicitud');
-            return;
-        }
 
-        // Refresh friends list to get new friend
-        const newFriends = await socialData.fetchFriends();
-        setFriends(newFriends);
+            // Refresh friends list to get new friend
+            const newFriends = await socialData.fetchFriends();
+            setFriends(newFriends);
 
-        // Post friend added activity (fire and forget)
-        if (supabase.user?.id && request) {
-            triggerFriendAddedActivity(supabase.user.id, request.fromName).catch(() => {});
-        }
-    }, [friendRequests, socialData, supabase.user?.id]);
+            // Post friend added activity (fire and forget)
+            if (supabase.user?.id && request) {
+                triggerFriendAddedActivity(supabase.user.id, request.fromName).catch(
+                    () => {},
+                );
+            }
+        },
+        [friendRequests, socialData, supabase.user?.id],
+    );
 
     /**
      * Reject friend request with optimistic update
      */
-    const rejectFriendRequest = useCallback(async (requestId: string) => {
-        // Optimistic: Remove from requests immediately
-        const request = friendRequests.find(r => r.id === requestId);
-        setFriendRequests(prev => prev.filter(r => r.id !== requestId));
+    const rejectFriendRequest = useCallback(
+        async (requestId: string) => {
+            // Optimistic: Remove from requests immediately
+            const request = friendRequests.find((r) => r.id === requestId);
+            setFriendRequests((prev) => prev.filter((r) => r.id !== requestId));
 
-        const result = await socialData.rejectFriendRequest(requestId);
+            const result = await socialData.rejectFriendRequest(requestId);
 
-        if (!result.success) {
-            // Revert optimistic update
-            if (request) {
-                setFriendRequests(prev => [...prev, request]);
+            if (!result.success) {
+                // Revert optimistic update
+                if (request) {
+                    setFriendRequests((prev) => [...prev, request]);
+                }
+                setSocialError(result.error || 'Error al rechazar solicitud');
             }
-            setSocialError(result.error || 'Error al rechazar solicitud');
-        }
-    }, [friendRequests, socialData]);
+        },
+        [friendRequests, socialData],
+    );
 
     /**
      * Remove friend with optimistic update
      */
-    const removeFriend = useCallback(async (friendshipId: string) => {
-        // Optimistic: Remove from friends immediately
-        const friend = friends.find(f => f.id === friendshipId);
-        setFriends(prev => prev.filter(f => f.id !== friendshipId));
+    const removeFriend = useCallback(
+        async (friendshipId: string) => {
+            // Optimistic: Remove from friends immediately
+            const friend = friends.find((f) => f.id === friendshipId);
+            setFriends((prev) => prev.filter((f) => f.id !== friendshipId));
 
-        const result = await socialData.removeFriend(friendshipId);
+            const result = await socialData.removeFriend(friendshipId);
 
-        if (!result.success) {
-            // Revert optimistic update
-            if (friend) {
-                setFriends(prev => [...prev, friend]);
+            if (!result.success) {
+                // Revert optimistic update
+                if (friend) {
+                    setFriends((prev) => [...prev, friend]);
+                }
+                setSocialError(result.error || 'Error al eliminar amigo');
             }
-            setSocialError(result.error || 'Error al eliminar amigo');
-        }
-    }, [friends, socialData]);
+        },
+        [friends, socialData],
+    );
 
     /**
      * Toggle reaction on activity with optimistic update
      */
-    const toggleReaction = useCallback(async (activityId: string) => {
-        // Optimistic: Update activity feed immediately
-        const activity = activityFeed.find(a => a.id === activityId);
-        if (!activity) return;
+    const toggleReaction = useCallback(
+        async (activityId: string) => {
+            // Optimistic: Update activity feed immediately
+            const activity = activityFeed.find((a) => a.id === activityId);
+            if (!activity) return;
 
-        const previousHasReacted = activity.hasReacted || false;
-        const previousCount = activity.reactionCount || 0;
+            const previousHasReacted = activity.hasReacted || false;
+            const previousCount = activity.reactionCount || 0;
 
-        setActivityFeed(prev => prev.map(a =>
-            a.id === activityId
-                ? {
-                    ...a,
-                    hasReacted: !previousHasReacted,
-                    reactionCount: previousHasReacted
-                        ? Math.max(0, previousCount - 1)
-                        : previousCount + 1,
-                }
-                : a
-        ));
+            setActivityFeed((prev) =>
+                prev.map((a) =>
+                    a.id === activityId
+                        ? {
+                              ...a,
+                              hasReacted: !previousHasReacted,
+                              reactionCount: previousHasReacted
+                                  ? Math.max(0, previousCount - 1)
+                                  : previousCount + 1,
+                          }
+                        : a,
+                ),
+            );
 
-        const result = await socialData.toggleReaction(activityId);
+            const result = await socialData.toggleReaction(activityId);
 
-        if (!result.success) {
-            // Revert optimistic update
-            setActivityFeed(prev => prev.map(a =>
-                a.id === activityId
-                    ? {
-                        ...a,
-                        hasReacted: previousHasReacted,
-                        reactionCount: previousCount,
-                    }
-                    : a
-            ));
-            setSocialError(result.error || 'Error al reaccionar');
-        }
-    }, [activityFeed, socialData]);
+            if (!result.success) {
+                // Revert optimistic update
+                setActivityFeed((prev) =>
+                    prev.map((a) =>
+                        a.id === activityId
+                            ? {
+                                  ...a,
+                                  hasReacted: previousHasReacted,
+                                  reactionCount: previousCount,
+                              }
+                            : a,
+                    ),
+                );
+                setSocialError(result.error || 'Error al reaccionar');
+            }
+        },
+        [activityFeed, socialData],
+    );
 
     // Initial load when authenticated
     useEffect(() => {

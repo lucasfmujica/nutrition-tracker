@@ -15,18 +15,34 @@ import { useSupabaseOperation } from './useSupabaseOperation';
 export interface UseSocialDataReturn {
     fetchFriends: () => Promise<Friend[]>;
     fetchFriendRequests: () => Promise<FriendRequest[]>;
-    sendFriendRequest: (friendCode: string) => Promise<{ success: boolean; error?: string }>;
-    acceptFriendRequest: (requestId: string) => Promise<{ success: boolean; error?: string }>;
-    rejectFriendRequest: (requestId: string) => Promise<{ success: boolean; error?: string }>;
-    removeFriend: (friendshipId: string) => Promise<{ success: boolean; error?: string }>;
+    sendFriendRequest: (
+        friendCode: string,
+    ) => Promise<{ success: boolean; error?: string }>;
+    acceptFriendRequest: (
+        requestId: string,
+    ) => Promise<{ success: boolean; error?: string }>;
+    rejectFriendRequest: (
+        requestId: string,
+    ) => Promise<{ success: boolean; error?: string }>;
+    removeFriend: (
+        friendshipId: string,
+    ) => Promise<{ success: boolean; error?: string }>;
     fetchActivityFeed: () => Promise<ActivityItem[]>;
     fetchLeaderboard: (metric: LeaderboardMetric) => Promise<LeaderboardEntry[]>;
-    postActivity: (activityType: ActivityType, metadata?: Record<string, any>) => Promise<void>;
+    postActivity: (
+        activityType: ActivityType,
+        metadata?: Record<string, any>,
+    ) => Promise<void>;
     fetchUserFriendCode: () => Promise<string | null>;
-    toggleReaction: (activityId: string) => Promise<{ success: boolean; error?: string }>;
+    toggleReaction: (
+        activityId: string,
+    ) => Promise<{ success: boolean; error?: string }>;
 }
 
-export function useSocialData(user: User | null, isOnline: boolean): UseSocialDataReturn {
+export function useSocialData(
+    user: User | null,
+    isOnline: boolean,
+): UseSocialDataReturn {
     const { withSync, withTimeout } = useSupabaseOperation();
     const canUseSupabase = !!(user && isOnline && supabase);
 
@@ -45,7 +61,7 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                     .eq('status', 'accepted')
                     .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`),
                 30000,
-                'fetchFriends'
+                'fetchFriends',
             );
 
             if (error || !friendships) {
@@ -55,7 +71,7 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
 
             // Extract friend user IDs
             const friendIds = friendships.map((f: any) =>
-                f.user_id === user.id ? f.friend_id : f.user_id
+                f.user_id === user.id ? f.friend_id : f.user_id,
             );
 
             if (friendIds.length === 0) return [];
@@ -67,7 +83,10 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                 .in('user_id', friendIds);
 
             if (profileError) {
-                console.error('[useSocialData] Error fetching friend profiles:', profileError);
+                console.error(
+                    '[useSocialData] Error fetching friend profiles:',
+                    profileError,
+                );
                 return [];
             }
 
@@ -81,19 +100,20 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
 
             // Map to Friend interface
             return friendships.map((friendship: any) => {
-                const friendId = friendship.user_id === user.id
-                    ? friendship.friend_id
-                    : friendship.user_id;
+                const friendId =
+                    friendship.user_id === user.id
+                        ? friendship.friend_id
+                        : friendship.user_id;
                 const profile = profiles?.find((p: any) => p.user_id === friendId);
                 const snapshot = snapshots?.find((s: any) => s.user_id === friendId);
 
                 const weeklyStats: WeeklySummary | undefined = snapshot
                     ? {
-                        weightDelta: snapshot.weight_delta,
-                        workoutCount: snapshot.workout_count,
-                        consistencyStreak: snapshot.consistency_streak,
-                        avgDeficit: snapshot.avg_deficit,
-                    }
+                          weightDelta: snapshot.weight_delta,
+                          workoutCount: snapshot.workout_count,
+                          consistencyStreak: snapshot.consistency_streak,
+                          avgDeficit: snapshot.avg_deficit,
+                      }
                     : undefined;
 
                 return {
@@ -126,11 +146,14 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                     .eq('friend_id', user.id)
                     .eq('status', 'pending'),
                 30000,
-                'fetchFriendRequests'
+                'fetchFriendRequests',
             );
 
             if (error || !requests) {
-                console.error('[useSocialData] Error fetching friend requests:', error);
+                console.error(
+                    '[useSocialData] Error fetching friend requests:',
+                    error,
+                );
                 return [];
             }
 
@@ -144,7 +167,9 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                 .in('user_id', requesterIds);
 
             return requests.map((request: any) => {
-                const profile = profiles?.find((p: any) => p.user_id === request.user_id);
+                const profile = profiles?.find(
+                    (p: any) => p.user_id === request.user_id,
+                );
                 return {
                     id: request.id,
                     fromUserId: request.user_id,
@@ -164,7 +189,9 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
      * Send a friend request using friend code
      */
     const sendFriendRequest = useCallback(
-        async (friendCode: string): Promise<{ success: boolean; error?: string }> => {
+        async (
+            friendCode: string,
+        ): Promise<{ success: boolean; error?: string }> => {
             if (!canUseSupabase || !user || !supabase) {
                 return { success: false, error: 'No autenticado o sin conexión' };
             }
@@ -178,14 +205,20 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                     .maybeSingle();
 
                 if (findError || !targetProfile) {
-                    return { success: false, error: 'Código de amigo no encontrado' };
+                    return {
+                        success: false,
+                        error: 'Código de amigo no encontrado',
+                    };
                 }
 
                 const targetUserId = targetProfile.user_id;
 
                 // Prevent self-friending
                 if (targetUserId === user.id) {
-                    return { success: false, error: 'No puedes agregarte a ti mismo' };
+                    return {
+                        success: false,
+                        error: 'No puedes agregarte a ti mismo',
+                    };
                 }
 
                 // Check for existing friendship/request
@@ -194,7 +227,7 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                     .select('id, status')
                     .or(
                         `and(user_id.eq.${user.id},friend_id.eq.${targetUserId}),` +
-                        `and(user_id.eq.${targetUserId},friend_id.eq.${user.id})`
+                            `and(user_id.eq.${targetUserId},friend_id.eq.${user.id})`,
                     )
                     .maybeSingle();
 
@@ -203,22 +236,33 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                         return { success: false, error: 'Ya son amigos' };
                     }
                     if (existing.status === 'pending') {
-                        return { success: false, error: 'Ya hay una solicitud pendiente' };
+                        return {
+                            success: false,
+                            error: 'Ya hay una solicitud pendiente',
+                        };
                     }
                     if (existing.status === 'blocked') {
-                        return { success: false, error: 'No se puede enviar solicitud' };
+                        return {
+                            success: false,
+                            error: 'No se puede enviar solicitud',
+                        };
                     }
                 }
 
                 // Create friend request
-                const { error: insertError } = await supabase.from('friendships').insert({
-                    user_id: user.id,
-                    friend_id: targetUserId,
-                    status: 'pending',
-                });
+                const { error: insertError } = await supabase
+                    .from('friendships')
+                    .insert({
+                        user_id: user.id,
+                        friend_id: targetUserId,
+                        status: 'pending',
+                    });
 
                 if (insertError) {
-                    console.error('[useSocialData] Error sending friend request:', insertError);
+                    console.error(
+                        '[useSocialData] Error sending friend request:',
+                        insertError,
+                    );
                     return { success: false, error: 'Error al enviar solicitud' };
                 }
 
@@ -228,7 +272,7 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                 return { success: false, error: err.message };
             }
         },
-        [canUseSupabase, user]
+        [canUseSupabase, user],
     );
 
     /**
@@ -250,7 +294,10 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                     .eq('id', requestId);
 
                 if (error) {
-                    console.error('[useSocialData] Error accepting friend request:', error);
+                    console.error(
+                        '[useSocialData] Error accepting friend request:',
+                        error,
+                    );
                     return { success: false, error: 'Error al aceptar solicitud' };
                 }
 
@@ -260,7 +307,7 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                 return { success: false, error: err.message };
             }
         },
-        [canUseSupabase]
+        [canUseSupabase],
     );
 
     /**
@@ -279,7 +326,10 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                     .eq('id', requestId);
 
                 if (error) {
-                    console.error('[useSocialData] Error rejecting friend request:', error);
+                    console.error(
+                        '[useSocialData] Error rejecting friend request:',
+                        error,
+                    );
                     return { success: false, error: 'Error al rechazar solicitud' };
                 }
 
@@ -289,14 +339,16 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                 return { success: false, error: err.message };
             }
         },
-        [canUseSupabase]
+        [canUseSupabase],
     );
 
     /**
      * Remove an existing friend
      */
     const removeFriend = useCallback(
-        async (friendshipId: string): Promise<{ success: boolean; error?: string }> => {
+        async (
+            friendshipId: string,
+        ): Promise<{ success: boolean; error?: string }> => {
             if (!canUseSupabase || !supabase) {
                 return { success: false, error: 'No autenticado o sin conexión' };
             }
@@ -318,7 +370,7 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                 return { success: false, error: err.message };
             }
         },
-        [canUseSupabase]
+        [canUseSupabase],
     );
 
     /**
@@ -336,7 +388,7 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                 .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`);
 
             const friendIds = (friendships || []).map((f: any) =>
-                f.user_id === user.id ? f.friend_id : f.user_id
+                f.user_id === user.id ? f.friend_id : f.user_id,
             );
 
             // Include user's own activities
@@ -355,11 +407,14 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                     .order('created_at', { ascending: false })
                     .limit(50),
                 30000,
-                'fetchActivityFeed'
+                'fetchActivityFeed',
             );
 
             if (error || !activities) {
-                console.error('[useSocialData] Error fetching activity feed:', error);
+                console.error(
+                    '[useSocialData] Error fetching activity feed:',
+                    error,
+                );
                 return [];
             }
 
@@ -377,18 +432,30 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                 .in('activity_id', activityIds);
 
             // Build reaction map: { activityId: { count, hasUserReacted } }
-            const reactionMap: Record<string, { count: number; hasReacted: boolean }> = {};
+            const reactionMap: Record<
+                string,
+                { count: number; hasReacted: boolean }
+            > = {};
             activityIds.forEach((activityId: string) => {
-                const activityReactions = reactions?.filter((r: any) => r.activity_id === activityId) || [];
+                const activityReactions =
+                    reactions?.filter((r: any) => r.activity_id === activityId) ||
+                    [];
                 reactionMap[activityId] = {
                     count: activityReactions.length,
-                    hasReacted: activityReactions.some((r: any) => r.user_id === user.id),
+                    hasReacted: activityReactions.some(
+                        (r: any) => r.user_id === user.id,
+                    ),
                 };
             });
 
             return activities.map((activity: any) => {
-                const profile = profiles?.find((p: any) => p.user_id === activity.user_id);
-                const reactionData = reactionMap[activity.id] || { count: 0, hasReacted: false };
+                const profile = profiles?.find(
+                    (p: any) => p.user_id === activity.user_id,
+                );
+                const reactionData = reactionMap[activity.id] || {
+                    count: 0,
+                    hasReacted: false,
+                };
                 return {
                     id: activity.id,
                     userId: activity.user_id,
@@ -423,7 +490,7 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                     .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`);
 
                 const friendIds = (friendships || []).map((f: any) =>
-                    f.user_id === user.id ? f.friend_id : f.user_id
+                    f.user_id === user.id ? f.friend_id : f.user_id,
                 );
 
                 // Include user in leaderboard
@@ -439,7 +506,10 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                     .eq('week_start', weekStart);
 
                 if (error) {
-                    console.error('[useSocialData] Error fetching leaderboard:', error);
+                    console.error(
+                        '[useSocialData] Error fetching leaderboard:',
+                        error,
+                    );
                     return [];
                 }
 
@@ -450,25 +520,34 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                     .in('user_id', allUserIds);
 
                 // Sort by metric
-                const sortedSnapshots = [...(snapshots || [])].sort((a: any, b: any) => {
-                    switch (metric) {
-                        case 'streak':
-                            return (b.consistency_streak || 0) - (a.consistency_streak || 0);
-                        case 'workouts':
-                            return (b.workout_count || 0) - (a.workout_count || 0);
-                        case 'weight':
-                            // For weight loss, more negative is better
-                            return (a.weight_delta || 0) - (b.weight_delta || 0);
-                        case 'deficit':
-                            // For deficit, higher is better (more deficit = ate less)
-                            return (b.avg_deficit || 0) - (a.avg_deficit || 0);
-                        default:
-                            return 0;
-                    }
-                });
+                const sortedSnapshots = [...(snapshots || [])].sort(
+                    (a: any, b: any) => {
+                        switch (metric) {
+                            case 'streak':
+                                return (
+                                    (b.consistency_streak || 0) -
+                                    (a.consistency_streak || 0)
+                                );
+                            case 'workouts':
+                                return (
+                                    (b.workout_count || 0) - (a.workout_count || 0)
+                                );
+                            case 'weight':
+                                // For weight loss, more negative is better
+                                return (a.weight_delta || 0) - (b.weight_delta || 0);
+                            case 'deficit':
+                                // For deficit, higher is better (more deficit = ate less)
+                                return (b.avg_deficit || 0) - (a.avg_deficit || 0);
+                            default:
+                                return 0;
+                        }
+                    },
+                );
 
                 return sortedSnapshots.map((snapshot: any, index: number) => {
-                    const profile = profiles?.find((p: any) => p.user_id === snapshot.user_id);
+                    const profile = profiles?.find(
+                        (p: any) => p.user_id === snapshot.user_id,
+                    );
                     let value: number;
                     switch (metric) {
                         case 'streak':
@@ -501,14 +580,17 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                 return [];
             }
         },
-        [canUseSupabase, user]
+        [canUseSupabase, user],
     );
 
     /**
      * Post an activity to the feed
      */
     const postActivity = useCallback(
-        async (activityType: ActivityType, metadata: Record<string, any> = {}): Promise<void> => {
+        async (
+            activityType: ActivityType,
+            metadata: Record<string, any> = {},
+        ): Promise<void> => {
             if (!canUseSupabase || !user || !supabase) return;
 
             try {
@@ -521,14 +603,24 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                 console.error('[useSocialData] postActivity failed:', err);
             }
         },
-        [canUseSupabase, user]
+        [canUseSupabase, user],
     );
 
     /**
      * Get the user's own friend code
      */
     const fetchUserFriendCode = useCallback(async (): Promise<string | null> => {
-        if (!canUseSupabase || !user || !supabase) return null;
+        if (!canUseSupabase || !user || !supabase) {
+            console.warn(
+                '[useSocialData] fetchUserFriendCode: Not authenticated or offline',
+                {
+                    canUseSupabase,
+                    hasUser: !!user,
+                    hasSupabase: !!supabase,
+                },
+            );
+            return null;
+        }
 
         try {
             const { data, error } = await supabase
@@ -537,7 +629,34 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                 .eq('user_id', user.id)
                 .maybeSingle();
 
-            if (error || !data) return null;
+            if (error) {
+                console.error('[useSocialData] fetchUserFriendCode error:', error);
+                return null;
+            }
+
+            if (!data) {
+                console.warn(
+                    '[useSocialData] fetchUserFriendCode: No profile found for user',
+                    user.id,
+                );
+                return null;
+            }
+
+            if (!data.friend_code) {
+                console.error(
+                    '[useSocialData] fetchUserFriendCode: Profile exists but friend_code is null/empty',
+                    {
+                        userId: user.id,
+                        data,
+                    },
+                );
+                return null;
+            }
+
+            console.log(
+                '[useSocialData] fetchUserFriendCode success:',
+                data.friend_code,
+            );
             return data.friend_code;
         } catch (err) {
             console.error('[useSocialData] fetchUserFriendCode failed:', err);
@@ -549,7 +668,9 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
      * Toggle reaction on an activity (add if not reacted, remove if already reacted)
      */
     const toggleReaction = useCallback(
-        async (activityId: string): Promise<{ success: boolean; error?: string }> => {
+        async (
+            activityId: string,
+        ): Promise<{ success: boolean; error?: string }> => {
             if (!canUseSupabase || !user || !supabase) {
                 return { success: false, error: 'No autenticado o sin conexión' };
             }
@@ -576,7 +697,10 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                         .eq('id', existing.id);
 
                     if (deleteError) {
-                        console.error('[useSocialData] Error removing reaction:', deleteError);
+                        console.error(
+                            '[useSocialData] Error removing reaction:',
+                            deleteError,
+                        );
                         return { success: false, error: 'Error al quitar reacción' };
                     }
                 } else {
@@ -590,8 +714,14 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                         });
 
                     if (insertError) {
-                        console.error('[useSocialData] Error adding reaction:', insertError);
-                        return { success: false, error: 'Error al agregar reacción' };
+                        console.error(
+                            '[useSocialData] Error adding reaction:',
+                            insertError,
+                        );
+                        return {
+                            success: false,
+                            error: 'Error al agregar reacción',
+                        };
                     }
                 }
 
@@ -601,7 +731,7 @@ export function useSocialData(user: User | null, isOnline: boolean): UseSocialDa
                 return { success: false, error: err.message };
             }
         },
-        [canUseSupabase, user]
+        [canUseSupabase, user],
     );
 
     return {
