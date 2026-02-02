@@ -54,6 +54,25 @@
         <!-- Register Service Worker -->
         <script>
             if ('serviceWorker' in navigator) {
+                // Track when page was loaded to prevent reloading during initial auth
+                const pageLoadTime = Date.now();
+                const MIN_TIME_BEFORE_RELOAD = 15000; // 15 seconds
+
+                // Check if it's safe to reload (auth completed or enough time passed)
+                const isSafeToReload = () => {
+                    const timeSinceLoad = Date.now() - pageLoadTime;
+                    const authCompleted = sessionStorage.getItem('auth-completed') === 'true';
+
+                    console.log('[SW] Reload safety check:', {
+                        timeSinceLoad,
+                        authCompleted,
+                        minTimeRequired: MIN_TIME_BEFORE_RELOAD
+                    });
+
+                    // Safe if auth is done OR if we've been running for 15+ seconds
+                    return authCompleted || timeSinceLoad >= MIN_TIME_BEFORE_RELOAD;
+                };
+
                 window.addEventListener('load', async () => {
                     try {
                         const registration =
@@ -69,8 +88,20 @@
                                         'SW updated to:',
                                         event.data.version,
                                     );
-                                    // Auto reload without prompt to get latest version
-                                    window.location.reload();
+
+                                    if (isSafeToReload()) {
+                                        console.log('[SW] Safe to reload, reloading now...');
+                                        window.location.reload();
+                                    } else {
+                                        console.warn('[SW] NOT safe to reload yet, deferring...');
+                                        // Retry after 5 seconds
+                                        setTimeout(() => {
+                                            if (isSafeToReload()) {
+                                                console.log('[SW] Deferred reload executing...');
+                                                window.location.reload();
+                                            }
+                                        }, 5000);
+                                    }
                                 }
                             },
                         );
@@ -97,10 +128,23 @@
                     }
                 });
 
-                // Handle controllerchange - reload when new SW takes over
+                // Handle controllerchange - only reload if safe
                 navigator.serviceWorker.addEventListener('controllerchange', () => {
-                    console.log('New SW controller, reloading...');
-                    window.location.reload();
+                    console.log('[SW] New controller detected');
+
+                    if (isSafeToReload()) {
+                        console.log('[SW] Safe to reload for controller change, reloading...');
+                        window.location.reload();
+                    } else {
+                        console.warn('[SW] NOT safe to reload yet for controller change, deferring...');
+                        // Retry after 5 seconds
+                        setTimeout(() => {
+                            if (isSafeToReload()) {
+                                console.log('[SW] Deferred controller reload executing...');
+                                window.location.reload();
+                            }
+                        }, 5000);
+                    }
                 });
             }
         </script>

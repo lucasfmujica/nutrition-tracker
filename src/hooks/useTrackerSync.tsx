@@ -180,16 +180,30 @@ export const useTrackerSync = ({
 
     // Handle auth state changes
     useEffect(() => {
-        if (supabase.loading) return;
+        console.log('[TrackerSync] Auth state check:', {
+            loading: supabase.loading,
+            isAuthenticated: supabase.isAuthenticated,
+            isOnline: supabase.isOnline,
+            hasUser: !!supabase.user,
+        });
+
+        if (supabase.loading) {
+            console.log('[TrackerSync] Supabase still loading, waiting...');
+            return;
+        }
 
         if (supabase.isAuthenticated) {
-            console.log('[Auth] User authenticated, hiding auth screen');
+            console.log('[TrackerSync] User authenticated, hiding auth screen');
             setShowAuth(false);
+            // 🔒 Mark auth as completed for SW reload safety
+            sessionStorage.setItem('auth-completed', 'true');
         } else {
-            console.log('[Auth] User not authenticated, showing auth screen');
+            console.log('[TrackerSync] User not authenticated, showing auth screen');
             setShowAuth(true);
             setIsLoading(false); // Stop loading so AuthUI can be shown
             hasInitialized.current = false;
+            // Clear auth-completed flag when logged out
+            sessionStorage.removeItem('auth-completed');
         }
     }, [supabase.loading, supabase.isAuthenticated]);
 

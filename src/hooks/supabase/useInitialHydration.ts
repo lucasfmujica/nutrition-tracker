@@ -61,27 +61,63 @@ export const useInitialHydration = ({
 }: UseInitialHydrationParams) => {
     // Ref to track fallback timer for cleanup
     const fallbackTimerRef = useRef<NodeJS.Timeout | null>(null);
+    // Track previous auth state to detect changes
+    const previousAuthStateRef = useRef<boolean>(supabase.isAuthenticated);
+
+    // 🔒 CRITICAL FIX: Reset hasInitialized when auth state changes
+    // This allows re-hydration after login/logout or session recovery
+    useEffect(() => {
+        const currentAuthState = supabase.isAuthenticated;
+        const previousAuthState = previousAuthStateRef.current;
+
+        if (currentAuthState !== previousAuthState) {
+            console.log(
+                `[Data] Auth state changed: ${previousAuthState} → ${currentAuthState}, resetting hasInitialized`,
+            );
+            hasInitialized.current = false;
+            previousAuthStateRef.current = currentAuthState;
+        }
+    }, [supabase.isAuthenticated, hasInitialized]);
 
     // Load data effect
     useEffect(() => {
+        console.log('[Data] Hydration effect triggered:', {
+            supabaseLoading: supabase.loading,
+            showAuth,
+            offlineMode,
+            isAuthenticated: supabase.isAuthenticated,
+            hasUser: !!supabase.user,
+            hasInitialized: hasInitialized.current,
+        });
+
         // Basic guards
-        if (supabase.loading || showAuth === null) return;
-        if (showAuth && !offlineMode) return;
+        if (supabase.loading || showAuth === null) {
+            console.log('[Data] Guard: supabase.loading or showAuth is null, skipping');
+            return;
+        }
+        if (showAuth && !offlineMode) {
+            console.log('[Data] Guard: showAuth is true and not in offline mode, skipping');
+            return;
+        }
 
         // 🔒 CRITICAL AUTH GUARD: Prevent race condition on page refresh (F5)
         if (!supabase.isAuthenticated || !supabase.user) {
             console.log(
                 '[Data] Auth not ready, waiting for session confirmation before loading data',
+                { isAuthenticated: supabase.isAuthenticated, hasUser: !!supabase.user }
             );
             return;
         }
 
-        if (hasInitialized.current) return;
+        if (hasInitialized.current) {
+            console.log('[Data] Already initialized, skipping data load');
+            return;
+        }
 
         // ✅ Mark as initialized ONLY after auth is confirmed
         hasInitialized.current = true;
         console.log(
-            '[Data] Starting data load with authenticated user:',
+            '[Data] ✅ Starting data load with authenticated user:',
             supabase.user?.email,
         );
 
@@ -115,6 +151,10 @@ export const useInitialHydration = ({
                 }
                 console.log(`[Data] Loading resolved via: ${source}`);
                 setIsLoading(false);
+
+                // 🔒 Mark auth/data load as completed for SW reload safety
+                // This signals it's safe for service worker to reload the app
+                sessionStorage.setItem('auth-completed', 'true');
             };
 
             try {
@@ -353,6 +393,10 @@ export const useInitialHydration = ({
                     } else {
                         // 🔒 IMPROVED TIMEOUT FEEDBACK: Clear action message for user
                         if (timeoutOccurred && !hasCachedData) {
+                            // 🔒 CRITICAL FIX: Reset hasInitialized on timeout to allow retry
+                            console.log('[Data] Supabase timeout with no cache, resetting hasInitialized for retry');
+                            hasInitialized.current = false;
+
                             resolveLoading('supabase-timeout-no-cache');
                             setSaveStatus(
                                 '❌ Error de conexión - Recargá la página para reintentar',
@@ -375,6 +419,10 @@ export const useInitialHydration = ({
                                 '[Data] Timeout occurred but showing cached data',
                             );
                         } else if (!hasCachedData) {
+                            // 🔒 CRITICAL FIX: Reset hasInitialized when no data available
+                            console.log('[Data] No Supabase data and no cache, resetting hasInitialized');
+                            hasInitialized.current = false;
+
                             resolveLoading('supabase-no-data-no-cache');
                             setSaveStatus('⚠️ Sin conexión');
                             setTimeout(() => setSaveStatus(''), 3000);
@@ -388,10 +436,19 @@ export const useInitialHydration = ({
                 }
             } catch (err) {
                 console.error('[Data] Error loading data:', err);
+
+                // 🔒 CRITICAL FIX: Reset hasInitialized on error to allow retry
+                console.log('[Data] Resetting hasInitialized due to error, will retry on next render');
+                hasInitialized.current = false;
+
                 // Ensure loading is resolved on error
                 if (!loadingResolved) {
                     resolveLoading('error-fallback');
                 }
+
+                // Show user-friendly error message
+                setSaveStatus('❌ Error al cargar - Reintentando...');
+                setTimeout(() => setSaveStatus(''), 3000);
             }
             // Note: No finally block needed - resolveLoading handles all cases
         };

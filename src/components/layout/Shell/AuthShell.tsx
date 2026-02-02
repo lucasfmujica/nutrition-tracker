@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTracker } from '../../../context/TrackerContext';
 import { AuthUI } from '../../auth/AuthUI';
 import { OnboardingWizard } from '../../onboarding/OnboardingWizard';
@@ -18,9 +18,51 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
         offlineMode,
         setOfflineMode,
         isLoading,
+        setIsLoading,
         setProfile,
         setCustomTargets,
     } = useTracker();
+
+    // Emergency timeout to prevent infinite loading
+    const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+    const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    // 🚨 EMERGENCY TIMEOUT: Prevent infinite loading state
+    // If isLoading is true for more than 30 seconds, force exit and show error
+    useEffect(() => {
+        if (isLoading && showAuth === false && !supabase.loading) {
+            console.log('[AuthShell] Loading started, setting 30s emergency timeout');
+
+            loadingTimeoutRef.current = setTimeout(() => {
+                console.error('[AuthShell] EMERGENCY: Loading timeout after 30s, forcing exit');
+                setLoadingTimedOut(true);
+                setIsLoading(false);
+            }, 30000);
+        } else {
+            // Clear timeout if loading finished normally
+            if (loadingTimeoutRef.current) {
+                console.log('[AuthShell] Loading finished, clearing emergency timeout');
+                clearTimeout(loadingTimeoutRef.current);
+                loadingTimeoutRef.current = null;
+            }
+            // Reset timeout flag when loading starts again
+            if (isLoading) {
+                setLoadingTimedOut(false);
+            }
+        }
+
+        return () => {
+            if (loadingTimeoutRef.current) {
+                clearTimeout(loadingTimeoutRef.current);
+                loadingTimeoutRef.current = null;
+            }
+        };
+    }, [isLoading, showAuth, supabase.loading, setIsLoading]);
+
+    const handleRetry = () => {
+        console.log('[AuthShell] User requested retry, reloading page');
+        window.location.reload();
+    };
 
     const handleSignIn = async (email: string, password: string) => {
         try {
@@ -126,6 +168,43 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
 
     if (showOnboarding && !offlineMode) {
         return <OnboardingWizard onComplete={handleOnboardingComplete} />;
+    }
+
+    // 🚨 Show error screen if loading timed out
+    if (loadingTimedOut) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
+                <div className="max-w-md w-full bg-white/10 backdrop-blur-lg rounded-2xl p-8 text-center">
+                    <div className="text-6xl mb-4">⚠️</div>
+                    <h1 className="text-2xl font-bold text-white mb-4">Error de Carga</h1>
+                    <p className="text-white/80 mb-6">
+                        La aplicación está tardando demasiado en cargar.
+                        Esto puede deberse a problemas de conexión o datos en caché corruptos.
+                    </p>
+                    <div className="space-y-3">
+                        <button
+                            onClick={handleRetry}
+                            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                        >
+                            🔄 Reintentar
+                        </button>
+                        <button
+                            onClick={() => {
+                                localStorage.clear();
+                                indexedDB.deleteDatabase('nutrition-tracker');
+                                window.location.reload();
+                            }}
+                            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                        >
+                            🗑️ Limpiar Datos y Reintentar
+                        </button>
+                    </div>
+                    <p className="text-white/60 text-sm mt-4">
+                        Si el problema persiste, intenta acceder desde otro dispositivo.
+                    </p>
+                </div>
+            </div>
+        );
     }
 
     if (showAuth === null || (isLoading && showAuth === false)) {
