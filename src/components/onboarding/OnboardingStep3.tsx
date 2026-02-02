@@ -4,7 +4,6 @@ interface OnboardingStep3Props {
     data: {
         trainingDaysPerWeek: number;
         currentWeight: string;
-        goalWeight: string;
         calorieGoal: string;
         proteinGoal: string;
         hasOuraRing?: boolean;
@@ -127,10 +126,6 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
                     <div className="text-gray-400">Peso actual:</div>
                     <div className="text-white font-medium">
                         {data.currentWeight || '-'} kg
-                    </div>
-                    <div className="text-gray-400">Objetivo:</div>
-                    <div className="text-white font-medium">
-                        {data.goalWeight || data.currentWeight || '-'} kg
                     </div>
                     <div className="text-gray-400">Calorías diarias:</div>
                     <div className="text-white font-medium">

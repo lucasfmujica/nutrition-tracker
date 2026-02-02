@@ -193,9 +193,14 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
                 return;
             }
 
-            // Refresh friends list to get new friend
-            const newFriends = await socialData.fetchFriends();
+            // Refresh both friends list AND friend requests to ensure consistency
+            const [newFriends, newRequests] = await Promise.all([
+                socialData.fetchFriends(),
+                socialData.fetchFriendRequests(),
+            ]);
+
             setFriends(newFriends);
+            setFriendRequests(newRequests);
 
             // Post friend added activity (fire and forget)
             if (supabase.user?.id && request) {

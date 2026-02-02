@@ -30,6 +30,7 @@ export interface Periodization {
 
 interface WeeklyPlanningCardProps {
     periodization: Periodization | null;
+    targetWeight: number;
 }
 
 /**
@@ -37,6 +38,7 @@ interface WeeklyPlanningCardProps {
  */
 export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
     periodization,
+    targetWeight,
 }) => {
     if (!periodization?.weekDays) return null;
 
@@ -201,7 +203,7 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
                         isOnTrack ? 'text-green-700' : 'text-amber-700'
                     }`}>
                     {isOnTrack
-                        ? '✓ En camino a 75 kg'
+                        ? `✓ En camino a ${targetWeight} kg`
                         : '⚠️ Ajusta intensidad para mantener déficit'}
                 </span>
             </div>

@@ -4,7 +4,6 @@ interface OnboardingStep1Props {
     data: {
         name: string;
         currentWeight: string;
-        goalWeight: string;
         height: string;
         age: string;
         gender: string;
@@ -66,21 +65,6 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                 </div>
                 <div>
                     <label className="block text-sm text-gray-400 mb-1.5">
-                        Peso objetivo (kg)
-                    </label>
-                    <input
-                        type="number"
-                        value={data.goalWeight}
-                        onChange={(e) => updateField('goalWeight', e.target.value)}
-                        placeholder="70"
-                        className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white text-center text-lg"
-                    />
-                </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label className="block text-sm text-gray-400 mb-1.5">
                         Altura (cm) *
                     </label>
                     <input
@@ -91,18 +75,17 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                         className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white text-center text-lg"
                     />
                 </div>
-                <div>
-                    <label className="block text-sm text-gray-400 mb-1.5">
-                        Edad *
-                    </label>
-                    <input
-                        type="number"
-                        value={data.age}
-                        onChange={(e) => updateField('age', e.target.value)}
-                        placeholder="27"
-                        className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white text-center text-lg"
-                    />
-                </div>
+            </div>
+
+            <div>
+                <label className="block text-sm text-gray-400 mb-1.5">Edad *</label>
+                <input
+                    type="number"
+                    value={data.age}
+                    onChange={(e) => updateField('age', e.target.value)}
+                    placeholder="27"
+                    className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white text-center text-lg"
+                />
             </div>
 
             <div>

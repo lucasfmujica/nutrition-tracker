@@ -165,7 +165,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         if (isSafetyNetActive(dashboardDate)) {
             calculatedTargets = {
                 ...dashboardTargets,
-                calories: profile?.tdee || 2500,
+                calories: profile?.tdee || dashboardTargets.calories + 500,
             };
         } else if (periodizedDay) {
             calculatedTargets = {
@@ -284,7 +284,10 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                 <div className="lg:w-4/12 space-y-4 lg:space-y-6">
                     <PlateauAlertCard plateauData={plateauData} />
 
-                    <WeeklyPlanningCard periodization={weeklyPeriodization} />
+                    <WeeklyPlanningCard
+                        periodization={weeklyPeriodization}
+                        targetWeight={profile?.targetWeight || 75}
+                    />
 
                     <MealTimingCard insights={mealTimingInsights} />
 

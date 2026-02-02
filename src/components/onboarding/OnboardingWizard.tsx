@@ -18,11 +18,10 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         // Step 1: Physical stats
         name: '',
         currentWeight: '',
-        goalWeight: '',
         height: '',
         age: '',
         gender: 'male',
-        // Step 2: Goals
+        // Step 2: Goals (auto-calculated)
         calorieGoal: '',
         proteinGoal: '',
         carbsGoal: '',
@@ -30,7 +29,6 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         // Step 3: Training & Devices
         trainingDaysPerWeek: 4,
         primaryGoal: 'maintain',
-        activityLevel: 'moderate',
         hasOuraRing: false, // Multi-user: Oura Ring support
     });
 
@@ -45,33 +43,58 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         const height = parseFloat(data.height) || 170;
         const age = parseFloat(data.age) || 30;
         const isMale = data.gender === 'male';
+        const trainingDays = data.trainingDaysPerWeek || 4;
 
+        // Calcular BMR (Mifflin-St Jeor)
         let bmr = isMale
             ? 10 * weight + 6.25 * height - 5 * age + 5
             : 10 * weight + 6.25 * height - 5 * age - 161;
 
-        const multipliers: Record<string, number> = {
-            sedentary: 1.2,
-            light: 1.375,
-            moderate: 1.55,
-            active: 1.725,
-            very_active: 1.9,
-        };
-        const tdee = bmr * (multipliers[data.activityLevel] || 1.55);
+        // Inferir nivel de actividad según días de entrenamiento
+        let activityMultiplier = 1.55; // moderate por defecto
+        if (trainingDays <= 1)
+            activityMultiplier = 1.2; // sedentary
+        else if (trainingDays <= 2)
+            activityMultiplier = 1.375; // light
+        else if (trainingDays <= 4)
+            activityMultiplier = 1.55; // moderate
+        else if (trainingDays <= 6)
+            activityMultiplier = 1.725; // active
+        else activityMultiplier = 1.9; // very_active
 
+        const tdee = bmr * activityMultiplier;
+
+        // Ajustar calorías según objetivo
         let calories = tdee;
-        if (data.primaryGoal === 'lose') calories -= 500;
-        if (data.primaryGoal === 'gain') calories += 300;
+        if (data.primaryGoal === 'lose') calories -= 500; // déficit de 500 kcal
+        if (data.primaryGoal === 'gain') calories += 300; // superávit de 300 kcal
+
+        // Proteína basada en peso corporal (más preciso para entrenamiento)
+        // Lose: 2.2g/kg, Maintain: 1.8g/kg, Gain: 2.0g/kg
+        let proteinPerKg = 1.8;
+        if (data.primaryGoal === 'lose') proteinPerKg = 2.2;
+        if (data.primaryGoal === 'gain') proteinPerKg = 2.0;
+
+        const protein = Math.round(weight * proteinPerKg);
+        const proteinCalories = protein * 4;
+
+        // Grasa: 25-30% de calorías totales
+        const fatCalories = calories * 0.28;
+        const fat = Math.round(fatCalories / 9);
+
+        // Carbohidratos: el resto de calorías
+        const carbCalories = calories - proteinCalories - fatCalories;
+        const carbs = Math.round(carbCalories / 4);
 
         return {
             calories: Math.round(calories),
-            protein: Math.round((calories * 0.3) / 4),
-            carbs: Math.round((calories * 0.4) / 4),
-            fat: Math.round((calories * 0.3) / 9),
+            protein,
+            carbs,
+            fat,
         };
     }, []);
 
-    // Auto-recalculate on Step 2 entry or goal/activity change
+    // Auto-recalculate on Step 2 entry or when training days/goal change
     useEffect(() => {
         if (
             step === 2 &&
@@ -81,7 +104,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         ) {
             handleAutoCalculate();
         }
-    }, [step, formData.primaryGoal, formData.activityLevel]);
+    }, [step, formData.primaryGoal, formData.trainingDaysPerWeek]);
 
     const handleAutoCalculate = () => {
         const suggested = calculateMacros(formData);
@@ -97,22 +120,41 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
     const handleSubmit = async () => {
         setIsSubmitting(true);
         try {
+            const currentWeight = parseFloat(formData.currentWeight) || 70;
+
+            // Inferir goal_weight basado en primaryGoal
+            let goalWeight = currentWeight;
+            if (formData.primaryGoal === 'lose') {
+                goalWeight = currentWeight - 5; // objetivo: -5kg
+            } else if (formData.primaryGoal === 'gain') {
+                goalWeight = currentWeight + 3; // objetivo: +3kg
+            }
+
+            // Inferir activity_level basado en trainingDaysPerWeek
+            let activityLevel = 'moderate';
+            const days = formData.trainingDaysPerWeek;
+            if (days <= 1) activityLevel = 'sedentary';
+            else if (days <= 2) activityLevel = 'light';
+            else if (days <= 4) activityLevel = 'moderate';
+            else if (days <= 6) activityLevel = 'active';
+            else activityLevel = 'very_active';
+
             // Maps to snake_case for Supabase
             await onComplete({
                 name: formData.name,
-                current_weight: parseFloat(formData.currentWeight) || null,
-                goal_weight: parseFloat(formData.goalWeight) || null,
+                current_weight: currentWeight,
+                goal_weight: goalWeight,
                 height: parseFloat(formData.height) || null,
                 age: parseInt(formData.age) || null,
-                gender: formData.gender, // string
+                gender: formData.gender,
                 calorie_goal: parseInt(formData.calorieGoal) || 2200,
                 protein_goal: parseInt(formData.proteinGoal) || 150,
                 carbs_goal: parseInt(formData.carbsGoal) || 220,
                 fat_goal: parseInt(formData.fatGoal) || 73,
                 training_days_per_week: formData.trainingDaysPerWeek,
-                primary_goal: formData.primaryGoal, // string
-                activity_level: formData.activityLevel, // string
-                has_oura_ring: formData.hasOuraRing, // Multi-user: Oura Ring support
+                primary_goal: formData.primaryGoal,
+                activity_level: activityLevel,
+                has_oura_ring: formData.hasOuraRing,
                 onboarding_completed: true,
             });
         } catch (err) {
