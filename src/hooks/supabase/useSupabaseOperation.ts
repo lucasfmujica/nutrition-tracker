@@ -93,10 +93,12 @@ export function useSupabaseOperation(): UseSupabaseOperationReturn {
 
     /**
      * wraps a promise with a timeout to prevent hanging operations
+     * 🔒 CRITICAL FIX: Reduced default timeout from 120s to 12s
+     * If Supabase is slow, fail fast and let app use stale cache
      */
     const withTimeout = async <T>(
         promise: Promise<T> | PromiseLike<T>,
-        timeoutMs = 120000,
+        timeoutMs = 12000,
         operationName = 'Operation',
     ): Promise<T> => {
         let timeoutId: NodeJS.Timeout;
@@ -125,8 +127,8 @@ export function useSupabaseOperation(): UseSupabaseOperationReturn {
             {
                 canUseSupabase = true,
                 errorMessage = 'Error de sincronización',
-                timeout = 120000,
-                maxRetries = 3,
+                timeout = 12000, // Reduced from 120s to 12s
+                maxRetries = 2, // Reduced from 3 to 2
                 enableRetry = true,
             }: SyncOptions = {},
         ): Promise<T | { data: null; error: any }> => {

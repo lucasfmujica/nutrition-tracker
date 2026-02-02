@@ -243,12 +243,12 @@ export const useInitialHydration = ({
                     resolveLoading('fresh-cache'); // Instant load with fresh cache
                 } else if (hasCachedData && hasAnyStaleness) {
                     // We have stale cache - set fallback timer to show it if Supabase is too slow
-                    // INCREASED to 8 seconds to give Supabase more time on cold starts/PWA resume
+                    // 🔒 CRITICAL FIX: Reduced from 8s to 3s for faster fallback
                     fallbackTimerRef.current = setTimeout(() => {
                         if (loadingResolved) return; // Already resolved, skip fallback
 
                         console.warn(
-                            '[Data] Supabase slow (>8s), falling back to stale cache',
+                            '[Data] Supabase slow (>3s), falling back to stale cache',
                         );
                         if (
                             cached.localProfile &&
@@ -280,7 +280,7 @@ export const useInitialHydration = ({
                         setSaveStatus(
                             '⚠️ Mostrando datos antiguos - Actualizando en segundo plano...',
                         );
-                    }, 8000); // 8-second grace period (increased from 3s)
+                    }, 3000); // 3-second grace period for fast fallback to cache
                 }
 
                 // Fetch from Supabase if authenticated and online
