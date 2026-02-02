@@ -58,19 +58,44 @@
                 const pageLoadTime = Date.now();
                 const MIN_TIME_BEFORE_RELOAD = 15000; // 15 seconds
 
+                // 🔒 CRITICAL FIX: Clear auth-completed flag on page load
+                // This prevents infinite reload loops caused by sessionStorage persistence
+                sessionStorage.removeItem('auth-completed');
+
+                // Track last reload to prevent duplicate reloads
+                let lastReloadTime = 0;
+                const MIN_TIME_BETWEEN_RELOADS = 2000; // 2 seconds debounce
+
                 // Check if it's safe to reload (auth completed or enough time passed)
                 const isSafeToReload = () => {
                     const timeSinceLoad = Date.now() - pageLoadTime;
+                    const timeSinceLastReload = Date.now() - lastReloadTime;
                     const authCompleted = sessionStorage.getItem('auth-completed') === 'true';
 
                     console.log('[SW] Reload safety check:', {
                         timeSinceLoad,
+                        timeSinceLastReload,
                         authCompleted,
                         minTimeRequired: MIN_TIME_BEFORE_RELOAD
                     });
 
+                    // Prevent duplicate reloads within 2 seconds
+                    if (timeSinceLastReload < MIN_TIME_BETWEEN_RELOADS && lastReloadTime > 0) {
+                        console.log('[SW] Reload debounced (too soon since last reload)');
+                        return false;
+                    }
+
                     // Safe if auth is done OR if we've been running for 15+ seconds
                     return authCompleted || timeSinceLoad >= MIN_TIME_BEFORE_RELOAD;
+                };
+
+                // Perform reload with cleanup
+                const performReload = () => {
+                    lastReloadTime = Date.now();
+                    // Clear flag before reload to prevent loop
+                    sessionStorage.removeItem('auth-completed');
+                    console.log('[SW] Reloading...');
+                    window.location.reload();
                 };
 
                 window.addEventListener('load', async () => {
@@ -91,14 +116,14 @@
 
                                     if (isSafeToReload()) {
                                         console.log('[SW] Safe to reload, reloading now...');
-                                        window.location.reload();
+                                        performReload();
                                     } else {
                                         console.warn('[SW] NOT safe to reload yet, deferring...');
                                         // Retry after 5 seconds
                                         setTimeout(() => {
                                             if (isSafeToReload()) {
                                                 console.log('[SW] Deferred reload executing...');
-                                                window.location.reload();
+                                                performReload();
                                             }
                                         }, 5000);
                                     }
@@ -134,14 +159,14 @@
 
                     if (isSafeToReload()) {
                         console.log('[SW] Safe to reload for controller change, reloading...');
-                        window.location.reload();
+                        performReload();
                     } else {
                         console.warn('[SW] NOT safe to reload yet for controller change, deferring...');
                         // Retry after 5 seconds
                         setTimeout(() => {
                             if (isSafeToReload()) {
                                 console.log('[SW] Deferred controller reload executing...');
-                                window.location.reload();
+                                performReload();
                             }
                         }, 5000);
                     }
