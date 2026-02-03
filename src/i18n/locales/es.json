@@ -213,5 +213,129 @@
     },
     "navigation": {
         "back": "Volver"
+    },
+    "common": {
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "edit": "Editar",
+        "add": "Agregar",
+        "new": "Nuevo",
+        "search": "Buscar",
+        "filter": "Filtrar",
+        "close": "Cerrar",
+        "confirm": "Confirmar",
+        "continue": "Continuar",
+        "back": "Volver",
+        "next": "Siguiente",
+        "prev": "Anterior",
+        "loading": "Cargando...",
+        "error": "Error",
+        "success": "Éxito",
+        "optional": "Opcional",
+        "required": "Requerido",
+        "yes": "Sí",
+        "no": "No",
+        "or": "O",
+        "and": "Y",
+        "of": "de",
+        "at": "a las",
+        "today": "Hoy",
+        "yesterday": "Ayer",
+        "tomorrow": "Mañana"
+    },
+    "modals": {
+        "deleteConfirm": {
+            "title": "¿Eliminar?",
+            "cancel": "Cancelar",
+            "confirm": "Eliminar"
+        },
+        "foodForm": {
+            "titleAdd": "Agregar Comida",
+            "titleEdit": "Editar Comida",
+            "name": "Nombre",
+            "namePlaceholder": "Ej: Pollo con arroz",
+            "description": "Descripción",
+            "descriptionPlaceholder": "Opcional",
+            "meal": "Comida",
+            "date": "Fecha",
+            "time": "Hora",
+            "macros": "Macros",
+            "calories": "Calorías",
+            "protein": "Proteína (g)",
+            "carbs": "Carbos (g)",
+            "fat": "Grasas (g)",
+            "fiber": "Fibra (g)",
+            "save": "Guardar",
+            "cancel": "Cancelar",
+            "aiConfidence": "Confianza AI",
+            "reviewed": "Revisado"
+        },
+        "foodSearch": {
+            "title": "Buscar Comida",
+            "searchPlaceholder": "Buscar en tus comidas...",
+            "noResults": "No se encontraron resultados",
+            "selectMeal": "Seleccionar comida para agregar"
+        },
+        "workoutForm": {
+            "titleAdd": "Agregar Entreno",
+            "titleEdit": "Editar Entreno",
+            "name": "Nombre",
+            "type": "Tipo",
+            "date": "Fecha",
+            "duration": "Duración (min)",
+            "calories": "Calorías",
+            "notes": "Notas",
+            "exercises": "Ejercicios"
+        }
+    },
+    "onboarding": {
+        "welcome": "Bienvenido",
+        "step1": {
+            "title": "Datos Básicos",
+            "name": "Nombre",
+            "currentWeight": "Peso Actual",
+            "height": "Altura",
+            "age": "Edad",
+            "gender": "Género"
+        },
+        "step2": {
+            "title": "Objetivos",
+            "calorieGoal": "Meta Calorías",
+            "proteinGoal": "Meta Proteína",
+            "carbsGoal": "Meta Carbos",
+            "fatGoal": "Meta Grasas",
+            "autoCalculate": "Calcular Automáticamente"
+        },
+        "step3": {
+            "title": "Entrenamiento",
+            "trainingDays": "Días de Entrenamiento",
+            "goal": "Objetivo Principal",
+            "hasOuraRing": "¿Tienes Oura Ring?"
+        },
+        "complete": "Completar Setup"
+    },
+    "steps": {
+        "title": "Pasos",
+        "subtitle": "Registro de actividad diaria",
+        "today": "Hoy",
+        "goal": "Meta",
+        "remaining": "Restantes",
+        "addSteps": "Agregar Pasos",
+        "stepsPlaceholder": "8000",
+        "save": "Guardar"
+    },
+    "workouts": {
+        "title": "Entrenos",
+        "subtitle": "Historial de entrenamientos",
+        "addWorkout": "Agregar Entreno",
+        "noWorkouts": "Sin entrenos registrados",
+        "duration": "Duración",
+        "calories": "Calorías",
+        "exercises": "Ejercicios",
+        "notes": "Notas",
+        "weeklyPlan": "Plan Semanal",
+        "edit": "Editar",
+        "done": "Listo"
     }
 }

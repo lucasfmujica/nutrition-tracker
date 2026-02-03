@@ -213,5 +213,129 @@
     },
     "navigation": {
         "back": "Back"
+    },
+    "common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "add": "Add",
+        "new": "New",
+        "search": "Search",
+        "filter": "Filter",
+        "close": "Close",
+        "confirm": "Confirm",
+        "continue": "Continue",
+        "back": "Back",
+        "next": "Next",
+        "prev": "Previous",
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success",
+        "optional": "Optional",
+        "required": "Required",
+        "yes": "Yes",
+        "no": "No",
+        "or": "Or",
+        "and": "And",
+        "of": "of",
+        "at": "at",
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "tomorrow": "Tomorrow"
+    },
+    "modals": {
+        "deleteConfirm": {
+            "title": "Delete?",
+            "cancel": "Cancel",
+            "confirm": "Delete"
+        },
+        "foodForm": {
+            "titleAdd": "Add Food",
+            "titleEdit": "Edit Food",
+            "name": "Name",
+            "namePlaceholder": "e.g: Chicken with rice",
+            "description": "Description",
+            "descriptionPlaceholder": "Optional",
+            "meal": "Meal",
+            "date": "Date",
+            "time": "Time",
+            "macros": "Macros",
+            "calories": "Calories",
+            "protein": "Protein (g)",
+            "carbs": "Carbs (g)",
+            "fat": "Fat (g)",
+            "fiber": "Fiber (g)",
+            "save": "Save",
+            "cancel": "Cancel",
+            "aiConfidence": "AI Confidence",
+            "reviewed": "Reviewed"
+        },
+        "foodSearch": {
+            "title": "Search Food",
+            "searchPlaceholder": "Search your foods...",
+            "noResults": "No results found",
+            "selectMeal": "Select meal to add"
+        },
+        "workoutForm": {
+            "titleAdd": "Add Workout",
+            "titleEdit": "Edit Workout",
+            "name": "Name",
+            "type": "Type",
+            "date": "Date",
+            "duration": "Duration (min)",
+            "calories": "Calories",
+            "notes": "Notes",
+            "exercises": "Exercises"
+        }
+    },
+    "onboarding": {
+        "welcome": "Welcome",
+        "step1": {
+            "title": "Basic Info",
+            "name": "Name",
+            "currentWeight": "Current Weight",
+            "height": "Height",
+            "age": "Age",
+            "gender": "Gender"
+        },
+        "step2": {
+            "title": "Goals",
+            "calorieGoal": "Calorie Goal",
+            "proteinGoal": "Protein Goal",
+            "carbsGoal": "Carbs Goal",
+            "fatGoal": "Fat Goal",
+            "autoCalculate": "Calculate Automatically"
+        },
+        "step3": {
+            "title": "Training",
+            "trainingDays": "Training Days",
+            "goal": "Main Goal",
+            "hasOuraRing": "Do you have an Oura Ring?"
+        },
+        "complete": "Complete Setup"
+    },
+    "steps": {
+        "title": "Steps",
+        "subtitle": "Daily activity tracking",
+        "today": "Today",
+        "goal": "Goal",
+        "remaining": "Remaining",
+        "addSteps": "Add Steps",
+        "stepsPlaceholder": "8000",
+        "save": "Save"
+    },
+    "workouts": {
+        "title": "Workouts",
+        "subtitle": "Training history",
+        "addWorkout": "Add Workout",
+        "noWorkouts": "No workouts recorded",
+        "duration": "Duration",
+        "calories": "Calories",
+        "exercises": "Exercises",
+        "notes": "Notes",
+        "weeklyPlan": "Weekly Plan",
+        "edit": "Edit",
+        "done": "Done"
     }
 }
