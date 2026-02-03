@@ -1,5 +1,6 @@
 import { Activity, Sparkles } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityItem as ActivityItemType } from '../../types/domain';
 import { ActivityItemComponent } from './ActivityItem';
 import { EmptyState } from './EmptyState';
@@ -15,6 +16,8 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
     loading = false,
     onToggleReaction,
 }) => {
+    const { t } = useTranslation();
+
     return (
         <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
             {/* Header */}
@@ -23,9 +26,11 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                     <Sparkles size={20} className="text-indigo-500" />
                 </div>
                 <div>
-                    <h2 className="font-bold text-slate-900 text-lg">Actividad</h2>
+                    <h2 className="font-bold text-slate-900 text-lg">
+                        {t('social.feed.title')}
+                    </h2>
                     <p className="text-xs text-slate-500 font-medium">
-                        Últimos 7 días
+                        {t('social.feed.subtitle')}
                     </p>
                 </div>
             </div>
@@ -48,8 +53,8 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
             ) : activities.length === 0 ? (
                 <EmptyState
                     icon={Activity}
-                    title="Sin actividad reciente"
-                    description="Cuando tú o tus amigos registren actividades, aparecerán aquí"
+                    title={t('social.feed.noActivity')}
+                    description={t('social.feed.noActivityDesc')}
                 />
             ) : (
                 <div className="max-h-96 overflow-y-auto -mx-2 px-2 space-y-1 custom-scrollbar">

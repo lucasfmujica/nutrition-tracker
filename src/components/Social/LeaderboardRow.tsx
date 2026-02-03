@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { LeaderboardEntry, LeaderboardMetric } from '../../types/domain';
 
 import { UserAvatar } from './UserAvatar';
@@ -9,6 +10,8 @@ interface LeaderboardRowProps {
 }
 
 export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ entry, metric }) => {
+    const { t, i18n } = useTranslation();
+
     const getRankDisplay = (rank: number) => {
         if (rank === 1)
             return { emoji: '🥇', bg: 'bg-amber-50', text: 'text-amber-600' };
@@ -20,11 +23,14 @@ export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ entry, metric })
     };
 
     const formatValue = (value: number, metric: LeaderboardMetric): string => {
+        const daysLabel = i18n.language === 'es' ? 'días' : 'days';
+        const workoutsLabel = i18n.language === 'es' ? 'entrenos' : 'workouts';
+
         switch (metric) {
             case 'streak':
-                return `${value} días`;
+                return `${value} ${daysLabel}`;
             case 'workouts':
-                return `${value} entrenos`;
+                return `${value} ${workoutsLabel}`;
             case 'weight':
                 const sign = value < 0 ? '' : '+';
                 return `${sign}${value.toFixed(1)} kg`;
@@ -71,7 +77,7 @@ export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ entry, metric })
                     {entry.name}
                     {entry.isCurrentUser && (
                         <span className="text-xs font-medium text-primary/60 ml-2">
-                            (Tú)
+                            {t('social.leaderboard.you')}
                         </span>
                     )}
                 </p>

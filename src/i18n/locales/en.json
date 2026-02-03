@@ -168,6 +168,71 @@
             "back": "Back",
             "other": "Other"
         },
+        "social": {
+            "title": "Social",
+            "subtitle": "Connect with friends",
+            "invite": "Invite",
+            "feed": {
+                "title": "Activity",
+                "subtitle": "Last 7 days",
+                "noActivity": "No recent activity",
+                "noActivityDesc": "When you or your friends log activities, they will appear here"
+            },
+            "friends": {
+                "title": "Friends",
+                "count_one": "{{count}} friend",
+                "count_other": "{{count}} friends",
+                "addFriend": "Add friend",
+                "requests": "Friend Requests",
+                "pending_one": "pending",
+                "pending_other": "pending",
+                "noFriends": "No friends yet",
+                "noFriendsDesc": "Add friends to see their progress and compete in the Leaderboard",
+                "remove": "Remove friend",
+                "confirmRemove": "Confirm removal"
+            },
+            "leaderboard": {
+                "title": "Leaderboard",
+                "subtitle": "This week",
+                "noData": "No data",
+                "noDataDesc": "Add friends to see the leaderboard",
+                "you": "(You)",
+                "metrics": {
+                    "streak": "Streak",
+                    "workouts": "Workouts",
+                    "weight": "Weight",
+                    "deficit": "Deficit"
+                }
+            },
+            "addFriend": {
+                "title": "Add Friend",
+                "yourCode": "Your Friend Code",
+                "shareTip": "Share this code with your friends",
+                "childTip": "or",
+                "friendCode": "Friend's Code",
+                "placeholder": "Ex: ABCD1234",
+                "send": "Send Request",
+                "sending": "Sending...",
+                "sent": "Request sent",
+                "error": "Error sending request"
+            },
+            "activity": {
+                "workout_logged": "logged a workout",
+                "weight_milestone": "reached a weight milestone",
+                "streak_achieved": "achieved a streak",
+                "goal_reached": "reached their goal",
+                "friend_added": "added a friend",
+                "default": "activity",
+                "ago": "{{time}} ago",
+                "now": "just now"
+            },
+            "requests": {
+                "sent": "Request sent {{time}}",
+                "today": "Today",
+                "yesterday": "Yesterday",
+                "daysAgo": "{{count}} days ago"
+            }
+        },
         "foodItem": {
             "needsReview": "Needs Review",
             "saveFavorite": "Save as favorite",

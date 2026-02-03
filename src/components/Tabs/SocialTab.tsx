@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronUp, RefreshCw, UserPlus, Users } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     ActivityItem,
     Friend,
@@ -61,6 +62,7 @@ export const SocialTab: React.FC<SocialTabProps> = ({
     onRefresh,
     onToggleReaction,
 }) => {
+    const { t } = useTranslation();
     const [requestsExpanded, setRequestsExpanded] = useState(true);
 
     return (
@@ -70,10 +72,10 @@ export const SocialTab: React.FC<SocialTabProps> = ({
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
                         <Users size={28} className="text-primary" />
-                        Crew
+                        {t('social.title')}
                     </h1>
                     <p className="text-sm text-slate-500 font-medium">
-                        Conecta con amigos
+                        {t('social.subtitle')}
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -90,7 +92,9 @@ export const SocialTab: React.FC<SocialTabProps> = ({
                         onClick={() => onShowAddFriendModal(true)}
                         className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-95">
                         <UserPlus size={18} />
-                        <span className="hidden sm:inline">Invitar</span>
+                        <span className="hidden sm:inline">
+                            {t('social.invite')}
+                        </span>
                     </button>
                 </div>
             </div>
@@ -107,13 +111,13 @@ export const SocialTab: React.FC<SocialTabProps> = ({
                             </div>
                             <div className="text-left">
                                 <h3 className="font-bold text-slate-900">
-                                    Solicitudes de Amistad
+                                    {t('social.friends.requests')}
                                 </h3>
                                 <p className="text-xs text-rose-600 font-medium">
                                     {friendRequests.length}{' '}
-                                    {friendRequests.length === 1
-                                        ? 'pendiente'
-                                        : 'pendientes'}
+                                    {t('social.friends.pending', {
+                                        count: friendRequests.length,
+                                    })}
                                 </p>
                             </div>
                         </div>

@@ -1,5 +1,6 @@
-import { Dumbbell, Flame, Scale, Trophy, TrendingDown } from 'lucide-react';
+import { Dumbbell, Flame, Scale, TrendingDown, Trophy } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { LeaderboardEntry, LeaderboardMetric } from '../../types/domain';
 import { EmptyState } from './EmptyState';
 import { LeaderboardRow } from './LeaderboardRow';
@@ -17,11 +18,21 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
     onMetricChange,
     loading = false,
 }) => {
+    const { t } = useTranslation();
+
     const metrics: { id: LeaderboardMetric; label: string; icon: typeof Flame }[] = [
-        { id: 'streak', label: 'Racha', icon: Flame },
-        { id: 'workouts', label: 'Entrenos', icon: Dumbbell },
-        { id: 'weight', label: 'Peso', icon: Scale },
-        { id: 'deficit', label: 'Déficit', icon: TrendingDown },
+        { id: 'streak', label: t('social.leaderboard.metrics.streak'), icon: Flame },
+        {
+            id: 'workouts',
+            label: t('social.leaderboard.metrics.workouts'),
+            icon: Dumbbell,
+        },
+        { id: 'weight', label: t('social.leaderboard.metrics.weight'), icon: Scale },
+        {
+            id: 'deficit',
+            label: t('social.leaderboard.metrics.deficit'),
+            icon: TrendingDown,
+        },
     ];
 
     return (
@@ -35,8 +46,12 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
                     <Trophy size={20} className="text-amber-500" />
                 </div>
                 <div>
-                    <h2 className="font-bold text-slate-900 text-lg">Ranking</h2>
-                    <p className="text-xs text-slate-500 font-medium">Esta semana</p>
+                    <h2 className="font-bold text-slate-900 text-lg">
+                        {t('social.leaderboard.title')}
+                    </h2>
+                    <p className="text-xs text-slate-500 font-medium">
+                        {t('social.leaderboard.subtitle')}
+                    </p>
                 </div>
             </div>
 
@@ -91,8 +106,8 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
             ) : leaderboard.length === 0 ? (
                 <EmptyState
                     icon={Trophy}
-                    title="Sin datos"
-                    description="Agrega amigos para ver el ranking"
+                    title={t('social.leaderboard.noData')}
+                    description={t('social.leaderboard.noDataDesc')}
                 />
             ) : (
                 <div className="space-y-1">

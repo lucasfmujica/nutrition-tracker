@@ -1,5 +1,6 @@
 import { Users } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Friend } from '../../types/domain';
 import { EmptyState } from './EmptyState';
 import { FriendCard } from './FriendCard';
@@ -17,6 +18,8 @@ export const FriendsList: React.FC<FriendsListProps> = ({
     onAddFriend,
     loading = false,
 }) => {
+    const { t } = useTranslation();
+
     return (
         <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
             {/* Header */}
@@ -26,10 +29,11 @@ export const FriendsList: React.FC<FriendsListProps> = ({
                         <Users size={20} className="text-cyan-500" />
                     </div>
                     <div>
-                        <h2 className="font-bold text-slate-900 text-lg">Amigos</h2>
+                        <h2 className="font-bold text-slate-900 text-lg">
+                            {t('social.friends.title')}
+                        </h2>
                         <p className="text-xs text-slate-500 font-medium">
-                            {friends.length}{' '}
-                            {friends.length === 1 ? 'amigo' : 'amigos'}
+                            {t('social.friends.count', { count: friends.length })}
                         </p>
                     </div>
                 </div>
@@ -53,9 +57,9 @@ export const FriendsList: React.FC<FriendsListProps> = ({
             ) : friends.length === 0 ? (
                 <EmptyState
                     icon={Users}
-                    title="Sin amigos aún"
-                    description="Agrega amigos para ver sus progresos y competir en el Ranking"
-                    actionLabel="Agregar amigo"
+                    title={t('social.friends.noFriends')}
+                    description={t('social.friends.noFriendsDesc')}
+                    actionLabel={t('social.friends.addFriend')}
                     onAction={onAddFriend}
                 />
             ) : (

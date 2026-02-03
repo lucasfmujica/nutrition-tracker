@@ -8,6 +8,7 @@ import {
     TrendingDown,
 } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Friend } from '../../types/domain';
 
 import { UserAvatar } from './UserAvatar';
@@ -18,6 +19,7 @@ interface FriendCardProps {
 }
 
 export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
+    const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
 
@@ -82,10 +84,10 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
                                     friend.weeklyStats.weightDelta,
                                 )}>
                                 {formatWeightDelta(friend.weeklyStats.weightDelta)}{' '}
-                                esta semana
+                                {t('social.leaderboard.subtitle').toLowerCase()}
                             </span>
                         ) : (
-                            'Sin datos esta semana'
+                            t('social.leaderboard.noData')
                         )}
                     </p>
                 </div>
@@ -114,7 +116,7 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
                                     )}
                                 </p>
                                 <p className="text-[10px] text-slate-400 uppercase">
-                                    Peso
+                                    {t('social.leaderboard.metrics.weight')}
                                 </p>
                             </div>
 
@@ -128,7 +130,7 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
                                     {friend.weeklyStats.workoutCount}
                                 </p>
                                 <p className="text-[10px] text-slate-400 uppercase">
-                                    Entrenos
+                                    {t('social.leaderboard.metrics.workouts')}
                                 </p>
                             </div>
 
@@ -142,7 +144,7 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
                                     {friend.weeklyStats.consistencyStreak}
                                 </p>
                                 <p className="text-[10px] text-slate-400 uppercase">
-                                    Racha
+                                    {t('social.leaderboard.metrics.streak')}
                                 </p>
                             </div>
 
@@ -157,13 +159,13 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
                                     {formatAvgDeficit(friend.weeklyStats.avgDeficit)}
                                 </p>
                                 <p className="text-[10px] text-slate-400 uppercase">
-                                    Déficit
+                                    {t('social.leaderboard.metrics.deficit')}
                                 </p>
                             </div>
                         </div>
                     ) : (
                         <p className="text-sm text-slate-400 text-center py-4">
-                            Sin estadísticas disponibles
+                            {t('social.leaderboard.noData')}
                         </p>
                     )}
 
@@ -179,7 +181,9 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
                                 : 'bg-slate-100 text-slate-500 hover:bg-red-50 hover:text-red-500'
                         }`}>
                         <Trash2 size={16} />
-                        {showConfirm ? 'Confirmar eliminación' : 'Eliminar amigo'}
+                        {showConfirm
+                            ? t('social.friends.confirmRemove')
+                            : t('social.friends.remove')}
                     </button>
                 </div>
             )}

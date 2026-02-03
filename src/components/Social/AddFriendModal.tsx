@@ -1,5 +1,6 @@
 import { Check, Copy, UserPlus, X } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface AddFriendModalProps {
     isOpen: boolean;
@@ -14,6 +15,7 @@ export const AddFriendModal: React.FC<AddFriendModalProps> = ({
     userFriendCode,
     onSendRequest,
 }) => {
+    const { t } = useTranslation();
     const [friendCode, setFriendCode] = useState('');
     const [copied, setCopied] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -53,7 +55,7 @@ export const AddFriendModal: React.FC<AddFriendModalProps> = ({
                 setSuccess(false);
             }, 1500);
         } else {
-            setError(result.error || 'Error al enviar solicitud');
+            setError(result.error || t('social.addFriend.error'));
         }
     };
 
@@ -80,7 +82,9 @@ export const AddFriendModal: React.FC<AddFriendModalProps> = ({
                         <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                             <UserPlus size={20} className="text-primary" />
                         </div>
-                        <h2 className="font-bold text-lg text-slate-900">Agregar Amigo</h2>
+                        <h2 className="font-bold text-lg text-slate-900">
+                            {t('social.addFriend.title')}
+                        </h2>
                     </div>
                     <button
                         onClick={handleClose}
@@ -94,7 +98,7 @@ export const AddFriendModal: React.FC<AddFriendModalProps> = ({
                     {/* Your Friend Code */}
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Tu Código de Amigo
+                            {t('social.addFriend.yourCode')}
                         </label>
                         <div className="flex items-center gap-2">
                             <div className="flex-1 bg-slate-100 rounded-xl px-4 py-3 text-center">
@@ -114,7 +118,7 @@ export const AddFriendModal: React.FC<AddFriendModalProps> = ({
                             </button>
                         </div>
                         <p className="text-xs text-slate-400 mt-2 text-center">
-                            Comparte este código con tus amigos
+                            {t('social.addFriend.shareTip')}
                         </p>
                     </div>
 
@@ -124,14 +128,16 @@ export const AddFriendModal: React.FC<AddFriendModalProps> = ({
                             <div className="w-full border-t border-slate-200"></div>
                         </div>
                         <div className="relative flex justify-center">
-                            <span className="px-3 bg-white text-sm text-slate-400">o</span>
+                            <span className="px-3 bg-white text-sm text-slate-400">
+                                {t('social.addFriend.childTip')}
+                            </span>
                         </div>
                     </div>
 
                     {/* Enter Friend Code */}
                     <form onSubmit={handleSubmit}>
                         <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Código de tu Amigo
+                            {t('social.addFriend.friendCode')}
                         </label>
                         <div className="flex gap-2">
                             <input
@@ -141,7 +147,7 @@ export const AddFriendModal: React.FC<AddFriendModalProps> = ({
                                     setFriendCode(e.target.value.toUpperCase());
                                     setError(null);
                                 }}
-                                placeholder="Ej: ABCD1234"
+                                placeholder={t('social.addFriend.placeholder')}
                                 maxLength={8}
                                 className="flex-1 bg-slate-100 border-2 border-transparent focus:border-primary rounded-xl px-4 py-3 text-center font-mono font-bold text-lg uppercase tracking-wider placeholder-slate-300 outline-none transition-all"
                             />
@@ -149,13 +155,15 @@ export const AddFriendModal: React.FC<AddFriendModalProps> = ({
 
                         {/* Error Message */}
                         {error && (
-                            <p className="text-sm text-red-500 mt-2 text-center">{error}</p>
+                            <p className="text-sm text-red-500 mt-2 text-center">
+                                {error}
+                            </p>
                         )}
 
                         {/* Success Message */}
                         {success && (
                             <p className="text-sm text-green-600 mt-2 text-center">
-                                Solicitud enviada
+                                {t('social.addFriend.sent')}
                             </p>
                         )}
 
@@ -171,10 +179,10 @@ export const AddFriendModal: React.FC<AddFriendModalProps> = ({
                             {loading ? (
                                 <span className="flex items-center justify-center gap-2">
                                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                    Enviando...
+                                    {t('social.addFriend.sending')}
                                 </span>
                             ) : (
-                                'Enviar Solicitud'
+                                t('social.addFriend.send')
                             )}
                         </button>
                     </form>

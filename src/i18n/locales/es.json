@@ -168,6 +168,71 @@
             "back": "Espalda",
             "other": "Otro"
         },
+        "social": {
+            "title": "Social",
+            "subtitle": "Conecta con amigos",
+            "invite": "Invitar",
+            "feed": {
+                "title": "Actividad",
+                "subtitle": "Últimos 7 días",
+                "noActivity": "Sin actividad reciente",
+                "noActivityDesc": "Cuando tú o tus amigos registren actividades, aparecerán aquí"
+            },
+            "friends": {
+                "title": "Amigos",
+                "count_one": "{{count}} amigo",
+                "count_other": "{{count}} amigos",
+                "addFriend": "Agregar amigo",
+                "requests": "Solicitudes de Amistad",
+                "pending_one": "pendiente",
+                "pending_other": "pendientes",
+                "noFriends": "Sin amigos aún",
+                "noFriendsDesc": "Agrega amigos para ver sus progresos y competir en el Ranking",
+                "remove": "Eliminar amigo",
+                "confirmRemove": "Confirmar eliminación"
+            },
+            "leaderboard": {
+                "title": "Ranking",
+                "subtitle": "Esta semana",
+                "noData": "Sin datos",
+                "noDataDesc": "Agrega amigos para ver el ranking",
+                "you": "(Tú)",
+                "metrics": {
+                    "streak": "Racha",
+                    "workouts": "Entrenos",
+                    "weight": "Peso",
+                    "deficit": "Déficit"
+                }
+            },
+            "addFriend": {
+                "title": "Agregar Amigo",
+                "yourCode": "Tu Código de Amigo",
+                "shareTip": "Comparte este código con tus amigos",
+                "childTip": "o",
+                "friendCode": "Código de tu Amigo",
+                "placeholder": "Ej: ABCD1234",
+                "send": "Enviar Solicitud",
+                "sending": "Enviando...",
+                "sent": "Solicitud enviada",
+                "error": "Error al enviar solicitud"
+            },
+            "activity": {
+                "workout_logged": "registró un entreno",
+                "weight_milestone": "alcanzó un hito de peso",
+                "streak_achieved": "logró una racha",
+                "goal_reached": "alcanzó su meta",
+                "friend_added": "agregó un amigo",
+                "default": "actividad",
+                "ago": "hace {{time}}",
+                "now": "ahora"
+            },
+            "requests": {
+                "sent": "Solicitud enviada {{time}}",
+                "today": "Hoy",
+                "yesterday": "Ayer",
+                "daysAgo": "Hace {{count}} días"
+            }
+        },
         "foodItem": {
             "needsReview": "Necesita Revisión",
             "saveFavorite": "Guardar como favorito",

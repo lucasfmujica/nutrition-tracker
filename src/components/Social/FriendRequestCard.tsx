@@ -1,5 +1,6 @@
 import { Check, X } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FriendRequest } from '../../types/domain';
 
 import { UserAvatar } from './UserAvatar';
@@ -15,16 +16,21 @@ export const FriendRequestCard: React.FC<FriendRequestCardProps> = ({
     onAccept,
     onReject,
 }) => {
+    const { t, i18n } = useTranslation();
+
     const formatDate = (dateString: string): string => {
         const date = new Date(dateString);
         const now = new Date();
         const diffMs = now.getTime() - date.getTime();
         const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-        if (diffDays === 0) return 'Hoy';
-        if (diffDays === 1) return 'Ayer';
-        if (diffDays < 7) return `Hace ${diffDays} días`;
-        return date.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
+        if (diffDays === 0) return t('social.requests.today');
+        if (diffDays === 1) return t('social.requests.yesterday');
+        if (diffDays < 7) return t('social.requests.daysAgo', { count: diffDays });
+        return date.toLocaleDateString(i18n.language, {
+            day: 'numeric',
+            month: 'short',
+        });
     };
 
     return (
@@ -42,7 +48,9 @@ export const FriendRequestCard: React.FC<FriendRequestCardProps> = ({
                     {request.fromName}
                 </p>
                 <p className="text-xs text-slate-400">
-                    Solicitud enviada {formatDate(request.createdAt)}
+                    {t('social.requests.sent', {
+                        time: formatDate(request.createdAt),
+                    })}
                 </p>
             </div>
 
