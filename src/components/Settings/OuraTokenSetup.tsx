@@ -7,6 +7,7 @@ import {
     Loader2,
 } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface OuraTokenSetupProps {
     hasOuraRing: boolean;
@@ -15,20 +16,13 @@ interface OuraTokenSetupProps {
     onToggleOura: (enabled: boolean) => Promise<void>;
 }
 
-/**
- * OuraTokenSetup - Configure Oura Ring personal access token
- *
- * Allows users to:
- * 1. Enable/disable Oura Ring integration
- * 2. Enter their personal access token from Oura Cloud
- * 3. View token status (masked)
- */
 export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
     hasOuraRing,
     currentToken,
     onSaveToken,
     onToggleOura,
 }) => {
+    const { t } = useTranslation();
     const [showToken, setShowToken] = useState(false);
     const [token, setToken] = useState('');
     const [isSaving, setIsSaving] = useState(false);
@@ -78,10 +72,10 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
                         <span className="text-2xl">💍</span>
                         <div>
                             <h3 className="font-semibold text-slate-900">
-                                Oura Ring
+                                {t('oura.title')}
                             </h3>
                             <p className="text-xs text-slate-500">
-                                Sincroniza sueño, HRV y recuperación
+                                {t('oura.subtitle')}
                             </p>
                         </div>
                     </div>
@@ -109,7 +103,7 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
                         <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-100 rounded-xl">
                             <Check className="w-4 h-4 text-green-600" />
                             <span className="text-sm text-green-700 font-medium">
-                                Token configurado
+                                {t('oura.setup.configured')}
                             </span>
                             <span className="text-xs text-green-600 font-mono ml-auto">
                                 {maskedToken}
@@ -120,11 +114,10 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
                             <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5" />
                             <div>
                                 <p className="text-sm text-amber-800 font-bold">
-                                    Token no configurado
+                                    {t('oura.setup.notConfigured')}
                                 </p>
                                 <p className="text-xs text-amber-700/80">
-                                    Necesitás un token personal para ver tus propios
-                                    datos.
+                                    {t('oura.setup.notConfiguredDesc')}
                                 </p>
                             </div>
                         </div>
@@ -134,11 +127,11 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
                     <div className="text-sm text-slate-600 space-y-3">
                         <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
                             <p className="font-bold text-slate-800 mb-1">
-                                ¿Cómo obtener tu token?
+                                {t('oura.setup.howTo')}
                             </p>
                             <ol className="list-decimal list-inside space-y-1.5 text-xs text-slate-600">
                                 <li>
-                                    Entrá a{' '}
+                                    {t('oura.setup.step1')}{' '}
                                     <a
                                         href="https://cloud.ouraring.com/personal-access-tokens"
                                         target="_blank"
@@ -148,12 +141,9 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
                                         <ExternalLink className="w-3 h-3" />
                                     </a>
                                 </li>
-                                <li>
-                                    Hacé clic en{' '}
-                                    <b>"Create New Personal Access Token"</b>
-                                </li>
-                                <li>Dale un nombre (ej: "LukenFit")</li>
-                                <li>Copiá el token generado y pegalo abajo</li>
+                                <li>{t('oura.setup.step2')}</li>
+                                <li>{t('oura.setup.step3')}</li>
+                                <li>{t('oura.setup.step4')}</li>
                             </ol>
                         </div>
                     </div>
@@ -161,14 +151,14 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
                     {/* Token Input */}
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-slate-700">
-                            {hasToken ? 'Actualizar Token' : 'Personal Access Token'}
+                            {hasToken ? t('oura.setup.save') : t('oura.setup.token')}
                         </label>
                         <div className="relative">
                             <input
                                 type={showToken ? 'text' : 'password'}
                                 value={token}
                                 onChange={(e) => setToken(e.target.value)}
-                                placeholder="Pegá tu token aquí..."
+                                placeholder={t('oura.setup.tokenPlaceholder')}
                                 className="w-full px-4 py-3 pr-20 border border-slate-200 rounded-xl text-sm font-mono focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                             />
                             <button
@@ -196,27 +186,26 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
                         {isSaving ? (
                             <>
                                 <Loader2 className="w-4 h-4 animate-spin" />
-                                Guardando...
+                                {t('oura.setup.saving')}
                             </>
                         ) : saveStatus === 'success' ? (
                             <>
                                 <Check className="w-4 h-4" />
-                                Token guardado
+                                {t('oura.setup.successSaving')}
                             </>
                         ) : saveStatus === 'error' ? (
                             <>
                                 <AlertCircle className="w-4 h-4" />
-                                Error al guardar
+                                {t('oura.setup.errorSaving')}
                             </>
                         ) : (
-                            'Guardar Token'
+                            t('oura.setup.save')
                         )}
                     </button>
 
                     {/* Privacy Note */}
                     <p className="text-xs text-slate-400 text-center">
-                        Tu token se guarda de forma segura y solo se usa para
-                        sincronizar tus datos.
+                        {t('oura.setup.privacy')}
                     </p>
                 </div>
             )}

@@ -1,6 +1,7 @@
 import html2canvas from 'html2canvas';
 import { Download, Loader2, X } from 'lucide-react';
 import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { WeeklyReportCard } from '../Dashboard/WeeklyReportCard';
 
 interface WeeklyReportModalProps {
@@ -24,6 +25,7 @@ export const WeeklyReportModal: React.FC<WeeklyReportModalProps> = ({
     isLoading,
     error,
 }) => {
+    const { t } = useTranslation();
     const cardRef = useRef<HTMLDivElement>(null);
     const [isDownloading, setIsDownloading] = useState(false);
 
@@ -43,7 +45,7 @@ export const WeeklyReportModal: React.FC<WeeklyReportModalProps> = ({
             });
 
             const link = document.createElement('a');
-            link.download = `LukenFit-Semana-${stats?.weekRange?.replace(/ /g, '-') || 'Reporte'}.png`;
+            link.download = `LukenFit-Week-${stats?.weekRange?.replace(/ /g, '-') || 'Report'}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
 
@@ -81,7 +83,9 @@ export const WeeklyReportModal: React.FC<WeeklyReportModalProps> = ({
                             style={{ width: '22rem', height: '28rem' }}>
                             <div className="text-center">
                                 <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
-                                <p className="text-gray-500">Generando reporte...</p>
+                                <p className="text-gray-500">
+                                    {t('modals.weeklyReport.generatingStatus')}
+                                </p>
                             </div>
                         </div>
                     )}
@@ -96,7 +100,7 @@ export const WeeklyReportModal: React.FC<WeeklyReportModalProps> = ({
                                     <X className="w-8 h-8 text-red-500" />
                                 </div>
                                 <p className="text-gray-900 font-medium mb-2">
-                                    Error al cargar
+                                    {t('modals.weeklyReport.errorTitle')}
                                 </p>
                                 <p className="text-gray-500 text-sm">{error}</p>
                             </div>
@@ -131,12 +135,12 @@ export const WeeklyReportModal: React.FC<WeeklyReportModalProps> = ({
                                 {isDownloading ? (
                                     <>
                                         <Loader2 className="w-5 h-5 animate-spin" />
-                                        Generando...
+                                        {t('modals.weeklyReport.downloading')}
                                     </>
                                 ) : (
                                     <>
                                         <Download className="w-5 h-5" />
-                                        Descargar Imagen
+                                        {t('modals.weeklyReport.downloadButton')}
                                     </>
                                 )}
                             </button>

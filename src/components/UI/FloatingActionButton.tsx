@@ -1,6 +1,7 @@
 import gsap from 'gsap';
 import { Camera, Dumbbell, Import, Plus, Star, Utensils } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // =====================================================
 // FLOATING ACTION BUTTON COMPONENT - PERFORMANCE LAB
@@ -22,6 +23,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
     onQuickAdd,
     onScanFood,
 }) => {
+    const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const itemsRef = useRef<(HTMLButtonElement | null)[]>([]);
@@ -51,23 +53,23 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
     const actions = [
         {
             icon: <Utensils size={24} />,
-            label: 'COMIDA',
-            sublabel: 'REGISTRE MANUAL',
+            label: t('navigation.meals').toUpperCase(),
+            sublabel: t('modals.foods.manualEntry').toUpperCase(),
             onClick: onAddFood,
             color: 'text-primary',
             bg: 'bg-primary/10',
         },
         {
             icon: <Dumbbell size={24} />,
-            label: 'ENTRENO',
-            sublabel: 'REGISTRO MANUAL',
+            label: t('navigation.workouts').toUpperCase(),
+            sublabel: t('modals.foods.manualEntry').toUpperCase(),
             onClick: onAddWorkout,
             color: 'text-fat',
             bg: 'bg-fat/10',
         },
         {
             icon: <Star size={24} />,
-            label: 'FAVORITOS',
+            label: (t('common.favorites') || 'FAVORITOS').toUpperCase(),
             sublabel: 'PLANTILLAS RÁPIDAS',
             onClick: onQuickAdd,
             color: 'text-purple-500',
@@ -75,7 +77,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
         },
         {
             icon: <Camera size={20} />,
-            label: 'ESCANEAR',
+            label: (t('common.scan') || 'ESCANEAR').toUpperCase(),
             sublabel: 'RECONOCIMIENTO IA',
             onClick: onScanFood,
             color: 'text-accent',
@@ -114,7 +116,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
                         <div className="flex items-center gap-3 mb-2">
                             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-slate-200" />
                             <span className="font-satoshi text-slate-400 tracking-[0.2em] text-[10px] font-black">
-                                CONTROL CENTER
+                                {t('layout.fab.add').toUpperCase()}
                             </span>
                             <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-slate-200" />
                         </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthLogin } from './AuthLogin';
 import { AuthRegister } from './AuthRegister';
 import { AuthResetPassword } from './AuthResetPassword';
@@ -26,6 +27,7 @@ export const AuthUI: React.FC<AuthUIProps> = ({
     isSupabaseConfigured,
     loading: externalLoading,
 }) => {
+    const { t } = useTranslation();
     const [mode, setMode] = useState<'login' | 'signup' | 'reset'>('login');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -47,58 +49,57 @@ export const AuthUI: React.FC<AuthUIProps> = ({
         try {
             if (mode === 'signup') {
                 if (password !== confirmPassword) {
-                    setError('Las contraseñas no coinciden');
+                    setError(t('auth.errors.passwordMismatch'));
                     setInternalLoading(false);
                     return;
                 }
                 if (password.length < 6) {
-                    setError('La contraseña debe tener al menos 6 caracteres');
+                    setError(t('auth.errors.passwordLength'));
                     setInternalLoading(false);
                     return;
                 }
                 const result = await onAuth.signUp(email, password);
                 if (result?.error) {
-                    let errorMsg = result.error.message || 'Error desconocido';
+                    let errorMsg = result.error.message || t('auth.errors.unknown');
                     if (errorMsg.includes('already registered'))
-                        errorMsg =
-                            'Este email ya está registrado. Intenta iniciar sesión.';
+                        errorMsg = t('auth.errors.emailRegistered');
                     else if (errorMsg.includes('valid email'))
-                        errorMsg = 'Por favor ingresa un email válido.';
+                        errorMsg = t('auth.errors.invalidEmail');
                     else if (errorMsg.includes('Password'))
-                        errorMsg = 'La contraseña debe tener al menos 6 caracteres.';
+                        errorMsg = t('auth.errors.passwordLength');
                     else if (errorMsg.includes('Database error'))
-                        errorMsg = 'Error de configuración del servidor.';
+                        errorMsg = t('auth.errors.serverError');
                     setError(errorMsg);
                 } else if (result?.needsConfirmation) {
-                    setMessage('¡Cuenta creada! Revisa tu email para confirmar.');
+                    setMessage(t('auth.success.accountCreated'));
                     setMode('login');
                     setPassword('');
                     setConfirmPassword('');
                 } else {
-                    setMessage('¡Cuenta creada! Redirigiendo...');
+                    setMessage(t('auth.success.accountCreatedRedirect'));
                 }
             } else if (mode === 'reset') {
                 const result = await onAuth.resetPassword(email);
                 if (result?.error) {
-                    setError(result.error.message || 'Error al enviar email');
+                    setError(result.error.message || t('auth.errors.unknown'));
                 } else {
-                    setMessage('Email de recuperación enviado. Revisa tu bandeja.');
+                    setMessage(t('auth.success.resetEmailSent'));
                 }
             } else {
                 // LOGIN
                 const result = await onAuth.signIn(email, password);
                 if (result?.error) {
-                    let errorMsg = result.error.message || 'Error desconocido';
+                    let errorMsg = result.error.message || t('auth.errors.unknown');
                     if (errorMsg.includes('Invalid login'))
-                        errorMsg = 'Email o contraseña incorrectos.';
+                        errorMsg = t('auth.errors.invalidLogin');
                     else if (errorMsg.includes('Email not confirmed'))
-                        errorMsg = 'Debes confirmar tu email. Revisa tu bandeja.';
+                        errorMsg = t('auth.errors.emailNotConfirmed');
                     setError(errorMsg);
                 }
             }
         } catch (err) {
             console.error('[Auth] Error:', err);
-            setError('Error de conexión. Intenta de nuevo.');
+            setError(t('auth.errors.connection'));
         } finally {
             setInternalLoading(false);
         }
@@ -116,14 +117,12 @@ export const AuthUI: React.FC<AuthUIProps> = ({
         try {
             const result = await onAuth.signInWithGoogle();
             if (result?.error) {
-                setError(
-                    result.error.message || 'Error al iniciar sesión con Google',
-                );
+                setError(result.error.message || t('auth.errors.googleError'));
                 setGoogleLoading(false);
             }
         } catch (err) {
             console.error('[Auth] Google sign-in error:', err);
-            setError('Error al iniciar sesión con Google');
+            setError(t('auth.errors.googleError'));
             setGoogleLoading(false);
         }
     };
@@ -178,20 +177,21 @@ export const AuthUI: React.FC<AuthUIProps> = ({
                 <div className={cardClasses}>
                     <div className="text-center mb-6">
                         <LukenFitLogo />
-                        <p className="text-gray-500 mt-2">Modo local activo</p>
+                        <p className="text-gray-500 mt-2">
+                            {t('auth.offline.title')}
+                        </p>
                     </div>
 
                     <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 mb-6">
                         <p className="text-amber-700 text-sm">
-                            ⚠️ Supabase no está configurado. Los datos se guardarán
-                            localmente en este dispositivo.
+                            {t('auth.offline.warning')}
                         </p>
                     </div>
 
                     <button
                         onClick={handleContinueOffline}
                         className="w-full py-3.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all shadow-lg shadow-gray-200">
-                        Continuar sin cuenta
+                        {t('auth.offline.button')}
                     </button>
                 </div>
             </div>

@@ -14,6 +14,7 @@ import {
     X,
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
 import { useBarcodeScanner } from '../../hooks/useBarcodeScanner';
 import type { FoodEntry } from '../../types/domain';
@@ -32,6 +33,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
     onClose,
     onOpenFoodSearch,
 }) => {
+    const { t } = useTranslation();
     const {
         isScanning,
         isInitializing,
@@ -106,7 +108,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                 name: product.brand
                     ? `${product.name} (${product.brand})`
                     : product.name,
-                description: `${amount}${unit === 'g' ? 'g' : ' porción(es)'} - código: ${scannedBarcode}`,
+                description: `${amount}${unit === 'g' ? 'g' : ` ${t('modals.foods.serving')}`}${amount > 1 ? 's' : ''} - code: ${scannedBarcode}`,
                 calories: calculatedMacros.calories,
                 protein: calculatedMacros.protein,
                 carbs: calculatedMacros.carbs,
@@ -119,13 +121,13 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
             };
 
             await saveFoodEntry(entry);
-            setSaveStatus('✓ Producto escaneado agregado');
+            setSaveStatus(t('modals.foods.added'));
             setTimeout(() => setSaveStatus(''), 2000);
 
             onClose();
         } catch (err) {
             console.error('[BarcodeScannerModal] Error saving:', err);
-            setSaveStatus('❌ Error al guardar');
+            setSaveStatus(t('modals.foods.error'));
             setTimeout(() => setSaveStatus(''), 3000);
         } finally {
             setIsSaving(false);
@@ -145,7 +147,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                 <div className="flex items-center justify-between p-4 border-b border-gray-100">
                     <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                         <Barcode size={20} className="text-blue-600" />
-                        Escanear Código
+                        {t('modals.barcode.title')}
                     </h2>
                     <button
                         onClick={onClose}
@@ -184,7 +186,9 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                         size={32}
                                         className="animate-spin mb-2"
                                     />
-                                    <p className="text-sm">Iniciando cámara...</p>
+                                    <p className="text-sm">
+                                        {t('modals.barcode.initializing')}
+                                    </p>
                                 </div>
                             )}
 
@@ -195,7 +199,9 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                         size={32}
                                         className="animate-spin mb-2"
                                     />
-                                    <p className="text-sm">Buscando producto...</p>
+                                    <p className="text-sm">
+                                        {t('modals.barcode.lookingUp')}
+                                    </p>
                                     <p className="text-xs text-slate-400 mt-1">
                                         {scannedBarcode}
                                     </p>
@@ -214,7 +220,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                         onClick={handleScanAgain}
                                         className="mt-4 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-xl text-sm font-medium flex items-center gap-2">
                                         <RefreshCw size={16} />
-                                        Reintentar
+                                        {t('modals.barcode.scanAnother')}
                                     </button>
                                 </div>
                             )}
@@ -223,7 +229,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                         {/* Instructions */}
                         {isScanning && !scannedBarcode && !error && (
                             <p className="text-center text-sm text-slate-500 mt-3">
-                                Apuntá la cámara al código de barras del producto
+                                {t('modals.barcode.instructions')}
                             </p>
                         )}
                     </div>
@@ -236,14 +242,12 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                             <AlertCircle size={32} className="text-amber-600" />
                         </div>
                         <h3 className="font-bold text-slate-900 mb-2">
-                            Producto no encontrado
+                            {t('modals.barcode.notFound')}
                         </h3>
                         <p className="text-sm text-slate-500 mb-4">
-                            El código{' '}
-                            <span className="font-mono font-bold">
-                                {scannedBarcode}
-                            </span>{' '}
-                            no está en nuestra base de datos.
+                            {t('modals.barcode.notFoundDesc', {
+                                barcode: scannedBarcode,
+                            })}
                         </p>
 
                         <div className="space-y-3">
@@ -251,7 +255,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                 onClick={handleScanAgain}
                                 className="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium flex items-center justify-center gap-2 transition-colors">
                                 <Camera size={18} />
-                                Escanear otro código
+                                {t('modals.barcode.scanAnother')}
                             </button>
 
                             {onOpenFoodSearch && (
@@ -262,7 +266,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                     }}
                                     className="w-full py-3 rounded-2xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium flex items-center justify-center gap-2 transition-colors">
                                     <Search size={18} />
-                                    Buscar por nombre
+                                    {t('modals.barcode.searchByName')}
                                 </button>
                             )}
                         </div>
@@ -289,7 +293,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                 )}
                                 <div className="flex-1 min-w-0">
                                     <span className="inline-block px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-800 text-[10px] font-bold uppercase tracking-wider mb-1">
-                                        Encontrado
+                                        {t('modals.barcode.found')}
                                     </span>
                                     <h3 className="font-bold text-slate-900 truncate">
                                         {product.name}
@@ -307,7 +311,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                         <div className="grid grid-cols-2 gap-3">
                             <div>
                                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
-                                    Cantidad
+                                    {t('modals.foods.amount')}
                                 </label>
                                 <input
                                     type="number"
@@ -325,7 +329,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                             </div>
                             <div>
                                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
-                                    Unidad
+                                    {t('modals.foods.unit')}
                                 </label>
                                 <div className="relative">
                                     <select
@@ -336,9 +340,11 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                             )
                                         }
                                         className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer">
-                                        <option value="g">gramos</option>
+                                        <option value="g">
+                                            {t('modals.foods.grams')}
+                                        </option>
                                         <option value="serving">
-                                            porción{' '}
+                                            {t('modals.foods.serving')}{' '}
                                             {product.servingSizeGrams &&
                                                 `(${product.servingSizeGrams}g)`}
                                         </option>
@@ -354,7 +360,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                         {/* Meal Selection */}
                         <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
-                                Comida
+                                {t('modals.foods.meal')}
                             </label>
                             <div className="relative">
                                 <select
@@ -365,14 +371,26 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                         )
                                     }
                                     className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer">
-                                    <option value="breakfast">Desayuno</option>
-                                    <option value="lunch">Almuerzo</option>
-                                    <option value="snack">Merienda</option>
-                                    <option value="dinner">Cena</option>
-                                    <option value="other">Snack</option>
-                                    <option value="Pre-entreno">Pre-entreno</option>
+                                    <option value="breakfast">
+                                        {t('mealTypes.breakfast')}
+                                    </option>
+                                    <option value="lunch">
+                                        {t('mealTypes.lunch')}
+                                    </option>
+                                    <option value="snack">
+                                        {t('mealTypes.snack')}
+                                    </option>
+                                    <option value="dinner">
+                                        {t('mealTypes.dinner')}
+                                    </option>
+                                    <option value="other">
+                                        {t('mealTypes.other')}
+                                    </option>
+                                    <option value="Pre-entreno">
+                                        {t('mealTypes.preworkout')}
+                                    </option>
                                     <option value="Post-entreno">
-                                        Post-entreno
+                                        {t('mealTypes.postworkout')}
                                     </option>
                                 </select>
                                 <ChevronDown
@@ -386,27 +404,27 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                         <div className="bg-slate-50 rounded-2xl p-4">
                             <div className="grid grid-cols-5 gap-2 text-center">
                                 <MacroValue
-                                    label="Cal"
+                                    label={t('modals.foods.macros.cal')}
                                     value={calculatedMacros.calories}
                                     highlight
                                 />
                                 <MacroValue
-                                    label="Prot"
+                                    label={t('modals.foods.macros.protein')}
                                     value={calculatedMacros.protein}
                                     suffix="g"
                                 />
                                 <MacroValue
-                                    label="Carbs"
+                                    label={t('modals.foods.macros.carbs')}
                                     value={calculatedMacros.carbs}
                                     suffix="g"
                                 />
                                 <MacroValue
-                                    label="Grasa"
+                                    label={t('modals.foods.macros.fat')}
                                     value={calculatedMacros.fat}
                                     suffix="g"
                                 />
                                 <MacroValue
-                                    label="Fibra"
+                                    label={t('modals.foods.macros.fiber')}
                                     value={calculatedMacros.fiber}
                                     suffix="g"
                                 />
@@ -418,7 +436,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                             onClick={handleScanAgain}
                             className="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium flex items-center justify-center gap-2 transition-colors">
                             <Camera size={16} />
-                            Escanear otro producto
+                            {t('modals.barcode.scanAnother')}
                         </button>
                     </div>
                 )}
@@ -433,10 +451,10 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                             {isSaving ? (
                                 <>
                                     <Loader2 size={18} className="animate-spin" />
-                                    Guardando...
+                                    {t('modals.foods.saving')}
                                 </>
                             ) : (
-                                'Guardar'
+                                t('modals.foods.save')
                             )}
                         </button>
                     </div>

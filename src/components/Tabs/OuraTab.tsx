@@ -1,5 +1,6 @@
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
 import { OuraEntry, Profile } from '../../types/domain';
 import { getArgentinaDateString } from '../../utils/dateUtils';
@@ -14,6 +15,7 @@ interface OuraTabProps {
  * OuraTab - Automated Oura Ring Dashboard
  */
 export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
+    const { t } = useTranslation();
     const {
         syncOuraData,
         isSyncing,
@@ -63,14 +65,12 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
                 <div className="px-1 text-center md:text-left">
                     <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2 justify-center md:justify-start">
-                        Oura Ring
+                        {t('oura.title')}
                         <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-[10px] font-bold uppercase tracking-wider">
                             Sync V2
                         </span>
                     </h1>
-                    <p className="text-sm text-gray-500">
-                        Recuperación y métricas de sueño
-                    </p>
+                    <p className="text-sm text-gray-500">{t('oura.subtitle')}</p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3 bg-white p-1.5 rounded-xl border border-gray-100 shadow-sm mx-auto md:mx-0">
@@ -78,7 +78,7 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
                         <LukenFitDatePicker
                             selectedDate={selectedDate}
                             onChange={setSelectedDate}
-                            label="Fecha"
+                            label={t('common.date')}
                         />
                     </div>
 
@@ -87,7 +87,7 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
                     <div className="flex items-center gap-2 pr-2 ml-auto sm:ml-0">
                         <div className="text-right hidden sm:block">
                             <p className="text-[10px] mobile-label text-gray-400 font-bold uppercase tracking-wider">
-                                Última sinc.
+                                {t('oura.setup.lastSync')}
                             </p>
                             <p className="text-xs font-bold text-gray-700">
                                 {lastSyncTime || '--:--'}
@@ -105,8 +105,8 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
                             }`}
                             title={
                                 !hasToken
-                                    ? 'Configurá tu token en Configuración'
-                                    : 'Sincronizar ahora'
+                                    ? t('oura.setup.notConfiguredDesc')
+                                    : t('oura.sync')
                             }>
                             <RefreshCw
                                 className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`}
@@ -123,17 +123,16 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
                     </div>
                     <div>
                         <h3 className="text-lg font-bold text-amber-900">
-                            Token no configurado
+                            {t('oura.setup.notConfigured')}
                         </h3>
                         <p className="text-sm text-amber-700 max-w-md mx-auto mt-1">
-                            Para ver tus datos de Oura Ring, necesitas configurar tu
-                            Personal Access Token en la pestaña de configuración.
+                            {t('oura.setup.notConfiguredDesc')}
                         </p>
                     </div>
                     <button
                         onClick={() => setActiveTab('config')}
                         className="px-6 py-2.5 bg-amber-600 text-white rounded-xl font-bold text-sm hover:bg-amber-700 transition-colors shadow-sm active:scale-95">
-                        Ir a Configuración
+                        {t('oura.setup.title')}
                     </button>
                 </div>
             )}
@@ -147,7 +146,7 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
 
             {isSyncing && (
                 <div className="text-center text-xs text-purple-500 font-medium animate-pulse">
-                    Sincronizando con Oura Cloud...
+                    {t('oura.setup.syncing')}
                 </div>
             )}
         </div>

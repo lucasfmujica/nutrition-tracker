@@ -1,3 +1,6 @@
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+
 /**
  * SimpleBarChart - Simple bar chart for weekly data
  * Displays bars for each day with target line
@@ -24,6 +27,7 @@ export const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     color,
     label,
 }) => {
+    const { t } = useTranslation();
     const maxVal =
         Math.max(...data.map((d) => (d[dataKey] as number) || 0), target) * 1.1 ||
         target * 1.1;
@@ -34,7 +38,7 @@ export const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                     {label}
                 </span>
                 <span className="text-xs font-bold text-slate-400">
-                    Meta: {target}
+                    {t('dashboard.summary.target')}: {target}
                 </span>
             </div>
             <div className="flex items-end justify-between h-20 gap-1">

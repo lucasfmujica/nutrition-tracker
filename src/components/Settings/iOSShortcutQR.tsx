@@ -1,6 +1,7 @@
 import { Check, ChevronDown, ChevronUp, Copy, Smartphone } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface iOSShortcutQRProps {
     userId: string;
@@ -20,6 +21,7 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
     userId,
     onConfigured,
 }) => {
+    const { t } = useTranslation();
     const [showInstructions, setShowInstructions] = useState(false);
     const [copiedId, setCopiedId] = useState(false);
 
@@ -49,10 +51,11 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                     </div>
                     <div>
                         <h3 className="font-semibold text-slate-900">
-                            iOS Shortcuts
+                            {t('settings.iosShortcut.title')}
                         </h3>
                         <p className="text-xs text-slate-500">
-                            Registra peso y pasos desde tu iPhone
+                            {t('settings.iosShortcut.subtitle') ||
+                                'Registra peso y pasos desde tu iPhone'}
                         </p>
                     </div>
                 </div>
@@ -62,7 +65,9 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
             <div className="p-4 space-y-4">
                 {/* User ID Display */}
                 <div className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                    <span className="text-xs text-slate-500">Tu ID de usuario:</span>
+                    <span className="text-xs text-slate-500">
+                        {t('settings.iosShortcut.userId') || 'Tu ID de usuario:'}
+                    </span>
                     <code className="text-xs font-mono text-slate-700 flex-1">
                         {shortUserId}...
                     </code>
@@ -136,8 +141,9 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                 {/* Quick Instructions */}
                 <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-center sm:text-left">
                     <p className="text-sm text-blue-800">
-                        <strong>Cómo usar:</strong> Tocá &ldquo;Instalar&rdquo; si
-                        estás en tu iPhone, o escaneá el QR desde otro dispositivo.
+                        <strong>{t('common.howToUse') || 'Cómo usar'}:</strong>{' '}
+                        {t('settings.iosShortcut.instructionsShort') ||
+                            'Tocá "Instalar" si estás en tu iPhone, o escaneá el QR desde otro dispositivo.'}
                     </p>
                 </div>
 
@@ -146,7 +152,8 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                     onClick={() => setShowInstructions(!showInstructions)}
                     className="w-full flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors">
                     <span className="text-sm text-slate-600">
-                        Instrucciones detalladas
+                        {t('settings.iosShortcut.detailedInstructions') ||
+                            'Instrucciones detalladas'}
                     </span>
                     {showInstructions ? (
                         <ChevronUp className="w-4 h-4 text-slate-400" />
@@ -199,7 +206,7 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                             <button
                                 onClick={onConfigured}
                                 className="w-full mt-2 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">
-                                Marcar como configurado
+                                {t('common.save') || 'Marcar como configurado'}
                             </button>
                         )}
                     </div>

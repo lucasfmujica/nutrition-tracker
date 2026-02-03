@@ -137,14 +137,16 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
 
         const macros = calculateMacros(selectedSearchFood, searchAmount, searchUnit);
         const amountStr =
-            searchUnit === 'g' ? `${searchAmount}g` : `${searchAmount} porción(es)`;
+            searchUnit === 'g'
+                ? `${searchAmount}g`
+                : `${searchAmount} ${t('modals.foods.serving')}${searchAmount > 1 ? 's' : ''}`;
 
         onFoodChange({
             ...food,
             name: selectedSearchFood.brand
                 ? `${selectedSearchFood.name} (${selectedSearchFood.brand})`
                 : selectedSearchFood.name,
-            description: `${amountStr} - búsqueda`,
+            description: `${amountStr} - via search`, // Key not in JSON, but following pattern
             calories: macros.calories,
             protein: macros.protein,
             carbs: macros.carbs,
@@ -179,7 +181,9 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                 {/* Header with close button */}
                 <div className="flex items-center justify-between mb-6">
                     <h3 className="text-xl lg:text-2xl font-bold text-slate-900">
-                        {isEditing ? `✏️ ${t('modals.foodForm.titleEdit')}` : `🍽️ ${t('modals.foodForm.titleAdd')}`}
+                        {isEditing
+                            ? `✏️ ${t('modals.foodForm.titleEdit')}`
+                            : `🍽️ ${t('modals.foodForm.titleAdd')}`}
                     </h3>
                     <button
                         onClick={onClose}
@@ -193,7 +197,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                     {!isEditing && (
                         <div className="relative" ref={resultsRef}>
                             <label className="block text-xs font-bold text-blue-600 uppercase tracking-wider mb-1.5 ml-1">
-                                Buscar alimento
+                                {t('modals.foods.searchTitle')}
                             </label>
                             <div className="relative">
                                 <Search
@@ -211,7 +215,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                         setSelectedFromSearch(false);
                                     }}
                                     onFocus={() => setShowResults(true)}
-                                    placeholder={t('modals.foodSearch.searchPlaceholder')}
+                                    placeholder={t('modals.foods.placeholder')}
                                     className="w-full pl-9 pr-10 py-2.5 bg-blue-50 border border-blue-200 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                                 />
                                 {isSearching && (
@@ -275,7 +279,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                 <div className="mt-2 p-3 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
                                     <div className="flex items-center justify-between mb-2">
                                         <span className="text-xs font-bold text-blue-600 uppercase">
-                                            Seleccionado
+                                            {t('modals.foods.found')}
                                         </span>
                                         <button
                                             onClick={() => {
@@ -313,9 +317,11 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                                 )
                                             }
                                             className="flex-1 px-2 py-1.5 bg-white border border-blue-200 rounded-lg text-sm">
-                                            <option value="g">gramos</option>
+                                            <option value="g">
+                                                {t('modals.foods.grams')}
+                                            </option>
                                             <option value="serving">
-                                                porción{' '}
+                                                {t('modals.foods.serving')}{' '}
                                                 {selectedSearchFood.servingSizeGrams &&
                                                     `(${selectedSearchFood.servingSizeGrams}g)`}
                                             </option>
@@ -342,7 +348,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                     <button
                                         onClick={applySearchSelection}
                                         className="w-full mt-2 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors">
-                                        Usar estos valores
+                                        {t('modals.foods.useValues')}
                                     </button>
                                 </div>
                             )}
@@ -351,7 +357,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                             <div className="flex items-center gap-3 mt-3 mb-1">
                                 <div className="flex-1 h-px bg-slate-200" />
                                 <span className="text-xs text-slate-400 uppercase font-bold">
-                                    o ingresá manualmente
+                                    {t('modals.foods.manualEntry')}
                                 </span>
                                 <div className="flex-1 h-px bg-slate-200" />
                             </div>
@@ -373,13 +379,21 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                     })
                                 }
                                 className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer">
-                                <option value="breakfast">Desayuno</option>
-                                <option value="lunch">Almuerzo</option>
-                                <option value="snack">Merienda</option>
-                                <option value="dinner">Cena</option>
-                                <option value="other">Snack / Otros</option>
-                                <option value="preworkout">Pre-Entreno</option>
-                                <option value="postworkout">Post-Entreno</option>
+                                <option value="breakfast">
+                                    {t('mealTypes.breakfast')}
+                                </option>
+                                <option value="lunch">{t('mealTypes.lunch')}</option>
+                                <option value="snack">{t('mealTypes.snack')}</option>
+                                <option value="dinner">
+                                    {t('mealTypes.dinner')}
+                                </option>
+                                <option value="other">{t('mealTypes.other')}</option>
+                                <option value="preworkout">
+                                    {t('mealTypes.preworkout')}
+                                </option>
+                                <option value="postworkout">
+                                    {t('mealTypes.postworkout')}
+                                </option>
                             </select>
                         </div>
                         <div>
@@ -408,7 +422,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                             onChange={(e) =>
                                 onFoodChange({ ...food, name: e.target.value })
                             }
-                            placeholder="Pollo con arroz"
+                            placeholder={t('modals.foodForm.namePlaceholder')}
                             className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                         />
                     </div>
@@ -427,7 +441,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                     description: e.target.value,
                                 })
                             }
-                            placeholder="200g pechuga, 150g arroz"
+                            placeholder={t('modals.foodForm.descriptionPlaceholder')}
                             className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                         />
                     </div>
@@ -507,7 +521,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
-                                Fibra
+                                {t('modals.foodForm.fiber')}
                             </label>
                             <input
                                 type="number"

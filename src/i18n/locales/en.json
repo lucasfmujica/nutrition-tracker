@@ -10,6 +10,110 @@
         "progress": "Progress",
         "oura": "Oura"
     },
+    "oura": {
+        "title": "Oura Ring",
+        "subtitle": "Health and sleep data",
+        "connect": "Connect Oura",
+        "disconnect": "Disconnect",
+        "sync": "Sync",
+        "metrics": {
+            "sleep": "Sleep",
+            "readiness": "Readiness",
+            "activity": "Activity",
+            "hrv": "HRV",
+            "restingHR": "Resting HR",
+            "score": "Score",
+            "ideal": "Optimal",
+            "hours": "hours",
+            "deep": "Deep",
+            "rem": "REM",
+            "steps": "Steps",
+            "target": "Goal"
+        },
+        "setup": {
+            "title": "Setup Oura",
+            "token": "Personal Token",
+            "save": "Save",
+            "tokenPlaceholder": "Paste your token here...",
+            "howTo": "How to get your token?",
+            "step1": "Go to Oura Cloud",
+            "step2": "Click on \"Create New Personal Access Token\"",
+            "step3": "Give it a name (e.g., \"LukenFit\")",
+            "step4": "Copy the generated token and paste it below",
+            "configured": "Token configured",
+            "notConfigured": "Token not configured",
+            "noData": "No synchronized data",
+            "notConfiguredDesc": "To see your Oura Ring data, you need to set up your Personal Access Token in the settings tab.",
+            "privacy": "Your token is saved securely and only used to sync your data.",
+            "lastSync": "Last sync",
+            "syncPrompt": "Sync your ring to see the report.",
+            "syncing": "Syncing...",
+            "saving": "Saving...",
+            "errorSaving": "Error saving",
+            "successSaving": "Token saved"
+        }
+    },
+    "auth": {
+        "login": {
+            "title": "Sign In",
+            "email": "Email",
+            "password": "Password",
+            "submit": "Sign In",
+            "noAccount": "Don't have an account?",
+            "signUp": "Sign Up",
+            "subtitle": "Sign in to sync your data",
+            "continueGoogle": "Continue with Google",
+            "continueGuest": "Or continue as guest",
+            "guestButton": "Use without account",
+            "forgotPassword": "Forgot your password?"
+        },
+        "register": {
+            "title": "Create Account",
+            "subtitle": "Create an account to save your data",
+            "name": "Name",
+            "email": "Email",
+            "password": "Password",
+            "confirmPassword": "Confirm password",
+            "submit": "Sign Up",
+            "hasAccount": "Already have an account?",
+            "signIn": "Sign In",
+            "continueGoogle": "Continue with Google",
+            "continueGuest": "Or continue as guest",
+            "guestButton": "Use without account"
+        },
+        "reset": {
+            "title": "Reset Password",
+            "subtitle": "Recover access to your account",
+            "email": "Email",
+            "submit": "Send",
+            "back": "Back to login",
+            "continueGuest": "Or continue as guest",
+            "guestButton": "Use without account"
+        },
+        "errors": {
+            "passwordMismatch": "Passwords do not match",
+            "passwordLength": "Password must be at least 6 characters",
+            "emailRegistered": "This email is already registered. Try signing in.",
+            "invalidEmail": "Please enter a valid email.",
+            "serverError": "Server configuration error.",
+            "unknown": "Unknown error",
+            "invalidLogin": "Incorrect email or password.",
+            "emailNotConfirmed": "You must confirm your email. Check your inbox.",
+            "connection": "Connection error. Please try again.",
+            "googleError": "Error signing in with Google"
+        },
+        "success": {
+            "accountCreated": "Account created! Check your email to confirm.",
+            "accountCreatedRedirect": "Account created! Redirecting...",
+            "resetEmailSent": "Recovery email sent. Check your inbox."
+        },
+        "offline": {
+            "title": "Local mode active",
+            "warning": "⚠️ Supabase is not configured. Data will be saved locally on this device.",
+            "button": "Continue without account"
+        },
+        "loading": "Processing..."
+    },
     "mealTypes": {
         "breakfast": "Breakfast",
         "lunch": "Lunch",
@@ -504,9 +608,50 @@
         }
     },
     "navigation": {
-        "back": "Back"
+        "back": "Back",
+        "dashboard": "Dashboard",
+        "meals": "Meals",
+        "workouts": "Workouts",
+        "weight": "Weight",
+        "steps": "Steps",
+        "progress": "Progress",
+        "social": "Social",
+        "config": "Settings"
+    },
+    "layout": {
+        "loading": "Loading...",
+        "syncStatus": "Syncing",
+        "fab": {
+            "add": "Add"
+        }
+    },
+    "charts": {
+        "weight": {
+            "title": "Weight History",
+            "trend": "Trend",
+            "goal": "Goal",
+            "today": "Today",
+            "average": "7d avg"
+        },
+        "projection": {
+            "title": "Projection",
+            "register": "Log your weight to see projection"
+        }
+    },
+    "settings": {
+        "iosShortcut": {
+            "title": "iOS Shortcut",
+            "subtitle": "Log weight and steps from your iPhone",
+            "userId": "Your user ID:",
+            "instructionsShort": "Tap \"Install\" if you're on your iPhone, or scan the QR from another device.",
+            "detailedInstructions": "Detailed instructions",
+            "scan": "Scan the QR"
+        }
     },
     "common": {
+        "date": "Date",
+        "install": "Install",
+        "howToUse": "How to use",
         "save": "Save",
         "cancel": "Cancel",
         "delete": "Delete",
@@ -537,6 +682,91 @@
         "tomorrow": "Tomorrow"
     },
     "modals": {
+        "barcode": {
+            "title": "Scan Barcode",
+            "scanning": "Scanning...",
+            "notFound": "Product not found",
+            "notFoundDesc": "Code {{barcode}} is not in our database.",
+            "scanAnother": "Scan another product",
+            "searchByName": "Search by name",
+            "found": "Found",
+            "initializing": "Starting camera...",
+            "lookingUp": "Looking up product...",
+            "instructions": "Point camera at the barcode"
+        },
+        "mondayBriefing": {
+            "title": "Weekly Summary",
+            "subtitle": "Review of your progress and adjustments",
+            "lastWeek": "Last Week",
+            "excellent": "Excellent Work!",
+            "excellentLong": "Excellent Work!",
+            "warning": "Careful! You're going too fast",
+            "adjustment": "Adjustment Needed",
+            "currentTempo": "Current Tempo",
+            "adherence": "Adherence",
+            "proposal": "Goal Proposal",
+            "noChanges": "No changes needed",
+            "noChangesDesc": "Keep it up, your current goals are working perfectly.",
+            "accept": "Accept New Goals",
+            "maintain": "Maintain Current",
+            "continue": "Continue Like This"
+        },
+        "weeklyReport": {
+            "title": "Weekly Report",
+            "generatingStatus": "Generating report...",
+            "downloadButton": "Download Image",
+            "downloading": "Generating...",
+            "errorTitle": "Error loading"
+        },
+        "import": {
+            "title": "Import Data",
+            "warning": "⚠️ This will replace all your data",
+            "import": "Import",
+            "cancel": "Cancel"
+        },
+        "foods": {
+            "searchTitle": "Search Food",
+            "placeholder": "Search by name or brand...",
+            "searching": "Searching...",
+            "noResults": "No results found",
+            "tryAnother": "Try another term",
+            "backToResults": "Back to results",
+            "amount": "Amount",
+            "unit": "Unit",
+            "meal": "Meal",
+            "save": "Save",
+            "saving": "Saving...",
+            "added": "✓ Food added",
+            "error": "❌ Error saving",
+            "grams": "grams",
+            "serving": "serving",
+            "found": "Selected",
+            "useValues": "Use these values",
+            "manualEntry": "or enter manually",
+            "macros": {
+                "cal": "Cal",
+                "protein": "Prot",
+                "carbs": "Carbs",
+                "fat": "Fat",
+                "fiber": "Fiber"
+            }
+        },
+        "workouts": {
+            "newTitle": "🏋️ New Workout",
+            "editTitle": "✏️ Edit Workout",
+            "date": "Date",
+            "type": "Type",
+            "name": "Name *",
+            "namePlaceholder": "Push Day, Tennis Match",
+            "duration": "Min",
+            "calories": "Kcal",
+            "volume": "Vol (kg)",
+            "notes": "Notes",
+            "notesPlaceholder": "Workout details",
+            "cancel": "Cancel",
+            "save": "Save",
+            "update": "Update"
+        },
         "deleteConfirm": {
             "title": "Delete?",
             "cancel": "Cancel",
@@ -563,23 +793,6 @@
             "aiConfidence": "AI Confidence",
             "reviewed": "Reviewed"
         },
-        "foodSearch": {
-            "title": "Search Food",
-            "searchPlaceholder": "Search your foods...",
-            "noResults": "No results found",
-            "selectMeal": "Select meal to add"
-        },
-        "workoutForm": {
-            "titleAdd": "Add Workout",
-            "titleEdit": "Edit Workout",
-            "name": "Name",
-            "type": "Type",
-            "date": "Date",
-            "duration": "Duration (min)",
-            "calories": "Calories",
-            "notes": "Notes",
-            "exercises": "Exercises"
-        },
         "photoSelection": {
             "title": "Select Photo",
             "cancel": "Cancel",
@@ -587,30 +800,66 @@
         }
     },
     "onboarding": {
-        "welcome": "Welcome",
+        "welcome": "Welcome to LukenFit!",
         "step1": {
             "title": "Basic Info",
-            "name": "Name",
-            "currentWeight": "Current Weight",
-            "height": "Height",
+            "greeting": "Hello!",
+            "name": "Full name",
+            "namePlaceholder": "Enter your name",
+            "physicalData": "Your physical data",
+            "currentWeight": "Current Weight (kg)",
+            "height": "Height (cm)",
             "age": "Age",
-            "gender": "Gender"
+            "gender": "Gender",
+            "male": "Male",
+            "female": "Female"
         },
         "step2": {
-            "title": "Goals",
+            "title": "Nutrition Goals",
+            "autoCalculate": "Auto-calculate based on your data",
             "calorieGoal": "Calorie Goal",
-            "proteinGoal": "Protein Goal",
-            "carbsGoal": "Carbs Goal",
-            "fatGoal": "Fat Goal",
-            "autoCalculate": "Calculate Automatically"
+            "proteinGoal": "Protein Goal (g)",
+            "carbsGoal": "Carbs Goal (g)",
+            "fatGoal": "Fat Goal (g)",
+            "tip": "💡 Tip: These goals are automatically calculated based on your weight, height, age, gender, and goal. You can adjust them manually if you wish."
         },
         "step3": {
-            "title": "Training",
-            "trainingDays": "Training Days",
+            "title": "Training & Devices",
+            "trainingDays": "Training days per week",
             "goal": "Main Goal",
-            "hasOuraRing": "Do you have an Oura Ring?"
+            "goals": {
+                "lose": "Lose",
+                "loseDesc": "Lose weight",
+                "maintain": "Maintain",
+                "maintainDesc": "Maintain weight",
+                "gain": "Gain",
+                "gainDesc": "Build muscle"
+            },
+            "hasOuraRing": "Do you have an Oura Ring?",
+            "ouraDesc": "Automatically syncs sleep, HRV, and recovery",
+            "summary": "Profile Summary",
+            "summaryLabels": {
+                "weight": "Current weight:",
+                "calories": "Daily calories:",
+                "protein": "Protein:",
+                "goal": "Goal:",
+                "training": "Workouts/week:",
+                "oura": "Oura Ring:",
+                "ouraActive": "✓ Active (token required)",
+                "days": "days"
+            }
         },
-        "complete": "Complete Setup"
+        "navigation": {
+            "back": "Back",
+            "next": "Next",
+            "finish": "Finish",
+            "skip": "Skip for now",
+            "start": "Start",
+            "saving": "Saving..."
+        },
+        "header": {
+            "subtitle": "Let's set up your profile in {{steps}} steps"
+        }
     },
     "steps": {
         "title": "Steps",

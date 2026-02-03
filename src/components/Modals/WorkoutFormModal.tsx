@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Workout } from '../../types/domain';
 import { ExerciseForm } from '../Workouts/ExerciseForm';
 
@@ -23,10 +24,14 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
     onSubmit,
     mode = 'add',
 }) => {
+    const { t } = useTranslation();
     if (!isOpen) return null;
 
     const isGymWorkout = workout.type === 'gym';
-    const headerText = mode === 'edit' ? '✏️ Editar Entreno' : '🏋️ Nuevo Entreno';
+    const headerText =
+        mode === 'edit'
+            ? `✏️ ${t('modals.workouts.editTitle')}`
+            : `🏋️ ${t('modals.workouts.newTitle')}`;
 
     const handleExercisesChange = (exercises: any[]) => {
         onWorkoutChange({ ...workout, exercises });
@@ -55,7 +60,7 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                     {/* Row 1: Date */}
                     <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
-                            Fecha
+                            {t('modals.workouts.date')}
                         </label>
                         <input
                             type="date"
@@ -70,7 +75,7 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                     {/* Row 2: Type */}
                     <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
-                            Tipo
+                            {t('modals.workouts.type')}
                         </label>
                         <select
                             value={workout.type || 'gym'}
@@ -91,7 +96,7 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                     {/* Row 3: Name */}
                     <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
-                            Nombre *
+                            {t('modals.workouts.name')} *
                         </label>
                         <input
                             type="text"
@@ -99,7 +104,7 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                             onChange={(e) =>
                                 onWorkoutChange({ ...workout, name: e.target.value })
                             }
-                            placeholder="Push Day, Clase de Tenis"
+                            placeholder={t('modals.workouts.namePlaceholder')}
                             className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all"
                         />
                     </div>
@@ -162,7 +167,7 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                     {/* Row 5: Notes */}
                     <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
-                            Notas
+                            {t('modals.workouts.notes')}
                         </label>
                         <input
                             type="text"
@@ -173,7 +178,7 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                                     notes: e.target.value,
                                 })
                             }
-                            placeholder="Subí peso en press banca"
+                            placeholder={t('modals.workouts.notesPlaceholder')}
                             className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all"
                         />
                     </div>
@@ -194,13 +199,15 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                     <button
                         onClick={onClose}
                         className="flex-1 bg-slate-100 hover:bg-slate-200 py-4 rounded-2xl text-slate-600 text-sm lg:text-base font-bold transition-all active:scale-95">
-                        Cancelar
+                        {t('modals.workouts.cancel')}
                     </button>
                     <button
                         onClick={onSubmit}
                         disabled={!workout.name}
                         className="flex-1 bg-gradient-to-br from-amber-600 to-orange-500 hover:from-amber-500 hover:to-orange-400 py-4 rounded-2xl text-white text-sm lg:text-base font-bold shadow-lg shadow-orange-500/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
-                        {mode === 'edit' ? 'Actualizar' : 'Guardar'}
+                        {mode === 'edit'
+                            ? t('modals.workouts.update')
+                            : t('modals.workouts.save')}
                     </button>
                 </div>
             </div>

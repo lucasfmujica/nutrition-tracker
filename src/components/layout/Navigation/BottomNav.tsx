@@ -8,8 +8,8 @@ import {
     Home,
     Image,
     Import,
-    MoreHorizontal,
     Moon,
+    MoreHorizontal,
     Plus,
     Settings,
     Star,
@@ -17,6 +17,7 @@ import {
     Utensils,
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../../context/TrackerContext';
 
 // =====================================================
@@ -29,7 +30,11 @@ interface BottomNavProps {
     pendingRequestCount?: number;
 }
 
-export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, pendingRequestCount = 0 }) => {
+export const BottomNav: React.FC<BottomNavProps> = ({
+    activeTab,
+    setActiveTab,
+    pendingRequestCount = 0,
+}) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -48,6 +53,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
         selectedWorkoutDate,
         setShowFoodScanModal,
     } = useTracker() as any;
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (isMenuOpen) {
@@ -79,8 +85,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
     const actions = [
         {
             icon: <Utensils size={22} />,
-            label: 'COMIDA',
-            sublabel: 'MANUAL',
+            label: t('navigation.meals').toUpperCase(),
+            sublabel: t('modals.foods.manualEntry').toUpperCase(),
             onClick: () => {
                 setNewFood({ ...newFood, date: getContextualDate() });
                 setShowFoodForm(true);
@@ -90,8 +96,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
         },
         {
             icon: <Dumbbell size={22} />,
-            label: 'ENTRENO',
-            sublabel: 'MANUAL',
+            label: t('navigation.workouts').toUpperCase(),
+            sublabel: t('modals.foods.manualEntry').toUpperCase(),
             onClick: () => {
                 setNewWorkout({ ...newWorkout, date: getContextualDate() });
                 setShowWorkoutForm(true);
@@ -101,7 +107,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
         },
         {
             icon: <Star size={22} />,
-            label: 'FAVORITOS',
+            label: t('common.favorites')?.toUpperCase() || 'FAVORITOS',
             sublabel: 'TEMPLATES',
             onClick: () => setShowTemplatesModal(true),
             color: 'text-purple-400',
@@ -109,7 +115,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
         },
         {
             icon: <Camera size={20} />,
-            label: 'ESCANEAR',
+            label: t('common.scan')?.toUpperCase() || 'ESCANEAR',
             sublabel: 'VISION IA',
             onClick: () => setShowFoodScanModal(true),
             color: 'text-primary',
@@ -128,8 +134,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
     const moreOptions = [
         {
             icon: <Footprints size={22} />,
-            label: 'PASOS',
-            sublabel: 'ACTIVIDAD',
+            label: t('navigation.steps').toUpperCase(),
+            sublabel: t('dashboard.activity.steps').toUpperCase(),
             onClick: () => {
                 setActiveTab('pasos');
                 setIsMoreMenuOpen(false);
@@ -150,7 +156,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
         },
         {
             icon: <Image size={22} />,
-            label: 'PROGRESO',
+            label: t('navigation.progress').toUpperCase(),
             sublabel: 'FOTOS',
             onClick: () => {
                 setActiveTab('progreso');
@@ -161,8 +167,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
         },
         {
             icon: <Settings size={22} />,
-            label: 'AJUSTES',
-            sublabel: 'CONFIGURACIÓN',
+            label: t('navigation.config').toUpperCase(),
+            sublabel: t('config.title').toUpperCase(),
             onClick: () => {
                 setActiveTab('config');
                 setIsMoreMenuOpen(false);
@@ -173,13 +179,49 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
     ];
 
     const tabs = [
-        { id: 'dashboard', icon: Home, label: 'LAB', tutorialId: 'dashboard-tab' },
-        { id: 'comidas', icon: BookOpen, label: 'FUEL', tutorialId: 'diary-tab' },
-        { id: 'entrenos', icon: Dumbbell, label: 'TRAIN', tutorialId: 'workouts-tab' },
-        { id: 'add', icon: Plus, label: '', isAction: true, tutorialId: 'fab-button' },
-        { id: 'peso', icon: BarChart2, label: 'WEIGHT', tutorialId: 'weight-tab' },
-        { id: 'more', icon: MoreHorizontal, label: 'MORE', isMore: true },
-        { id: 'social', icon: Users, label: 'CREW', tutorialId: 'social-tab' },
+        {
+            id: 'dashboard',
+            icon: Home,
+            label: t('navigation.dashboard').toUpperCase(),
+            tutorialId: 'dashboard-tab',
+        },
+        {
+            id: 'comidas',
+            icon: BookOpen,
+            label: t('navigation.meals').toUpperCase(),
+            tutorialId: 'diary-tab',
+        },
+        {
+            id: 'entrenos',
+            icon: Dumbbell,
+            label: t('navigation.workouts').toUpperCase(),
+            tutorialId: 'workouts-tab',
+        },
+        {
+            id: 'add',
+            icon: Plus,
+            label: '',
+            isAction: true,
+            tutorialId: 'fab-button',
+        },
+        {
+            id: 'peso',
+            icon: BarChart2,
+            label: t('navigation.weight').toUpperCase(),
+            tutorialId: 'weight-tab',
+        },
+        {
+            id: 'more',
+            icon: MoreHorizontal,
+            label: t('navigation.more')?.toUpperCase() || 'MORE',
+            isMore: true,
+        },
+        {
+            id: 'social',
+            icon: Users,
+            label: t('navigation.social').toUpperCase(),
+            tutorialId: 'social-tab',
+        },
     ];
 
     return (
@@ -230,7 +272,9 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
                         className="fixed inset-0 bg-background/80 z-40 backdrop-blur-2xl transition-all duration-500"
                         onClick={() => setIsMoreMenuOpen(false)}
                     />
-                    <div ref={moreMenuRef} className="fixed inset-x-4 bottom-28 z-50">
+                    <div
+                        ref={moreMenuRef}
+                        className="fixed inset-x-4 bottom-28 z-50">
                         <div className="glass rounded-[2.5rem] p-6 shadow-2xl border border-white/5 max-w-sm mx-auto overflow-hidden">
                             <div className="absolute inset-0 bg-noise opacity-[0.03] pointer-events-none" />
                             <div className="flex flex-col gap-3 relative z-10">
@@ -292,11 +336,18 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
                         }
 
                         if (tab.isMore) {
-                            const isMoreActive = ['pasos', 'oura', 'progreso', 'config'].includes(activeTab);
+                            const isMoreActive = [
+                                'pasos',
+                                'oura',
+                                'progreso',
+                                'config',
+                            ].includes(activeTab);
                             return (
                                 <button
                                     key={tab.id}
-                                    onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+                                    onClick={() =>
+                                        setIsMoreMenuOpen(!isMoreMenuOpen)
+                                    }
                                     className={`flex flex-col items-center justify-center transition-all duration-300 relative group min-w-[40px] h-full ${
                                         isMoreActive
                                             ? 'text-primary'
@@ -307,7 +358,9 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
                                             {tab.icon &&
                                                 React.createElement(tab.icon, {
                                                     size: 20,
-                                                    strokeWidth: isMoreActive ? 2.5 : 2,
+                                                    strokeWidth: isMoreActive
+                                                        ? 2.5
+                                                        : 2,
                                                     className: `transition-all duration-300 ${isMoreActive ? '-translate-y-1 scale-110' : 'group-hover:scale-105'}`,
                                                 })}
                                         </div>
@@ -353,13 +406,16 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, p
                                             })}
 
                                         {/* Notification Badge for Social Tab */}
-                                        {tab.id === 'social' && pendingRequestCount > 0 && (
-                                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-                                                <span className="text-[8px] font-black text-white">
-                                                    {pendingRequestCount > 9 ? '9+' : pendingRequestCount}
-                                                </span>
-                                            </div>
-                                        )}
+                                        {tab.id === 'social' &&
+                                            pendingRequestCount > 0 && (
+                                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                                                    <span className="text-[8px] font-black text-white">
+                                                        {pendingRequestCount > 9
+                                                            ? '9+'
+                                                            : pendingRequestCount}
+                                                    </span>
+                                                </div>
+                                            )}
                                     </div>
 
                                     <div

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ImportModalProps {
     isOpen: boolean;
@@ -29,6 +30,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
     error,
     accentColor = 'blue',
 }) => {
+    const { t } = useTranslation();
     if (!isOpen) return null;
 
     const colorClasses = {
@@ -71,12 +73,12 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                     <button
                         onClick={onClose}
                         className="flex-1 bg-slate-100 hover:bg-slate-200 py-4 rounded-2xl text-slate-600 font-bold transition-all active:scale-95">
-                        Cancelar
+                        {t('modals.import.cancel')}
                     </button>
                     <button
                         onClick={onImport}
                         className={`flex-1 ${colors.button} py-4 rounded-2xl text-white font-bold shadow-lg transition-all active:scale-95`}>
-                        Importar
+                        {t('modals.import.import')}
                     </button>
                 </div>
             </div>

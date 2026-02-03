@@ -1,5 +1,6 @@
 import { Activity, Flame, Footprints, Heart, Moon, Zap } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface OuraData {
     date: string;
@@ -24,6 +25,8 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
     data,
     stepGoal = 10000,
 }) => {
+    const { t } = useTranslation();
+
     if (!data) {
         return (
             <div className="bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm">
@@ -31,11 +34,9 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                     📭
                 </div>
                 <h3 className="text-gray-900 font-bold text-lg mb-1">
-                    Sin datos sincronizados
+                    {t('oura.setup.noData')}
                 </h3>
-                <p className="text-gray-500 text-sm">
-                    Sincroniza tu anillo para ver el reporte.
-                </p>
+                <p className="text-gray-500 text-sm">{t('oura.setup.syncPrompt')}</p>
             </div>
         );
     }
@@ -80,12 +81,12 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                                 <Zap className="w-5 h-5 text-yellow-300" />
                             </div>
                             <span className="font-bold text-sm tracking-wide text-indigo-100">
-                                READINESS
+                                {t('oura.metrics.readiness').toUpperCase()}
                             </span>
                         </div>
                         {readinessScore !== undefined && readinessScore >= 85 && (
                             <span className="px-2 py-1 rounded-full bg-green-500/20 border border-green-500/30 text-green-300 text-[10px] font-bold uppercase tracking-wider">
-                                Optimal
+                                {t('oura.metrics.ideal')}
                             </span>
                         )}
                     </div>
@@ -111,7 +112,9 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                         <div className="bg-white/5 rounded-xl p-3 backdrop-blur-sm border border-white/10">
                             <div className="flex items-center gap-2 mb-1">
                                 <Activity className="w-3.5 h-3.5 text-rose-400" />
-                                <span className="text-xs text-indigo-200">RHR</span>
+                                <span className="text-xs text-indigo-200">
+                                    {t('oura.metrics.restingHR')}
+                                </span>
                             </div>
                             <span className="text-xl font-bold">
                                 {restingHr || '--'}
@@ -134,7 +137,7 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                                 <Moon className="w-4 h-4" />
                             </div>
                             <span className="font-bold text-sm text-gray-700">
-                                SUEÑO
+                                {t('oura.metrics.sleep').toUpperCase()}
                             </span>
                         </div>
                         <span
@@ -148,7 +151,7 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                             {sleepHours || '--'}
                         </span>
                         <span className="text-sm text-gray-500 font-medium">
-                            horas
+                            {t('oura.metrics.hours')}
                         </span>
                     </div>
 
@@ -156,7 +159,7 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                         <div className="flex justify-between items-center text-xs">
                             <span className="text-gray-500 font-medium flex items-center gap-1.5">
                                 <div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>{' '}
-                                Deep
+                                {t('oura.metrics.deep')}
                             </span>
                             <span className="font-bold text-gray-900">
                                 {formatMins(deepSleepMins)}
@@ -165,7 +168,7 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                         <div className="flex justify-between items-center text-xs">
                             <span className="text-gray-500 font-medium flex items-center gap-1.5">
                                 <div className="w-1.5 h-1.5 rounded-full bg-sky-400"></div>{' '}
-                                REM
+                                {t('oura.metrics.rem')}
                             </span>
                             <span className="font-bold text-gray-900">
                                 {formatMins(remSleepMins)}
@@ -183,7 +186,7 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                                 <Flame className="w-4 h-4" />
                             </div>
                             <span className="font-bold text-sm text-gray-700">
-                                ACTIVIDAD
+                                {t('oura.metrics.activity').toUpperCase()}
                             </span>
                         </div>
                         <span
@@ -196,7 +199,9 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <Footprints className="w-4 h-4 text-gray-400" />
-                                <span className="text-sm text-gray-500">Pasos</span>
+                                <span className="text-sm text-gray-500">
+                                    {t('oura.metrics.steps')}
+                                </span>
                             </div>
                             <span className="text-lg font-bold text-gray-900">
                                 {steps ? steps.toLocaleString() : '--'}
@@ -211,7 +216,7 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                             />
                         </div>
                         <p className="text-[10px] text-gray-400 text-right">
-                            Meta: {stepGoal.toLocaleString()}
+                            {t('oura.metrics.target')}: {stepGoal.toLocaleString()}
                         </p>
                     </div>
                 </div>

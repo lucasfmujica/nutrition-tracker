@@ -1,5 +1,6 @@
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     addDaysToDate,
     getArgentinaDateString,
@@ -21,20 +22,25 @@ interface LukenFitDatePickerProps {
 export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
     selectedDate,
     onChange,
-    label = 'Fecha',
+    label,
     disableFuture = true,
 }) => {
+    const { t, i18n } = useTranslation();
+    const displayLabel = label || t('common.date');
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     const today = getArgentinaDateString();
     const yesterday = addDaysToDate(today, -1);
 
     // Format display text - Optimized to avoid redundancy
     const dateObj = new Date(selectedDate + 'T12:00:00');
-    const formattedDate = new Intl.DateTimeFormat('es-AR', {
-        weekday: 'short',
-        day: 'numeric',
-        month: 'short',
-    }).format(dateObj);
+    const formattedDate = new Intl.DateTimeFormat(
+        i18n.language === 'es' ? 'es-AR' : 'en-US',
+        {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short',
+        },
+    ).format(dateObj);
 
     const mainText = formattedDate;
 
@@ -59,7 +65,7 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
     }, [isCalendarOpen, selectedDate, today]);
 
     const viewMonthYear = new Date(viewDate + 'T12:00:00').toLocaleDateString(
-        'es-AR',
+        i18n.language === 'es' ? 'es-AR' : 'en-US',
         { month: 'long', year: 'numeric' },
     );
 
@@ -97,7 +103,10 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
     };
 
     const calendarDays = getCalendarDays();
-    const weekDays = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+    const weekDays =
+        i18n.language === 'es'
+            ? ['L', 'M', 'X', 'J', 'V', 'S', 'D']
+            : ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
     const changeMonth = (offset: number) => {
         const parts = viewDate.split('-').map(Number);
@@ -116,7 +125,7 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                 <button
                     onClick={handlePrevDay}
                     className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all active:scale-95 flex-shrink-0"
-                    aria-label="Día anterior">
+                    aria-label={t('common.prev')}>
                     <ChevronLeft className="w-5 h-5" />
                 </button>
 
@@ -130,7 +139,11 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                                 ? 'text-blue-600'
                                 : 'text-gray-400 group-hover:text-blue-500'
                         }`}>
-                        {isToday ? 'HOY' : isYesterday ? 'AYER' : label}
+                        {isToday
+                            ? t('common.today')
+                            : isYesterday
+                              ? t('common.yesterday')
+                              : displayLabel}
                     </span>
                     <div className="flex items-center justify-center gap-1.5 text-gray-900 font-bold text-lg leading-none mt-0.5 group-hover:text-blue-600 transition-colors w-full">
                         <CalendarIcon className="w-4 h-4 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
@@ -147,7 +160,7 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                             ? 'text-gray-200 cursor-not-allowed'
                             : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'
                     }`}
-                    aria-label="Día siguiente">
+                    aria-label={t('common.next')}>
                     <ChevronRight className="w-5 h-5" />
                 </button>
             </div>
@@ -174,7 +187,7 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                                 <button
                                     onClick={() => handleCalendarSelect(today)}
                                     className="text-xs font-bold text-blue-500 hover:text-blue-600 transition-colors mt-0.5">
-                                    Volver a Hoy
+                                    {t('diary.calendar.goToToday')}
                                 </button>
                             </div>
                             <div className="flex items-center gap-1 bg-gray-50 p-1 rounded-full border border-gray-100">
@@ -244,7 +257,7 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                         <button
                             onClick={() => setIsCalendarOpen(false)}
                             className="mt-4 w-full py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold rounded-xl text-xs transition-colors">
-                            Cerrar
+                            {t('common.close')}
                         </button>
                     </div>
                 </>

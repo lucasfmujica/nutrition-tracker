@@ -10,6 +10,111 @@
         "progress": "Progreso",
         "oura": "Oura"
     },
+    "oura": {
+        "title": "Oura Ring",
+        "subtitle": "Datos de salud y sueño",
+        "connect": "Conectar Oura",
+        "disconnect": "Desconectar",
+        "sync": "Sincronizar",
+        "metrics": {
+            "sleep": "Sueño",
+            "readiness": "Preparación",
+            "activity": "Actividad",
+            "hrv": "HRV",
+            "restingHR": "FC Reposo",
+            "score": "Score",
+            "ideal": "Óptimo",
+            "hours": "horas",
+            "deep": "Deep",
+            "rem": "REM",
+            "steps": "Pasos",
+            "target": "Meta"
+        },
+        "setup": {
+            "title": "Configurar Oura",
+            "token": "Token Personal",
+            "save": "Guardar",
+            "tokenPlaceholder": "Pegá tu token aquí...",
+            "howTo": "¿Cómo obtener tu token?",
+            "step1": "Entrá a Oura Cloud",
+            "step2": "Hacé clic en \"Create New Personal Access Token\"",
+            "step3": "Dale un nombre (ej: \"LukenFit\")",
+            "step4": "Copiá el token generado y pegalo abajo",
+            "configured": "Token configurado",
+            "notConfigured": "Token no configurado",
+            "noData": "Sin datos sincronizados",
+            "notConfiguredDesc": "Para ver tus datos de Oura Ring, necesitas configurar tu Personal Access Token en la pestaña de configuración.",
+            "privacy": "Tu token se guarda de forma segura y solo se usa para sincronizar tus datos.",
+            "lastSync": "Última sinc.",
+            "syncPrompt": "Sincroniza tu anillo para ver el reporte.",
+            "syncing": "Sincronizando...",
+            "saving": "Guardando...",
+            "errorSaving": "Error al guardar",
+            "successSaving": "Token guardado"
+        }
+    },
+
+    "auth": {
+        "login": {
+            "title": "Iniciar Sesión",
+            "email": "Email",
+            "password": "Contraseña",
+            "submit": "Entrar",
+            "noAccount": "¿No tenés cuenta?",
+            "signUp": "Registrarse",
+            "subtitle": "Inicia sesión para sincronizar tus datos",
+            "continueGoogle": "Continuar con Google",
+            "continueGuest": "O continúa como invitado",
+            "guestButton": "Usar sin cuenta",
+            "forgotPassword": "¿Olvidaste tu contraseña?"
+        },
+        "register": {
+            "title": "Crear Cuenta",
+            "subtitle": "Crea una cuenta para guardar tus datos",
+            "name": "Nombre",
+            "email": "Email",
+            "password": "Contraseña",
+            "confirmPassword": "Confirmar contraseña",
+            "submit": "Registrarse",
+            "hasAccount": "¿Ya tenés cuenta?",
+            "signIn": "Iniciar Sesión",
+            "continueGoogle": "Continuar con Google",
+            "continueGuest": "O continúa como invitado",
+            "guestButton": "Usar sin cuenta"
+        },
+        "reset": {
+            "title": "Recuperar Contraseña",
+            "subtitle": "Recupera el acceso a tu cuenta",
+            "email": "Email",
+            "submit": "Enviar",
+            "back": "Volver al login",
+            "continueGuest": "O continúa como invitado",
+            "guestButton": "Usar sin cuenta"
+        },
+        "errors": {
+            "passwordMismatch": "Las contraseñas no coinciden",
+            "passwordLength": "La contraseña debe tener al menos 6 caracteres",
+            "emailRegistered": "Este email ya está registrado. Intenta iniciar sesión.",
+            "invalidEmail": "Por favor ingresa un email válido.",
+            "serverError": "Error de configuración del servidor.",
+            "unknown": "Error desconocido",
+            "invalidLogin": "Email o contraseña incorrectos.",
+            "emailNotConfirmed": "Debes confirmar tu email. Revisa tu bandeja.",
+            "connection": "Error de conexión. Intenta de nuevo.",
+            "googleError": "Error al iniciar sesión con Google"
+        },
+        "success": {
+            "accountCreated": "¡Cuenta creada! Revisa tu email para confirmar.",
+            "accountCreatedRedirect": "¡Cuenta creada! Redirigiendo...",
+            "resetEmailSent": "Email de recuperación enviado. Revisa tu bandeja."
+        },
+        "offline": {
+            "title": "Modo local activo",
+            "warning": "⚠️ Supabase no está configurado. Los datos se guardarán localmente en este dispositivo.",
+            "button": "Continuar sin cuenta"
+        },
+        "loading": "Procesando..."
+    },
     "mealTypes": {
         "breakfast": "Desayuno",
         "lunch": "Almuerzo",
@@ -504,9 +609,50 @@
         }
     },
     "navigation": {
-        "back": "Volver"
+        "back": "Volver",
+        "dashboard": "Resumen",
+        "meals": "Comidas",
+        "workouts": "Entrenos",
+        "weight": "Peso",
+        "steps": "Pasos",
+        "progress": "Progreso",
+        "social": "Social",
+        "config": "Config"
+    },
+    "layout": {
+        "loading": "Cargando...",
+        "syncStatus": "Sincronizando",
+        "fab": {
+            "add": "Agregar"
+        }
+    },
+    "charts": {
+        "weight": {
+            "title": "Historial de Peso",
+            "trend": "Tendencia",
+            "goal": "Objetivo",
+            "today": "Hoy",
+            "average": "Media 7d"
+        },
+        "projection": {
+            "title": "Proyección",
+            "register": "Registra tu peso para ver la proyección"
+        }
+    },
+    "settings": {
+        "iosShortcut": {
+            "title": "Shortcut de iOS",
+            "subtitle": "Registra peso y pasos desde tu iPhone",
+            "userId": "Tu ID de usuario:",
+            "instructionsShort": "Tocá \"Instalar\" si estás en tu iPhone, o escaneá el QR desde otro dispositivo.",
+            "detailedInstructions": "Instrucciones detalladas",
+            "scan": "Escanea el QR"
+        }
     },
     "common": {
+        "date": "Fecha",
+        "install": "Instalar",
+        "howToUse": "Cómo usar",
         "save": "Guardar",
         "cancel": "Cancelar",
         "delete": "Eliminar",
@@ -537,6 +683,91 @@
         "tomorrow": "Mañana"
     },
     "modals": {
+        "barcode": {
+            "title": "Escanear Código de Barras",
+            "scanning": "Escaneando...",
+            "notFound": "Producto no encontrado",
+            "notFoundDesc": "El código {{barcode}} no está en nuestra base de datos.",
+            "scanAnother": "Escanear otro producto",
+            "searchByName": "Buscar por nombre",
+            "found": "Encontrado",
+            "initializing": "Iniciando cámara...",
+            "lookingUp": "Buscando producto...",
+            "instructions": "Apuntá la cámara al código de barras"
+        },
+        "mondayBriefing": {
+            "title": "Resumen Semanal",
+            "subtitle": "Resumen de tu progreso y ajustes",
+            "lastWeek": "Semana Pasada",
+            "excellent": "¡Excelente Trabajo!",
+            "excellentLong": "¡Excelente Trabajo!",
+            "warning": "¡Cuidado! Vas muy rápido",
+            "adjustment": "Ajuste Necesario",
+            "currentTempo": "Ritmo Actual",
+            "adherence": "Adherencia",
+            "proposal": "Propuesta de Objetivos",
+            "noChanges": "Sin cambios necesarios",
+            "noChangesDesc": "Sigue así, tus objetivos actuales están funcionando perfectamente.",
+            "accept": "Aceptar Nuevos Objetivos",
+            "maintain": "Mantener Actuales",
+            "continue": "Continuar Así"
+        },
+        "weeklyReport": {
+            "title": "Reporte Semanal",
+            "generatingStatus": "Generando reporte...",
+            "downloadButton": "Descargar Imagen",
+            "downloading": "Generando...",
+            "errorTitle": "Error al cargar"
+        },
+        "import": {
+            "title": "Importar Datos",
+            "warning": "⚠️ Esto reemplazará todos tus datos",
+            "import": "Importar",
+            "cancel": "Cancelar"
+        },
+        "foods": {
+            "searchTitle": "Buscar Alimento",
+            "placeholder": "Buscar por nombre o marca...",
+            "searching": "Buscando...",
+            "noResults": "No se encontraron resultados",
+            "tryAnother": "Probá con otro término",
+            "backToResults": "Volver a resultados",
+            "amount": "Cantidad",
+            "unit": "Unidad",
+            "meal": "Comida",
+            "save": "Guardar",
+            "saving": "Guardando...",
+            "added": "✓ Alimento agregado",
+            "error": "❌ Error al guardar",
+            "grams": "gramos",
+            "serving": "porción",
+            "found": "Seleccionado",
+            "useValues": "Usar estos valores",
+            "manualEntry": "o ingresá manualmente",
+            "macros": {
+                "cal": "Cal",
+                "protein": "Prot",
+                "carbs": "Carbs",
+                "fat": "Grasa",
+                "fiber": "Fibra"
+            }
+        },
+        "workouts": {
+            "newTitle": "🏋️ Nuevo Entreno",
+            "editTitle": "✏️ Editar Entreno",
+            "date": "Fecha",
+            "type": "Tipo",
+            "name": "Nombre *",
+            "namePlaceholder": "Push Day, Clase de Tenis",
+            "duration": "Min",
+            "calories": "Kcal",
+            "volume": "Vol (kg)",
+            "notes": "Notas",
+            "notesPlaceholder": "Detalles del entreno",
+            "cancel": "Cancelar",
+            "save": "Guardar",
+            "update": "Actualizar"
+        },
         "deleteConfirm": {
             "title": "¿Eliminar?",
             "cancel": "Cancelar",
@@ -563,23 +794,6 @@
             "aiConfidence": "Confianza AI",
             "reviewed": "Revisado"
         },
-        "foodSearch": {
-            "title": "Buscar Comida",
-            "searchPlaceholder": "Buscar en tus comidas...",
-            "noResults": "No se encontraron resultados",
-            "selectMeal": "Seleccionar comida para agregar"
-        },
-        "workoutForm": {
-            "titleAdd": "Agregar Entreno",
-            "titleEdit": "Editar Entreno",
-            "name": "Nombre",
-            "type": "Tipo",
-            "date": "Fecha",
-            "duration": "Duración (min)",
-            "calories": "Calorías",
-            "notes": "Notas",
-            "exercises": "Ejercicios"
-        },
         "photoSelection": {
             "title": "Seleccionar Foto",
             "cancel": "Cancelar",
@@ -587,30 +801,66 @@
         }
     },
     "onboarding": {
-        "welcome": "Bienvenido",
+        "welcome": "¡Bienvenido a LukenFit!",
         "step1": {
             "title": "Datos Básicos",
-            "name": "Nombre",
-            "currentWeight": "Peso Actual",
-            "height": "Altura",
+            "greeting": "¡Hola!",
+            "name": "Nombre completo",
+            "namePlaceholder": "Escribe tu nombre",
+            "physicalData": "Tus datos físicos",
+            "currentWeight": "Peso Actual (kg)",
+            "height": "Altura (cm)",
             "age": "Edad",
-            "gender": "Género"
+            "gender": "Género",
+            "male": "Masculino",
+            "female": "Femenino"
         },
         "step2": {
-            "title": "Objetivos",
-            "calorieGoal": "Meta Calorías",
-            "proteinGoal": "Meta Proteína",
-            "carbsGoal": "Meta Carbos",
-            "fatGoal": "Meta Grasas",
-            "autoCalculate": "Calcular Automáticamente"
+            "title": "Objetivos Nutricionales",
+            "autoCalculate": "Auto-calcular basado en tus datos",
+            "calorieGoal": "Meta de Calorías",
+            "proteinGoal": "Meta de Proteína (g)",
+            "carbsGoal": "Meta de Carbos (g)",
+            "fatGoal": "Meta de Grasas (g)",
+            "tip": "💡 Tip: Estas metas se calculan automáticamente basadas en tu peso, altura, edad, género y objetivo. Puedes ajustarlas manualmente si lo deseas."
         },
         "step3": {
-            "title": "Entrenamiento",
-            "trainingDays": "Días de Entrenamiento",
+            "title": "Entrenamiento y Dispositivos",
+            "trainingDays": "Días de entrenamiento por semana",
             "goal": "Objetivo Principal",
-            "hasOuraRing": "¿Tienes Oura Ring?"
+            "goals": {
+                "lose": "Bajar",
+                "loseDesc": "Perder peso",
+                "maintain": "Mantener",
+                "maintainDesc": "Mantener peso",
+                "gain": "Subir",
+                "gainDesc": "Ganar músculo"
+            },
+            "hasOuraRing": "¿Tenés Oura Ring?",
+            "ouraDesc": "Sincroniza automáticamente sueño, HRV y recuperación",
+            "summary": "Resumen de tu perfil",
+            "summaryLabels": {
+                "weight": "Peso actual:",
+                "calories": "Calorías diarias:",
+                "protein": "Proteína:",
+                "goal": "Objetivo:",
+                "training": "Entrenos/semana:",
+                "oura": "Oura Ring:",
+                "ouraActive": "✓ Activado (token requerido)",
+                "days": "días"
+            }
         },
-        "complete": "Completar Setup"
+        "navigation": {
+            "back": "Atrás",
+            "next": "Siguiente",
+            "finish": "Completar",
+            "skip": "Omitir por ahora",
+            "start": "Comenzar",
+            "saving": "Guardando..."
+        },
+        "header": {
+            "subtitle": "Configuremos tu perfil en {{steps}} pasos"
+        }
     },
     "steps": {
         "title": "Pasos",

@@ -1,5 +1,6 @@
 import { Moon, Sun } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../../context/TrackerContext';
 import { SyncStatusIndicator } from '../SyncStatusIndicator';
 
@@ -19,6 +20,7 @@ export const TrackerHeader: React.FC = () => {
         isTrainingDay,
         cacheStale,
     } = useTracker() as any;
+    const { t, i18n } = useTranslation();
 
     return (
         <header className="bg-white/90 backdrop-blur-md border-b border-slate-100 px-4 lg:px-8 py-4 lg:py-5 sticky top-0 z-30 shadow-sm">
@@ -83,15 +85,18 @@ export const TrackerHeader: React.FC = () => {
                                 )}
                                 {new Date(
                                     dashboardDate + 'T00:00:00',
-                                ).toLocaleDateString('es-AR', {
-                                    weekday: 'long',
-                                    day: 'numeric',
-                                    month: 'long',
-                                })}
+                                ).toLocaleDateString(
+                                    i18n.language === 'es' ? 'es-AR' : 'en-US',
+                                    {
+                                        weekday: 'long',
+                                        day: 'numeric',
+                                        month: 'long',
+                                    },
+                                )}
                             </div>
                             <div className="flex items-center gap-2 text-xs font-medium text-slate-400 pl-1">
                                 <span>
-                                    Peso:{' '}
+                                    {t('navigation.weight')}:{' '}
                                     <span className="text-slate-700 font-bold">
                                         {getMostRecentWeight(weightHistory)
                                             ?.weight || profile.currentWeight}
@@ -100,7 +105,7 @@ export const TrackerHeader: React.FC = () => {
                                 </span>
                                 <span className="text-slate-300">•</span>
                                 <span>
-                                    Meta:{' '}
+                                    {t('charts.weight.goal')}:{' '}
                                     <span className="text-blue-600 font-bold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
                                         {profile.targetWeight}kg
                                     </span>
@@ -134,7 +139,7 @@ export const TrackerHeader: React.FC = () => {
                                 />
                             ) : (
                                 <span className="text-xs font-bold bg-amber-50 text-amber-600 px-3 py-1.5 rounded-full border border-amber-100">
-                                    📴 Offline
+                                    📴 {t('auth.offline.title')}
                                 </span>
                             )}
 
@@ -148,7 +153,7 @@ export const TrackerHeader: React.FC = () => {
                                 }}
                                 disabled={isLocalSyncing}
                                 className={`w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-2xl bg-white hover:bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 transition-all shadow-sm active:scale-90 ${isLocalSyncing ? 'cursor-not-allowed opacity-80' : ''}`}
-                                title="Refrescar datos desde la nube">
+                                title={t('dashboard.summary.syncStatus') || 'Sync'}>
                                 <svg
                                     className={`w-5 h-5 ${isLocalSyncing ? 'animate-spin text-blue-600' : ''}`}
                                     fill="none"
@@ -170,7 +175,7 @@ export const TrackerHeader: React.FC = () => {
                                     setActiveTab('config');
                                 }}
                                 className="lg:hidden w-10 h-10 flex items-center justify-center rounded-2xl bg-white hover:bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 transition-all shadow-sm active:scale-90"
-                                title="Mi Perfil">
+                                title={t('navigation.config')}>
                                 {profile?.avatar && profile.avatar.length > 4 ? (
                                     <img
                                         src={profile.avatar}
@@ -191,7 +196,7 @@ export const TrackerHeader: React.FC = () => {
                                     handleLogout();
                                 }}
                                 className="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-2xl bg-white hover:bg-red-50 border border-slate-100 text-slate-400 hover:text-red-600 transition-all shadow-sm active:scale-90"
-                                title="Cerrar sesión">
+                                title={t('common.close')}>
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="w-5 h-5 lg:w-6 lg:h-6"
@@ -214,7 +219,7 @@ export const TrackerHeader: React.FC = () => {
                                 setOfflineMode(false);
                             }}
                             className="text-sm font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-5 py-2.5 rounded-2xl border border-blue-100 shadow-sm transition-all active:scale-95">
-                            Login
+                            {t('auth.login.title')}
                         </button>
                     )}
                 </div>

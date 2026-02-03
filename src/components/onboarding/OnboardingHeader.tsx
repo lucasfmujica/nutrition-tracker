@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface OnboardingHeaderProps {
     step: number;
@@ -13,6 +14,8 @@ export const OnboardingHeader: React.FC<OnboardingHeaderProps> = ({
     step,
     totalSteps,
 }) => {
+    const { t } = useTranslation();
+
     return (
         <>
             {/* Header */}
@@ -21,10 +24,10 @@ export const OnboardingHeader: React.FC<OnboardingHeaderProps> = ({
                     <span className="text-2xl">💪</span>
                 </div>
                 <h1 className="text-2xl font-bold text-white mb-2">
-                    ¡Bienvenido a LukenFit!
+                    {t('onboarding.welcome')}
                 </h1>
                 <p className="text-gray-400">
-                    Configuremos tu perfil en {totalSteps} pasos
+                    {t('onboarding.header.subtitle', { steps: totalSteps })}
                 </p>
             </div>
 

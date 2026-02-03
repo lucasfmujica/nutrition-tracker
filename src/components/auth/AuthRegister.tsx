@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface AuthRegisterProps {
     email: string;
@@ -33,12 +34,14 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
     handleContinueOffline,
     LukenFitLogo,
 }) => {
+    const { t } = useTranslation();
+
     return (
         <>
             <div className="text-center mb-8">
                 <LukenFitLogo />
                 <p className="text-gray-500 text-sm mt-2">
-                    Crea una cuenta para guardar tus datos
+                    {t('auth.register.subtitle')}
                 </p>
             </div>
 
@@ -56,7 +59,7 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
             <form onSubmit={onSubmit} className="space-y-4">
                 <div>
                     <label className="block text-gray-700 text-xs font-bold mb-2 uppercase tracking-wide">
-                        Email
+                        {t('auth.register.email')}
                     </label>
                     <input
                         type="email"
@@ -70,7 +73,7 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
 
                 <div>
                     <label className="block text-gray-700 text-xs font-bold mb-2 uppercase tracking-wide">
-                        Contraseña
+                        {t('auth.register.password')}
                     </label>
                     <input
                         type="password"
@@ -84,7 +87,7 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
 
                 <div>
                     <label className="block text-gray-700 text-xs font-bold mb-2 uppercase tracking-wide">
-                        Confirmar contraseña
+                        {t('auth.register.confirmPassword')}
                     </label>
                     <input
                         type="password"
@@ -120,10 +123,10 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                 />
                             </svg>
-                            Procesando...
+                            {t('auth.loading')}
                         </span>
                     ) : (
-                        'Crear Cuenta'
+                        t('auth.register.submit')
                     )}
                 </button>
             </form>
@@ -134,7 +137,9 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
                     <div className="w-full border-t border-gray-200"></div>
                 </div>
                 <div className="relative flex justify-center text-xs uppercase tracking-widest">
-                    <span className="px-4 bg-white text-gray-400 font-bold">O</span>
+                    <span className="px-4 bg-white text-gray-400 font-bold">
+                        {t('common.or')}
+                    </span>
                 </div>
             </div>
 
@@ -160,18 +165,18 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
                         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                     />
                 </svg>
-                Continuar con Google
+                {t('auth.register.continueGoogle')}
             </button>
 
             <div className="mt-8 space-y-4 text-center">
                 <div className="text-gray-600 text-sm bg-gray-50 p-3 rounded-xl border border-gray-100">
-                    ¿Ya tienes cuenta?{' '}
+                    {t('auth.register.hasAccount')}{' '}
                     <button
                         onClick={() => {
                             setMode('login');
                         }}
                         className="text-blue-600 hover:text-blue-700 font-bold transition-colors ml-1">
-                        Inicia sesión
+                        {t('auth.register.signIn')}
                     </button>
                 </div>
             </div>
@@ -182,7 +187,7 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
                 </div>
                 <div className="relative flex justify-center text-xs uppercase tracking-widest">
                     <span className="px-4 bg-white text-gray-400 font-bold">
-                        O continúa como invitado
+                        {t('auth.register.continueGuest')}
                     </span>
                 </div>
             </div>
@@ -190,7 +195,7 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
             <button
                 onClick={handleContinueOffline}
                 className="w-full py-3.5 bg-white text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all border-2 border-dashed border-gray-200 hover:border-gray-300">
-                Usar sin cuenta
+                {t('auth.register.guestButton')}
             </button>
         </>
     );

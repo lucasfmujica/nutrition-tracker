@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Area,
     AreaChart,
@@ -81,7 +82,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 /**
  * Format date to readable label
  */
-const formatDayLabel = (dateStr: string) => {
+const formatDayLabel = (dateStr: string, t: any, i18n: any) => {
     if (!dateStr) return '';
 
     try {
@@ -89,12 +90,11 @@ const formatDayLabel = (dateStr: string) => {
         const today = new Date();
         const isToday = dateStr === today.toISOString().split('T')[0];
 
-        if (isToday) return 'Hoy';
+        if (isToday) return t('common.today');
 
-        return new Intl.DateTimeFormat('es-AR', {
+        return new Intl.DateTimeFormat(i18n.language === 'es' ? 'es-AR' : 'en-US', {
             day: 'numeric',
             month: 'short',
-            timeZone: 'America/Argentina/Buenos_Aires',
         })
             .format(date)
             .replace('.', '');
@@ -109,6 +109,7 @@ export const WeightProjectionChart: React.FC<WeightProjectionChartProps> = ({
     targetWeight,
     height = 150,
 }) => {
+    const { t, i18n } = useTranslation();
     // Merge actual and projected data for unified chart
     const chartData = React.useMemo(() => {
         if (!actualPath || actualPath.length === 0) return [];
@@ -118,7 +119,7 @@ export const WeightProjectionChart: React.FC<WeightProjectionChartProps> = ({
 
         // Add actual weights
         actualPath.forEach((point) => {
-            const dayLabel = formatDayLabel(point.date);
+            const dayLabel = formatDayLabel(point.date, t, i18n);
             dataMap.set(point.date, {
                 date: point.date,
                 dayLabel,
@@ -129,7 +130,7 @@ export const WeightProjectionChart: React.FC<WeightProjectionChartProps> = ({
 
         // Add projected weights (may overlap with actual on "today")
         projectedPath?.forEach((point) => {
-            const dayLabel = formatDayLabel(point.date);
+            const dayLabel = formatDayLabel(point.date, t, i18n);
             const existing = dataMap.get(point.date);
             if (existing) {
                 existing.projected = point.projectedWeight;
@@ -147,12 +148,12 @@ export const WeightProjectionChart: React.FC<WeightProjectionChartProps> = ({
         return Array.from(dataMap.values()).sort((a, b) =>
             a.date.localeCompare(b.date),
         );
-    }, [actualPath, projectedPath]);
+    }, [actualPath, projectedPath, t, i18n]);
 
     if (chartData.length === 0) {
         return (
             <div className="flex items-center justify-center h-[150px] text-gray-400 text-sm">
-                Registra tu peso para ver la proyección
+                {t('charts.projection.register')}
             </div>
         );
     }
@@ -229,7 +230,7 @@ export const WeightProjectionChart: React.FC<WeightProjectionChartProps> = ({
                     <Area
                         type="monotone"
                         dataKey="actual"
-                        name="Peso Real"
+                        name={t('navigation.weight')}
                         stroke="#6366f1"
                         strokeWidth={2}
                         fillOpacity={1}
@@ -243,7 +244,7 @@ export const WeightProjectionChart: React.FC<WeightProjectionChartProps> = ({
                     <Line
                         type="monotone"
                         dataKey="projected"
-                        name="Proyección"
+                        name={t('charts.projection.title')}
                         stroke="#14b8a6"
                         strokeWidth={2}
                         strokeDasharray="6 4"

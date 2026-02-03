@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface AuthResetPasswordProps {
     email: string;
@@ -23,12 +24,14 @@ export const AuthResetPassword: React.FC<AuthResetPasswordProps> = ({
     handleContinueOffline,
     LukenFitLogo,
 }) => {
+    const { t } = useTranslation();
+
     return (
         <>
             <div className="text-center mb-8">
                 <LukenFitLogo />
                 <p className="text-gray-500 text-sm mt-2">
-                    Recupera el acceso a tu cuenta
+                    {t('auth.reset.subtitle')}
                 </p>
             </div>
 
@@ -46,7 +49,7 @@ export const AuthResetPassword: React.FC<AuthResetPasswordProps> = ({
             <form onSubmit={onSubmit} className="space-y-4">
                 <div>
                     <label className="block text-gray-700 text-xs font-bold mb-2 uppercase tracking-wide">
-                        Email
+                        {t('auth.reset.email')}
                     </label>
                     <input
                         type="email"
@@ -82,10 +85,10 @@ export const AuthResetPassword: React.FC<AuthResetPasswordProps> = ({
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                 />
                             </svg>
-                            Procesando...
+                            {t('auth.loading')}
                         </span>
                     ) : (
-                        'Enviar Email'
+                        t('auth.reset.submit')
                     )}
                 </button>
             </form>
@@ -96,7 +99,7 @@ export const AuthResetPassword: React.FC<AuthResetPasswordProps> = ({
                         setMode('login');
                     }}
                     className="text-blue-600 hover:text-blue-700 text-sm font-bold transition-colors flex items-center justify-center gap-2">
-                    ← Volver al login
+                    ← {t('auth.reset.back')}
                 </button>
             </div>
 
@@ -106,7 +109,7 @@ export const AuthResetPassword: React.FC<AuthResetPasswordProps> = ({
                 </div>
                 <div className="relative flex justify-center text-xs uppercase tracking-widest">
                     <span className="px-4 bg-white text-gray-400 font-bold">
-                        O continúa como invitado
+                        {t('auth.reset.continueGuest')}
                     </span>
                 </div>
             </div>
@@ -114,7 +117,7 @@ export const AuthResetPassword: React.FC<AuthResetPasswordProps> = ({
             <button
                 onClick={handleContinueOffline}
                 className="w-full py-3.5 bg-white text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all border-2 border-dashed border-gray-200 hover:border-gray-300">
-                Usar sin cuenta
+                {t('auth.reset.guestButton')}
             </button>
         </>
     );

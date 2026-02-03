@@ -1,5 +1,16 @@
-import { Activity, Camera, Dumbbell, Home, Link, Scale, User, Users, Utensils } from 'lucide-react';
+import {
+    Activity,
+    Camera,
+    Dumbbell,
+    Home,
+    Link,
+    Scale,
+    User,
+    Users,
+    Utensils,
+} from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Profile } from '../../../types/domain';
 
 interface SidebarProps {
@@ -15,21 +26,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
     profile,
     pendingRequestCount = 0,
 }) => {
+    const { t } = useTranslation();
     const menuItems = [
-        { id: 'dashboard', icon: Home, label: 'Dashboard' },
-        { id: 'comidas', icon: Utensils, label: 'Comidas', tutorialId: 'diary-tab' },
+        { id: 'dashboard', icon: Home, label: t('navigation.dashboard') },
+        {
+            id: 'comidas',
+            icon: Utensils,
+            label: t('navigation.meals'),
+            tutorialId: 'diary-tab',
+        },
         {
             id: 'entrenos',
             icon: Dumbbell,
-            label: 'Entrenos',
+            label: t('navigation.workouts'),
             tutorialId: 'workouts-tab',
         },
-        { id: 'peso', icon: Scale, label: 'Peso', tutorialId: 'weight-tab' },
-        { id: 'progreso', icon: Camera, label: 'Progreso' },
-        { id: 'social', icon: Users, label: 'Crew', tutorialId: 'social-tab' },
-        { id: 'pasos', icon: Activity, label: 'Pasos' },
+        {
+            id: 'peso',
+            icon: Scale,
+            label: t('navigation.weight'),
+            tutorialId: 'weight-tab',
+        },
+        { id: 'progreso', icon: Camera, label: t('navigation.progress') },
+        {
+            id: 'social',
+            icon: Users,
+            label: t('navigation.social'),
+            tutorialId: 'social-tab',
+        },
+        { id: 'pasos', icon: Activity, label: t('navigation.steps') },
         { id: 'oura', icon: Link, label: 'Oura' },
-        { id: 'config', icon: User, label: 'Perfil', tutorialId: 'config-tab' },
+        {
+            id: 'config',
+            icon: User,
+            label: t('navigation.config'),
+            tutorialId: 'config-tab',
+        },
     ];
 
     return (
@@ -79,7 +111,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {menuItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = activeTab === item.id;
-                    const showBadge = item.id === 'social' && pendingRequestCount > 0;
+                    const showBadge =
+                        item.id === 'social' && pendingRequestCount > 0;
                     return (
                         <button
                             key={item.id}
@@ -102,7 +135,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                 {showBadge && (
                                     <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center shadow-lg">
                                         <span className="text-[8px] font-black text-white">
-                                            {pendingRequestCount > 9 ? '9+' : pendingRequestCount}
+                                            {pendingRequestCount > 9
+                                                ? '9+'
+                                                : pendingRequestCount}
                                         </span>
                                     </div>
                                 )}
@@ -132,10 +167,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     )}
                     <div className="overflow-hidden">
                         <p className="text-sm font-bold text-gray-900 truncate">
-                            {profile?.name || 'Usuario'}
+                            {profile?.name || t('common.user')}
                         </p>
                         <p className="text-xs text-gray-500 truncate">
-                            Premium Member
+                            LukenFit Member
                         </p>
                     </div>
                 </div>

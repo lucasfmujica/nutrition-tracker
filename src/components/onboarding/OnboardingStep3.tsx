@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface OnboardingStep3Props {
     data: {
@@ -19,56 +20,60 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
     data,
     handlers,
 }) => {
+    const { t } = useTranslation();
     const { updateField } = handlers;
+
+    const getGoalLabel = (goal?: string) => {
+        if (!goal) return '-';
+        return t(`onboarding.step3.goals.${goal}`);
+    };
+
+    const getGoalEmoji = (goal?: string) => {
+        switch (goal) {
+            case 'lose':
+                return '📉';
+            case 'gain':
+                return '📈';
+            case 'maintain':
+                return '⚖️';
+            default:
+                return '🎯';
+        }
+    };
 
     return (
         <div className="space-y-5">
             <div className="text-center mb-6">
                 <span className="text-3xl mb-2 block">🏋️</span>
                 <h2 className="text-xl font-bold text-white">
-                    Tu rutina de entreno
+                    {t('onboarding.step3.title')}
                 </h2>
                 <p className="text-sm text-gray-400 mt-1">
-                    Para trackear tu progreso
+                    {t('onboarding.step3.ouraDesc')}
                 </p>
             </div>
 
             {/* Goal Selection */}
             <div>
                 <label className="block text-sm text-gray-400 mb-3">
-                    ¿Cuál es tu objetivo principal?
+                    {t('onboarding.step3.goal')}
                 </label>
                 <div className="grid grid-cols-3 gap-2">
-                    {[
-                        {
-                            value: 'lose',
-                            label: 'Bajar',
-                            emoji: '📉',
-                            desc: 'Perder peso',
-                        },
-                        {
-                            value: 'maintain',
-                            label: 'Mantener',
-                            emoji: '⚖️',
-                            desc: 'Mantener peso',
-                        },
-                        {
-                            value: 'gain',
-                            label: 'Subir',
-                            emoji: '📈',
-                            desc: 'Ganar músculo',
-                        },
-                    ].map((goal) => (
+                    {['lose', 'maintain', 'gain'].map((goalValue) => (
                         <button
-                            key={goal.value}
-                            onClick={() => updateField('primaryGoal', goal.value)}
+                            key={goalValue}
+                            onClick={() => updateField('primaryGoal', goalValue)}
                             className={`p-3 rounded-xl text-center transition-all ${
-                                data.primaryGoal === goal.value
+                                data.primaryGoal === goalValue
                                     ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white'
                                     : 'bg-gray-700/50 text-gray-400 hover:bg-gray-600/50'
                             }`}>
-                            <span className="text-xl block mb-1">{goal.emoji}</span>
-                            <span className="font-bold text-sm">{goal.label}</span>
+                            <span className="text-xl block mb-1">
+                                {getGoalEmoji(goalValue)}
+                            </span>
+                            <span className="font-bold text-sm">
+                                {t(`onboarding.step3.goals.${goalValue}`)}
+                            </span>
                         </button>
                     ))}
                 </div>
@@ -76,7 +81,7 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
 
             <div>
                 <label className="block text-sm text-gray-400 mb-3">
-                    ¿Cuántos días entrenas por semana?
+                    {t('onboarding.step3.trainingDays')}
                 </label>
                 <div className="flex justify-between gap-1">
                     {[1, 2, 3, 4, 5, 6, 7].map((day) => (
@@ -107,10 +112,10 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
                     />
                     <div className="flex-1">
                         <span className="text-white font-medium">
-                            ¿Tenés un Oura Ring?
+                            {t('onboarding.step3.hasOuraRing')}
                         </span>
                         <p className="text-xs text-gray-400 mt-0.5">
-                            Sincroniza automáticamente sueño, HRV y recuperación
+                            {t('onboarding.step3.ouraDesc')}
                         </p>
                     </div>
                     <span className="text-2xl">💍</span>
@@ -120,38 +125,48 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
             {/* Summary */}
             <div className="mt-6 p-4 bg-gray-700/30 rounded-xl">
                 <h3 className="font-semibold text-white mb-3">
-                    📋 Resumen de tu perfil
+                    📋 {t('onboarding.step3.summary')}
                 </h3>
                 <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="text-gray-400">Peso actual:</div>
+                    <div className="text-gray-400">
+                        {t('onboarding.step3.summaryLabels.weight')}
+                    </div>
                     <div className="text-white font-medium">
                         {data.currentWeight || '-'} kg
                     </div>
-                    <div className="text-gray-400">Calorías diarias:</div>
+                    <div className="text-gray-400">
+                        {t('onboarding.step3.summaryLabels.calories')}
+                    </div>
                     <div className="text-white font-medium">
                         {data.calorieGoal || '-'} kcal
                     </div>
-                    <div className="text-gray-400">Proteína:</div>
+                    <div className="text-gray-400">
+                        {t('onboarding.step3.summaryLabels.protein')}
+                    </div>
                     <div className="text-white font-medium">
                         {data.proteinGoal || '-'}g
                     </div>
-                    <div className="text-gray-400">Objetivo:</div>
-                    <div className="text-white font-medium">
-                        {data.primaryGoal === 'lose'
-                            ? '📉 Bajar peso'
-                            : data.primaryGoal === 'gain'
-                              ? '📈 Subir peso'
-                              : '⚖️ Mantener'}
+                    <div className="text-gray-400">
+                        {t('onboarding.step3.summaryLabels.goal')}
                     </div>
-                    <div className="text-gray-400">Entrenos/semana:</div>
                     <div className="text-white font-medium">
-                        {data.trainingDaysPerWeek} días
+                        {getGoalEmoji(data.primaryGoal)}{' '}
+                        {getGoalLabel(data.primaryGoal)}
+                    </div>
+                    <div className="text-gray-400">
+                        {t('onboarding.step3.summaryLabels.training')}
+                    </div>
+                    <div className="text-white font-medium">
+                        {data.trainingDaysPerWeek}{' '}
+                        {t('onboarding.step3.summaryLabels.days')}
                     </div>
                     {data.hasOuraRing && (
                         <>
-                            <div className="text-gray-400">Oura Ring:</div>
+                            <div className="text-gray-400">
+                                {t('onboarding.step3.summaryLabels.oura')}
+                            </div>
                             <div className="text-green-400 font-medium">
-                                ✓ Activado (token requerido)
+                                {t('onboarding.step3.summaryLabels.ouraActive')}
                             </div>
                         </>
                     )}

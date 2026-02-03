@@ -8,6 +8,7 @@ import {
     X,
 } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { CustomTargets } from '../../types/domain';
 
 interface MondayBriefingModalProps {
@@ -38,6 +39,7 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
     proposal,
     currentTargets,
 }) => {
+    const { t } = useTranslation();
     if (!proposal) return null;
 
     const { status, severity, message } = proposal.analysis;
@@ -83,9 +85,11 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
             <div className="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl pointer-events-auto overflow-hidden flex flex-col max-h-[90vh] animate-slide-up sm:animate-fade-in-up transition-all duration-300">
                 {/* Header */}
                 <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 text-white text-center pb-12">
-                    <h2 className="text-2xl font-bold mb-1">Informe Semanal</h2>
+                    <h2 className="text-2xl font-bold mb-1">
+                        {t('modals.mondayBriefing.title')}
+                    </h2>
                     <p className="text-purple-100 text-sm">
-                        Resumen de tu progreso y ajustes
+                        {t('modals.mondayBriefing.subtitle')}
                     </p>
                     <button
                         onClick={onDismiss}
@@ -104,10 +108,10 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                         </div>
                         <h3 className="font-bold text-lg mb-1">
                             {status === 'onTrack'
-                                ? '¡Excelente Trabajo!'
+                                ? t('modals.mondayBriefing.excellent')
                                 : status === 'fast'
-                                  ? '¡Cuidado! Vas muy rápido'
-                                  : 'Ajuste Necesario'}
+                                  ? t('modals.mondayBriefing.warning')
+                                  : t('modals.mondayBriefing.adjustment')}
                         </h3>
                         <p className="text-sm text-center opacity-90">{message}</p>
                     </div>
@@ -116,7 +120,7 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                     <div className="grid grid-cols-2 gap-3 mb-6">
                         <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 text-center">
                             <span className="text-xs text-gray-500 block mb-1">
-                                Ritmo Actual
+                                {t('modals.mondayBriefing.currentTempo')}
                             </span>
                             <span
                                 className={`text-lg font-bold ${currentTrend < 0 ? 'text-green-600' : 'text-amber-600'}`}>
@@ -126,7 +130,7 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                         </div>
                         <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 text-center">
                             <span className="text-xs text-gray-500 block mb-1">
-                                Adherencia
+                                {t('modals.mondayBriefing.adherence')}
                             </span>
                             <span
                                 className={`text-lg font-bold ${weeklyAdherence > 80 ? 'text-green-600' : 'text-amber-600'}`}>
@@ -140,7 +144,7 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                         <div className="mb-6">
                             <div className="flex items-center justify-between mb-3">
                                 <h4 className="font-bold text-gray-800">
-                                    Propuesta de Nuevos Objetivos
+                                    {t('modals.mondayBriefing.proposal')}
                                 </h4>
                                 <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-lg font-medium">
                                     Auto-Pilot
@@ -187,11 +191,10 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                     ) : (
                         <div className="mb-6 bg-green-50 p-4 rounded-xl border border-green-100 text-center">
                             <p className="text-green-800 font-medium mb-1">
-                                Sin cambios necesarios
+                                {t('modals.mondayBriefing.noChanges')}
                             </p>
                             <p className="text-sm text-green-600">
-                                Sigue así, tus objetivos actuales están funcionando
-                                perfectamente.
+                                {t('modals.mondayBriefing.noChangesDesc')}
                             </p>
                         </div>
                     )}
@@ -203,7 +206,7 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                                 onClick={onAccept}
                                 className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-purple-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                                 <Target className="w-5 h-5" />
-                                Aceptar Nuevos Objetivos
+                                {t('modals.mondayBriefing.accept')}
                             </button>
                         )}
 
@@ -215,8 +218,8 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                                     : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
                             }`}>
                             {actionType === 'maintain'
-                                ? 'Continuar Así'
-                                : 'Mantener Actuales'}
+                                ? t('modals.mondayBriefing.continue')
+                                : t('modals.mondayBriefing.maintain')}
                         </button>
                     </div>
                 </div>

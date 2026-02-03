@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const LOADING_MESSAGES = [
     'Sincronizando con tu anillo Oura...',
@@ -13,6 +14,13 @@ interface LoadingScreenProps {
 }
 
 export const LoadingScreen: React.FC<LoadingScreenProps> = ({ message = null }) => {
+    const { t } = useTranslation();
+    const LOADING_MESSAGES = [
+        t('auth.loading'),
+        t('layout.loading'),
+        t('layout.syncStatus') + '...',
+        t('dashboard.predictive.calibrating.title') + '...',
+    ];
     const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
     useEffect(() => {

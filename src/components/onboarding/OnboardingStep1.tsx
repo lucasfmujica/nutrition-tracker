@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface OnboardingStep1Props {
     data: {
@@ -17,6 +18,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
     data,
     handlers,
 }) => {
+    const { t } = useTranslation();
     const { updateField } = handlers;
 
     return (
@@ -24,34 +26,36 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
             <div className="text-center mb-6">
                 <span className="text-3xl mb-2 block">👋</span>
                 <h2 className="text-xl font-bold text-white">
-                    ¡Hola! ¿Cómo te llamas?
+                    {t('onboarding.step1.greeting')} {t('onboarding.step1.name')}
                 </h2>
                 <p className="text-sm text-gray-400 mt-1">
-                    Queremos conocerte un poco mejor
+                    {t('onboarding.step1.title')}
                 </p>
             </div>
 
             <div>
                 <label className="block text-sm text-gray-400 mb-1.5">
-                    Nombre completo *
+                    {t('onboarding.step1.name')} *
                 </label>
                 <input
                     type="text"
                     value={data.name}
                     onChange={(e) => updateField('name', e.target.value)}
-                    placeholder="Escribe tu nombre"
+                    placeholder={t('onboarding.step1.namePlaceholder')}
                     className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white text-lg"
                 />
             </div>
 
             <div className="text-center mt-8 mb-4 pt-4 border-t border-gray-700/50">
-                <h2 className="text-lg font-bold text-white">Tus datos físicos</h2>
+                <h2 className="text-lg font-bold text-white">
+                    {t('onboarding.step1.physicalData')}
+                </h2>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <label className="block text-sm text-gray-400 mb-1.5">
-                        Peso actual (kg) *
+                        {t('onboarding.step1.currentWeight')} *
                     </label>
                     <input
                         type="number"
@@ -65,7 +69,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                 </div>
                 <div>
                     <label className="block text-sm text-gray-400 mb-1.5">
-                        Altura (cm) *
+                        {t('onboarding.step1.height')} *
                     </label>
                     <input
                         type="number"
@@ -78,7 +82,9 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
             </div>
 
             <div>
-                <label className="block text-sm text-gray-400 mb-1.5">Edad *</label>
+                <label className="block text-sm text-gray-400 mb-1.5">
+                    {t('onboarding.step1.age')} *
+                </label>
                 <input
                     type="number"
                     value={data.age}
@@ -89,7 +95,9 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
             </div>
 
             <div>
-                <label className="block text-sm text-gray-400 mb-2">Género</label>
+                <label className="block text-sm text-gray-400 mb-2">
+                    {t('onboarding.step1.gender')}
+                </label>
                 <div className="grid grid-cols-2 gap-3">
                     <button
                         onClick={() => updateField('gender', 'male')}
@@ -98,7 +106,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                                 ? 'bg-blue-600 text-white'
                                 : 'bg-gray-700/50 text-gray-400 hover:bg-gray-600/50'
                         }`}>
-                        👨 Masculino
+                        👨 {t('onboarding.step1.male')}
                     </button>
                     <button
                         onClick={() => updateField('gender', 'female')}
@@ -107,7 +115,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                                 ? 'bg-pink-600 text-white'
                                 : 'bg-gray-700/50 text-gray-400 hover:bg-gray-600/50'
                         }`}>
-                        👩 Femenino
+                        👩 {t('onboarding.step1.female')}
                     </button>
                 </div>
             </div>

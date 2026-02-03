@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Area,
     AreaChart,
@@ -29,6 +30,7 @@ interface WeightLineChartProps {
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => {
+    const { t } = useTranslation();
     if (active && payload && payload.length) {
         return (
             <div className="bg-white p-4 rounded-xl shadow-xl border border-gray-100 ring-1 ring-gray-50">
@@ -56,6 +58,7 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
     data,
     targetWeight,
 }) => {
+    const { t } = useTranslation();
     if (!data || data.length === 0) return null;
 
     // Calculate domain for better visualization
@@ -68,10 +71,10 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                 <div>
                     <h3 className="text-lg font-bold text-gray-900">
-                        Historial de Peso
+                        {t('charts.weight.title')}
                     </h3>
                     <p className="text-xs text-gray-400 font-medium">
-                        Tendencia y Objetivo
+                        {t('charts.weight.trend')}
                     </p>
                 </div>
 
@@ -79,16 +82,20 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                 <div className="flex gap-4 text-xs">
                     <div className="flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
-                        <span className="text-gray-600 font-medium">Peso</span>
+                        <span className="text-gray-600 font-medium">
+                            {t('navigation.weight')}
+                        </span>
                     </div>
                     <div className="flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-                        <span className="text-gray-600 font-medium">Media 7d</span>
+                        <span className="text-gray-600 font-medium">
+                            {t('charts.weight.average')}
+                        </span>
                     </div>
                     <div className="flex items-center gap-1.5">
                         <span className="w-2 h-0.5 border-t border-dashed border-emerald-400"></span>
                         <span className="text-gray-600 font-medium">
-                            Objetivo ({targetWeight})
+                            {t('charts.weight.goal')} ({targetWeight})
                         </span>
                     </div>
                 </div>
@@ -154,7 +161,7 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                         <Area
                             type="monotone"
                             dataKey="weight"
-                            name="Peso"
+                            name={t('navigation.weight')}
                             stroke="#6366f1"
                             strokeWidth={2.5}
                             fillOpacity={1}
@@ -165,7 +172,7 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                         <Line
                             type="monotone"
                             dataKey="avg7d"
-                            name="Promedio 7d"
+                            name={t('charts.weight.average')}
                             stroke="#fbbf24"
                             strokeWidth={2}
                             dot={false}
