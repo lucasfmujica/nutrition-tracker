@@ -311,9 +311,46 @@ export const getCacheMetadata = async (userId?: string): Promise<CacheMetadata> 
     }
 };
 
+// ============================================================================
+// MUTEX - Prevents Race Condition in Metadata Updates
+// ============================================================================
+
+/**
+ * Simple mutex implementation to serialize metadata updates
+ * Prevents race conditions when useInitialHydration and useVaultWorker
+ * both try to update metadata simultaneously
+ */
+class MetadataMutex {
+    private queue: Array<() => void> = [];
+    private locked = false;
+
+    async acquire(): Promise<void> {
+        return new Promise((resolve) => {
+            if (!this.locked) {
+                this.locked = true;
+                resolve();
+            } else {
+                this.queue.push(resolve);
+            }
+        });
+    }
+
+    release(): void {
+        if (this.queue.length > 0) {
+            const resolve = this.queue.shift();
+            resolve?.();
+        } else {
+            this.locked = false;
+        }
+    }
+}
+
+const metadataMutex = new MetadataMutex();
+
 /**
  * Update cache metadata after successful Supabase sync
  * Uses Argentina timezone (browser local time already in -03:00)
+ * CRITICAL: Protected by mutex to prevent race conditions between hooks
  * @param {string} dataType - Data type key (e.g., 'food', 'weight', 'profile')
  * @param {string} userId - Optional user ID for user-specific metadata
  * @param {number} syncTimestamp - Optional timestamp (defaults to now)
@@ -324,6 +361,7 @@ export const updateCacheMetadata = async (
     userId?: string,
     syncTimestamp: number = Date.now(),
 ): Promise<boolean> => {
+    await metadataMutex.acquire();
     try {
         const keys = userId ? getCacheKeys(userId) : LEGACY_CACHE_KEYS;
         const metadata = await getCacheMetadata(userId);
@@ -336,6 +374,8 @@ export const updateCacheMetadata = async (
     } catch (err) {
         console.error('[Cache] Failed to update metadata:', err);
         return false;
+    } finally {
+        metadataMutex.release();
     }
 };
 
@@ -358,7 +398,11 @@ export const isCacheStale = async (dataType: string, userId?: string): Promise<b
         if (dataMetadata.schemaVersion !== SCHEMA_VERSION) return true;
 
         // Time-based staleness check
-        const age = Date.now() - dataMetadata.lastSynced;
+        // NOTE: Date.now() is ALWAYS UTC (milliseconds since Unix epoch), regardless of browser timezone
+        // Both lastSynced and Date.now() use UTC, so comparison is timezone-agnostic
+        // This is intentional and correct - cache TTL is based on absolute time, not local time
+        const now = Date.now(); // UTC timestamp
+        const age = now - dataMetadata.lastSynced; // Both in UTC
         const isStale = age > CACHE_TTL_MS;
 
         return isStale;
@@ -404,6 +448,7 @@ export const addPendingWrite = async (
             return false;
         }
 
+        // 🔒 IMPROVED: Comprehensive date validation
         if (!data.date || !/^\d{4}-\d{2}-\d{2}$/.test(data.date)) {
             console.error(
                 '[Vault] Invalid date format (expected YYYY-MM-DD):',
@@ -412,8 +457,37 @@ export const addPendingWrite = async (
             return false;
         }
 
+        // 🔒 NEW: Prevent future dates (Argentina timezone)
+        // Import getArgentinaDateString if not already imported
+        const { getArgentinaDateString } = await import('./dateUtils');
+        const todayArgentina = getArgentinaDateString();
+        if (data.date > todayArgentina) {
+            console.error(
+                `[Vault] Cannot queue future date. Got: ${data.date}, Today (Argentina): ${todayArgentina}`,
+            );
+            return false;
+        }
+
+        // 🔒 NEW: Check for duplicate pending write (same table + date + userId)
+        // This prevents queuing the same entry multiple times if user clicks rapidly
         const keys = getCacheKeys(userId);
         let queue = await getPendingWrites(userId);
+
+        const isDuplicate = queue.some(
+            (item) =>
+                item.table === table &&
+                item.data.date === data.date &&
+                item.userId === userId &&
+                // For weight entries, also check weight value to allow multiple weights per day
+                (table !== 'weight_history' || item.data.weight === data.weight),
+        );
+
+        if (isDuplicate) {
+            console.warn(
+                `[Vault] Duplicate pending write detected for ${table} on ${data.date}. Skipping.`,
+            );
+            return false; // Not an error, just skip silently
+        }
 
         // PROTECTION 1: Remove entries that exceeded max retry count
         const initialLength = queue.length;

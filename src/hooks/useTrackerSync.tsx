@@ -155,6 +155,7 @@ export const useTrackerSync = ({
         setOuraLog,
         setWaterLog,
         setMealTemplates,
+        setSyncStatus, // Pass status setter for UI feedback
     });
 
     // Initial Hydration: Handles data loading from cache and Supabase

@@ -8,6 +8,7 @@ import {
     LeaderboardMetric,
 } from '../types/domain';
 import { useSocialData } from './supabase/useSocialData';
+import { useSupabaseOperation } from './supabase/useSupabaseOperation';
 
 interface UseSocialProps {
     supabase: {
@@ -83,8 +84,13 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
     // Data layer hook
     const socialData = useSocialData(supabase.user as any, supabase.isOnline);
 
+    // Timeout protection for queries
+    const { withTimeout } = useSupabaseOperation();
+
     /**
      * Refresh all social data
+     * CRITICAL: Uses Promise.allSettled with timeout protection
+     * Prevents one hanging query from blocking the entire social section
      */
     const refreshSocial = useCallback(async () => {
         if (!useCloud || !supabase.isAuthenticated) return;
@@ -93,25 +99,36 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
         setSocialError(null);
 
         try {
-            const [
-                fetchedFriends,
-                fetchedRequests,
-                fetchedFeed,
-                fetchedLeaderboard,
-                fetchedCode,
-            ] = await Promise.all([
-                socialData.fetchFriends(),
-                socialData.fetchFriendRequests(),
-                socialData.fetchActivityFeed(),
-                socialData.fetchLeaderboard(leaderboardMetric),
-                socialData.fetchUserFriendCode(),
+            // Use Promise.allSettled instead of Promise.all
+            // This ensures one failing/hanging query doesn't block others
+            const results = await Promise.allSettled([
+                withTimeout(socialData.fetchFriends(), 8000, 'fetchFriends'),
+                withTimeout(socialData.fetchFriendRequests(), 8000, 'fetchFriendRequests'),
+                withTimeout(socialData.fetchActivityFeed(), 8000, 'fetchActivityFeed'),
+                withTimeout(socialData.fetchLeaderboard(leaderboardMetric), 10000, 'fetchLeaderboard'),
+                withTimeout(socialData.fetchUserFriendCode(), 6000, 'fetchUserFriendCode'),
             ]);
+
+            // Extract fulfilled results, using empty fallback for failures
+            const fetchedFriends = results[0].status === 'fulfilled' ? results[0].value : [];
+            const fetchedRequests = results[1].status === 'fulfilled' ? results[1].value : [];
+            const fetchedFeed = results[2].status === 'fulfilled' ? results[2].value : [];
+            const fetchedLeaderboard = results[3].status === 'fulfilled' ? results[3].value : [];
+            const fetchedCode = results[4].status === 'fulfilled' ? results[4].value : null;
 
             setFriends(fetchedFriends);
             setFriendRequests(fetchedRequests);
             setActivityFeed(fetchedFeed);
             setLeaderboard(fetchedLeaderboard);
             setUserFriendCode(fetchedCode);
+
+            // Log any failures for debugging
+            results.forEach((result, index) => {
+                if (result.status === 'rejected') {
+                    const names = ['Friends', 'Requests', 'Feed', 'Leaderboard', 'FriendCode'];
+                    console.warn(`[useSocial] ${names[index]} query failed:`, result.reason);
+                }
+            });
 
             console.log('[useSocial] refreshSocial complete:', {
                 friendsCount: fetchedFriends.length,
@@ -126,7 +143,7 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
         } finally {
             setSocialLoading(false);
         }
-    }, [useCloud, supabase.isAuthenticated, socialData, leaderboardMetric]);
+    }, [useCloud, supabase.isAuthenticated, socialData, leaderboardMetric, withTimeout]);
 
     /**
      * Refresh just the leaderboard with a new metric
@@ -194,10 +211,14 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
             }
 
             // Refresh both friends list AND friend requests to ensure consistency
-            const [newFriends, newRequests] = await Promise.all([
-                socialData.fetchFriends(),
-                socialData.fetchFriendRequests(),
+            // Use Promise.allSettled with timeout protection
+            const results = await Promise.allSettled([
+                withTimeout(socialData.fetchFriends(), 8000, 'fetchFriends'),
+                withTimeout(socialData.fetchFriendRequests(), 8000, 'fetchFriendRequests'),
             ]);
+
+            const newFriends = results[0].status === 'fulfilled' ? results[0].value : friends;
+            const newRequests = results[1].status === 'fulfilled' ? results[1].value : friendRequests;
 
             setFriends(newFriends);
             setFriendRequests(newRequests);

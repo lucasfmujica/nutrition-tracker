@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
     cacheData,
     getPendingWrites,
@@ -23,6 +23,7 @@ export interface UseVaultWorkerParams {
     setOuraLog: (log: any[]) => void;
     setWaterLog: (log: any[]) => void;
     setMealTemplates: (templates: any[]) => void;
+    setSyncStatus?: (status: string) => void; // Optional: For UI feedback during sync
 }
 
 export interface UseVaultWorkerReturn {
@@ -52,13 +53,15 @@ export const useVaultWorker = ({
     setOuraLog,
     setWaterLog,
     setMealTemplates,
+    setSyncStatus,
 }: UseVaultWorkerParams): UseVaultWorkerReturn => {
     const isProcessingQueue = useRef(false); // CRITICAL: Prevent concurrent queue processing
 
     /**
      * Process a single pending write item
+     * CRITICAL: Memoized to prevent re-creating processPendingQueue unnecessarily
      */
-    const processSingleWrite = async (item: PendingWrite) => {
+    const processSingleWrite = useCallback(async (item: PendingWrite) => {
         try {
             // CRITICAL: Verify userId matches current user (prevent cross-user corruption)
             const currentUserId = supabase?.user?.id;
@@ -109,12 +112,13 @@ export const useVaultWorker = ({
             );
             return { success: false, id: item.id, error: err.message };
         }
-    };
+    }, [supabase]);
 
     /**
      * Process pending writes from The Vault (offline resilience queue)
+     * CRITICAL: Memoized with useCallback to prevent infinite re-renders in useEffect
      */
-    const processPendingQueue = async () => {
+    const processPendingQueue = useCallback(async () => {
         if (!useCloud) {
             return { success: false, synced: 0, failed: 0 };
         }
@@ -123,6 +127,11 @@ export const useVaultWorker = ({
         const queue = await getPendingWrites(userId);
         if (queue.length === 0) {
             return { success: true, synced: 0, failed: 0 };
+        }
+
+        // 🔒 UX IMPROVEMENT: Show loading indicator during Vault sync
+        if (setSyncStatus) {
+            setSyncStatus(`🔄 Sincronizando ${queue.length} ${queue.length === 1 ? 'entrada' : 'entradas'}...`);
         }
 
         const BATCH_SIZE = 3; // Process 3 items at a time to prevent UI blocking
@@ -176,8 +185,19 @@ export const useVaultWorker = ({
         const message = `[Vault] Queue processed: ${synced} synced, ${failed} failed`;
         console.log(message);
 
+        // 🔒 UX IMPROVEMENT: Show sync completion status
+        if (setSyncStatus) {
+            if (synced > 0 && failed === 0) {
+                setSyncStatus(`✅ ${synced} ${synced === 1 ? 'entrada sincronizada' : 'entradas sincronizadas'}`);
+                setTimeout(() => setSyncStatus(''), 3000); // Clear after 3s
+            } else if (failed > 0) {
+                setSyncStatus(`⚠️ ${synced} ok, ${failed} fallaron - Reintentando...`);
+                setTimeout(() => setSyncStatus(''), 5000); // Keep error longer
+            }
+        }
+
         return { success: true, synced, failed };
-    };
+    }, [useCloud, supabase, processSingleWrite, setSyncStatus]);
 
     // Auto-trigger pending queue processing when coming back online
     useEffect(() => {

@@ -2,7 +2,9 @@ import React, {
     createContext,
     ReactNode,
     useContext,
+    useEffect,
     useMemo,
+    useRef,
     useState,
 } from 'react';
 import { useBiometrics } from '../hooks/useBiometrics';
@@ -71,12 +73,46 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
     // Service Layer
     const supabase = useSupabase();
 
-    // CRITICAL FIX: Unified useCloud flag
+    // CRITICAL FIX: Unified useCloud flag with stability during token refresh
     // Single source of truth for cloud connectivity status
     const [offlineMode, setOfflineMode] = useState<boolean>(false);
-    const useCloud = Boolean(
-        supabase.isAuthenticated && !offlineMode && supabase.isOnline,
-    );
+    const [useCloud, setUseCloud] = useState<boolean>(false);
+    const useCloudRef = useRef<boolean>(false);
+    const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+    // CRITICAL: Debounced useCloud calculation to prevent data loss during token refresh
+    // Token refresh causes isAuthenticated to briefly flip to false (50-100ms window)
+    // Without debouncing, writes during this window would not be queued in The Vault
+    useEffect(() => {
+        const newValue = Boolean(
+            supabase.isAuthenticated && !offlineMode && supabase.isOnline,
+        );
+
+        // If switching to FALSE, debounce for 200ms to avoid transient auth states
+        if (!newValue && useCloudRef.current) {
+            if (debounceTimerRef.current) {
+                clearTimeout(debounceTimerRef.current);
+            }
+            debounceTimerRef.current = setTimeout(() => {
+                useCloudRef.current = newValue;
+                setUseCloud(newValue);
+            }, 200); // 200ms debounce protects against token refresh
+        } else {
+            // If switching to TRUE, apply immediately (no need to delay recovery)
+            if (debounceTimerRef.current) {
+                clearTimeout(debounceTimerRef.current);
+                debounceTimerRef.current = null;
+            }
+            useCloudRef.current = newValue;
+            setUseCloud(newValue);
+        }
+
+        return () => {
+            if (debounceTimerRef.current) {
+                clearTimeout(debounceTimerRef.current);
+            }
+        };
+    }, [supabase.isAuthenticated, offlineMode, supabase.isOnline]);
 
     // 0. Shared state for templates (needed by both sync and template hook)
     const [mealTemplatesData, setMealTemplatesData] = useState<any[]>([]); // TODO: Type with Database['public']['Tables']['meal_templates']['Row'][]
