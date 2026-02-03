@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StepsEntry } from '../../types/domain';
 import { SimpleBarChart } from '../Charts/SimpleBarChart';
 import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
@@ -27,11 +28,15 @@ export const StepsTab: React.FC<StepsTabProps> = ({
     stepsLog,
     stepGoal,
 }) => {
+    const { t } = useTranslation();
+
     return (
         <div className="w-full space-y-6">
             <div className="mb-2 px-1">
-                <h1 className="text-2xl font-bold text-gray-900">Pasos</h1>
-                <p className="text-sm text-gray-500">Actividad diaria</p>
+                <h1 className="text-2xl font-bold text-gray-900">
+                    {t('steps.title')}
+                </h1>
+                <p className="text-sm text-gray-500">{t('steps.subtitle')}</p>
             </div>
 
             <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
@@ -39,13 +44,13 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                     <span className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
                         👟
                     </span>
-                    REGISTRAR PASOS
+                    {t('steps.addSteps')}
                 </h2>
                 <div className="mb-3">
                     <LukenFitDatePicker
                         selectedDate={stepsDate}
                         onChange={setStepsDate}
-                        label="Fecha"
+                        label={t('weight.date')}
                     />
                 </div>
                 <div className="flex gap-2">
@@ -53,13 +58,13 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                         type="number"
                         value={newSteps}
                         onChange={(e) => setNewSteps(e.target.value)}
-                        placeholder="ej: 8500"
+                        placeholder={t('steps.stepsPlaceholder')}
                         className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-lg font-black focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all placeholder-gray-300"
                     />
                     <button
                         onClick={addStepsEntry}
                         className="bg-orange-600 hover:bg-orange-700 active:bg-orange-800 px-8 py-3 rounded-xl font-bold text-white shadow-lg shadow-orange-500/20 transition-all">
-                        OK
+                        {t('steps.save')}
                     </button>
                 </div>
             </div>
@@ -69,7 +74,7 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                 dataKey="steps"
                 target={stepGoal}
                 color="bg-cyan-500"
-                label="Pasos 7 días"
+                label={t('steps.chartLabel')}
             />
 
             {stepsLog.length > 0 && (
@@ -78,7 +83,7 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                         <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
                             📊
                         </span>
-                        HISTORIAL
+                        {t('steps.history')}
                     </h2>
                     <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
                         {stepsLog.slice(0, 14).map((entry, idx) => (
@@ -92,7 +97,7 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                                     className={`font-black text-base ${entry.steps >= stepGoal ? 'text-cyan-600' : 'text-slate-400'}`}>
                                     {entry.steps.toLocaleString()}
                                     <span className="text-[10px] font-bold ml-1 text-slate-300 uppercase">
-                                        pasos
+                                        {t('steps.unit')}
                                     </span>
                                 </span>
                             </div>

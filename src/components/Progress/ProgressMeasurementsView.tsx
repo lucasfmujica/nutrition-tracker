@@ -2,27 +2,35 @@
  * ProgressMeasurementsView - Body measurements tracking interface
  */
 
-import React, { useState } from 'react';
+import { format, parseISO } from 'date-fns';
+import { enUS, es } from 'date-fns/locale';
 import {
+    AlertCircle,
+    Loader2,
+    Minus,
     Ruler,
-    X,
     Trash2,
     TrendingDown,
     TrendingUp,
-    Minus,
-    Loader2,
-    AlertCircle,
+    X,
 } from 'lucide-react';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useBodyMeasurements } from '../../hooks/useBodyMeasurements';
-import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
-import { getArgentinaDateString } from '../../utils/dateUtils';
 import type { BodyMeasurement } from '../../types/domain';
+import { getArgentinaDateString } from '../../utils/dateUtils';
+import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
 interface ProgressMeasurementsViewProps {
     userId: string | null;
 }
 
-export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> = ({ userId }) => {
+export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> = ({
+    userId,
+}) => {
+    const { t, i18n } = useTranslation();
+    const dateLocale = i18n.language === 'es' ? es : enUS;
+
     const {
         measurements,
         isLoading,
@@ -49,7 +57,7 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
     };
 
     const handleDelete = async (id: string) => {
-        if (confirm('¿Eliminar esta medición?')) {
+        if (confirm(t('progress.measurements.deleteConfirm'))) {
             await deleteMeasurement(id);
         }
     };
@@ -57,7 +65,7 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
     // Compare with previous measurement
     const getChange = (
         current: number | undefined,
-        fieldName: keyof BodyMeasurement
+        fieldName: keyof BodyMeasurement,
     ): { value: number; direction: 'up' | 'down' | 'same' } | null => {
         if (current === undefined || measurements.length < 2) return null;
 
@@ -76,10 +84,9 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
             {/* Add Button */}
             <button
                 onClick={() => setShowForm(true)}
-                className="w-full py-4 bg-gradient-to-br from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 transition-all active:scale-[0.98]"
-            >
+                className="w-full py-4 bg-gradient-to-br from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 transition-all active:scale-[0.98]">
                 <Ruler size={20} />
-                Nueva Medición
+                {t('progress.measurements.newMeasurement')}
             </button>
 
             {/* Form Modal */}
@@ -87,11 +94,12 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-12 overflow-y-auto">
                     <div className="bg-white rounded-3xl p-6 w-full max-w-sm mb-20">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-bold text-slate-900">Nueva Medición</h3>
+                            <h3 className="text-lg font-bold text-slate-900">
+                                {t('progress.measurements.newMeasurement')}
+                            </h3>
                             <button
                                 onClick={() => setShowForm(false)}
-                                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500"
-                            >
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500">
                                 <X size={18} />
                             </button>
                         </div>
@@ -99,7 +107,7 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5">
-                                    Fecha
+                                    {t('progress.photos.date')}
                                 </label>
                                 <LukenFitDatePicker
                                     selectedDate={formDate}
@@ -110,44 +118,63 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
 
                             <div className="grid grid-cols-2 gap-3">
                                 <MeasurementInput
-                                    label="Pecho"
+                                    label={t('progress.measurements.chest')}
                                     value={formData.chest}
-                                    onChange={(v) => setFormData({ ...formData, chest: v })}
+                                    onChange={(v) =>
+                                        setFormData({ ...formData, chest: v })
+                                    }
                                 />
                                 <MeasurementInput
-                                    label="Cintura"
+                                    label={t('progress.measurements.waist')}
                                     value={formData.waist}
-                                    onChange={(v) => setFormData({ ...formData, waist: v })}
+                                    onChange={(v) =>
+                                        setFormData({ ...formData, waist: v })
+                                    }
                                 />
                                 <MeasurementInput
-                                    label="Cadera"
+                                    label={t('progress.measurements.hips')}
                                     value={formData.hips}
-                                    onChange={(v) => setFormData({ ...formData, hips: v })}
+                                    onChange={(v) =>
+                                        setFormData({ ...formData, hips: v })
+                                    }
                                 />
                                 <MeasurementInput
-                                    label="Bíceps (izq)"
+                                    label={t('progress.measurements.bicepsLeft')}
                                     value={formData.bicepsLeft}
-                                    onChange={(v) => setFormData({ ...formData, bicepsLeft: v })}
+                                    onChange={(v) =>
+                                        setFormData({ ...formData, bicepsLeft: v })
+                                    }
                                 />
                                 <MeasurementInput
-                                    label="Bíceps (der)"
+                                    label={t('progress.measurements.bicepsRight')}
                                     value={formData.bicepsRight}
-                                    onChange={(v) => setFormData({ ...formData, bicepsRight: v })}
+                                    onChange={(v) =>
+                                        setFormData({ ...formData, bicepsRight: v })
+                                    }
                                 />
                                 <MeasurementInput
-                                    label="Muslo (izq)"
+                                    label={t('progress.measurements.thighLeft')}
                                     value={formData.thighLeft}
-                                    onChange={(v) => setFormData({ ...formData, thighLeft: v })}
+                                    onChange={(v) =>
+                                        setFormData({ ...formData, thighLeft: v })
+                                    }
                                 />
                                 <MeasurementInput
-                                    label="Muslo (der)"
+                                    label={t('progress.measurements.thighRight')}
                                     value={formData.thighRight}
-                                    onChange={(v) => setFormData({ ...formData, thighRight: v })}
+                                    onChange={(v) =>
+                                        setFormData({ ...formData, thighRight: v })
+                                    }
                                 />
                                 <MeasurementInput
-                                    label="% Grasa"
+                                    label={t('progress.measurements.bodyFat')}
                                     value={formData.bodyFatPercent}
-                                    onChange={(v) => setFormData({ ...formData, bodyFatPercent: v })}
+                                    onChange={(v) =>
+                                        setFormData({
+                                            ...formData,
+                                            bodyFatPercent: v,
+                                        })
+                                    }
                                     unit="%"
                                 />
                             </div>
@@ -155,15 +182,17 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
                             <button
                                 onClick={handleSave}
                                 disabled={isSaving}
-                                className="w-full py-4 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"
-                            >
+                                className="w-full py-4 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors">
                                 {isSaving ? (
                                     <>
-                                        <Loader2 size={18} className="animate-spin" />
-                                        Guardando...
+                                        <Loader2
+                                            size={18}
+                                            className="animate-spin"
+                                        />
+                                        {t('progress.measurements.saving')}
                                     </>
                                 ) : (
-                                    'Guardar Medidas'
+                                    t('progress.measurements.save')
                                 )}
                             </button>
                         </div>
@@ -192,9 +221,11 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
                     <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Ruler size={28} className="text-purple-400" />
                     </div>
-                    <h3 className="font-bold text-slate-900 mb-1">Sin medidas aún</h3>
+                    <h3 className="font-bold text-slate-900 mb-1">
+                        {t('progress.measurements.noMeasurementsTitle')}
+                    </h3>
                     <p className="text-sm text-slate-500">
-                        Registrá tus medidas corporales para trackear tu progreso más allá del peso.
+                        {t('progress.measurements.noMeasurementsDesc')}
                     </p>
                 </div>
             )}
@@ -204,69 +235,70 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
                 <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
                     <div className="flex items-center justify-between mb-3">
                         <div>
-                            <h3 className="font-bold text-slate-900">Última Medición</h3>
+                            <h3 className="font-bold text-slate-900">
+                                {t('progress.measurements.latestMeasurement')}
+                            </h3>
                             <p className="text-xs text-slate-500">
-                                {new Date(latestMeasurement.date + 'T12:00:00').toLocaleDateString('es-AR', {
-                                    day: 'numeric',
-                                    month: 'long',
-                                    year: 'numeric',
-                                })}
+                                {format(
+                                    parseISO(latestMeasurement.date),
+                                    'd MMMM yyyy',
+                                    { locale: dateLocale },
+                                )}
                             </p>
                         </div>
                         <button
                             onClick={() => handleDelete(latestMeasurement.id)}
-                            className="text-slate-400 hover:text-red-500 p-2"
-                        >
+                            className="text-slate-400 hover:text-red-500 p-2">
                             <Trash2 size={16} />
                         </button>
                     </div>
 
                     <div className="space-y-1">
                         <MeasurementRow
-                            label="Pecho"
+                            label={t('progress.measurements.chest')}
                             value={latestMeasurement.chest}
                             fieldName="chest"
                             getChange={getChange}
                         />
                         <MeasurementRow
-                            label="Cintura"
+                            label={t('progress.measurements.waist')}
                             value={latestMeasurement.waist}
                             fieldName="waist"
                             getChange={getChange}
                         />
                         <MeasurementRow
-                            label="Cadera"
+                            label={t('progress.measurements.hips')}
                             value={latestMeasurement.hips}
                             fieldName="hips"
                             getChange={getChange}
                         />
                         <MeasurementRow
-                            label="Bíceps (izq)"
+                            label={t('progress.measurements.bicepsLeft')}
                             value={latestMeasurement.bicepsLeft}
                             fieldName="bicepsLeft"
                             getChange={getChange}
                         />
                         <MeasurementRow
-                            label="Bíceps (der)"
+                            label={t('progress.measurements.bicepsRight')}
                             value={latestMeasurement.bicepsRight}
                             fieldName="bicepsRight"
                             getChange={getChange}
                         />
                         <MeasurementRow
-                            label="Muslo (izq)"
+                            label={t('progress.measurements.thighLeft')}
                             value={latestMeasurement.thighLeft}
                             fieldName="thighLeft"
                             getChange={getChange}
                         />
                         <MeasurementRow
-                            label="Muslo (der)"
+                            label={t('progress.measurements.thighRight')}
                             value={latestMeasurement.thighRight}
                             fieldName="thighRight"
                             getChange={getChange}
                         />
                         {latestMeasurement.bodyFatPercent && (
                             <MeasurementRow
-                                label="% Grasa"
+                                label={t('progress.measurements.bodyFat')}
                                 value={latestMeasurement.bodyFatPercent}
                                 fieldName="bodyFatPercent"
                                 unit="%"
@@ -281,29 +313,32 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
             {measurements.length > 1 && (
                 <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
                     <div className="px-4 py-3 border-b border-slate-100 bg-slate-50">
-                        <h3 className="font-bold text-slate-900">Historial</h3>
+                        <h3 className="font-bold text-slate-900">
+                            {t('progress.measurements.history')}
+                        </h3>
                     </div>
                     <div className="divide-y divide-slate-100">
                         {measurements.slice(1).map((m) => (
-                            <div key={m.id} className="px-4 py-3 flex items-center justify-between">
+                            <div
+                                key={m.id}
+                                className="px-4 py-3 flex items-center justify-between">
                                 <div>
                                     <p className="font-medium text-slate-900 text-sm">
-                                        {new Date(m.date + 'T12:00:00').toLocaleDateString('es-AR', {
-                                            day: 'numeric',
-                                            month: 'short',
-                                            year: 'numeric',
+                                        {format(parseISO(m.date), 'd MMM yyyy', {
+                                            locale: dateLocale,
                                         })}
                                     </p>
                                     <p className="text-xs text-slate-500">
-                                        {m.waist && `Cintura: ${m.waist}cm`}
+                                        {m.waist &&
+                                            `${t('progress.measurements.waist')}: ${m.waist}cm`}
                                         {m.waist && m.chest && ' · '}
-                                        {m.chest && `Pecho: ${m.chest}cm`}
+                                        {m.chest &&
+                                            `${t('progress.measurements.chest')}: ${m.chest}cm`}
                                     </p>
                                 </div>
                                 <button
                                     onClick={() => handleDelete(m.id)}
-                                    className="text-slate-400 hover:text-red-500 p-2"
-                                >
+                                    className="text-slate-400 hover:text-red-500 p-2">
                                     <Trash2 size={14} />
                                 </button>
                             </div>
@@ -324,7 +359,7 @@ const MeasurementRow: React.FC<{
     unit?: string;
     getChange: (
         current: number | undefined,
-        fieldName: keyof BodyMeasurement
+        fieldName: keyof BodyMeasurement,
     ) => { value: number; direction: 'up' | 'down' | 'same' } | null;
 }> = ({ label, value, fieldName, unit = 'cm', getChange }) => {
     const change = getChange(value, fieldName);
@@ -344,12 +379,15 @@ const MeasurementRow: React.FC<{
                                     change.direction === 'down'
                                         ? 'text-emerald-600'
                                         : change.direction === 'up'
-                                        ? 'text-red-500'
-                                        : 'text-slate-400'
-                                }`}
-                            >
-                                {change.direction === 'down' && <TrendingDown size={12} />}
-                                {change.direction === 'up' && <TrendingUp size={12} />}
+                                          ? 'text-red-500'
+                                          : 'text-slate-400'
+                                }`}>
+                                {change.direction === 'down' && (
+                                    <TrendingDown size={12} />
+                                )}
+                                {change.direction === 'up' && (
+                                    <TrendingUp size={12} />
+                                )}
                                 {change.direction === 'same' && <Minus size={12} />}
                                 {change.value > 0 && ` ${change.value}`}
                             </span>
@@ -378,7 +416,9 @@ const MeasurementInput: React.FC<{
                 type="number"
                 step="0.1"
                 value={value ?? ''}
-                onChange={(e) => onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                onChange={(e) =>
+                    onChange(e.target.value ? parseFloat(e.target.value) : undefined)
+                }
                 placeholder="—"
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-center font-bold pr-8"
             />

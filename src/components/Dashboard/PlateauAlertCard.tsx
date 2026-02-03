@@ -1,5 +1,6 @@
 import { AlertTriangle, RefreshCw, TrendingDown } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface PlateauAction {
     type: 'refeed' | 'deficit';
@@ -41,6 +42,7 @@ export const PlateauAlertCard: React.FC<PlateauAlertCardProps> = ({
     plateauData,
     onApplyAction,
 }) => {
+    const { t } = useTranslation();
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
     if (!plateauData?.isInPlateau || !plateauData?.suggestion) {
@@ -65,10 +67,10 @@ export const PlateauAlertCard: React.FC<PlateauAlertCardProps> = ({
                 </div>
                 <div>
                     <h3 className="text-sm font-bold text-amber-900">
-                        Plateau Detectado
+                        {t('dashboard.plateau.detected')}
                     </h3>
                     <p className="text-xs text-amber-700 mt-0.5">
-                        {suggestion.message}
+                        {suggestion.message || t('dashboard.plateau.suggestion')}
                     </p>
                 </div>
             </div>
@@ -131,7 +133,7 @@ export const PlateauAlertCard: React.FC<PlateauAlertCardProps> = ({
                         </div>
                         {selectedOption === option.id && (
                             <span className="text-xs font-bold text-amber-100 ml-auto flex-shrink-0 whitespace-nowrap">
-                                Aplicado ✓
+                                {t('dashboard.plateau.applied')} ✓
                             </span>
                         )}
                     </button>
@@ -140,7 +142,7 @@ export const PlateauAlertCard: React.FC<PlateauAlertCardProps> = ({
 
             {/* Info */}
             <p className="text-[10px] text-amber-600/70 mt-3 text-center">
-                Basado en análisis de los últimos 14 días de peso
+                {t('dashboard.plateau.basedOn')}
             </p>
         </div>
     );

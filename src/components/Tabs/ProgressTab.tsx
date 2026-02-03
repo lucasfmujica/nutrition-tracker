@@ -5,6 +5,7 @@
 
 import { BarChart3, Calendar, Camera, Ruler, TrendingUp } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
 import { ProgressAnalyticsView } from '../Progress/ProgressAnalyticsView';
 import { ProgressComparisonView } from '../Progress/ProgressComparisonView';
@@ -15,6 +16,7 @@ import { ProgressTimelineView } from '../Progress/ProgressTimelineView';
 type TabMode = 'photos' | 'measurements' | 'compare' | 'timeline' | 'analytics';
 
 export const ProgressTab: React.FC = () => {
+    const { t } = useTranslation();
     const { profile } = useTracker() as any;
     const userId = profile?.userId || null;
     const currentWeight = profile?.currentWeight;
@@ -27,10 +29,10 @@ export const ProgressTab: React.FC = () => {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Progreso</h1>
-                    <p className="text-sm text-gray-500">
-                        Fotos, medidas y análisis
-                    </p>
+                    <h1 className="text-2xl font-bold text-gray-900">
+                        {t('progress.title')}
+                    </h1>
+                    <p className="text-sm text-gray-500">{t('progress.subtitle')}</p>
                 </div>
             </div>
 
@@ -38,31 +40,31 @@ export const ProgressTab: React.FC = () => {
             <div className="flex gap-2 p-1 bg-slate-100 rounded-xl overflow-x-auto">
                 <TabButton
                     icon={Camera}
-                    label="Fotos"
+                    label={t('progress.photos.title')}
                     isActive={activeMode === 'photos'}
                     onClick={() => setActiveMode('photos')}
                 />
                 <TabButton
                     icon={Ruler}
-                    label="Medidas"
+                    label={t('progress.measurements.title')}
                     isActive={activeMode === 'measurements'}
                     onClick={() => setActiveMode('measurements')}
                 />
                 <TabButton
                     icon={TrendingUp}
-                    label="Comparar"
+                    label={t('progress.comparison.title')}
                     isActive={activeMode === 'compare'}
                     onClick={() => setActiveMode('compare')}
                 />
                 <TabButton
                     icon={Calendar}
-                    label="Timeline"
+                    label={t('progress.timeline.title')}
                     isActive={activeMode === 'timeline'}
                     onClick={() => setActiveMode('timeline')}
                 />
                 <TabButton
                     icon={BarChart3}
-                    label="Análisis"
+                    label={t('progress.analytics.title')}
                     isActive={activeMode === 'analytics'}
                     onClick={() => setActiveMode('analytics')}
                 />

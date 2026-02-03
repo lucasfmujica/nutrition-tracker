@@ -2,19 +2,29 @@
  * ProgressTimelineView - Wrapper for ProgressTimeline with data fetching
  */
 
+import { AlertCircle, ImageIcon, Loader2 } from 'lucide-react';
 import React from 'react';
-import { ImageIcon, Loader2, AlertCircle } from 'lucide-react';
-import { useProgressPhotos } from '../../hooks/useProgressPhotos';
+import { useTranslation } from 'react-i18next';
 import { useBodyMeasurements } from '../../hooks/useBodyMeasurements';
+import { useProgressPhotos } from '../../hooks/useProgressPhotos';
 import { ProgressTimeline } from './ProgressTimeline';
 
 interface ProgressTimelineViewProps {
     userId: string | null;
 }
 
-export const ProgressTimelineView: React.FC<ProgressTimelineViewProps> = ({ userId }) => {
-    const { photos, isLoading: photosLoading, error: photosError } = useProgressPhotos({ userId });
-    const { measurements, isLoading: measurementsLoading } = useBodyMeasurements({ userId });
+export const ProgressTimelineView: React.FC<ProgressTimelineViewProps> = ({
+    userId,
+}) => {
+    const { t } = useTranslation();
+    const {
+        photos,
+        isLoading: photosLoading,
+        error: photosError,
+    } = useProgressPhotos({ userId });
+    const { measurements, isLoading: measurementsLoading } = useBodyMeasurements({
+        userId,
+    });
 
     const isLoading = photosLoading || measurementsLoading;
 
@@ -44,9 +54,11 @@ export const ProgressTimelineView: React.FC<ProgressTimelineViewProps> = ({ user
                 <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <ImageIcon size={28} className="text-purple-400" />
                 </div>
-                <h3 className="font-bold text-slate-900 mb-1">Sin fotos aún</h3>
+                <h3 className="font-bold text-slate-900 mb-1">
+                    {t('progress.photos.noPhotos')}
+                </h3>
                 <p className="text-sm text-slate-500">
-                    Subí fotos de progreso para ver tu línea de tiempo.
+                    {t('progress.timeline.noPhotosDesc')}
                 </p>
             </div>
         );

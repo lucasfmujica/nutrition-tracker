@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
 
 /**
@@ -12,6 +13,7 @@ export const GoalInsightsCard: React.FC = () => {
         remainingWeight,
         profile,
     } = useTracker() as any; // Cast as any for now until TrackerContext is fully typed
+    const { t, i18n } = useTranslation();
 
     const STARTING_WEIGHT = 84.9; // kg - Initial weight
     const TARGET_WEIGHT = profile?.targetWeight || 75; // kg - Goal weight
@@ -32,7 +34,7 @@ export const GoalInsightsCard: React.FC = () => {
 
         try {
             const date = new Date(estimatedGoalDate + 'T12:00:00');
-            return new Intl.DateTimeFormat('es-AR', {
+            return new Intl.DateTimeFormat(i18n.language, {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric',
@@ -40,9 +42,9 @@ export const GoalInsightsCard: React.FC = () => {
             }).format(date);
         } catch (err) {
             console.error('[GoalInsightsCard] Error formatting date:', err);
-            return 'Calculando...';
+            return t('dashboard.insights.calculating');
         }
-    }, [estimatedGoalDate]);
+    }, [estimatedGoalDate, t, i18n.language]);
 
     // Edge case: Goal already reached
     if (remainingWeight !== null && remainingWeight <= 0) {
@@ -51,10 +53,10 @@ export const GoalInsightsCard: React.FC = () => {
                 <div className="text-center py-6">
                     <span className="text-6xl">🎉</span>
                     <h3 className="text-2xl font-bold text-green-600 mt-4">
-                        ¡Meta alcanzada!
+                        {t('dashboard.insights.goalReached')}
                     </h3>
                     <p className="text-sm text-green-700 mt-2">
-                        Has llegado a tu peso objetivo de {TARGET_WEIGHT} kg
+                        {t('dashboard.insights.congrats', { weight: TARGET_WEIGHT })}
                     </p>
                 </div>
             </div>
@@ -68,10 +70,10 @@ export const GoalInsightsCard: React.FC = () => {
                 <div className="text-center py-8">
                     <span className="text-5xl mb-4 block">📊</span>
                     <h3 className="text-lg font-semibold text-gray-600">
-                        Calculando...
+                        {t('dashboard.insights.calculating')}
                     </h3>
                     <p className="text-sm text-gray-500 mt-2">
-                        Necesitamos al menos 14 días de datos para proyectar tu meta
+                        {t('dashboard.insights.needData')}
                     </p>
                 </div>
             </div>
@@ -83,7 +85,7 @@ export const GoalInsightsCard: React.FC = () => {
         if (currentTrend === null || currentTrend === undefined) {
             return {
                 icon: '—',
-                text: 'Sin datos',
+                text: t('dashboard.insights.noDataTrend'),
                 color: 'text-gray-400 bg-gray-100 border-gray-200',
             };
         }
@@ -91,19 +93,19 @@ export const GoalInsightsCard: React.FC = () => {
         if (currentTrend < 0) {
             return {
                 icon: '↓',
-                text: `${Math.abs(currentTrend).toFixed(1)} kg/sem`,
+                text: `${Math.abs(currentTrend).toFixed(1)} ${t('dashboard.predictive.units.kgPerWeek')}`,
                 color: 'text-green-600 bg-green-50 border-green-200',
             };
         } else if (currentTrend > 0) {
             return {
                 icon: '↑',
-                text: `${currentTrend.toFixed(1)} kg/sem`,
+                text: `${currentTrend.toFixed(1)} ${t('dashboard.predictive.units.kgPerWeek')}`,
                 color: 'text-amber-600 bg-amber-50 border-amber-200',
             };
         } else {
             return {
                 icon: '→',
-                text: 'Manteniendo',
+                text: t('dashboard.insights.maintain'),
                 color: 'text-gray-600 bg-gray-50 border-gray-200',
             };
         }
@@ -131,15 +133,17 @@ export const GoalInsightsCard: React.FC = () => {
             <div className="relative z-10">
                 {/* Header */}
                 <h2 className="text-gray-500 text-xs font-semibold mb-4 uppercase tracking-wider">
-                    Objetivo {TARGET_WEIGHT} kg
+                    {t('dashboard.insights.goalTarget', { weight: TARGET_WEIGHT })}
                 </h2>
 
                 {/* Hero: Estimated Goal Date */}
                 <div className="mb-6">
                     <div className="text-3xl font-bold text-gray-900 mb-1">
-                        {formattedGoalDate || 'Calculando...'}
+                        {formattedGoalDate || t('dashboard.insights.calculating')}
                     </div>
-                    <p className="text-sm text-gray-500">Fecha estimada</p>
+                    <p className="text-sm text-gray-500">
+                        {t('dashboard.projection.estimatedDate')}
+                    </p>
                 </div>
 
                 {/* Progress Bar */}
@@ -175,7 +179,9 @@ export const GoalInsightsCard: React.FC = () => {
                         <div className="text-xs font-medium">
                             {trendDisplay.text}
                         </div>
-                        <div className="text-xs opacity-70 mt-0.5">Tendencia</div>
+                        <div className="text-xs opacity-70 mt-0.5">
+                            {t('dashboard.insights.trend')}
+                        </div>
                     </div>
 
                     {/* Adherence Badge */}
@@ -184,8 +190,12 @@ export const GoalInsightsCard: React.FC = () => {
                         <div className="text-2xl font-bold mb-0.5">
                             {weeklyAdherence}%
                         </div>
-                        <div className="text-xs font-medium">Semanal</div>
-                        <div className="text-xs opacity-70 mt-0.5">Adherencia</div>
+                        <div className="text-xs font-medium">
+                            {t('dashboard.insights.weekly')}
+                        </div>
+                        <div className="text-xs opacity-70 mt-0.5">
+                            {t('dashboard.insights.adherence')}
+                        </div>
                     </div>
 
                     {/* Remaining Weight Badge */}
@@ -193,8 +203,12 @@ export const GoalInsightsCard: React.FC = () => {
                         <div className="text-2xl font-bold mb-0.5">
                             {remainingWeight?.toFixed(1) || '—'}
                         </div>
-                        <div className="text-xs font-medium">kg</div>
-                        <div className="text-xs opacity-70 mt-0.5">Restante</div>
+                        <div className="text-xs font-medium">
+                            {t('units.kg', { defaultValue: 'kg' })}
+                        </div>
+                        <div className="text-xs opacity-70 mt-0.5">
+                            {t('dashboard.insights.remaining')}
+                        </div>
                     </div>
                 </div>
             </div>

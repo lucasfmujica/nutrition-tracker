@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface CompassSuggestion {
     name: string;
@@ -18,6 +19,8 @@ export const MealCompassCard: React.FC<MealCompassCardProps> = ({
     suggestions,
     onSelect,
 }) => {
+    const { t } = useTranslation();
+
     if (!suggestions || suggestions.length === 0) return null;
 
     return (
@@ -28,10 +31,10 @@ export const MealCompassCard: React.FC<MealCompassCardProps> = ({
                 </div>
                 <div>
                     <h3 className="font-bold text-indigo-900 leading-tight">
-                        Smart Compass
+                        {t('diary.compass.title')}
                     </h3>
                     <p className="text-xs text-indigo-600/80 font-medium">
-                        Sugerencias inteligentes para cerrar tu día
+                        {t('diary.compass.smartSubtitle')}
                     </p>
                 </div>
             </div>

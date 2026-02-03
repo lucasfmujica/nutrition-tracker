@@ -5,6 +5,7 @@
 
 import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     CartesianGrid,
     Line,
@@ -69,13 +70,17 @@ export const CorrelationChart: React.FC<CorrelationChartProps> = ({
         );
     };
 
+    const { t } = useTranslation();
+
     // Empty state
     if (dataPoints.length === 0) {
         return (
             <div className="bg-white rounded-2xl p-6 border border-slate-100">
                 <h3 className="font-bold text-slate-900 mb-2">{title}</h3>
                 <div className="flex items-center justify-center py-8">
-                    <p className="text-sm text-slate-400">Sin datos suficientes</p>
+                    <p className="text-sm text-slate-400">
+                        {t('progress.analytics.noDataDesc')}
+                    </p>
                 </div>
             </div>
         );
@@ -88,7 +93,7 @@ export const CorrelationChart: React.FC<CorrelationChartProps> = ({
                 <h3 className="font-bold text-slate-900 mb-2">{title}</h3>
                 <div className="flex items-center justify-center py-8">
                     <p className="text-sm text-slate-400">
-                        Necesitás al menos 3 mediciones para ver correlación
+                        {t('progress.analytics.insufficientDataDesc')}
                     </p>
                 </div>
             </div>

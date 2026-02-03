@@ -92,7 +92,7 @@ export const ActivityCards: React.FC<ActivityCardsProps> = React.memo(
                         unit={t('dashboard.activity.steps')}
                         icon={Footprints}
                         color="bg-orange-500"
-                        subtext={`${t('dashboard.activity.goal')}: ${stepsTarget}`}
+                        subtext={`${t('dashboard.activity.stepsGoal')}: ${stepsTarget}`}
                     />
                 </div>
 
@@ -101,7 +101,7 @@ export const ActivityCards: React.FC<ActivityCardsProps> = React.memo(
                     title={t('dashboard.activity.water')}
                     value={water}
                     target={waterTarget}
-                    unit={t('dashboard.activity.glasses')}
+                    unit={t('dashboard.activity.waterGlasses')}
                     icon={Droplets}
                     color="bg-blue-400"
                     onAdd={onAddWater}

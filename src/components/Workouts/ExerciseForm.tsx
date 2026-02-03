@@ -1,5 +1,6 @@
 import { Copy, Plus, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Exercise } from '../../types/domain';
 
 interface ExerciseFormProps {
@@ -16,6 +17,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
     onChange,
     disabled = false,
 }) => {
+    const { t } = useTranslation();
     const [, setEditingIndex] = useState<number | null>(null);
 
     const handleAddExercise = () => {
@@ -65,7 +67,8 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
             {/* Header */}
             <div className="flex items-center justify-between">
                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    Ejercicios {exercises.length > 0 && `(${exercises.length})`}
+                    {t('workouts.exercise.title')}{' '}
+                    {exercises.length > 0 && `(${exercises.length})`}
                 </label>
                 <div className="flex gap-2">
                     {exercises.length > 0 && (
@@ -74,9 +77,9 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                             onClick={handleQuickAdd}
                             disabled={disabled}
                             className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-bold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            title="Duplicar último ejercicio">
+                            title={t('workouts.exercise.quickAdd')}>
                             <Copy className="w-3.5 h-3.5" />
-                            Quick Add
+                            {t('workouts.exercise.quickAdd')}
                         </button>
                     )}
                     <button
@@ -85,7 +88,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                         disabled={disabled}
                         className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-600 text-xs font-bold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                         <Plus className="w-3.5 h-3.5" />
-                        Agregar
+                        {t('workouts.exercise.add')}
                     </button>
                 </div>
             </div>
@@ -97,10 +100,10 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                         🏋️
                     </div>
                     <p className="text-slate-400 text-sm font-medium">
-                        Sin ejercicios registrados
+                        {t('workouts.exercise.noExercises')}
                     </p>
                     <p className="text-slate-400 text-xs mt-1">
-                        Hacé click en "Agregar" para comenzar
+                        {t('workouts.exercise.startPrompt')}
                     </p>
                 </div>
             ) : (
@@ -111,7 +114,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                             className="bg-gradient-to-br from-slate-50 to-slate-50/50 rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
                             <div className="flex items-center justify-between mb-3">
                                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                                    Ejercicio {index + 1}
+                                    {t('workouts.exercise.itemTitle')} {index + 1}
                                 </span>
                                 <button
                                     type="button"
@@ -143,7 +146,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                             <div className="grid grid-cols-3 gap-2">
                                 <div>
                                     <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 text-center">
-                                        Series
+                                        {t('workouts.exercise.sets')}
                                     </label>
                                     <input
                                         type="number"
@@ -164,7 +167,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
 
                                 <div>
                                     <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 text-center">
-                                        Reps
+                                        {t('workouts.exercise.reps')}
                                     </label>
                                     <input
                                         type="number"
@@ -185,7 +188,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
 
                                 <div>
                                     <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 text-center">
-                                        Peso (kg)
+                                        {t('workouts.exercise.weight')}
                                     </label>
                                     <input
                                         type="number"
@@ -233,7 +236,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
 
             {exercises.length > 0 && (
                 <p className="text-xs text-slate-400 text-center">
-                    💡 Usá "Quick Add" para duplicar el último ejercicio
+                    {t('workouts.exercise.duplicateTip')}
                 </p>
             )}
         </div>

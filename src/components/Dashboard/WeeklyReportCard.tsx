@@ -7,6 +7,7 @@ import {
     Trophy,
 } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface WeeklyReportCardProps {
     // Activity
@@ -61,6 +62,7 @@ export const WeeklyReportCard = React.forwardRef<
         },
         ref,
     ) => {
+        const { t } = useTranslation();
         // 1. Helper: Generate Insight Logic
         const generateWeeklyFeedback = () => {
             // Priority 1: Weight Loss
@@ -122,10 +124,10 @@ export const WeeklyReportCard = React.forwardRef<
                     <div className="flex justify-between items-center mb-10">
                         <div>
                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-1">
-                                REPORTE SEMANAL
+                                {t('dashboard.weeklyReport.title')}
                             </p>
                             <h1 className="text-xl font-black text-gray-900">
-                                {weekRange || 'Esta Semana'}
+                                {weekRange || t('dashboard.weeklyReport.thisWeek')}
                             </h1>
                         </div>
                         <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center">
@@ -143,7 +145,7 @@ export const WeeklyReportCard = React.forwardRef<
                         <div className="inline-flex items-center gap-2 mb-2">
                             <Scale className="w-4 h-4 text-slate-400" />
                             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                                Peso Corporal
+                                {t('dashboard.weeklyReport.bodyWeight')}
                             </span>
                         </div>
 
@@ -161,9 +163,10 @@ export const WeeklyReportCard = React.forwardRef<
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white rounded-full shadow-sm border border-slate-100">
                                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
                                 <div className="text-[11px] font-medium text-slate-600">
-                                    Total perdido:{' '}
+                                    {t('dashboard.weeklyReport.totalLost')}:{' '}
                                     <span className="font-bold text-slate-900">
-                                        {totalLost} kg
+                                        {totalLost}{' '}
+                                        {t('units.kg', { defaultValue: 'kg' })}
                                     </span>
                                     {percentToGoal && (
                                         <span className="text-slate-400 mx-1">
@@ -185,10 +188,11 @@ export const WeeklyReportCard = React.forwardRef<
                                         className={`w-2 h-2 rounded-full ${weightDelta <= 0 ? 'bg-emerald-500' : 'bg-amber-500'}`}
                                     />
                                     <p className="text-[11px] font-medium text-slate-600">
-                                        Variación:{' '}
+                                        {t('dashboard.weeklyReport.variation')}:{' '}
                                         <span className="font-bold text-slate-900">
                                             {weightDelta > 0 ? '+' : ''}
-                                            {weightDelta} kg
+                                            {weightDelta}{' '}
+                                            {t('units.kg', { defaultValue: 'kg' })}
                                         </span>
                                     </p>
                                 </div>
@@ -206,13 +210,13 @@ export const WeeklyReportCard = React.forwardRef<
                                 />
                             </div>
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                                Déficit Prom.
+                                {t('dashboard.weeklyReport.avgDeficit')}
                             </p>
                             <p className="text-2xl font-bold text-slate-900">
                                 {avgDeficit > 0 ? avgDeficit : '-'}
                             </p>
                             <p className="text-[10px] text-slate-400 font-medium">
-                                kcal/día
+                                kcal/dia
                             </p>
                         </div>
 
@@ -225,7 +229,7 @@ export const WeeklyReportCard = React.forwardRef<
                                 />
                             </div>
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                                Consistencia
+                                {t('dashboard.weeklyReport.consistency')}
                             </p>
                             <p className="text-2xl font-bold text-slate-900">
                                 {consistencyStreak}
@@ -234,7 +238,7 @@ export const WeeklyReportCard = React.forwardRef<
                                 </span>
                             </p>
                             <p className="text-[10px] text-slate-400 font-medium">
-                                días on track
+                                {t('dashboard.weeklyReport.daysOnTrack')}
                             </p>
                         </div>
                     </div>
@@ -244,7 +248,7 @@ export const WeeklyReportCard = React.forwardRef<
                         <div className="flex items-center gap-2 mb-3 px-1">
                             <Activity className="w-4 h-4 text-slate-400" />
                             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                                Actividad Total
+                                {t('dashboard.weeklyReport.totalActivity')}
                             </h3>
                         </div>
 
@@ -255,13 +259,13 @@ export const WeeklyReportCard = React.forwardRef<
                                         <Dumbbell className="w-4 h-4 text-blue-600" />
                                     </div>
                                     <span className="text-sm font-semibold text-slate-700">
-                                        Fuerza
+                                        {t('dashboard.weeklyReport.strength')}
                                     </span>
                                 </div>
                                 <span className="text-sm font-bold text-slate-900">
                                     {gymCount}{' '}
                                     <span className="text-xs font-normal text-slate-400">
-                                        sesiones
+                                        {t('dashboard.weeklyReport.sessions')}
                                     </span>
                                 </span>
                             </div>
@@ -274,13 +278,13 @@ export const WeeklyReportCard = React.forwardRef<
                                         <Activity className="w-4 h-4 text-orange-600" />
                                     </div>
                                     <span className="text-sm font-semibold text-slate-700">
-                                        Tenis
+                                        {t('dashboard.weeklyReport.tennis')}
                                     </span>
                                 </div>
                                 <span className="text-sm font-bold text-slate-900">
                                     {tennisCount}{' '}
                                     <span className="text-xs font-normal text-slate-400">
-                                        partidos
+                                        {t('dashboard.weeklyReport.matches')}
                                     </span>
                                 </span>
                             </div>
@@ -292,7 +296,7 @@ export const WeeklyReportCard = React.forwardRef<
                         <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10" />
 
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
-                            LUKENFIT INSIGHTS
+                            {t('dashboard.weeklyReport.insightsTitle')}
                         </p>
                         <p className="text-sm font-medium leading-relaxed opacity-90">
                             "{insight}"
@@ -304,7 +308,7 @@ export const WeeklyReportCard = React.forwardRef<
                 <div className="bg-white py-3 border-t border-slate-50 flex items-center justify-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-slate-900" />
                     <span className="text-[10px] font-bold text-slate-900 tracking-[0.2em]">
-                        LUKENFIT REPORT
+                        {t('dashboard.weeklyReport.footer')}
                     </span>
                 </div>
             </div>

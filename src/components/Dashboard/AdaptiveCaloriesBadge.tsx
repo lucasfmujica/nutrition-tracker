@@ -1,5 +1,6 @@
 import { Flame, TrendingUp } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface AdaptiveCaloriesBadgeProps {
     isActive: boolean;
@@ -18,6 +19,7 @@ export const AdaptiveCaloriesBadge: React.FC<AdaptiveCaloriesBadgeProps> = ({
     reason,
     boost,
 }) => {
+    const { t } = useTranslation();
     if (!isActive) return null;
 
     return (
@@ -27,15 +29,18 @@ export const AdaptiveCaloriesBadge: React.FC<AdaptiveCaloriesBadgeProps> = ({
             </div>
             <div className="flex flex-col">
                 <span className="text-xs font-semibold text-orange-700">
-                    {reason || 'Día de Entreno'}
+                    {reason || t('dashboard.coach.reason')}
                 </span>
                 <div className="flex items-center gap-2 text-[10px] text-orange-600">
                     <span className="flex items-center gap-0.5">
                         <TrendingUp className="w-2.5 h-2.5" />+{boost?.calories || 0}{' '}
-                        kcal
+                        {t('units.kcal')}
                     </span>
                     <span>•</span>
-                    <span>+{boost?.carbs || 0}g carbs</span>
+                    <span>
+                        +{boost?.carbs || 0}
+                        {t('units.grams')} {t('dashboard.macros.carbs')}
+                    </span>
                 </div>
             </div>
         </div>

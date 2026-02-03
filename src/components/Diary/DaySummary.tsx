@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Macros } from '../../types/domain';
 
 interface DaySummaryProps {
@@ -7,17 +8,18 @@ interface DaySummaryProps {
 }
 
 export const DaySummary: React.FC<DaySummaryProps> = ({ totals, targets }) => {
+    const { t } = useTranslation();
     const calsLeft = Math.round(targets.calories - totals.calories);
 
     return (
         <div className="bg-white border border-gray-100 rounded-2xl p-4 mt-2 relative max-w-4xl mx-auto shadow-sm">
             <div className="flex justify-between items-end mb-2">
                 <span className="text-xs font-medium text-gray-500">
-                    RESUMEN DIARIO
+                    {t('diary.summary.title')}
                 </span>
                 <span
                     className={`text-sm font-bold ${calsLeft < 0 ? 'text-red-500' : 'text-green-600'}`}>
-                    {calsLeft} kcal restantes
+                    {calsLeft} kcal {t('diary.summary.remaining')}
                 </span>
             </div>
 

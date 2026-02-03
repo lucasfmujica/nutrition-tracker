@@ -1,5 +1,6 @@
 import { BatteryCharging, Cloud, CloudRain, Info, Loader, Sun } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
 
 export interface PerformanceForecastMetrics {
@@ -34,6 +35,7 @@ export const PerformanceForecastCard: React.FC = () => {
     const { performanceForecast } = useTracker() as {
         performanceForecast: PerformanceForecast;
     };
+    const { t } = useTranslation();
     const [showExplanation, setShowExplanation] = useState(false);
 
     if (!performanceForecast) return null;
@@ -77,7 +79,7 @@ export const PerformanceForecastCard: React.FC = () => {
                         <div className="min-w-0 flex-1">
                             <h3
                                 className={`text-sm font-bold uppercase tracking-wide mb-1 opacity-80 ${textClass} truncate w-full`}>
-                                Pronóstico Mañana
+                                {t('dashboard.forecast.title')}
                             </h3>
                             <div
                                 className={`text-lg font-bold leading-tight ${textClass} break-words line-clamp-2`}>
@@ -88,18 +90,18 @@ export const PerformanceForecastCard: React.FC = () => {
                             <button
                                 onClick={() => setShowExplanation(!showExplanation)}
                                 className={`p-1.5 rounded-lg transition-all ${showExplanation ? 'bg-white shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
-                                title="¿Cómo se calcula esto?">
+                                title={t('dashboard.forecast.howCalculated')}>
                                 <Info size={18} />
                             </button>
                             {/* Status Badge */}
                             {forecastCode === 'peak' && (
                                 <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
-                                    Prime
+                                    {t('dashboard.forecast.prime')}
                                 </span>
                             )}
                             {forecastCode === 'recovery' && (
                                 <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-200 text-slate-700">
-                                    Rest
+                                    {t('dashboard.forecast.rest')}
                                 </span>
                             )}
                         </div>
@@ -117,19 +119,17 @@ export const PerformanceForecastCard: React.FC = () => {
                     <div className="bg-white/60 backdrop-blur-md rounded-xl p-4 space-y-3 ring-1 ring-black/5 shadow-inner">
                         <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
                             <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></span>
-                            Algoritmo de Predicción
+                            {t('dashboard.forecast.algorithm')}
                         </h4>
 
                         <p className="text-xs text-slate-600 leading-relaxed">
-                            Analizamos la relación entre tu recuperación reciente y
-                            la fatiga acumulada para predecir tu ventana de
-                            rendimiento óptimo.
+                            {t('dashboard.forecast.explanation')}
                         </p>
 
                         <div className="grid grid-cols-2 gap-3 mt-2">
                             <div className="space-y-1">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase">
-                                    Tendencia Readiness
+                                    {t('dashboard.forecast.readinessTrend')}
                                 </span>
                                 <div className="flex items-center gap-2">
                                     <span
@@ -149,7 +149,7 @@ export const PerformanceForecastCard: React.FC = () => {
 
                             <div className="space-y-1">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase">
-                                    Tendencia Sueño
+                                    {t('dashboard.forecast.sleepTrend')}
                                 </span>
                                 <div className="flex items-center gap-2">
                                     <span
@@ -168,7 +168,7 @@ export const PerformanceForecastCard: React.FC = () => {
 
                             <div className="col-span-2 space-y-1 pt-1 border-t border-slate-200/50">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase">
-                                    Carga de Entrenamiento
+                                    {t('dashboard.forecast.trainingLoad')}
                                 </span>
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm font-black text-slate-700">
@@ -180,8 +180,8 @@ export const PerformanceForecastCard: React.FC = () => {
                                     <span
                                         className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${(metrics.volume48h ?? 0) > 10000 ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>
                                         {(metrics.volume48h ?? 0) > 10000
-                                            ? 'ALTA CARGA'
-                                            : 'ÓPTIMO'}
+                                            ? t('dashboard.forecast.highLoad')
+                                            : t('dashboard.forecast.optimal')}
                                     </span>
                                 </div>
                             </div>

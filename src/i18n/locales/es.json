@@ -152,6 +152,22 @@
             "meal": "Comida",
             "total": "Total"
         },
+        "captionGenerator": {
+            "generate": "Generar Caption con IA",
+            "generating": "Generando caption con IA...",
+            "regenerate": "Regenerar",
+            "save": "Guardar",
+            "edit": "Editar",
+            "caption": "Caption",
+            "placeholder": "Escribí tu caption...",
+            "tip": "Tip"
+        },
+        "angles": {
+            "front": "Frente",
+            "side": "Lado",
+            "back": "Espalda",
+            "other": "Otro"
+        },
         "foodItem": {
             "needsReview": "Necesita Revisión",
             "saveFavorite": "Guardar como favorito",
@@ -498,6 +514,11 @@
             "calories": "Calorías",
             "notes": "Notas",
             "exercises": "Ejercicios"
+        },
+        "photoSelection": {
+            "title": "Seleccionar Foto",
+            "cancel": "Cancelar",
+            "all": "Todas"
         }
     },
     "onboarding": {
@@ -716,6 +737,28 @@
             "changeAfter": "Cambiar Después",
             "noData": "Sin datos",
             "days": "días"
+        },
+        "caption": {
+            "generate": "Generar Caption",
+            "copy": "Copiar"
+        },
+        "share": {
+            "title": "Compartir Progreso",
+            "download": "Descargar",
+            "social": "Redes Sociales",
+            "tip": "La IA generará un caption personalizado basado en tu progreso. Podés editarlo después de generarlo.",
+            "createCaption": "1. Generá tu caption",
+            "preview": "2. Vista previa",
+            "exporting": "Exportando...",
+            "createdWith": "Creado con Lukenfit",
+            "weeks": "Semanas",
+            "lost": "Perdidos",
+            "waist": "Cintura"
+        },
+        "story": {
+            "title": "Tu Historia",
+            "started": "Empezaste",
+            "lost": "Perdiste"
         }
     }
 }

@@ -5,6 +5,7 @@
 
 import { X } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ProgressPhoto } from '../../types/domain';
 import { CaptionGenerator } from './CaptionGenerator';
 import { TransformationStoryCard } from './TransformationStoryCard';
@@ -28,6 +29,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({
     measurements,
     onClose,
 }) => {
+    const { t } = useTranslation();
+
     const [caption, setCaption] = useState('');
     const [hashtags, setHashtags] = useState<string[]>([]);
 
@@ -48,7 +51,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                 {/* Header */}
                 <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
                     <h2 className="text-xl font-bold text-slate-900">
-                        Compartir Transformación
+                        {t('progress.share.title')}
                     </h2>
                     <button
                         onClick={onClose}
@@ -62,7 +65,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                     {/* Caption Generator */}
                     <div>
                         <h3 className="font-bold text-slate-900 mb-3">
-                            1. Generá tu caption
+                            {t('progress.share.createCaption')}
                         </h3>
                         <CaptionGenerator
                             beforePhoto={beforePhoto}
@@ -77,7 +80,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                     {caption && (
                         <div>
                             <h3 className="font-bold text-slate-900 mb-3">
-                                2. Vista previa
+                                {t('progress.share.preview')}
                             </h3>
                             <TransformationStoryCard
                                 beforePhoto={beforePhoto}
@@ -93,9 +96,11 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                     {!caption && (
                         <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
                             <p className="text-sm text-blue-700">
-                                💡 <strong>Tip:</strong> La IA generará un caption
-                                personalizado basado en tu progreso. Podés editarlo
-                                después de generarlo.
+                                <span
+                                    dangerouslySetInnerHTML={{
+                                        __html: t('progress.share.tip'),
+                                    }}
+                                />
                             </p>
                         </div>
                     )}

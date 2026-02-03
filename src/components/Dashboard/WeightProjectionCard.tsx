@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface WeightProjection {
     realistTrend: number | null;
@@ -29,16 +30,19 @@ interface WeightProjectionCardProps {
 export const WeightProjectionCard: React.FC<WeightProjectionCardProps> = ({
     projection,
 }) => {
+    const { t } = useTranslation();
     if (!projection) return null;
 
     return (
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50">
-            <h3 className="text-gray-900 font-bold text-lg mb-4">Proyección</h3>
+            <h3 className="text-gray-900 font-bold text-lg mb-4">
+                {t('dashboard.projection.title')}
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                 {/* Adjusted Trend */}
                 <div className="flex flex-row sm:flex-col justify-between sm:justify-center items-center p-3 bg-gray-50 rounded-xl">
                     <div className="text-sm sm:text-xs text-gray-500 font-medium">
-                        Ritmo actual
+                        {t('dashboard.projection.currentRate')}
                     </div>
                     <div className="flex items-baseline gap-1">
                         <span className="text-xl font-bold text-gray-900">
@@ -52,27 +56,33 @@ export const WeightProjectionCard: React.FC<WeightProjectionCardProps> = ({
                                 '—'
                             )}
                         </span>
-                        <span className="text-xs text-gray-500">kg/sem</span>
+                        <span className="text-xs text-gray-500">
+                            {t('dashboard.predictive.units.kgPerWeek')}
+                        </span>
                     </div>
                 </div>
 
                 {/* Weeks to Goal */}
                 <div className="flex flex-row sm:flex-col justify-between sm:justify-center items-center p-3 bg-gray-50 rounded-xl">
                     <div className="text-sm sm:text-xs text-gray-500 font-medium">
-                        Para objetivo
+                        {t('dashboard.projection.toGoal')}
                     </div>
                     <div className="flex items-baseline gap-1">
                         <span className="text-xl font-bold text-blue-600">
                             {projection.weeksToGoal || '-'}
                         </span>
-                        <span className="text-xs text-blue-400">sem</span>
+                        <span className="text-xs text-blue-400">
+                            {t('units.weeks', { defaultValue: 'sem' })}
+                        </span>
                     </div>
                 </div>
             </div>
 
             {projection.formattedGoalDate && (
                 <div className="mb-4 text-center">
-                    <span className="text-xs text-gray-400">Fecha estimada: </span>
+                    <span className="text-xs text-gray-400">
+                        {t('dashboard.projection.estimatedDate')}:{' '}
+                    </span>
                     <span className="text-sm font-semibold text-gray-900">
                         {projection.formattedGoalDate}
                     </span>
@@ -80,8 +90,10 @@ export const WeightProjectionCard: React.FC<WeightProjectionCardProps> = ({
             )}
 
             <p className="text-[10px] text-gray-400 mt-3 text-center">
-                Basado en {projection.dataPoints} registros ({projection.daysCovered}{' '}
-                días)
+                {t('dashboard.projection.basedOn', {
+                    count: projection.dataPoints,
+                    days: projection.daysCovered,
+                })}
             </p>
         </div>
     );

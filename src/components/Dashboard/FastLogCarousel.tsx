@@ -1,5 +1,6 @@
 import { Check, Plus, Zap } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface FastLogFood {
     name: string;
@@ -31,6 +32,7 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
     frequentCombos = [],
     onQuickLog,
 }) => {
+    const { t } = useTranslation();
     const [loggingId, setLoggingId] = useState<string | null>(null);
     const [successId, setSuccessId] = useState<string | null>(null);
 
@@ -64,7 +66,9 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
                 <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
                     <Zap className="w-4 h-4 fill-current" />
                 </div>
-                <h2 className="text-lg font-bold text-gray-900">Fast-Log</h2>
+                <h2 className="text-lg font-bold text-gray-900">
+                    {t('dashboard.fastLog.title')}
+                </h2>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 px-1">
@@ -103,11 +107,14 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
                         <div className="text-left min-w-0">
                             <h3
                                 className={`font-bold text-sm leading-tight truncate ${successId === combo.id ? 'text-white' : 'text-white'}`}>
-                                {successId === combo.id ? '¡Listo!' : (combo.name || 'Mi Combo')}
+                                {successId === combo.id
+                                    ? t('dashboard.fastLog.done')
+                                    : combo.name || t('dashboard.fastLog.myCombo')}
                             </h3>
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="bg-white/20 px-1.5 py-0.5 rounded text-[10px] text-white font-bold backdrop-blur-sm">
-                                    {combo.totalCalories} kcal
+                                    {combo.totalCalories}{' '}
+                                    {t('units.kcal', { defaultValue: 'kcal' })}
                                 </span>
                             </div>
                         </div>
@@ -156,7 +163,8 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
                             </h3>
                             <span
                                 className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${successId === food.name ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'}`}>
-                                {food.calories} kcal
+                                {food.calories}{' '}
+                                {t('units.kcal', { defaultValue: 'kcal' })}
                             </span>
                         </div>
 

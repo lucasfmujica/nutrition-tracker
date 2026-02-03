@@ -2,34 +2,36 @@
  * ProgressPhotosView - Photo gallery and upload interface
  */
 
-import React, { useState, useRef } from 'react';
+import { format, parseISO } from 'date-fns';
+import { enUS, es } from 'date-fns/locale';
 import {
+    AlertCircle,
     Camera,
-    X,
-    Trash2,
     Image as ImageIcon,
     Loader2,
-    AlertCircle,
+    Trash2,
+    X,
 } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useProgressPhotos } from '../../hooks/useProgressPhotos';
-import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
+import type { PhotoAngle, ProgressPhoto } from '../../types/domain';
 import { getArgentinaDateString } from '../../utils/dateUtils';
 import { formatAngleLabel, getAngleBadge } from '../../utils/progressUtils';
-import type { ProgressPhoto, PhotoAngle } from '../../types/domain';
+import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
 interface ProgressPhotosViewProps {
     userId: string | null;
 }
 
-export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({ userId }) => {
-    const {
-        photos,
-        isLoading,
-        isUploading,
-        error,
-        uploadPhoto,
-        deletePhoto,
-    } = useProgressPhotos({ userId });
+export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
+    userId,
+}) => {
+    const { t, i18n } = useTranslation();
+    const dateLocale = i18n.language === 'es' ? es : enUS;
+
+    const { photos, isLoading, isUploading, error, uploadPhoto, deletePhoto } =
+        useProgressPhotos({ userId });
 
     const [showUploadForm, setShowUploadForm] = useState(false);
     const [selectedPhoto, setSelectedPhoto] = useState<ProgressPhoto | null>(null);
@@ -56,29 +58,31 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({ userId }
     };
 
     const handleDelete = async (photo: ProgressPhoto) => {
-        if (confirm('¿Eliminar esta foto?')) {
+        if (confirm(t('progress.photos.deleteConfirm'))) {
             await deletePhoto(photo.id);
             setSelectedPhoto(null);
         }
     };
 
     // Group photos by month
-    const photosByMonth = photos.reduce((acc, photo) => {
-        const monthKey = photo.date.substring(0, 7); // YYYY-MM
-        if (!acc[monthKey]) acc[monthKey] = [];
-        acc[monthKey].push(photo);
-        return acc;
-    }, {} as Record<string, ProgressPhoto[]>);
+    const photosByMonth = photos.reduce(
+        (acc, photo) => {
+            const monthKey = photo.date.substring(0, 7); // YYYY-MM
+            if (!acc[monthKey]) acc[monthKey] = [];
+            acc[monthKey].push(photo);
+            return acc;
+        },
+        {} as Record<string, ProgressPhoto[]>,
+    );
 
     return (
         <div className="space-y-4">
             {/* Upload Button */}
             <button
                 onClick={() => setShowUploadForm(true)}
-                className="w-full py-4 bg-gradient-to-br from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 transition-all active:scale-[0.98]"
-            >
+                className="w-full py-4 bg-gradient-to-br from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 transition-all active:scale-[0.98]">
                 <Camera size={20} />
-                Subir Foto de Progreso
+                {t('progress.photos.addPhoto')}
             </button>
 
             {/* Upload Form Modal */}
@@ -86,11 +90,12 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({ userId }
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-3xl p-6 w-full max-w-sm">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-bold text-slate-900">Nueva Foto</h3>
+                            <h3 className="text-lg font-bold text-slate-900">
+                                {t('progress.photos.newPhoto')}
+                            </h3>
                             <button
                                 onClick={() => setShowUploadForm(false)}
-                                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500"
-                            >
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500">
                                 <X size={18} />
                             </button>
                         </div>
@@ -98,7 +103,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({ userId }
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5">
-                                    Fecha
+                                    {t('progress.photos.date')}
                                 </label>
                                 <LukenFitDatePicker
                                     selectedDate={uploadDate}
@@ -109,10 +114,17 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({ userId }
 
                             <div>
                                 <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5">
-                                    Ángulo
+                                    {t('progress.photos.angle')}
                                 </label>
                                 <div className="grid grid-cols-4 gap-2">
-                                    {(['front', 'side', 'back', 'other'] as PhotoAngle[]).map((angle) => (
+                                    {(
+                                        [
+                                            'front',
+                                            'side',
+                                            'back',
+                                            'other',
+                                        ] as PhotoAngle[]
+                                    ).map((angle) => (
                                         <button
                                             key={angle}
                                             onClick={() => setUploadAngle(angle)}
@@ -120,8 +132,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({ userId }
                                                 uploadAngle === angle
                                                     ? 'bg-purple-100 text-purple-700 border-2 border-purple-500'
                                                     : 'bg-slate-100 text-slate-600 border-2 border-transparent'
-                                            }`}
-                                        >
+                                            }`}>
                                             {formatAngleLabel(angle)}
                                         </button>
                                     ))}
@@ -130,13 +141,15 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({ userId }
 
                             <div>
                                 <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5">
-                                    Notas (opcional)
+                                    {t('progress.photos.notes')}
                                 </label>
                                 <input
                                     type="text"
                                     value={uploadNotes}
                                     onChange={(e) => setUploadNotes(e.target.value)}
-                                    placeholder="Ej: Después de 4 semanas"
+                                    placeholder={t(
+                                        'progress.photos.notesPlaceholder',
+                                    )}
                                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm"
                                 />
                             </div>
@@ -153,17 +166,19 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({ userId }
                             <button
                                 onClick={() => fileInputRef.current?.click()}
                                 disabled={isUploading}
-                                className="w-full py-4 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors"
-                            >
+                                className="w-full py-4 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors">
                                 {isUploading ? (
                                     <>
-                                        <Loader2 size={18} className="animate-spin" />
-                                        Subiendo...
+                                        <Loader2
+                                            size={18}
+                                            className="animate-spin"
+                                        />
+                                        {t('progress.photos.uploading')}
                                     </>
                                 ) : (
                                     <>
                                         <Camera size={18} />
-                                        Seleccionar Foto
+                                        {t('progress.photos.selectPhoto')}
                                     </>
                                 )}
                             </button>
@@ -193,9 +208,11 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({ userId }
                     <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <ImageIcon size={28} className="text-purple-400" />
                     </div>
-                    <h3 className="font-bold text-slate-900 mb-1">Sin fotos aún</h3>
+                    <h3 className="font-bold text-slate-900 mb-1">
+                        {t('progress.photos.noPhotos')}
+                    </h3>
                     <p className="text-sm text-slate-500">
-                        Subí tu primera foto de progreso para comenzar a trackear tu transformación.
+                        {t('progress.photos.noPhotosDesc')}
                     </p>
                 </div>
             )}
@@ -204,9 +221,8 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({ userId }
             {Object.entries(photosByMonth).map(([monthKey, monthPhotos]) => (
                 <div key={monthKey} className="space-y-3">
                     <h3 className="text-sm font-bold text-slate-500 uppercase">
-                        {new Date(monthKey + '-01').toLocaleDateString('es-AR', {
-                            month: 'long',
-                            year: 'numeric',
+                        {format(parseISO(monthKey + '-01'), 'MMMM yyyy', {
+                            locale: dateLocale,
                         })}
                     </h3>
                     <div className="grid grid-cols-3 gap-2">
@@ -214,8 +230,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({ userId }
                             <button
                                 key={photo.id}
                                 onClick={() => setSelectedPhoto(photo)}
-                                className="aspect-square rounded-xl overflow-hidden bg-slate-100 relative group"
-                            >
+                                className="aspect-square rounded-xl overflow-hidden bg-slate-100 relative group">
                                 <img
                                     src={photo.thumbnailUrl || photo.photoUrl}
                                     alt={`Progreso ${photo.date}`}
@@ -223,8 +238,8 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({ userId }
                                 />
                                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
                                     <p className="text-white text-xs font-medium">
-                                        {new Date(photo.date + 'T12:00:00').toLocaleDateString('es-AR', {
-                                            day: 'numeric',
+                                        {format(parseISO(photo.date), 'd', {
+                                            locale: dateLocale,
                                         })}
                                     </p>
                                 </div>
@@ -243,12 +258,10 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({ userId }
             {selectedPhoto && (
                 <div
                     className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
-                    onClick={() => setSelectedPhoto(null)}
-                >
+                    onClick={() => setSelectedPhoto(null)}>
                     <div
                         className="bg-white rounded-3xl overflow-hidden max-w-lg w-full max-h-[90vh] overflow-y-auto"
-                        onClick={(e) => e.stopPropagation()}
-                    >
+                        onClick={(e) => e.stopPropagation()}>
                         <img
                             src={selectedPhoto.photoUrl}
                             alt={`Progreso ${selectedPhoto.date}`}
@@ -258,22 +271,22 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({ userId }
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="font-bold text-slate-900">
-                                        {new Date(selectedPhoto.date + 'T12:00:00').toLocaleDateString('es-AR', {
-                                            day: 'numeric',
-                                            month: 'long',
-                                            year: 'numeric',
-                                        })}
+                                        {format(
+                                            parseISO(selectedPhoto.date),
+                                            'd MMMM yyyy',
+                                            { locale: dateLocale },
+                                        )}
                                     </p>
                                     {selectedPhoto.angle && (
                                         <p className="text-sm text-slate-500 capitalize">
-                                            Vista: {formatAngleLabel(selectedPhoto.angle)}
+                                            {t('progress.photos.view')}:{' '}
+                                            {formatAngleLabel(selectedPhoto.angle)}
                                         </p>
                                     )}
                                 </div>
                                 <button
                                     onClick={() => handleDelete(selectedPhoto)}
-                                    className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-100"
-                                >
+                                    className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-100">
                                     <Trash2 size={18} />
                                 </button>
                             </div>
@@ -284,7 +297,10 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({ userId }
                             )}
                             {selectedPhoto.weight && (
                                 <p className="text-sm text-slate-500">
-                                    Peso: <span className="font-bold text-slate-900">{selectedPhoto.weight} kg</span>
+                                    {t('progress.photos.weight')}:{' '}
+                                    <span className="font-bold text-slate-900">
+                                        {selectedPhoto.weight} kg
+                                    </span>
                                 </p>
                             )}
                         </div>

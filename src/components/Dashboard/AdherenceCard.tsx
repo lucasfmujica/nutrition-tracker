@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 export interface AdherenceData {
     score: number;
     calOkDays: number;
@@ -15,6 +16,7 @@ interface AdherenceCardProps {
  * AdherenceCard - Weekly adherence score display
  */
 export const AdherenceCard: React.FC<AdherenceCardProps> = ({ data, label }) => {
+    const { t } = useTranslation();
     const getScoreColor = (score: number) => {
         if (score >= 8) return 'text-blue-400';
         if (score >= 6) return 'text-amber-400';
@@ -34,19 +36,25 @@ export const AdherenceCard: React.FC<AdherenceCardProps> = ({ data, label }) => 
                     <div className="text-blue-400 font-bold">
                         {data.calOkDays}/{data.daysTracked}
                     </div>
-                    <div className="text-gray-500">Cal OK</div>
+                    <div className="text-gray-500">
+                        {t('dashboard.adherence.calOk')}
+                    </div>
                 </div>
                 <div>
                     <div className="text-blue-400 font-bold">
                         {data.protOkDays}/{data.daysTracked}
                     </div>
-                    <div className="text-gray-500">Prot OK</div>
+                    <div className="text-gray-500">
+                        {t('dashboard.adherence.protOk')}
+                    </div>
                 </div>
                 <div>
                     <div className="text-cyan-400 font-bold">
                         {data.stepsOkDays}/{data.daysTracked}
                     </div>
-                    <div className="text-gray-500">Pasos OK</div>
+                    <div className="text-gray-500">
+                        {t('dashboard.adherence.stepsOk')}
+                    </div>
                 </div>
             </div>
         </div>

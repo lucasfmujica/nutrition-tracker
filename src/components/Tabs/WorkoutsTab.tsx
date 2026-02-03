@@ -10,6 +10,7 @@ import {
     Zap,
 } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DEFAULT_WEEKLY_PLAN } from '../../constants/weeklyPlan';
 import { useTracker } from '../../context/TrackerContext';
 import { useEffortAnalytics } from '../../hooks/useEffortAnalytics';
@@ -52,6 +53,7 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
     getWorkoutsForDate,
     confirmDelete,
 }) => {
+    const { t } = useTranslation();
     const workoutsForSelectedDate = getWorkoutsForDate(selectedWorkoutDate);
     const dailyOura = ouraLog.find((e) => e.date === selectedWorkoutDate);
 
@@ -74,10 +76,10 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
         <div className="space-y-3 pb-24 lg:pb-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Entrenos</h1>
-                    <p className="text-sm text-gray-500">
-                        Registro de actividad física
-                    </p>
+                    <h1 className="text-2xl font-bold text-gray-900">
+                        {t('workouts.title')}
+                    </h1>
+                    <p className="text-sm text-gray-500">{t('workouts.subtitle')}</p>
                 </div>
                 <div className="flex flex-col-reverse md:flex-row gap-3 w-full md:w-auto">
                     <button
@@ -85,13 +87,13 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                         className="group relative flex items-center justify-center gap-2 px-5 py-3 md:py-2 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl text-sm font-bold shadow-lg shadow-slate-900/20 active:scale-95 transition-all w-full md:w-auto overflow-hidden">
                         <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                         <Camera size={18} className="text-amber-400" />
-                        <span>Importar Gravl</span>
+                        <span>{t('workouts.importGravl')}</span>
                     </button>
                     <div className="w-full md:w-auto md:min-w-[200px]">
                         <LukenFitDatePicker
                             selectedDate={selectedWorkoutDate}
                             onChange={setSelectedWorkoutDate}
-                            label="Fecha"
+                            label={t('weight.date')}
                         />
                     </div>
                 </div>
@@ -109,27 +111,31 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                     <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex flex-col justify-center items-center">
                         <div className="flex items-center gap-2 mb-1">
                             <Trophy className="w-5 h-5 text-amber-500" />
-                            <h3 className="text-gray-900 font-bold">Total</h3>
+                            <h3 className="text-gray-900 font-bold">
+                                {t('workouts.total')}
+                            </h3>
                         </div>
                         <div className="text-3xl font-black text-gray-900 leading-none mb-1">
                             {(workoutAnalysis as any).gymCount +
                                 (workoutAnalysis as any).tennisCount}
                         </div>
                         <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                            Entrenamientos
+                            {t('workouts.workoutsLabel')}
                         </p>
                     </div>
 
                     <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-4 border border-cyan-100 flex flex-col justify-center items-center">
                         <div className="flex items-center gap-2 mb-1">
                             <span className="text-xl">⏱️</span>
-                            <h3 className="text-cyan-900 font-bold">Tiempo</h3>
+                            <h3 className="text-cyan-900 font-bold">
+                                {t('workouts.time')}
+                            </h3>
                         </div>
                         <div className="text-3xl font-black text-cyan-700 leading-none mb-1">
                             {(workoutAnalysis as any).totalDuration}'
                         </div>
                         <p className="text-[10px] text-cyan-600 font-bold uppercase tracking-wider">
-                            Minutos Totales
+                            {t('workouts.totalMinutes')}
                         </p>
                     </div>
                 </div>
@@ -145,7 +151,7 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                                     {(workoutAnalysis as any).gymCount}
                                 </div>
                                 <div className="text-[10px] text-gray-400 font-bold uppercase">
-                                    Gym
+                                    {t('workouts.gym')}
                                 </div>
                             </div>
                         </div>
@@ -161,7 +167,7 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                                     {(workoutAnalysis as any).tennisCount}
                                 </div>
                                 <div className="text-[10px] text-gray-400 font-bold uppercase">
-                                    Tenis
+                                    {t('workouts.tennis')}
                                 </div>
                             </div>
                         </div>
@@ -178,7 +184,7 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                             </div>
                             <div>
                                 <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                                    Sueño
+                                    {t('workouts.sleep')}
                                 </p>
                                 <p className="text-xl font-bold text-gray-900">
                                     {dailyOura.sleepScore}
@@ -197,7 +203,7 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                             </div>
                             <div>
                                 <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                                    Readiness
+                                    {t('workouts.readiness')}
                                 </p>
                                 <p className="text-xl font-bold text-gray-900">
                                     {dailyOura.readinessScore}
@@ -213,7 +219,7 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
 
             {workoutsForSelectedDate.length > 0 && (
                 <p className="text-xs text-gray-400 text-center uppercase tracking-widest font-bold">
-                    ← Desliza para eliminar
+                    ← {t('common.swipeToDelete', 'Desliza para eliminar')}
                 </p>
             )}
 
@@ -223,10 +229,10 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                         💪
                     </div>
                     <h3 className="text-gray-900 font-bold text-lg mb-1">
-                        Sin entrenos registrados
+                        {t('workouts.noWorkouts')}
                     </h3>
                     <p className="text-gray-500 text-sm">
-                        Registra tu actividad para hoy.
+                        {t('workouts.logActivityPrompt')}
                     </p>
                 </div>
             ) : (
@@ -357,6 +363,7 @@ interface EditableWeeklyPlanProps {
 const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
     setSelectedWorkoutDate,
 }) => {
+    const { t } = useTranslation();
     // TODO: Implement plan feature in TrackerContext
     // Temporarily using local state until context is ready
     const [plan] = useState<any>({});
@@ -410,7 +417,7 @@ const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
         <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                    Plan Semanal
+                    {t('workouts.weeklyPlan')}
                 </h3>
                 <button
                     onClick={() => setIsEditing(!isEditing)}
@@ -421,7 +428,9 @@ const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:scale-95'
                     } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <span className="text-base">{isEditing ? '✓' : '✏️'}</span>
-                    <span>{isEditing ? 'Listo' : 'Editar'}</span>
+                    <span>
+                        {isEditing ? t('workouts.done') : t('workouts.edit')}
+                    </span>
                 </button>
             </div>
 
@@ -521,7 +530,7 @@ const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
             {isSaving && (
                 <div className="mt-3 flex items-center justify-center gap-2 text-xs text-gray-500">
                     <div className="w-3 h-3 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
-                    Guardando...
+                    {t('common.saving', 'Guardando...')}
                 </div>
             )}
         </div>

@@ -77,7 +77,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
             {/* Month Tabs (Horizontal Scroll) */}
             {groupedPhotos.length > 0 && (
                 <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
-                    {groupedPhotos.map(({ month, monthLabel }) => (
+                    {groupedPhotos.map(({ month }) => (
                         <button
                             key={month}
                             onClick={() => scrollToMonth(month)}
@@ -86,7 +86,9 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                                     ? 'bg-blue-500 text-white shadow-md'
                                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                             }`}>
-                            {monthLabel}
+                            {format(parseISO(`${month}-01`), 'MMM yyyy', {
+                                locale: dateLocale,
+                            })}
                         </button>
                     ))}
                 </div>
@@ -102,7 +104,9 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                         id={`month-${month}`}
                         className="snap-start flex-shrink-0">
                         <p className="text-xs text-slate-400 font-bold mb-2">
-                            {monthLabel}
+                            {format(parseISO(`${month}-01`), 'MMMM yyyy', {
+                                locale: dateLocale,
+                            })}
                         </p>
                         <div className="flex gap-3">
                             {monthPhotos.map((photo) => {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Area,
     AreaChart,
@@ -21,6 +22,7 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
     currentWeight,
     weeklyTrend,
 }) => {
+    const { t } = useTranslation();
     // Format data for chart - Show last 14 days for more context
     const chartData = [...data]
         .filter((entry) => {
@@ -107,16 +109,19 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
             <div className="flex justify-between items-start mb-6 gap-2 w-full">
                 <div className="min-w-0 flex-1">
                     <h3 className="text-gray-900 font-bold text-lg truncate w-full">
-                        Peso Corporal
+                        {t('dashboard.weightChart.title')}
                     </h3>
                     <p className="text-xs text-gray-400 font-medium truncate w-full">
-                        {finalChartData.length} registros recientes
+                        {finalChartData.length}{' '}
+                        {t('dashboard.weightChart.recentRecords')}
                     </p>
                 </div>
                 <div className="text-right flex-shrink-0">
                     <span className="block text-2xl font-bold text-gray-900 whitespace-nowrap">
                         {currentWeight}{' '}
-                        <span className="text-sm font-normal text-gray-400">kg</span>
+                        <span className="text-sm font-normal text-gray-400">
+                            {t('units.kg', { defaultValue: 'kg' })}
+                        </span>
                     </span>
                     <span
                         className={`text-xs font-bold px-2 py-0.5 rounded-full ${isLoss ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
@@ -190,7 +195,7 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                 </div>
             ) : (
                 <div className="h-48 w-full flex items-center justify-center text-gray-400 text-sm bg-gray-50 rounded-xl border border-dashed border-gray-200">
-                    <p>No hay datos suficientes para mostrar el gráfico</p>
+                    <p>{t('dashboard.weightChart.noData')}</p>
                 </div>
             )}
         </div>

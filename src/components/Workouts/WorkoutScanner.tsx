@@ -1,5 +1,6 @@
 import { Image as ImageIcon, Loader2, Upload, X } from 'lucide-react';
 import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { analyzeWorkoutImages } from '../../services/ai/workoutService';
 
 interface WorkoutScannerProps {
@@ -11,6 +12,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
     onSave,
     onCancel,
 }) => {
+    const { t } = useTranslation();
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [parsedResult, setParsedResult] = useState<string | null>(null);
@@ -40,7 +42,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
             setParsedResult(JSON.stringify(result, null, 2));
         } catch (error) {
             console.error('Analysis failed:', error);
-            setJsonError('Error al analizar las imágenes. Intenta nuevamente.');
+            setJsonError(t('workouts.scanner.error'));
         } finally {
             setIsAnalyzing(false);
         }
@@ -59,7 +61,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
 
             onSave(workoutToSave);
         } catch (e) {
-            setJsonError('El JSON no es válido. Por favor corrige el formato.');
+            setJsonError(t('workouts.scanner.invalidJson'));
         }
     };
 
@@ -70,10 +72,10 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                 <div className="flex justify-between items-start mb-6">
                     <div>
                         <h2 className="text-xl font-bold text-gray-900">
-                            Importar desde Gravl
+                            {t('workouts.scanner.title')}
                         </h2>
                         <p className="text-sm text-gray-500">
-                            Sube capturas de tu entrenamiento
+                            {t('workouts.scanner.subtitle')}
                         </p>
                     </div>
                     <button
@@ -102,10 +104,10 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                                 <Upload size={24} />
                             </div>
                             <p className="font-bold text-gray-900">
-                                Toca para subir imágenes
+                                {t('workouts.scanner.uploadPrompt')}
                             </p>
                             <p className="text-xs text-gray-400 mt-1">
-                                Soporta múltiples capturas
+                                {t('workouts.scanner.uploadSubPrompt')}
                             </p>
                         </div>
 
@@ -113,7 +115,8 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                         {selectedFiles.length > 0 && (
                             <div>
                                 <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                                    Seleccionadas ({selectedFiles.length})
+                                    {t('workouts.scanner.selected')} (
+                                    {selectedFiles.length})
                                 </h4>
                                 <div className="flex gap-2 overflow-x-auto pb-2">
                                     {selectedFiles.map((file, i) => (
@@ -144,12 +147,12 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                             {isAnalyzing ? (
                                 <>
                                     <Loader2 className="animate-spin" size={20} />
-                                    Analizando con Gemini IA...
+                                    {t('workouts.scanner.analyzing')}
                                 </>
                             ) : (
                                 <>
                                     <ImageIcon size={20} />
-                                    Analizar Entrenamiento
+                                    {t('workouts.scanner.analyze')}
                                 </>
                             )}
                         </button>
@@ -160,12 +163,10 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                         <div className="bg-amber-50 rounded-xl p-4 mb-4 flex items-start gap-3">
                             <div className="text-amber-600 mt-0.5">⚠️</div>
                             <div className="text-sm text-amber-800">
-                                <p className="font-bold mb-1">Revisar Resultados</p>
-                                <p>
-                                    Verifica que los datos sean correctos antes de
-                                    guardar. Puedes editar el JSON directamente si es
-                                    necesario.
+                                <p className="font-bold mb-1">
+                                    {t('workouts.scanner.review')}
                                 </p>
+                                <p>{t('workouts.scanner.reviewPrompt')}</p>
                             </div>
                         </div>
 
@@ -186,12 +187,12 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                             <button
                                 onClick={() => setParsedResult(null)}
                                 className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-3.5 rounded-xl transition-colors">
-                                Volver
+                                {t('workouts.scanner.back')}
                             </button>
                             <button
                                 onClick={handleSave}
                                 className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-green-500/20 transition-all active:scale-95">
-                                Confirmar y Guardar
+                                {t('workouts.scanner.save')}
                             </button>
                         </div>
                     </div>

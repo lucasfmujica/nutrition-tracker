@@ -3,8 +3,11 @@
  * Displays days as columns and meals (Desayuno, Almuerzo, Merienda, Cena) as rows
  */
 
+import { format } from 'date-fns';
+import { enUS, es } from 'date-fns/locale';
 import { Calendar, ChevronLeft, ChevronRight, Plus, Utensils } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { FoodEntry, Macros } from '../../types/domain';
 import {
     addDaysToDate,
@@ -21,10 +24,10 @@ interface WeeklyMealPlanViewProps {
 }
 
 const MEAL_TYPES = [
-    { id: 'breakfast', emoji: '🌅', label: 'Desayuno' },
-    { id: 'lunch', emoji: '☀️', label: 'Almuerzo' },
-    { id: 'snack', emoji: '🍵', label: 'Merienda' },
-    { id: 'dinner', emoji: '🌙', label: 'Cena' },
+    { id: 'breakfast', emoji: '🌅', labelKey: 'mealTypes.breakfast' },
+    { id: 'lunch', emoji: '☀️', labelKey: 'mealTypes.lunch' },
+    { id: 'snack', emoji: '🍵', labelKey: 'mealTypes.snack' },
+    { id: 'dinner', emoji: '🌙', labelKey: 'mealTypes.dinner' },
 ];
 
 const DAY_NAMES_SHORT = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
@@ -37,8 +40,11 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
     getTargetsForDate,
     onAddFood,
 }) => {
+    const { t, i18n } = useTranslation();
     const today = getArgentinaDateString();
     const [isExpanded, setIsExpanded] = useState(true);
+
+    const dateLocale = i18n.language === 'es' ? es : enUS;
 
     // Calculate week data with foods organized by meal type
     const weekData = useMemo(() => {
@@ -78,8 +84,12 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
             days.push({
                 date,
                 dayNum: parseInt(date.split('-')[2], 10),
-                dayName: DAY_NAMES_SHORT[i],
-                dayNameFull: DAY_NAMES_FULL[i],
+                dayName: format(new Date(date + 'T12:00:00'), 'EEEEE', {
+                    locale: dateLocale,
+                }),
+                dayNameFull: format(new Date(date + 'T12:00:00'), 'EEE', {
+                    locale: dateLocale,
+                }),
                 isToday: date === today,
                 isSelected: date === selectedDate,
                 isFuture,
@@ -111,26 +121,18 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
     const weekRange = useMemo(() => {
         const monday = weekData[0];
         const sunday = weekData[6];
-        const startMonth = new Date(monday.date + 'T12:00:00').toLocaleDateString(
-            'es-AR',
-            {
-                month: 'short',
-                timeZone: 'America/Argentina/Buenos_Aires',
-            },
-        );
-        const endMonth = new Date(sunday.date + 'T12:00:00').toLocaleDateString(
-            'es-AR',
-            {
-                month: 'short',
-                timeZone: 'America/Argentina/Buenos_Aires',
-            },
-        );
+        const startMonth = format(new Date(monday.date + 'T12:00:00'), 'MMM', {
+            locale: dateLocale,
+        });
+        const endMonth = format(new Date(sunday.date + 'T12:00:00'), 'MMM', {
+            locale: dateLocale,
+        });
 
         if (startMonth === endMonth) {
             return `${monday.dayNum} - ${sunday.dayNum} ${startMonth}`;
         }
         return `${monday.dayNum} ${startMonth} - ${sunday.dayNum} ${endMonth}`;
-    }, [weekData]);
+    }, [weekData, dateLocale]);
 
     return (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
@@ -152,14 +154,16 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                             <button
                                 onClick={goToToday}
                                 className="text-xs text-blue-600 hover:text-blue-700 font-medium">
-                                Ir a hoy
+                                {t('diary.calendar.goToToday')}
                             </button>
                         )}
                     </div>
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
                         className="ml-2 text-xs text-slate-500 hover:text-slate-700 px-2 py-1 rounded bg-white/50">
-                        {isExpanded ? 'Compactar' : 'Expandir'}
+                        {isExpanded
+                            ? t('diary.weeklyPlan.collapse')
+                            : t('diary.weeklyPlan.expand')}
                     </button>
                 </div>
 
@@ -177,7 +181,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                     <thead>
                         <tr className="bg-slate-50">
                             <th className="py-2 px-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-24">
-                                Comida
+                                {t('diary.weeklyPlan.meal')}
                             </th>
                             {weekData.map((day) => (
                                 <th
@@ -238,7 +242,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                             {mealType.emoji}
                                         </span>
                                         <span className="text-xs font-bold text-slate-700">
-                                            {mealType.label}
+                                            {t(mealType.labelKey!)}
                                         </span>
                                     </div>
                                 </td>
@@ -333,7 +337,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                 <div className="flex items-center gap-1.5">
                                     <Utensils size={14} className="text-slate-500" />
                                     <span className="text-xs font-bold text-slate-700">
-                                        Total
+                                        {t('diary.weeklyPlan.total')}
                                     </span>
                                 </div>
                             </td>

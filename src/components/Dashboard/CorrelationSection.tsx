@@ -1,5 +1,6 @@
 import { Info, Microscope, TrendingUp } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     CartesianGrid,
     Line,
@@ -35,6 +36,7 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
     yLabel,
     color,
 }) => {
+    const { t } = useTranslation();
     // Calculate simple linear regression for the trend line
     const calculateTrendLine = () => {
         if (data.length < 2) return [];
@@ -89,10 +91,25 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
 
     const getCorrelationStrength = (r: number) => {
         const absR = Math.abs(r);
-        if (absR > 0.7) return { label: 'Fuerte', color: 'text-emerald-600' };
-        if (absR > 0.4) return { label: 'Moderada', color: 'text-blue-600' };
-        if (absR > 0.2) return { label: 'Débil', color: 'text-amber-600' };
-        return { label: 'Ruido', color: 'text-slate-400' };
+        if (absR > 0.7)
+            return {
+                label: t('dashboard.correlation.strength.strong'),
+                color: 'text-emerald-600',
+            };
+        if (absR > 0.4)
+            return {
+                label: t('dashboard.correlation.strength.moderate'),
+                color: 'text-blue-600',
+            };
+        if (absR > 0.2)
+            return {
+                label: t('dashboard.correlation.strength.weak'),
+                color: 'text-amber-600',
+            };
+        return {
+            label: t('dashboard.correlation.strength.noise'),
+            color: 'text-slate-400',
+        };
     };
 
     const strength = rValue !== null ? getCorrelationStrength(rValue) : null;
@@ -245,7 +262,7 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                             <span className="text-xs">?</span>
                         </div>
                         <p className="text-[10px] font-bold uppercase tracking-widest">
-                            Sin datos suficientes
+                            {t('dashboard.correlation.noData')}
                         </p>
                     </div>
                 )}
@@ -267,6 +284,7 @@ interface CorrelationSectionProps {
 export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
     analytics,
 }) => {
+    const { t } = useTranslation();
     const { fuelData, recoveryData, disciplineData } = analytics;
     const [showLabsInfo, setShowLabsInfo] = useState(false);
 
@@ -282,9 +300,9 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                         <Microscope size={18} className="text-blue-600" />
                     </div>
                     <h2 className="text-lg font-black text-slate-900 tracking-tight">
-                        Luken Labs
+                        {t('dashboard.correlation.labsTitle')}
                         <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-700 uppercase tracking-wider">
-                            Beta
+                            {t('common.beta', { defaultValue: 'Beta' })}
                         </span>
                     </h2>
                 </div>
@@ -301,36 +319,24 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                         <Microscope size={80} />
                     </div>
                     <h3 className="text-lg font-bold mb-2 relative z-10">
-                        ¿Qué es Luken Labs?
+                        {t('dashboard.correlation.whatIs')}
                     </h3>
                     <p className="text-xs text-blue-50 opacity-90 leading-relaxed mb-4 relative z-10 max-w-md">
-                        Aquí buscamos <strong>correlaciones ocultas</strong> entre
-                        tus hábitos. No son verdades absolutas, sino patrones que
-                        surgen de tus propios datos para ayudarte a ajustar tu
-                        rendimiento.
+                        {t('dashboard.correlation.explanation')}
                     </p>
                     <ul className="text-[10px] space-y-2 relative z-10">
                         <li className="flex items-start gap-2">
                             <span className="w-1.5 h-1.5 bg-white rounded-full mt-1 shrink-0"></span>
-                            <span>
-                                <strong>Fuel:</strong> ¿Consumir más carbohidratos el
-                                día anterior mejora el volumen de tus entrenos hoy?
-                            </span>
+                            <span>{t('dashboard.correlation.points.fuel')}</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 bg-white rounded-full mt-1 shrink-0"></span>
+                            <span>{t('dashboard.correlation.points.recovery')}</span>
                         </li>
                         <li className="flex items-start gap-2">
                             <span className="w-1.5 h-1.5 bg-white rounded-full mt-1 shrink-0"></span>
                             <span>
-                                <strong>Recovery:</strong> ¿Qué tanto afecta un
-                                entreno de alto volumen a tu sueño profundo esa misma
-                                noche?
-                            </span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                            <span className="w-1.5 h-1.5 bg-white rounded-full mt-1 shrink-0"></span>
-                            <span>
-                                <strong>Discipline:</strong> ¿Existe una conexión
-                                entre la calidad de tu sueño y tu capacidad de
-                                mantenerte en rango calórico?
+                                {t('dashboard.correlation.points.discipline')}
                             </span>
                         </li>
                     </ul>
@@ -340,33 +346,35 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
             <div className="flex flex-col lg:flex-row gap-4 overflow-x-auto pb-4 scrollbar-hide">
                 {fuelData.length > 2 && (
                     <ScatterCard
-                        title="Combustible vs Rendimiento"
-                        subtitle="Carga Carbos (Ayer) vs Duración Entreno (Hoy)"
+                        title={t('dashboard.correlation.charts.fuelVsPerf')}
+                        subtitle={t('dashboard.correlation.charts.fuelSubtitle')}
                         data={fuelData}
-                        xLabel="Carbohidratos (g)"
-                        yLabel="Duración Entrenamiento (min)"
+                        xLabel={t('dashboard.correlation.charts.xCarbs')}
+                        yLabel={t('dashboard.correlation.charts.yDuration')}
                         color="#EF4444" // Red for Fuel/Fire
                     />
                 )}
 
                 {recoveryData.length > 2 && (
                     <ScatterCard
-                        title="Costo de Recuperación"
-                        subtitle="Duración Entreno (Hoy) vs Deep Sleep (Noche)"
+                        title={t('dashboard.correlation.charts.recoveryCost')}
+                        subtitle={t('dashboard.correlation.charts.recoverySubtitle')}
                         data={recoveryData}
-                        xLabel="Duración Entrenamiento (min)"
-                        yLabel="Sueño Profundo (min)"
+                        xLabel={t('dashboard.correlation.charts.yDuration')} // Swapped x/y intent in original?
+                        yLabel={t('dashboard.correlation.charts.yDeepSleep')}
                         color="#8B5CF6" // Purple for Sleep
                     />
                 )}
 
                 {disciplineData.length > 2 && (
                     <ScatterCard
-                        title="Fuerza de Voluntad"
-                        subtitle="Score Sueño (Hoy) vs Adherencia Calórica (Hoy)"
+                        title={t('dashboard.correlation.charts.willpower')}
+                        subtitle={t(
+                            'dashboard.correlation.charts.willpowerSubtitle',
+                        )}
                         data={disciplineData}
-                        xLabel="Índice de Preparación (Oura)"
-                        yLabel="Calorías Consumidas"
+                        xLabel={t('dashboard.correlation.charts.xReadiness')}
+                        yLabel={t('dashboard.correlation.charts.yCalories')}
                         color="#10B981" // Green for Health
                     />
                 )}
@@ -374,8 +382,7 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
             {fuelData.length <= 10 && (
                 <div className="flex items-center gap-2 text-[10px] bg-slate-50 text-slate-500 p-3 rounded-xl border border-slate-100 italic">
                     <Info size={12} />
-                    Los patrones se vuelven más claros a medida que registras más
-                    días. Sigue trackeando para desbloquear insights reales.
+                    {t('dashboard.correlation.footer')}
                 </div>
             )}
         </div>

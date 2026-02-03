@@ -43,7 +43,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = React.memo(
                     {/* Header with Shield badge if active */}
                     <div className="flex items-center gap-2 mb-1">
                         <h2 className="text-gray-500 text-sm font-medium uppercase tracking-wide">
-                            {t('dashboard.summary.remaining_title')}
+                            {t('dashboard.summary.caloriesRemaining')}
                         </h2>
                         {safetyNetActive ? (
                             <div className="flex items-center gap-1 bg-blue-100 px-2 py-0.5 rounded-full">

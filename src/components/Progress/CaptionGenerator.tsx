@@ -5,6 +5,7 @@
 
 import { Loader2, RefreshCw, Sparkles } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     generateTransformationCaption,
     regenerateCaption,
@@ -31,6 +32,7 @@ export const CaptionGenerator: React.FC<CaptionGeneratorProps> = ({
     measurements,
     onCaptionGenerated,
 }) => {
+    const { t } = useTranslation();
     const [caption, setCaption] = useState('');
     const [hashtags, setHashtags] = useState<string[]>([]);
     const [isGenerating, setIsGenerating] = useState(false);
@@ -106,12 +108,12 @@ export const CaptionGenerator: React.FC<CaptionGeneratorProps> = ({
                     {isGenerating ? (
                         <>
                             <Loader2 size={20} className="animate-spin" />
-                            Generando caption con IA...
+                            {t('captionGenerator.generating')}
                         </>
                     ) : (
                         <>
                             <Sparkles size={20} />
-                            Generar Caption con IA
+                            {t('captionGenerator.generate')}
                         </>
                     )}
                 </button>
@@ -122,13 +124,15 @@ export const CaptionGenerator: React.FC<CaptionGeneratorProps> = ({
                 <div className="bg-white rounded-2xl p-4 border border-slate-200">
                     <div className="flex items-center justify-between mb-3">
                         <label className="text-sm font-bold text-slate-700">
-                            Caption
+                            {t('captionGenerator.caption')}
                         </label>
                         <div className="flex gap-2">
                             <button
                                 onClick={() => setIsEditing(!isEditing)}
                                 className="text-xs text-purple-600 font-bold hover:text-purple-700">
-                                {isEditing ? 'Guardar' : 'Editar'}
+                                {isEditing
+                                    ? t('captionGenerator.save')
+                                    : t('captionGenerator.edit')}
                             </button>
                             <button
                                 onClick={handleRegenerate}
@@ -138,7 +142,7 @@ export const CaptionGenerator: React.FC<CaptionGeneratorProps> = ({
                                     size={12}
                                     className={isGenerating ? 'animate-spin' : ''}
                                 />
-                                Regenerar
+                                {t('captionGenerator.regenerate')}
                             </button>
                         </div>
                     </div>
@@ -149,7 +153,7 @@ export const CaptionGenerator: React.FC<CaptionGeneratorProps> = ({
                             onChange={(e) => handleCaptionChange(e.target.value)}
                             className="w-full p-3 border border-slate-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
                             rows={3}
-                            placeholder="Escribí tu caption..."
+                            placeholder={t('captionGenerator.placeholder')}
                         />
                     ) : (
                         <p className="text-sm text-slate-900 leading-relaxed">

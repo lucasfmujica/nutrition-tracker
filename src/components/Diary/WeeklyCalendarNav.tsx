@@ -3,10 +3,23 @@
  * Shows Mon-Sun with daily macro summaries and visual indicators
  */
 
+import { format } from 'date-fns';
+import { enUS, es } from 'date-fns/locale';
+import {
+    CheckCircle2,
+    ChevronLeft,
+    ChevronRight,
+    Target,
+    Utensils,
+} from 'lucide-react';
 import React, { useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Utensils, Target, CheckCircle2 } from 'lucide-react';
-import { getMondayOfWeek, addDaysToDate, getArgentinaDateString } from '../../utils/dateUtils';
+import { useTranslation } from 'react-i18next';
 import type { FoodEntry, Macros } from '../../types/domain';
+import {
+    addDaysToDate,
+    getArgentinaDateString,
+    getMondayOfWeek,
+} from '../../utils/dateUtils';
 
 interface WeeklyCalendarNavProps {
     selectedDate: string;
@@ -23,7 +36,10 @@ export const WeeklyCalendarNav: React.FC<WeeklyCalendarNavProps> = ({
     getFoodsForDate,
     getTargetsForDate,
 }) => {
+    const { t, i18n } = useTranslation();
     const today = getArgentinaDateString();
+
+    const dateLocale = i18n.language === 'es' ? es : enUS;
 
     // Calculate week data
     const weekData = useMemo(() => {
@@ -51,12 +67,16 @@ export const WeeklyCalendarNav: React.FC<WeeklyCalendarNavProps> = ({
             const isFuture = date > today;
 
             // Consider "on track" if within 10% of target
-            const isOnTrack = hasFood && Math.abs(calories - targetCalories) <= targetCalories * 0.1;
+            const isOnTrack =
+                hasFood &&
+                Math.abs(calories - targetCalories) <= targetCalories * 0.1;
 
             days.push({
                 date,
                 dayNum: parseInt(date.split('-')[2], 10),
-                dayName: DAY_NAMES[i],
+                dayName: format(new Date(date + 'T12:00:00'), 'EEE', {
+                    locale: dateLocale,
+                }),
                 isToday: date === today,
                 isSelected: date === selectedDate,
                 isFuture,
@@ -68,7 +88,7 @@ export const WeeklyCalendarNav: React.FC<WeeklyCalendarNavProps> = ({
         }
 
         return days;
-    }, [selectedDate, getFoodsForDate, getTargetsForDate, today]);
+    }, [selectedDate, getFoodsForDate, getTargetsForDate, today, dateLocale]);
 
     // Week navigation
     const goToPreviousWeek = () => {
@@ -89,20 +109,19 @@ export const WeeklyCalendarNav: React.FC<WeeklyCalendarNavProps> = ({
     const weekRange = useMemo(() => {
         const monday = weekData[0];
         const sunday = weekData[6];
-        const startMonth = new Date(monday.date + 'T12:00:00').toLocaleDateString('es-AR', {
-            month: 'short',
-            timeZone: 'America/Argentina/Buenos_Aires',
+        // Use Javascript Date for display purposes, handling timezone offset roughly by fixing time
+        const startMonth = format(new Date(monday.date + 'T12:00:00'), 'MMM', {
+            locale: dateLocale,
         });
-        const endMonth = new Date(sunday.date + 'T12:00:00').toLocaleDateString('es-AR', {
-            month: 'short',
-            timeZone: 'America/Argentina/Buenos_Aires',
+        const endMonth = format(new Date(sunday.date + 'T12:00:00'), 'MMM', {
+            locale: dateLocale,
         });
 
         if (startMonth === endMonth) {
             return `${monday.dayNum} - ${sunday.dayNum} ${startMonth}`;
         }
         return `${monday.dayNum} ${startMonth} - ${sunday.dayNum} ${endMonth}`;
-    }, [weekData]);
+    }, [weekData, dateLocale]);
 
     return (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
@@ -110,27 +129,26 @@ export const WeeklyCalendarNav: React.FC<WeeklyCalendarNavProps> = ({
             <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50">
                 <button
                     onClick={goToPreviousWeek}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 transition-colors"
-                >
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 transition-colors">
                     <ChevronLeft size={20} />
                 </button>
 
                 <div className="text-center">
-                    <p className="text-sm font-bold text-slate-900 capitalize">{weekRange}</p>
+                    <p className="text-sm font-bold text-slate-900 capitalize">
+                        {weekRange}
+                    </p>
                     {selectedDate !== today && (
                         <button
                             onClick={goToToday}
-                            className="text-xs text-blue-600 hover:text-blue-700 font-medium mt-0.5"
-                        >
-                            Ir a hoy
+                            className="text-xs text-blue-600 hover:text-blue-700 font-medium mt-0.5">
+                            {t('diary.calendar.goToToday')}
                         </button>
                     )}
                 </div>
 
                 <button
                     onClick={goToNextWeek}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 transition-colors"
-                >
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 transition-colors">
                     <ChevronRight size={20} />
                 </button>
             </div>
@@ -206,15 +224,16 @@ const DayCell: React.FC<DayCellProps> = ({ day, onSelect }) => {
                 ${getStatusColor()}
                 ${getBorderColor()}
                 ${isFuture ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-100 active:scale-95'}
-            `}
-        >
+            `}>
             {/* Day name */}
-            <span className={`text-[10px] font-bold uppercase ${isToday ? 'text-blue-600' : 'text-slate-400'}`}>
+            <span
+                className={`text-[10px] font-bold uppercase ${isToday ? 'text-blue-600' : 'text-slate-400'}`}>
                 {dayName}
             </span>
 
             {/* Day number */}
-            <span className={`text-lg font-bold ${isSelected ? 'text-blue-600' : 'text-slate-900'}`}>
+            <span
+                className={`text-lg font-bold ${isSelected ? 'text-blue-600' : 'text-slate-900'}`}>
                 {dayNum}
             </span>
 
@@ -227,10 +246,15 @@ const DayCell: React.FC<DayCellProps> = ({ day, onSelect }) => {
                         ) : (
                             <div className="flex items-center gap-0.5">
                                 <Utensils size={10} className="text-slate-400" />
-                                <span className={`text-[9px] font-bold ${
-                                    calories > targetCalories ? 'text-red-500' : 'text-slate-500'
-                                }`}>
-                                    {calories > 0 ? Math.round(calories / 100) * 100 : '-'}
+                                <span
+                                    className={`text-[9px] font-bold ${
+                                        calories > targetCalories
+                                            ? 'text-red-500'
+                                            : 'text-slate-500'
+                                    }`}>
+                                    {calories > 0
+                                        ? Math.round(calories / 100) * 100
+                                        : '-'}
                                 </span>
                             </div>
                         )
@@ -248,8 +272,8 @@ const DayCell: React.FC<DayCellProps> = ({ day, onSelect }) => {
                             isOnTrack
                                 ? 'bg-emerald-500'
                                 : calories > targetCalories
-                                    ? 'bg-red-500'
-                                    : 'bg-amber-500'
+                                  ? 'bg-red-500'
+                                  : 'bg-amber-500'
                         }`}
                         style={{ width: `${progress}%` }}
                     />

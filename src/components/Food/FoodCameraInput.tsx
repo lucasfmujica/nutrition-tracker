@@ -6,6 +6,7 @@
 
 import { Camera, Loader2, Save, X } from 'lucide-react';
 import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
 import { useFoodAnalysis } from '../../hooks/useFoodAnalysis';
 import { useSmartMealType } from '../../hooks/useSmartMealType';
@@ -29,6 +30,7 @@ export const FoodCameraInput: React.FC = () => {
     const { analyzeFood, isLoading, result, error, resetResult } = useFoodAnalysis();
     const { saveFoodEntry } = useTracker();
     const { getAutoMealType } = useSmartMealType();
+    const { t } = useTranslation();
 
     // Editable state for AI results
     const [editableMeal, setEditableMeal] = useState('');
@@ -129,7 +131,7 @@ export const FoodCameraInput: React.FC = () => {
             setSelectedMealType('');
         } catch (err) {
             console.error('[FoodCameraInput] Error saving food entry:', err);
-            alert('Error al guardar la comida. Por favor, intenta nuevamente.');
+            alert(t('common.error'));
         }
     };
 
@@ -151,7 +153,7 @@ export const FoodCameraInput: React.FC = () => {
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <h3 className="text-lg font-bold text-gray-900">
-                        Editar Comida Detectada
+                        {t('food.camera.editTitle')}
                     </h3>
                     <button
                         onClick={handleCancel}
@@ -163,37 +165,37 @@ export const FoodCameraInput: React.FC = () => {
                 {/* Meal Name */}
                 <div>
                     <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                        Nombre de la Comida
+                        {t('food.camera.nameLabel')}
                     </label>
                     <input
                         type="text"
                         value={editableMeal}
                         onChange={(e) => setEditableMeal(e.target.value)}
                         className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        placeholder="Ej: Bife con batatas"
+                        placeholder={t('food.camera.namePlaceholder')}
                     />
                 </div>
 
                 {/* Meal Type Dropdown */}
                 <div>
                     <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                        Tipo de Comida
+                        {t('food.camera.typeLabel')}
                     </label>
                     <select
                         value={selectedMealType}
                         onChange={(e) => setSelectedMealType(e.target.value)}
                         className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                        <option value="breakfast">Desayuno</option>
-                        <option value="lunch">Almuerzo</option>
-                        <option value="snack">Merienda</option>
-                        <option value="dinner">Cena</option>
+                        <option value="breakfast">{t('mealTypes.breakfast')}</option>
+                        <option value="lunch">{t('mealTypes.lunch')}</option>
+                        <option value="snack">{t('mealTypes.snack')}</option>
+                        <option value="dinner">{t('mealTypes.dinner')}</option>
                     </select>
                 </div>
 
                 {/* Items List */}
                 <div>
                     <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                        Ingredientes Detectados
+                        {t('food.camera.ingredientsLabel')}
                     </label>
                     <div className="space-y-2">
                         {editableItems.map((item, index) => (
@@ -207,7 +209,9 @@ export const FoodCameraInput: React.FC = () => {
                                         setEditableItems(newItems);
                                     }}
                                     className="w-24 px-3 py-2 border border-gray-200 rounded-lg text-sm"
-                                    placeholder="160g"
+                                    placeholder={t(
+                                        'food.camera.ingredientsPlaceholderAmount',
+                                    )}
                                 />
                                 <input
                                     type="text"
@@ -218,7 +222,9 @@ export const FoodCameraInput: React.FC = () => {
                                         setEditableItems(newItems);
                                     }}
                                     className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm"
-                                    placeholder="Bife de Chorizo"
+                                    placeholder={t(
+                                        'food.camera.ingredientsPlaceholderName',
+                                    )}
                                 />
                             </div>
                         ))}
@@ -228,12 +234,12 @@ export const FoodCameraInput: React.FC = () => {
                 {/* Macros */}
                 <div>
                     <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                        Macronutrientes
+                        {t('food.camera.macrosLabel')}
                     </label>
                     <div className="grid grid-cols-2 gap-3">
                         <div>
                             <label className="text-xs text-gray-600 mb-1 block">
-                                Calorías
+                                {t('modals.foodForm.calories')}
                             </label>
                             <input
                                 type="number"
@@ -249,7 +255,7 @@ export const FoodCameraInput: React.FC = () => {
                         </div>
                         <div>
                             <label className="text-xs text-gray-600 mb-1 block">
-                                Proteína (g)
+                                {t('modals.foodForm.protein')}
                             </label>
                             <input
                                 type="number"
@@ -265,7 +271,7 @@ export const FoodCameraInput: React.FC = () => {
                         </div>
                         <div>
                             <label className="text-xs text-gray-600 mb-1 block">
-                                Carbos (g)
+                                {t('modals.foodForm.carbs')}
                             </label>
                             <input
                                 type="number"
@@ -281,7 +287,7 @@ export const FoodCameraInput: React.FC = () => {
                         </div>
                         <div>
                             <label className="text-xs text-gray-600 mb-1 block">
-                                Grasa (g)
+                                {t('modals.foodForm.fat')}
                             </label>
                             <input
                                 type="number"
@@ -297,7 +303,7 @@ export const FoodCameraInput: React.FC = () => {
                         </div>
                         <div className="col-span-2">
                             <label className="text-xs text-gray-600 mb-1 block">
-                                Fibra (g)
+                                {t('modals.foodForm.fiber')}
                             </label>
                             <input
                                 type="number"
@@ -319,13 +325,13 @@ export const FoodCameraInput: React.FC = () => {
                     <button
                         onClick={handleCancel}
                         className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors">
-                        Cancelar
+                        {t('common.cancel')}
                     </button>
                     <button
                         onClick={handleConfirm}
                         className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold shadow-lg shadow-purple-200/50 hover:shadow-xl transition-all flex items-center justify-center gap-2">
                         <Save className="w-5 h-5" />
-                        Guardar
+                        {t('common.save')}
                     </button>
                 </div>
             </div>
@@ -357,18 +363,18 @@ export const FoodCameraInput: React.FC = () => {
                 {isLoading ? (
                     <>
                         <Loader2 className="w-5 h-5 animate-spin" />
-                        Analizando imagen...
+                        {t('food.camera.analyzing')}
                     </>
                 ) : (
                     <>
                         <Camera className="w-5 h-5" />
-                        Escanear Comida
+                        {t('food.camera.scanButton')}
                     </>
                 )}
             </button>
 
             <p className="text-xs text-gray-500 text-center mt-3">
-                Toma una foto de tu comida para análisis automático con IA
+                {t('food.camera.helper')}
             </p>
         </div>
     );

@@ -4,10 +4,11 @@
  */
 
 import { format, parseISO } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { enUS, es } from 'date-fns/locale';
 import html2canvas from 'html2canvas';
 import { Calendar, Download, Ruler, Share2, TrendingDown } from 'lucide-react';
 import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ProgressPhoto } from '../../types/domain';
 import { calculatePhotoStats } from '../../utils/progressUtils';
 
@@ -29,6 +30,9 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
     measurements,
     onShare,
 }) => {
+    const { t, i18n } = useTranslation();
+    const dateLocale = i18n.language === 'es' ? es : enUS;
+
     const cardRef = useRef<HTMLDivElement>(null);
     const [isExporting, setIsExporting] = useState(false);
 
@@ -109,15 +113,15 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                 {/* Header */}
                 <div className="text-center mb-4">
                     <h2 className="text-2xl font-bold text-slate-900 mb-1">
-                        Mi Transformación
+                        {t('progress.story.title')}
                     </h2>
                     <p className="text-sm text-slate-600">
                         {format(parseISO(beforePhoto.date), 'd MMM yyyy', {
-                            locale: es,
+                            locale: dateLocale,
                         })}{' '}
                         -{' '}
                         {format(parseISO(afterPhoto.date), 'd MMM yyyy', {
-                            locale: es,
+                            locale: dateLocale,
                         })}
                     </p>
                 </div>
@@ -129,12 +133,12 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                         <div className="aspect-[3/4] rounded-xl overflow-hidden bg-slate-200">
                             <img
                                 src={beforePhoto.photoUrl}
-                                alt="Antes"
+                                alt={t('progress.comparison.before')}
                                 className="w-full h-full object-cover"
                             />
                         </div>
                         <div className="absolute top-2 left-2 bg-slate-900/80 text-white px-3 py-1 rounded-full text-xs font-bold">
-                            ANTES
+                            {t('progress.comparison.before')}
                         </div>
                         {beforePhoto.weight && (
                             <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-slate-900">
@@ -148,12 +152,12 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                         <div className="aspect-[3/4] rounded-xl overflow-hidden bg-slate-200">
                             <img
                                 src={afterPhoto.photoUrl}
-                                alt="Después"
+                                alt={t('progress.comparison.after')}
                                 className="w-full h-full object-cover"
                             />
                         </div>
                         <div className="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-bold">
-                            DESPUÉS
+                            {t('progress.comparison.after')}
                         </div>
                         {afterPhoto.weight && (
                             <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-slate-900">
@@ -175,7 +179,9 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                             <p className="text-lg font-bold text-slate-900">
                                 {Math.abs(stats.weightChange).toFixed(1)} kg
                             </p>
-                            <p className="text-xs text-slate-500">Perdidos</p>
+                            <p className="text-xs text-slate-500">
+                                {t('progress.share.lost')}
+                            </p>
                         </div>
                     )}
 
@@ -188,7 +194,9 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                         <p className="text-lg font-bold text-slate-900">
                             {Math.floor(stats.daysDuration / 7)}
                         </p>
-                        <p className="text-xs text-slate-500">Semanas</p>
+                        <p className="text-xs text-slate-500">
+                            {t('progress.share.weeks')}
+                        </p>
                     </div>
 
                     {/* Waist Change */}
@@ -201,7 +209,9 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                             <p className="text-lg font-bold text-slate-900">
                                 {Math.abs(measurements.waistChange).toFixed(1)} cm
                             </p>
-                            <p className="text-xs text-slate-500">Cintura</p>
+                            <p className="text-xs text-slate-500">
+                                {t('progress.share.waist')}
+                            </p>
                         </div>
                     )}
                 </div>
@@ -216,7 +226,7 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                 {/* Branding */}
                 <div className="text-center mt-4">
                     <p className="text-xs text-slate-400 font-mono">
-                        Creado con Lukenfit
+                        {t('progress.share.createdWith')}
                     </p>
                 </div>
             </div>
@@ -228,13 +238,15 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                     disabled={isExporting}
                     className="flex-1 flex items-center justify-center gap-2 bg-white border-2 border-purple-200 text-purple-600 py-3 rounded-xl font-bold hover:bg-purple-50 transition-colors disabled:opacity-50">
                     <Download size={18} />
-                    {isExporting ? 'Exportando...' : 'Descargar'}
+                    {isExporting
+                        ? t('progress.share.exporting')
+                        : t('progress.share.download')}
                 </button>
                 <button
                     onClick={onShare || handleWebShare}
                     className="flex-1 flex items-center justify-center gap-2 bg-purple-600 text-white py-3 rounded-xl font-bold hover:bg-purple-700 transition-colors">
                     <Share2 size={18} />
-                    Compartir
+                    {t('progress.share.social')}
                 </button>
             </div>
         </div>

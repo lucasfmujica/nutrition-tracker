@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getArgentinaDateString } from '../../utils/dateUtils';
 
 export interface EffortAnalytics {
@@ -26,6 +27,7 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
     analytics,
     selectedDate,
 }) => {
+    const { t } = useTranslation();
     const { status, insight, score, metrics } = analytics;
     const [showMetrics, setShowMetrics] = useState(false);
 
@@ -80,7 +82,7 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
                     <button
                         onClick={() => setShowMetrics(!showMetrics)}
                         className="ml-1 text-gray-400 hover:text-gray-600 transition-colors"
-                        title="Ver métricas">
+                        title={t('workouts.effort.viewMetrics')}>
                         <svg
                             className="w-4 h-4"
                             fill="none"
@@ -105,8 +107,7 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
                 <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-xl flex gap-2 items-start">
                     <span className="text-lg">⚠️</span>
                     <p className="text-xs text-yellow-800 leading-snug">
-                        Fecha futura: Esta proyección se basa en tu historial. No hay
-                        datos reales de Oura o entrenamientos para esta fecha.
+                        {t('workouts.effort.warnings.future')}
                     </p>
                 </div>
             )}
@@ -115,9 +116,11 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
                 <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-xl flex gap-2 items-start">
                     <span className="text-lg">💍</span>
                     <p className="text-xs text-orange-800 leading-snug">
-                        <strong>Datos de Oura desactualizados:</strong> Los scores de
-                        readiness y sueño son del {metrics.ouraDate}. Sincroniza tu
-                        Oura Ring para obtener datos más recientes.
+                        <strong className="font-bold">
+                            {t('workouts.effort.warnings.stale', {
+                                date: metrics.ouraDate,
+                            })}
+                        </strong>
                     </p>
                 </div>
             )}
@@ -125,13 +128,14 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
             {showMetrics && metrics && (
                 <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-xl space-y-2">
                     <p className="text-xs font-bold text-blue-900 mb-2">
-                        📊 Factores que influyen:
+                        📊 {t('workouts.effort.factors')}
                     </p>
                     <div className="grid grid-cols-2 gap-2">
                         <div className="flex items-center gap-1.5">
                             <span className="text-xs">💍</span>
                             <span className="text-xs text-blue-800">
-                                <strong>Readiness:</strong> {metrics.readiness}%
+                                <strong>{t('workouts.effort.readiness')}</strong>{' '}
+                                {metrics.readiness}%
                                 {isOuraStale && (
                                     <span className="text-orange-600">
                                         {' '}
@@ -143,7 +147,8 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
                         <div className="flex items-center gap-1.5">
                             <span className="text-xs">😴</span>
                             <span className="text-xs text-blue-800">
-                                <strong>Sueño:</strong> {metrics.sleepScore}%
+                                <strong>{t('workouts.effort.sleep')}</strong>{' '}
+                                {metrics.sleepScore}%
                                 {isOuraStale && (
                                     <span className="text-orange-600">
                                         {' '}
@@ -155,24 +160,23 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
                         <div className="flex items-center gap-1.5">
                             <span className="text-xs">🏋️</span>
                             <span className="text-xs text-blue-800">
-                                <strong>Volumen 7d/30d:</strong>{' '}
+                                <strong>{t('workouts.effort.volumeRatio')}</strong>{' '}
                                 {metrics.volumeRatio}
                             </span>
                         </div>
                         <div className="flex items-center gap-1.5">
                             <span className="text-xs">⚖️</span>
                             <span className="text-xs text-blue-800">
-                                <strong>Tendencia:</strong>{' '}
+                                <strong>{t('workouts.effort.trend')}</strong>{' '}
                                 {metrics.trend
-                                    ? `${metrics.trend.toFixed(2)} kg/sem`
+                                    ? `${metrics.trend.toFixed(2)} kg/${t('weight.perWeek', 'sem')}`
                                     : 'N/A'}
                             </span>
                         </div>
                     </div>
                     <p className="text-[10px] text-blue-700 mt-2 italic">
-                        Readiness alto + volumen moderado = capacidad alta (zona
-                        izquierda/verde). Readiness bajo + volumen alto = necesitas
-                        recuperación (zona derecha/naranja).
+                        {t('workouts.effort.insight.highReadiness')}{' '}
+                        {t('workouts.effort.insight.lowReadiness')}
                     </p>
                 </div>
             )}
@@ -191,9 +195,9 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
             </div>
 
             <div className="flex justify-between text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-4">
-                <span>Alta Capacidad</span>
-                <span>Normal</span>
-                <span>Necesitas Rest</span>
+                <span>{t('workouts.effort.capacity.high')}</span>
+                <span>{t('workouts.effort.capacity.normal')}</span>
+                <span>{t('workouts.effort.capacity.recovery')}</span>
             </div>
 
             <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 flex gap-3 items-start">

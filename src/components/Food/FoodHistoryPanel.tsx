@@ -1,9 +1,10 @@
-import { Clock, Search, X } from 'lucide-react';
-import React, { useRef, useEffect } from 'react';
-import { FoodEntry } from '../../types/domain';
-import { useFoodHistorySearch } from '../../hooks/useFoodHistorySearch';
 import { formatDistanceToNow } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { enUS, es } from 'date-fns/locale';
+import { Clock, Search, X } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useFoodHistorySearch } from '../../hooks/useFoodHistorySearch';
+import { FoodEntry } from '../../types/domain';
 
 interface FoodHistoryPanelProps {
     isOpen: boolean;
@@ -22,8 +23,15 @@ export const FoodHistoryPanel: React.FC<FoodHistoryPanelProps> = ({
     foodLog,
     onSelectFood,
 }) => {
-    const { searchQuery, setSearchQuery, filteredFoods, recentFoods, hasResults, hasSearch } =
-        useFoodHistorySearch(foodLog);
+    const { t, i18n } = useTranslation();
+    const {
+        searchQuery,
+        setSearchQuery,
+        filteredFoods,
+        recentFoods,
+        hasResults,
+        hasSearch,
+    } = useFoodHistorySearch(foodLog);
     const inputRef = useRef<HTMLInputElement>(null);
 
     // Focus input when modal opens
@@ -47,7 +55,11 @@ export const FoodHistoryPanel: React.FC<FoodHistoryPanelProps> = ({
     const formatLastSeen = (date: string) => {
         try {
             const foodDate = new Date(date);
-            return formatDistanceToNow(foodDate, { addSuffix: true, locale: es });
+            const dateLocale = i18n.language === 'es' ? es : enUS;
+            return formatDistanceToNow(foodDate, {
+                addSuffix: true,
+                locale: dateLocale,
+            });
         } catch {
             return date;
         }
@@ -64,7 +76,9 @@ export const FoodHistoryPanel: React.FC<FoodHistoryPanelProps> = ({
                 <div className="flex items-center justify-between p-4 border-b border-gray-100">
                     <div className="flex items-center gap-2">
                         <Clock className="text-indigo-600" size={20} />
-                        <h2 className="text-lg font-bold text-slate-900">Historial de Comidas</h2>
+                        <h2 className="text-lg font-bold text-slate-900">
+                            {t('food.history.title')}
+                        </h2>
                     </div>
                     <button
                         onClick={onClose}
@@ -85,7 +99,7 @@ export const FoodHistoryPanel: React.FC<FoodHistoryPanelProps> = ({
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Buscar pollo, arroz..."
+                            placeholder={t('food.history.searchPlaceholder')}
                             className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
                         />
                         {searchQuery && (
@@ -104,7 +118,7 @@ export const FoodHistoryPanel: React.FC<FoodHistoryPanelProps> = ({
                     {!hasSearch && (
                         <div className="flex items-center gap-2 mb-3 px-1">
                             <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                                Recientes
+                                {t('food.history.recent')}
                             </div>
                             <div className="flex-1 h-px bg-slate-200" />
                         </div>
@@ -115,16 +129,22 @@ export const FoodHistoryPanel: React.FC<FoodHistoryPanelProps> = ({
                         <div className="text-center py-8 text-slate-400">
                             {hasSearch ? (
                                 <>
-                                    <Search size={32} className="mx-auto mb-2 opacity-50" />
-                                    <p>No se encontraron resultados</p>
+                                    <Search
+                                        size={32}
+                                        className="mx-auto mb-2 opacity-50"
+                                    />
+                                    <p>{t('food.history.noResults')}</p>
                                     <p className="text-xs mt-1">
-                                        Probá con otro término de búsqueda
+                                        {t('food.history.tryAgain')}
                                     </p>
                                 </>
                             ) : (
                                 <>
-                                    <Clock size={32} className="mx-auto mb-2 opacity-50" />
-                                    <p>No hay comidas registradas</p>
+                                    <Clock
+                                        size={32}
+                                        className="mx-auto mb-2 opacity-50"
+                                    />
+                                    <p>{t('food.history.empty')}</p>
                                 </>
                             )}
                         </div>
@@ -165,13 +185,17 @@ const FoodHistoryItem: React.FC<{
                     {food.name}
                 </h3>
                 {food.description && (
-                    <p className="text-xs text-slate-500 truncate">{food.description}</p>
+                    <p className="text-xs text-slate-500 truncate">
+                        {food.description}
+                    </p>
                 )}
             </div>
         </div>
         <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 text-xs">
-                <span className="font-bold text-orange-600">{food.calories} kcal</span>
+                <span className="font-bold text-orange-600">
+                    {food.calories} kcal
+                </span>
                 <span className="text-green-600">P: {food.protein}g</span>
             </div>
             <span className="text-[10px] text-slate-400">{lastSeen}</span>

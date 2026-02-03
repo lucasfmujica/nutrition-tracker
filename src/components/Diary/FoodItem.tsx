@@ -1,5 +1,6 @@
 import { Star } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FoodEntry } from '../../types/domain';
 import { SwipeableItem } from '../UI/SwipeableItem';
 
@@ -20,6 +21,7 @@ export const FoodItem: React.FC<FoodItemProps> = ({
     onDuplicate,
     isFavorite,
 }) => {
+    const { t } = useTranslation();
     const needsReview =
         !food.reviewed || (food.confidence !== undefined && food.confidence < 0.7);
 
@@ -61,8 +63,8 @@ export const FoodItem: React.FC<FoodItemProps> = ({
                         className={`ml-3 p-1.5 transition-colors ${isFavorite ? 'text-yellow-400 fill-current' : 'text-gray-300 hover:text-yellow-400'}`}
                         title={
                             isFavorite
-                                ? 'Quitar de favoritos'
-                                : 'Guardar como favorito'
+                                ? t('diary.foodItem.removeFavorite')
+                                : t('diary.foodItem.saveFavorite')
                         }>
                         <Star
                             size={16}
@@ -72,7 +74,7 @@ export const FoodItem: React.FC<FoodItemProps> = ({
                     <button
                         onClick={onEdit}
                         className="ml-1 p-1.5 text-gray-400 hover:text-blue-500 transition-colors"
-                        title="Editar">
+                        title={t('diary.foodItem.edit')}>
                         <svg
                             className="w-4 h-4"
                             fill="none"
@@ -89,7 +91,7 @@ export const FoodItem: React.FC<FoodItemProps> = ({
                     <button
                         onClick={onDelete}
                         className="ml-1 p-1.5 text-gray-400 hover:text-red-500 transition-colors"
-                        title="Eliminar">
+                        title={t('diary.foodItem.delete')}>
                         <svg
                             className="w-4 h-4"
                             fill="none"

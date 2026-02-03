@@ -1,5 +1,6 @@
 import { Cloud, Droplets, Flame, Sun, Zap } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface WeatherStatus {
     temperature: number;
@@ -25,44 +26,19 @@ interface HydrationGuardProps {
 }
 
 /**
- * Generate personalized coach tip based on hydration context
- */
-const generateCoachTip = (hydrationTarget: HydrationTarget) => {
-    const {
-        heatBonus,
-        activityBonus,
-        needsElectrolytes,
-        weatherStatus,
-        activityMinutes,
-    } = hydrationTarget;
-
-    if (needsElectrolytes) {
-        return `🔥 Hace ${weatherStatus?.temperature}°C con alta humedad en BA. Agregá 800ml de agua y electrolitos para mantener tu progreso hacia los 75 kg.`;
-    }
-
-    if (activityBonus > 0 && activityMinutes > 0) {
-        return `💪 Registraste ${activityMinutes} minutos de actividad hoy. Tu cuerpo necesita ${activityBonus}ml extra para recuperación óptima.`;
-    }
-
-    if (heatBonus > 0) {
-        return `☀️ Temperatura de ${weatherStatus?.temperature}°C en BA. Aumentá tu ingesta en ${heatBonus}ml para compensar la pérdida por calor.`;
-    }
-
-    return `✅ Condiciones ideales hoy. Mantené tu línea base de 2500ml para un progreso sostenido.`;
-};
-
-/**
  * Weather status badge component
  */
 const WeatherBadge: React.FC<{
     weatherStatus: WeatherStatus | null;
     isLoading: boolean;
 }> = ({ weatherStatus, isLoading }) => {
+    const { t } = useTranslation();
+
     if (isLoading) {
         return (
             <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Cloud size={16} className="animate-pulse" />
-                <span>Cargando clima...</span>
+                <span>{t('dashboard.hydration.loading')}</span>
             </div>
         );
     }
@@ -71,7 +47,7 @@ const WeatherBadge: React.FC<{
         return (
             <div className="flex items-center gap-2 text-sm text-gray-400">
                 <Cloud size={16} />
-                <span>Sin datos climáticos</span>
+                <span>{t('dashboard.hydration.noData')}</span>
             </div>
         );
     }
@@ -103,6 +79,7 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
     currentIntake,
     hydrationTarget,
 }) => {
+    const { t } = useTranslation();
     const {
         target,
         baseline,
@@ -116,7 +93,32 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
     const progress = Math.min((currentIntake / target) * 100, 100);
     const isOnTrack = currentIntake >= target * 0.8;
 
-    const coachTip = generateCoachTip(hydrationTarget);
+    const getCoachTip = () => {
+        if (needsElectrolytes) {
+            return t('dashboard.hydration.tips.electrolytes', {
+                temp: weatherStatus?.temperature,
+                amount: 800, // Hardcoded in original logic, ideally dynamic
+            });
+        }
+
+        if (activityBonus > 0 && hydrationTarget.activityMinutes > 0) {
+            return t('dashboard.hydration.tips.activity', {
+                minutes: hydrationTarget.activityMinutes,
+                amount: activityBonus,
+            });
+        }
+
+        if (heatBonus > 0) {
+            return t('dashboard.hydration.tips.heat', {
+                temp: weatherStatus?.temperature,
+                amount: heatBonus,
+            });
+        }
+
+        return t('dashboard.hydration.tips.ideal');
+    };
+
+    const coachTip = getCoachTip();
 
     return (
         <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-5 rounded-2xl border border-blue-100 shadow-sm">
@@ -126,7 +128,7 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
                         <Droplets size={18} className="text-white" />
                     </div>
                     <h3 className="font-bold text-gray-900">
-                        Hidratación Inteligente
+                        {t('dashboard.hydration.title')}
                     </h3>
                 </div>
                 <div className="self-start sm:self-auto">
@@ -146,7 +148,9 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
                         <span className="text-lg text-gray-500 ml-1">ml</span>
                     </div>
                     <div className="text-right">
-                        <span className="text-sm text-gray-500">Meta: </span>
+                        <span className="text-sm text-gray-500">
+                            {t('dashboard.activity.goal')}:{' '}
+                        </span>
                         <span className="text-lg font-bold text-blue-600">
                             {target}ml
                         </span>

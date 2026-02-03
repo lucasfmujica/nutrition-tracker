@@ -152,6 +152,22 @@
             "meal": "Meal",
             "total": "Total"
         },
+        "captionGenerator": {
+            "generate": "Generate AI Caption",
+            "generating": "Generating AI caption...",
+            "regenerate": "Regenerate",
+            "save": "Save",
+            "edit": "Edit",
+            "caption": "Caption",
+            "placeholder": "Write your caption...",
+            "tip": "Tip"
+        },
+        "angles": {
+            "front": "Front",
+            "side": "Side",
+            "back": "Back",
+            "other": "Other"
+        },
         "foodItem": {
             "needsReview": "Needs Review",
             "saveFavorite": "Save as favorite",
@@ -498,6 +514,11 @@
             "calories": "Calories",
             "notes": "Notes",
             "exercises": "Exercises"
+        },
+        "photoSelection": {
+            "title": "Select Photo",
+            "cancel": "Cancel",
+            "all": "All"
         }
     },
     "onboarding": {
@@ -716,6 +737,28 @@
             "changeAfter": "Change After",
             "noData": "No data",
             "days": "days"
+        },
+        "caption": {
+            "generate": "Generate Caption",
+            "copy": "Copy"
+        },
+        "share": {
+            "title": "Share Progress",
+            "download": "Download",
+            "social": "Social Media",
+            "tip": "AI will generate a personalized caption based on your progress. You can edit it after generation.",
+            "createCaption": "1. Generate your caption",
+            "preview": "2. Preview",
+            "exporting": "Exporting...",
+            "createdWith": "Created with Lukenfit",
+            "weeks": "Weeks",
+            "lost": "Lost",
+            "waist": "Waist"
+        },
+        "story": {
+            "title": "Your Story",
+            "started": "You started",
+            "lost": "You lost"
         }
     }
 }

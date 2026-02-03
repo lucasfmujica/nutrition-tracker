@@ -1,5 +1,6 @@
 import { AlertCircle, Brain, LucideIcon, Moon, Shield, Zap } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { CoachInsight as ICoachInsight } from '../../types/domain';
 
 interface CoachInsightProps {
@@ -7,6 +8,7 @@ interface CoachInsightProps {
 }
 
 const CoachInsight: React.FC<CoachInsightProps> = ({ insight }) => {
+    const { t } = useTranslation();
     if (!insight) return null;
 
     // Determine Icon
@@ -40,7 +42,7 @@ const CoachInsight: React.FC<CoachInsightProps> = ({ insight }) => {
 
                     <div className="space-y-1">
                         <h4 className="text-sm font-semibold text-indigo-300 tracking-wide uppercase text-[11px]">
-                            Coach Insight
+                            {t('dashboard.coach.insight')}
                         </h4>
                         <p className="text-gray-200 font-medium leading-relaxed text-sm">
                             {insight.message}

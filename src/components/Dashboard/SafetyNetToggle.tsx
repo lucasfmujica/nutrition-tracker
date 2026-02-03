@@ -1,5 +1,6 @@
 import { Shield } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface SafetyNetToggleProps {
     isActive: boolean;
@@ -14,6 +15,7 @@ export const SafetyNetToggle: React.FC<SafetyNetToggleProps> = ({
     isActive,
     onToggle,
 }) => {
+    const { t } = useTranslation();
     return (
         <button
             onClick={onToggle}
@@ -27,7 +29,11 @@ export const SafetyNetToggle: React.FC<SafetyNetToggleProps> = ({
                 : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300 shadow-sm'
         }
       `}
-            title={isActive ? 'Desactivar Modo Escudo' : 'Activar Modo Escudo'}>
+            title={
+                isActive
+                    ? t('dashboard.safetyNet.deactivate')
+                    : t('dashboard.safetyNet.activate')
+            }>
             {/* Shield Icon */}
             <Shield
                 className={`
@@ -41,11 +47,13 @@ export const SafetyNetToggle: React.FC<SafetyNetToggleProps> = ({
             <div className="flex flex-col items-start text-left">
                 <span
                     className={`text-sm font-semibold ${isActive ? 'text-white' : 'text-gray-900'}`}>
-                    Modo Escudo
+                    {t('dashboard.safetyNet.title')}
                 </span>
                 <span
                     className={`text-[10px] uppercase tracking-wide font-medium ${isActive ? 'text-blue-100' : 'text-gray-400'}`}>
-                    {isActive ? 'Activado' : 'Desactivado'}
+                    {isActive
+                        ? t('dashboard.safetyNet.on')
+                        : t('dashboard.safetyNet.off')}
                 </span>
             </div>
 

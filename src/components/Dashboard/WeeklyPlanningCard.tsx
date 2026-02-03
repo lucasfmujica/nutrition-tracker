@@ -1,5 +1,6 @@
 import { Calendar, Flame, Leaf, LucideIcon, TrendingDown, Zap } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface WeekDay {
     date: string;
@@ -40,6 +41,7 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
     periodization,
     targetWeight,
 }) => {
+    const { t } = useTranslation();
     if (!periodization?.weekDays) return null;
 
     const { weekDays, weeklyAverage, isOnTrack, dayDistribution } = periodization;
@@ -52,7 +54,7 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
                     text: 'text-orange-700',
                     border: 'border-orange-200',
                     icon: Zap,
-                    label: 'Alta',
+                    label: t('dashboard.weeklyPlan.intensity.high'),
                 };
             case 'moderate':
                 return {
@@ -60,7 +62,7 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
                     text: 'text-blue-700',
                     border: 'border-blue-200',
                     icon: Flame,
-                    label: 'Moderado',
+                    label: t('dashboard.weeklyPlan.intensity.moderate'),
                 };
             case 'recovery':
             default:
@@ -69,7 +71,7 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
                     text: 'text-green-700',
                     border: 'border-green-200',
                     icon: Leaf,
-                    label: 'Recuperación',
+                    label: t('dashboard.weeklyPlan.intensity.recovery'),
                 };
         }
     };
@@ -84,10 +86,10 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
                     </div>
                     <div className="min-w-0">
                         <h3 className="text-sm font-bold text-gray-900 truncate">
-                            Periodización
+                            {t('dashboard.weeklyPlan.title')}
                         </h3>
                         <p className="text-[10px] text-gray-500 hidden sm:block">
-                            Distribución de calorías
+                            {t('dashboard.weeklyPlan.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -176,19 +178,22 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
                 <div className="flex items-center gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-orange-400" />
                     <span className="text-[10px] text-gray-500">
-                        Alta ({dayDistribution.high})
+                        {t('dashboard.weeklyPlan.intensity.high')} (
+                        {dayDistribution.high})
                     </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-blue-400" />
                     <span className="text-[10px] text-gray-500">
-                        Mod. ({dayDistribution.moderate})
+                        {t('dashboard.weeklyPlan.intensity.moderate')} (
+                        {dayDistribution.moderate})
                     </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
                     <span className="text-[10px] text-gray-500">
-                        Rec. ({dayDistribution.recovery})
+                        {t('dashboard.weeklyPlan.intensity.recovery')} (
+                        {dayDistribution.recovery})
                     </span>
                 </div>
             </div>
@@ -203,8 +208,10 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
                         isOnTrack ? 'text-green-700' : 'text-amber-700'
                     }`}>
                     {isOnTrack
-                        ? `✓ En camino a ${targetWeight} kg`
-                        : '⚠️ Ajusta intensidad para mantener déficit'}
+                        ? t('dashboard.weeklyPlan.status.onTrack', {
+                              target: targetWeight,
+                          })
+                        : t('dashboard.weeklyPlan.status.adjust')}
                 </span>
             </div>
         </div>
