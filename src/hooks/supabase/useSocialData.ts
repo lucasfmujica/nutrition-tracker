@@ -60,7 +60,7 @@ export function useSocialData(
                     .select('*')
                     .eq('status', 'accepted')
                     .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`),
-                10000, // Reduced from 30s to 10s
+                3000, // Reduced to 3s for fast failure
                 'fetchFriends',
             );
 
@@ -145,7 +145,7 @@ export function useSocialData(
                     .select('*')
                     .eq('friend_id', user.id)
                     .eq('status', 'pending'),
-                10000, // Reduced from 30s to 10s
+                3000, // Reduced to 3s for fast failure
                 'fetchFriendRequests',
             );
 
@@ -406,7 +406,7 @@ export function useSocialData(
                     .gte('created_at', sevenDaysAgo.toISOString())
                     .order('created_at', { ascending: false })
                     .limit(50),
-                10000, // Reduced from 30s to 10s
+                3000, // Reduced to 3s for fast failure
                 'fetchActivityFeed',
             );
 

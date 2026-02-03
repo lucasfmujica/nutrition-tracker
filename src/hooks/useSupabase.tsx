@@ -146,10 +146,10 @@ export function useSupabase() {
 
         setSyncStatus((prev) => (prev === 'syncing' ? prev : 'syncing'));
 
-        // 🔒 CRITICAL FIX: Reduced timeout from 45s to 15s
+        // 🔒 CRITICAL FIX: Reduced timeout from 45s to 8s
         // If Supabase is slow/down, fail fast and use stale cache
         const timeoutPromise = new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error('Fetch timeout after 15s')), 15000),
+            setTimeout(() => reject(new Error('Fetch timeout after 8s')), 8000),
         );
 
         try {
