@@ -62,10 +62,7 @@ export const calculateBMR = (
 /**
  * Calculate TDEE (Total Daily Energy Expenditure)
  */
-export const calculateTDEE = (
-    bmr: number,
-    activityMultiplier: number,
-): number => {
+export const calculateTDEE = (bmr: number, activityMultiplier: number): number => {
     return bmr * activityMultiplier;
 };
 
@@ -99,7 +96,7 @@ export const calculateProtein = (
     goal: 'lose' | 'maintain' | 'gain',
 ): number => {
     let proteinPerKg = 1.8; // maintain baseline
-    if (goal === 'lose') proteinPerKg = 2.2; // preserve muscle in deficit
+    if (goal === 'lose') proteinPerKg = 2.0; // preserve muscle in deficit
     if (goal === 'gain') proteinPerKg = 2.0; // muscle building
 
     return Math.round(weight * proteinPerKg);
@@ -135,11 +132,8 @@ export const calculateCarbs = (
 /**
  * Main function: Calculate all macros based on profile
  */
-export const calculateMacros = (
-    params: MacroCalculationParams,
-): MacroResult => {
-    const { weight, height, age, gender, trainingDaysPerWeek, primaryGoal } =
-        params;
+export const calculateMacros = (params: MacroCalculationParams): MacroResult => {
+    const { weight, height, age, gender, trainingDaysPerWeek, primaryGoal } = params;
 
     const isMale = gender === 'male';
 

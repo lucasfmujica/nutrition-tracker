@@ -74,10 +74,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                 very_active: 7,
             } as const;
 
-            const trainingDays =
-                profile.trainingDaysPerWeek ??
-                activityToDays[profile.activityLevel] ??
-                4;
+            const trainingDays = 2; // Force 'Lightly Active' (1.375x) for Rest Day baseline. Training bonus is added separately.
 
             const macros = calculateMacros({
                 weight: profile.currentWeight,
@@ -342,7 +339,8 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                 🧮 AUTO-CÁLCULO CIENTÍFICO
                             </h2>
                             <p className="text-xs text-gray-600">
-                                Ajusta tus datos y recalcula objetivos automáticamente
+                                Ajusta tus datos y recalcula objetivos
+                                automáticamente
                             </p>
                         </div>
                     </div>
@@ -387,7 +385,8 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                         moderate: 4,
                                         active: 6,
                                         very_active: 7,
-                                    }[profile.activityLevel] || 4)
+                                    }[profile.activityLevel] ||
+                                        4)
                                 }
                                 onChange={(e) =>
                                     updateConfig(
@@ -468,9 +467,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                 Recalculando...
                             </>
                         ) : (
-                            <>
-                                🎯 Recalcular Objetivos con Fórmula Científica
-                            </>
+                            <>🎯 Recalcular Objetivos con Fórmula Científica</>
                         )}
                     </button>
 
