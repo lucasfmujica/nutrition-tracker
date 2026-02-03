@@ -143,7 +143,7 @@ export const useWeightProjection = (
                 foodLog?.filter(
                     (f) =>
                         f.date === date &&
-                        !(f as any).is_safety_net_day &&
+                        !f.is_safety_net_day && // ✅ TYPE SAFE: property is now in FoodEntry
                         f.sourceId !== 'safety-net',
                 ) || [];
 

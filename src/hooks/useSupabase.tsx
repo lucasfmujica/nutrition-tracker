@@ -79,9 +79,9 @@ export function useSupabase() {
 
     // Real-time subscriptions
     const subscriptionsRef = useRef<RealtimeChannel[]>([]);
-    const [realtimeCallbacks, setRealtimeCallbacks] = useState<
-        Record<string, (payload: any) => void>
-    >({});
+    // 🔒 MEMORY LEAK FIX: Use useRef instead of useState for callbacks
+    // This prevents effect re-runs on every callback registration
+    const realtimeCallbacksRef = useRef<Record<string, (payload: any) => void>>({});
     const canUseSupabase = !!supabase && !!user && isOnline;
 
     useEffect(() => {
@@ -113,8 +113,9 @@ export function useSupabase() {
                         filter: `user_id=eq.${user.id}`,
                     },
                     (payload) => {
-                        if (realtimeCallbacks[table]) {
-                            realtimeCallbacks[table](payload);
+                        // Access ref directly - always has latest callbacks
+                        if (realtimeCallbacksRef.current[table]) {
+                            realtimeCallbacksRef.current[table](payload);
                         }
                     },
                 )
@@ -127,11 +128,11 @@ export function useSupabase() {
             subscriptionsRef.current.forEach((sub) => supabase!.removeChannel(sub));
             subscriptionsRef.current = [];
         };
-    }, [canUseSupabase, user, realtimeCallbacks]);
+    }, [canUseSupabase, user]); // Removed realtimeCallbacks from deps - no longer causes re-runs
 
     const onRealtimeUpdate = useCallback(
         (table: string, callback: (payload: any) => void) => {
-            setRealtimeCallbacks((prev) => ({ ...prev, [table]: callback }));
+            realtimeCallbacksRef.current[table] = callback;
         },
         [],
     );

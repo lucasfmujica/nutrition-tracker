@@ -190,7 +190,7 @@ export const useWeightAnalytics = (
             const dayEntries = foodLog.filter(
                 (entry) =>
                     entry.date === date &&
-                    !(entry as any).is_safety_net_day &&
+                    !entry.is_safety_net_day && // ✅ TYPE SAFE: property is now in FoodEntry
                     entry.sourceId !== 'safety-net',
             );
 

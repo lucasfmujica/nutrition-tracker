@@ -163,6 +163,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         setOuraLog: biometrics.setOuraLog,
         setWaterLog: nutrition.setWaterLog,
         setMealTemplates: setMealTemplatesData,
+        setSyncStatus: undefined, // Will be populated from trackerSync.setSaveStatus internally
         // Data for Force Sync
         foodLog: nutrition.foodLog,
         workoutLog: workouts.workoutLog,

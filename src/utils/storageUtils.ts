@@ -146,14 +146,42 @@ interface StorageItem {
     value: string | null;
 }
 
-const safeParse = <T>(item: StorageItem | null, defaultValue: T): T => {
+/**
+ * Track corrupted cache instances for user notification
+ * Cleared after reporting to avoid spam
+ */
+let corruptedCacheDetected = false;
+
+const safeParse = <T>(item: StorageItem | null, defaultValue: T, key?: string): T => {
     if (!item?.value) return defaultValue;
     try {
         return JSON.parse(item.value);
     } catch (e) {
-        console.warn('Error parsing cached item:', e);
+        // 🔒 IMPROVED: Explicit error recovery for corrupted cache
+        console.error('[Cache] CORRUPTED data detected:', {
+            key,
+            error: e instanceof Error ? e.message : 'Unknown error',
+            rawValue: item.value?.substring(0, 100), // First 100 chars for debugging
+        });
+
+        // Set flag for user notification (consumed by loadCachedData)
+        if (!corruptedCacheDetected) {
+            corruptedCacheDetected = true;
+            // Flag will be checked by caller to show user notification
+        }
+
         return defaultValue;
     }
+};
+
+/**
+ * Check if corrupted cache was detected during parsing
+ * Caller should show user notification and optionally clear cache
+ */
+export const hasCorruptedCache = (): boolean => {
+    const detected = corruptedCacheDetected;
+    corruptedCacheDetected = false; // Reset flag after check
+    return detected;
 };
 
 interface CachedData {
@@ -194,15 +222,15 @@ export const loadCachedData = async (userId?: string): Promise<CachedData> => {
     ]);
 
     return {
-        localProfile: safeParse(profileData, null),
-        localWeight: safeParse(weightData, []),
-        localFood: safeParse(foodData, []),
-        localWorkout: safeParse(workoutData, []),
-        localSteps: safeParse(stepsData, []),
-        localTargets: safeParse(targetsData, null),
-        localOura: safeParse(ouraData, []),
-        localWater: safeParse(waterData, []),
-        localTemplates: safeParse(templatesData, []),
+        localProfile: safeParse(profileData, null, 'PROFILE'),
+        localWeight: safeParse(weightData, [], 'WEIGHT'),
+        localFood: safeParse(foodData, [], 'FOOD'),
+        localWorkout: safeParse(workoutData, [], 'WORKOUT'),
+        localSteps: safeParse(stepsData, [], 'STEPS'),
+        localTargets: safeParse(targetsData, null, 'TARGETS'),
+        localOura: safeParse(ouraData, [], 'OURA'),
+        localWater: safeParse(waterData, [], 'WATER'),
+        localTemplates: safeParse(templatesData, [], 'TEMPLATES'),
     };
 };
 

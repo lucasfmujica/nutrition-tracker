@@ -161,13 +161,13 @@ export const useNutrition = (
             // JS: is_safety_net_day: shouldTagAsSafetyNetDay ? ...
             // Verify mapped type. FoodEntry likely maps structure.
             // I'll ignore the property if it's not in the type, or cast.
-            const entryToSave = {
+            const entryToSave: FoodEntry = {
                 ...entry,
-                // @ts-ignore: Custom property for logic
+                // ✅ TYPE SAFE: is_safety_net_day is now properly typed in FoodEntry interface
                 is_safety_net_day: shouldTagAsSafetyNetDay
                     ? shouldTagAsSafetyNetDay(entry.date)
                     : false,
-            } as FoodEntry;
+            };
 
             // Optimistic Update
             setFoodLog((prevLog) => {

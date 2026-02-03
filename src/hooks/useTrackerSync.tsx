@@ -33,6 +33,7 @@ interface TrackerSyncParams {
     setOuraLog: (log: OuraEntry[]) => void;
     setWaterLog: (log: WaterEntry[]) => void;
     setMealTemplates: (templates: any[]) => void;
+    setSyncStatus?: (status: string) => void; // Optional: For UI feedback during sync
     // Data needed for forceSync
     foodLog: FoodEntry[];
     workoutLog: Workout[];
@@ -69,6 +70,7 @@ export const useTrackerSync = ({
     setOuraLog,
     setWaterLog,
     setMealTemplates,
+    setSyncStatus, // For Vault sync UI feedback
     // Data needed for forceSync (unused currently but kept for potential features)
     foodLog,
     workoutLog,
@@ -155,7 +157,7 @@ export const useTrackerSync = ({
         setOuraLog,
         setWaterLog,
         setMealTemplates,
-        setSyncStatus, // Pass status setter for UI feedback
+        setSyncStatus: setSyncStatus || setSaveStatus, // Use provided or fallback to saveStatus
     });
 
     // Initial Hydration: Handles data loading from cache and Supabase
