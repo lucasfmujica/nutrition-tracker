@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { calculateMacros } from '../../utils/macroCalculator';
 import { OnboardingHeader } from './OnboardingHeader';
 import { OnboardingNavigation } from './OnboardingNavigation';
 import { OnboardingStep1 } from './OnboardingStep1';
@@ -38,60 +39,19 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
-    const calculateMacros = useCallback((data: any) => {
+    const handleCalculateMacros = useCallback((data: any) => {
         const weight = parseFloat(data.currentWeight) || 70;
         const height = parseFloat(data.height) || 170;
         const age = parseFloat(data.age) || 30;
-        const isMale = data.gender === 'male';
-        const trainingDays = data.trainingDaysPerWeek || 4;
 
-        // Calcular BMR (Mifflin-St Jeor)
-        let bmr = isMale
-            ? 10 * weight + 6.25 * height - 5 * age + 5
-            : 10 * weight + 6.25 * height - 5 * age - 161;
-
-        // Inferir nivel de actividad según días de entrenamiento
-        let activityMultiplier = 1.55; // moderate por defecto
-        if (trainingDays <= 1)
-            activityMultiplier = 1.2; // sedentary
-        else if (trainingDays <= 2)
-            activityMultiplier = 1.375; // light
-        else if (trainingDays <= 4)
-            activityMultiplier = 1.55; // moderate
-        else if (trainingDays <= 6)
-            activityMultiplier = 1.725; // active
-        else activityMultiplier = 1.9; // very_active
-
-        const tdee = bmr * activityMultiplier;
-
-        // Ajustar calorías según objetivo
-        let calories = tdee;
-        if (data.primaryGoal === 'lose') calories -= 500; // déficit de 500 kcal
-        if (data.primaryGoal === 'gain') calories += 300; // superávit de 300 kcal
-
-        // Proteína basada en peso corporal (más preciso para entrenamiento)
-        // Lose: 2.2g/kg, Maintain: 1.8g/kg, Gain: 2.0g/kg
-        let proteinPerKg = 1.8;
-        if (data.primaryGoal === 'lose') proteinPerKg = 2.2;
-        if (data.primaryGoal === 'gain') proteinPerKg = 2.0;
-
-        const protein = Math.round(weight * proteinPerKg);
-        const proteinCalories = protein * 4;
-
-        // Grasa: 25-30% de calorías totales
-        const fatCalories = calories * 0.28;
-        const fat = Math.round(fatCalories / 9);
-
-        // Carbohidratos: el resto de calorías
-        const carbCalories = calories - proteinCalories - fatCalories;
-        const carbs = Math.round(carbCalories / 4);
-
-        return {
-            calories: Math.round(calories),
-            protein,
-            carbs,
-            fat,
-        };
+        return calculateMacros({
+            weight,
+            height,
+            age,
+            gender: data.gender,
+            trainingDaysPerWeek: data.trainingDaysPerWeek || 4,
+            primaryGoal: data.primaryGoal,
+        });
     }, []);
 
     // Auto-recalculate on Step 2 entry or when training days/goal change
@@ -107,7 +67,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
     }, [step, formData.primaryGoal, formData.trainingDaysPerWeek]);
 
     const handleAutoCalculate = () => {
-        const suggested = calculateMacros(formData);
+        const suggested = handleCalculateMacros(formData);
         setFormData((prev) => ({
             ...prev,
             calorieGoal: suggested.calories.toString(),

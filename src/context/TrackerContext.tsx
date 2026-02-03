@@ -136,17 +136,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         weightHistory: biometrics.weightHistory,
     });
 
-    // 7. Analytics & Intelligence (extracted hook - WITH date reactivity)
-    const analytics = useTrackerAnalytics({
-        dashboardDate: uiState.dashboardDate, // ✅ CRITICAL FIX: Date-reactive
-        biometrics,
-        nutrition,
-        workouts,
-        safetyNet,
-        updateConfig: null, // Will be defined in actions
-    });
-
-    // 8. Actions (extracted hook - needs updateConfig closure)
+    // 7. updateConfig closure (must be defined BEFORE analytics)
     const updateConfigClosure = async (newProfile: any, newTargets: any) => {
         biometrics.setProfile(newProfile);
         biometrics.setCustomTargets(newTargets);
@@ -156,10 +146,21 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
             if (newTargets !== biometrics.customTargets)
                 await biometrics.saveTargets(newTargets);
         } catch (err) {
-            console.error('Error updating config:', err);
+            console.error('[TrackerContext] Error updating config:', err);
         }
     };
 
+    // 8. Analytics & Intelligence (extracted hook - WITH date reactivity)
+    const analytics = useTrackerAnalytics({
+        dashboardDate: uiState.dashboardDate, // ✅ CRITICAL FIX: Date-reactive
+        biometrics,
+        nutrition,
+        workouts,
+        safetyNet,
+        updateConfig: updateConfigClosure, // ✅ FIX: Pass real function instead of null
+    });
+
+    // 9. Actions (extracted hook)
     const actions = useTrackerActions({
         nutrition,
         biometrics,
@@ -170,7 +171,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
     // Override updateConfig in actions (needed for dynamicTargets)
     const updateConfig = updateConfigClosure;
 
-    // 9. Operations (Legacy hooks support)
+    // 10. Operations (Legacy hooks support)
     const dataOperations = useDataOperations({
         foodLog: nutrition.foodLog,
         saveFoodLog: nutrition.saveFoodLog,
@@ -187,7 +188,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         dashboardDate: uiState.dashboardDate,
     });
 
-    // 10. Export
+    // 11. Export
     const exportDoc = useExport(
         {
             profile: biometrics.profile,
@@ -216,7 +217,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         analytics.weightAnalytics,
     );
 
-    // 11. Food Entry
+    // 12. Food Entry
     const foodEntry = useFoodEntry({
         foodLog: nutrition.foodLog,
         saveFoodLog: nutrition.saveFoodLog,
@@ -224,17 +225,17 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         setSaveStatus: trackerSync.setSaveStatus,
     });
 
-    // 12. Fast-Log Library
+    // 13. Fast-Log Library
     const quickLog = useQuickLog(nutrition.foodLog, nutrition.saveFoodEntry);
 
-    // 13. Workout Entry
+    // 14. Workout Entry
     const workoutEntry = useWorkoutEntry({
         workoutLog: workouts.workoutLog,
         saveWorkoutLog: workouts.saveWorkoutLog,
         saveWorkoutEntry: workouts.saveWorkoutEntry,
     });
 
-    // 14. Meal Templates
+    // 15. Meal Templates
     const mealTemplates = useMealTemplates({
         mealTemplates: mealTemplatesData,
         setMealTemplates: setMealTemplatesData,
@@ -249,7 +250,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         useCloud,
     });
 
-    // 15. Global Delete Actions
+    // 16. Global Delete Actions
     const globalDelete = useGlobalDelete(
         nutrition,
         workouts,
@@ -258,14 +259,14 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         useCloud,
     );
 
-    // 16. Oura Sync Service
+    // 17. Oura Sync Service
     const ouraSync = useOuraSync({
         saveOuraEntry: biometrics.saveOuraEntry,
         saveStepsEntry: biometrics.saveStepsEntry,
         ouraPersonalToken: biometrics.profile?.ouraPersonalToken,
     });
 
-    // 17. Social Feature
+    // 18. Social Feature
     const social = useSocial({
         supabase: {
             user: supabase.user,
@@ -275,7 +276,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         useCloud,
     });
 
-    // 18. Weekly Snapshot Generation (for leaderboards)
+    // 19. Weekly Snapshot Generation (for leaderboards)
     useWeeklySnapshot({
         userId: supabase.user?.id,
         weightHistory: biometrics.weightHistory,
@@ -285,7 +286,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         useCloud,
     });
 
-    // 19. UI Helpers
+    // 20. UI Helpers
     const changeDate = (days: number) => {
         const targetTab = uiState.activeTab;
         if (targetTab === 'dashboard') {

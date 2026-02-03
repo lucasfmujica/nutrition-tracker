@@ -32,6 +32,9 @@ export interface Profile {
     onboardingCompleted?: boolean;
     tutorialCompleted?: boolean;
     iosShortcutsConfigured?: boolean;
+    // Macro calculation fields (optional - used for auto-calculation)
+    gender?: 'male' | 'female'; // TODO: Add to DB schema
+    trainingDaysPerWeek?: number; // TODO: Add to DB schema (0-7)
 }
 
 export interface WeightEntry {

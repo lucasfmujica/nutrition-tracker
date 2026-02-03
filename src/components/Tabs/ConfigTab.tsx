@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import {
     CustomTargets,
     FoodEntry,
@@ -7,6 +7,7 @@ import {
     WeightEntry,
     Workout,
 } from '../../types/domain';
+import { calculateMacros } from '../../utils/macroCalculator';
 import { IOSShortcutQR } from '../Settings/iOSShortcutQR';
 import { OuraTokenSetup } from '../Settings/OuraTokenSetup';
 
@@ -51,6 +52,58 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
     // User ID
     userId,
 }) => {
+    const [isRecalculating, setIsRecalculating] = useState(false);
+
+    const handleAutoRecalculate = async () => {
+        setIsRecalculating(true);
+
+        try {
+            // Map goal from 'cut'/'maintain'/'bulk' to 'lose'/'maintain'/'gain'
+            const goalMap = {
+                cut: 'lose',
+                maintain: 'maintain',
+                bulk: 'gain',
+            } as const;
+
+            // Map activityLevel to trainingDaysPerWeek (approximation)
+            const activityToDays = {
+                sedentary: 1,
+                light: 2,
+                moderate: 4,
+                active: 6,
+                very_active: 7,
+            } as const;
+
+            const trainingDays =
+                profile.trainingDaysPerWeek ??
+                activityToDays[profile.activityLevel] ??
+                4;
+
+            const macros = calculateMacros({
+                weight: profile.currentWeight,
+                height: profile.height,
+                age: profile.age,
+                gender: profile.gender || 'male', // Default to male if not set
+                trainingDaysPerWeek: trainingDays,
+                primaryGoal: goalMap[profile.goal],
+            });
+
+            const newTargets: CustomTargets = {
+                ...customTargets,
+                calories: macros.calories,
+                protein: macros.protein,
+                carbs: macros.carbs,
+                fat: macros.fat,
+            };
+
+            await updateConfig(profile, newTargets);
+        } catch (err) {
+            console.error('[ConfigTab] Error recalculating macros:', err);
+        } finally {
+            setIsRecalculating(false);
+        }
+    };
+
     return (
         <div className="w-full max-w-none space-y-6">
             <div className="mb-2 px-1">
@@ -273,6 +326,160 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                             }
                             className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                         />
+                    </div>
+                </div>
+            </div>
+
+            {/* Auto-Calculate Section */}
+            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-3xl p-6 border border-purple-100 shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-purple-200/30 rounded-full -mr-16 -mt-16" />
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-200/30 rounded-full -ml-12 -mb-12" />
+
+                <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 className="text-xs font-black text-purple-600 mb-1 uppercase tracking-[0.2em] flex items-center gap-2">
+                                🧮 AUTO-CÁLCULO CIENTÍFICO
+                            </h2>
+                            <p className="text-xs text-gray-600">
+                                Ajusta tus datos y recalcula objetivos automáticamente
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div>
+                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 px-1">
+                                Género
+                            </label>
+                            <select
+                                value={profile.gender || 'male'}
+                                onChange={(e) =>
+                                    updateConfig(
+                                        {
+                                            ...profile,
+                                            gender: e.target.value as
+                                                | 'male'
+                                                | 'female',
+                                        },
+                                        customTargets,
+                                    )
+                                }
+                                className="w-full bg-white/80 border border-purple-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all">
+                                <option value="male">Masculino</option>
+                                <option value="female">Femenino</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 px-1">
+                                Días Entrenamiento
+                            </label>
+                            <input
+                                type="number"
+                                min="0"
+                                max="7"
+                                value={
+                                    profile.trainingDaysPerWeek ??
+                                    ({
+                                        sedentary: 1,
+                                        light: 2,
+                                        moderate: 4,
+                                        active: 6,
+                                        very_active: 7,
+                                    }[profile.activityLevel] || 4)
+                                }
+                                onChange={(e) =>
+                                    updateConfig(
+                                        {
+                                            ...profile,
+                                            trainingDaysPerWeek:
+                                                parseInt(e.target.value) || 0,
+                                        },
+                                        customTargets,
+                                    )
+                                }
+                                className="w-full bg-white/80 border border-purple-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 px-1">
+                                Objetivo
+                            </label>
+                            <select
+                                value={profile.goal || 'cut'}
+                                onChange={(e) =>
+                                    updateConfig(
+                                        {
+                                            ...profile,
+                                            goal: e.target.value as
+                                                | 'cut'
+                                                | 'maintain'
+                                                | 'bulk',
+                                        },
+                                        customTargets,
+                                    )
+                                }
+                                className="w-full bg-white/80 border border-purple-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all">
+                                <option value="cut">Bajar Peso</option>
+                                <option value="maintain">Mantener</option>
+                                <option value="bulk">Subir Peso</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 px-1">
+                                Nivel Actividad
+                            </label>
+                            <select
+                                value={profile.activityLevel || 'moderate'}
+                                onChange={(e) =>
+                                    updateConfig(
+                                        {
+                                            ...profile,
+                                            activityLevel: e.target.value as
+                                                | 'sedentary'
+                                                | 'light'
+                                                | 'moderate'
+                                                | 'active'
+                                                | 'very_active',
+                                        },
+                                        customTargets,
+                                    )
+                                }
+                                className="w-full bg-white/80 border border-purple-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all">
+                                <option value="sedentary">Sedentario</option>
+                                <option value="light">Ligero</option>
+                                <option value="moderate">Moderado</option>
+                                <option value="active">Activo</option>
+                                <option value="very_active">Muy Activo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={handleAutoRecalculate}
+                        disabled={isRecalculating}
+                        className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white py-4 rounded-xl font-bold text-sm shadow-lg shadow-purple-500/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                        {isRecalculating ? (
+                            <>
+                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                Recalculando...
+                            </>
+                        ) : (
+                            <>
+                                🎯 Recalcular Objetivos con Fórmula Científica
+                            </>
+                        )}
+                    </button>
+
+                    <div className="mt-4 p-3 bg-white/60 border border-purple-200 rounded-xl">
+                        <p className="text-xs text-purple-900 font-medium leading-relaxed">
+                            <span className="font-black">✨ Mejoras aplicadas:</span>{' '}
+                            Déficit 20% (no 500kcal fijo) · Grasa mínima por kg ·
+                            Proteína optimizada · Basado en Mifflin-St Jeor
+                        </p>
                     </div>
                 </div>
             </div>
