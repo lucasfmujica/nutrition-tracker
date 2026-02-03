@@ -5,6 +5,7 @@
 
 import { AlertCircle, BarChart3, Loader2, TrendingUp } from 'lucide-react';
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useBodyMeasurements } from '../../hooks/useBodyMeasurements';
 import { useProgressPhotos } from '../../hooks/useProgressPhotos';
 import {
@@ -27,6 +28,7 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
     currentWeight,
     targetWeight,
 }) => {
+    const { t } = useTranslation();
     const { photos, isLoading: photosLoading } = useProgressPhotos({ userId });
     const { measurements, isLoading: measurementsLoading } = useBodyMeasurements({
         userId,
@@ -120,17 +122,15 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
                     <BarChart3 size={28} className="text-purple-400" />
                 </div>
                 <h3 className="font-bold text-slate-900 mb-1">
-                    Sin datos para analizar
+                    {t('progress.analytics.noDataTitle')}
                 </h3>
                 <p className="text-sm text-slate-500 mb-4">
-                    Necesitás medidas corporales y fotos con peso para ver análisis.
+                    {t('progress.analytics.noDataDesc')}
                 </p>
                 <div className="text-xs text-slate-400 space-y-1">
-                    <p>• Subí fotos de progreso con tu peso</p>
-                    <p>
-                        • Registrá medidas corporales (cintura, grasa corporal, etc.)
-                    </p>
-                    <p>• Necesitás al menos 3 mediciones para ver correlaciones</p>
+                    <p>• {t('progress.photos.addPhoto')}</p>
+                    <p>• {t('progress.measurements.noMeasurementsDesc')}</p>
+                    <p>• {t('progress.analytics.insufficientDataDesc')}</p>
                 </div>
             </div>
         );
@@ -149,19 +149,15 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
                     <BarChart3 size={28} className="text-purple-400" />
                 </div>
                 <h3 className="font-bold text-slate-900 mb-2">
-                    Datos insuficientes
+                    {t('progress.analytics.insufficientDataTitle')}
                 </h3>
                 <p className="text-sm text-slate-600 mb-4 max-w-md mx-auto">
-                    Necesitás al menos{' '}
-                    <strong>3 mediciones con diferentes pesos</strong> para calcular
-                    correlaciones y predicciones.
+                    {t('progress.analytics.insufficientDataDesc')}
                 </p>
                 <div className="bg-blue-50 rounded-xl p-4 max-w-md mx-auto">
                     <p className="text-xs text-blue-700 leading-relaxed">
-                        💡 <strong>Tip:</strong> Registrá tus medidas cada semana
-                        mientras tu peso cambia. Por ejemplo: Semana 1 (105kg),
-                        Semana 2 (104kg), Semana 3 (103kg). Así podremos predecir
-                        cómo cambiarán tus medidas a medida que alcanzás tu meta.
+                        💡 <strong>{t('progress.analytics.tip')}:</strong>{' '}
+                        {t('progress.analytics.tipDesc')}
                     </p>
                 </div>
             </div>
@@ -178,11 +174,12 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
                     </div>
                     <div>
                         <h2 className="font-bold text-slate-900 mb-1">
-                            Análisis Predictivo
+                            {t('progress.analytics.headerTitle')}
                         </h2>
                         <p className="text-sm text-slate-600">
-                            Correlaciones y predicciones basadas en{' '}
-                            {weightData.length} mediciones
+                            {t('progress.analytics.headerSubtitle', {
+                                count: weightData.length,
+                            })}
                         </p>
                     </div>
                 </div>
@@ -192,11 +189,11 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
             {waistPredictions && (
                 <div>
                     <h3 className="font-bold text-slate-900 mb-3">
-                        Predicciones de Cintura
+                        {t('progress.analytics.waistPredictions')}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <PredictionCard
-                            title="4 Semanas"
+                            title={t('progress.analytics.weeks', { count: 4 })}
                             currentValue={waistPredictions.current}
                             predictedValue={waistPredictions.fourWeek.predictedValue}
                             confidenceInterval={
@@ -207,7 +204,7 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
                             trend={waistPredictions.fourWeek.trend}
                         />
                         <PredictionCard
-                            title="8 Semanas"
+                            title={t('progress.analytics.weeks', { count: 8 })}
                             currentValue={waistPredictions.current}
                             predictedValue={
                                 waistPredictions.eightWeek.predictedValue
@@ -225,38 +222,40 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
 
             {/* Correlation Charts */}
             <div>
-                <h3 className="font-bold text-slate-900 mb-3">Correlaciones</h3>
+                <h3 className="font-bold text-slate-900 mb-3">
+                    {t('progress.analytics.correlations')}
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {waistData.length >= 3 && (
                         <CorrelationChart
                             dataPoints={waistData}
-                            xLabel="Peso (kg)"
-                            yLabel="Cintura (cm)"
-                            title="Peso vs Cintura"
+                            xLabel={`${t('progress.photos.weight')} (kg)`}
+                            yLabel={`${t('progress.measurements.waist')} (cm)`}
+                            title={`${t('progress.photos.weight')} vs ${t('progress.measurements.waist')}`}
                         />
                     )}
                     {bodyFatData.length >= 3 && (
                         <CorrelationChart
                             dataPoints={bodyFatData}
-                            xLabel="Peso (kg)"
-                            yLabel="Grasa Corporal (%)"
-                            title="Peso vs Grasa Corporal"
+                            xLabel={`${t('progress.photos.weight')} (kg)`}
+                            yLabel={`${t('progress.measurements.bodyFat')}`}
+                            title={`${t('progress.photos.weight')} vs ${t('progress.measurements.bodyFat')}`}
                         />
                     )}
                     {chestData.length >= 3 && (
                         <CorrelationChart
                             dataPoints={chestData}
-                            xLabel="Peso (kg)"
-                            yLabel="Pecho (cm)"
-                            title="Peso vs Pecho"
+                            xLabel={`${t('progress.photos.weight')} (kg)`}
+                            yLabel={`${t('progress.measurements.chest')} (cm)`}
+                            title={`${t('progress.photos.weight')} vs ${t('progress.measurements.chest')}`}
                         />
                     )}
                     {hipsData.length >= 3 && (
                         <CorrelationChart
                             dataPoints={hipsData}
-                            xLabel="Peso (kg)"
-                            yLabel="Caderas (cm)"
-                            title="Peso vs Caderas"
+                            xLabel={`${t('progress.photos.weight')} (kg)`}
+                            yLabel={`${t('progress.measurements.hips')} (cm)`}
+                            title={`${t('progress.photos.weight')} vs ${t('progress.measurements.hips')}`}
                         />
                     )}
                 </div>
@@ -270,13 +269,10 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
                         className="text-blue-600 mt-0.5 flex-shrink-0"
                     />
                     <div className="text-xs text-blue-700">
-                        <p className="font-bold mb-1">Sobre las predicciones</p>
-                        <p>
-                            Las predicciones se basan en regresión lineal de tus
-                            datos históricos. Asumen una pérdida de peso constante de
-                            ~0.5kg/semana. Los resultados reales pueden variar según
-                            tu adherencia y metabolismo.
+                        <p className="font-bold mb-1">
+                            {t('progress.analytics.aboutPredictions')}
                         </p>
+                        <p>{t('progress.analytics.aboutPredictionsDesc')}</p>
                     </div>
                 </div>
             </div>

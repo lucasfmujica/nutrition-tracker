@@ -129,14 +129,44 @@
             "subtitle": "Registra tu primera comida del día.",
             "button": "Registrar Comida"
         },
-        "swipeHint": "← Desliza para eliminar"
+        "swipeHint": "← Desliza para eliminar",
+        "summary": {
+            "title": "RESUMEN DIARIO",
+            "remaining": "Restantes",
+            "consumed": "Consumido"
+        },
+        "compass": {
+            "title": "Brújula Nutricional",
+            "smartSubtitle": "Sugerencias inteligentes para cerrar tu día",
+            "balanced": "Balanceado"
+        },
+        "calendar": {
+            "today": "Hoy",
+            "goToToday": "Ir a hoy",
+            "selectDate": "Seleccionar fecha"
+        },
+        "weeklyPlan": {
+            "title": "Plan Semanal de Comidas",
+            "expand": "Expandir",
+            "collapse": "Compactar",
+            "meal": "Comida",
+            "total": "Total"
+        },
+        "foodItem": {
+            "needsReview": "Necesita Revisión",
+            "saveFavorite": "Guardar como favorito",
+            "removeFavorite": "Quitar de favoritos",
+            "edit": "Editar",
+            "delete": "Eliminar"
+        }
     },
     "dashboard": {
         "title": "Resumen",
         "subtitle": "Resumen diario",
-        "weeklyReport": "Generar Reporte Semanal",
+        "generateWeeklyReport": "Generar Reporte Semanal",
         "summary": {
             "remaining_title": "Calorías Restantes",
+            "caloriesRemaining": "Calorías Restantes",
             "shield": "ESCUDO",
             "training": "ENTRENAMIENTO",
             "recovery": "RECUPERACIÓN",
@@ -157,7 +187,44 @@
             "steps": "Pasos",
             "water": "Agua",
             "glasses": "Vasos",
-            "goal": "Meta"
+            "goal": "Meta",
+            "stepsGoal": "Meta de pasos",
+            "waterGlasses": "Vasos de agua"
+        },
+        "adherence": {
+            "title": "Consistencia Semanal",
+            "perfect": "Perfecto",
+            "good": "Bien",
+            "ok": "OK",
+            "calOk": "Cal OK",
+            "protOk": "Prot OK",
+            "stepsOk": "Pasos OK"
+        },
+        "safetyNet": {
+            "title": "Modo Escudo",
+            "active": "Safety Net Activo",
+            "inactive": "Safety Net Inactivo",
+            "on": "Activado",
+            "off": "Desactivado",
+            "activate": "Activar Modo Escudo",
+            "deactivate": "Desactivar Modo Escudo"
+        },
+        "hydration": {
+            "title": "Hidratación Inteligente",
+            "reminder": "¡Tomá agua!",
+            "onTrack": "Hidratación OK",
+            "loading": "Cargando clima...",
+            "noData": "Sin datos climáticos",
+            "tips": {
+                "heat": "🔥 Hace {{temp}}°C. Agregá {{amount}}ml por el calor.",
+                "electrolytes": "🔥 Hace {{temp}}°C con alta humedad. Agregá {{amount}}ml y electrolitos.",
+                "activity": "💪 {{minutes}} min actividad. Necesitás {{amount}}ml extra.",
+                "ideal": "✅ Condiciones ideales. Mantené tu línea base."
+            }
+        },
+        "coach": {
+            "insight": "Coach Insight",
+            "reason": "Día de Entreno"
         },
         "predictive": {
             "calibrating": {
@@ -205,10 +272,154 @@
                 "protein": "Proteína:",
                 "proteinDesc": "Mínimo 85% del objetivo",
                 "steps": "Pasos:",
-                "stepsDesc": "Mínimo 80% del objetivo (6,400 pasos)",
+                "stepsDesc": "Mínimo 80% del objetivo",
                 "score": "Score = (checks OK) / 21 días × 100",
                 "tip": "Mejorá tu adherencia cumpliendo más días con tus metas de calorías, proteína y pasos."
             }
+        },
+        "weightChart": {
+            "title": "Peso Corporal",
+            "recentRecords": "registros recientes",
+            "noData": "No hay datos suficientes para mostrar el gráfico"
+        },
+        "projection": {
+            "title": "Proyección",
+            "currentRate": "Ritmo actual",
+            "toGoal": "Para objetivo",
+            "estimatedDate": "Fecha estimada",
+            "basedOn": "Basado en {{count}} registros ({{days}} días)"
+        },
+        "insights": {
+            "title": "Insights del Coach",
+            "noData": "Necesitás más datos",
+            "goalTarget": "Objetivo {{weight}} kg",
+            "calculating": "Calculando...",
+            "needData": "Necesitamos al menos 14 días de datos para proyectar tu meta",
+            "trend": "Tendencia",
+            "weekly": "Semanal",
+            "adherence": "Adherencia",
+            "remaining": "Restante",
+            "maintain": "Manteniendo",
+            "noDataTrend": "Sin datos",
+            "goalReached": "¡Meta alcanzada!",
+            "congrats": "Has llegado a tu peso objetivo de {{weight}} kg"
+        },
+        "plateau": {
+            "detected": "Meseta detectada",
+            "suggestion": "Ajustá calorías",
+            "applied": "Aplicado",
+            "basedOn": "Basado en análisis de los últimos 14 días de peso"
+        },
+        "forecast": {
+            "title": "Pronóstico Mañana",
+            "estimated": "Estimado",
+            "howCalculated": "¿Cómo se calcula esto?",
+            "algorithm": "Algoritmo de Predicción",
+            "explanation": "Analizamos la relación entre tu recuperación reciente y la fatiga acumulada para predecir tu ventana de rendimiento óptimo.",
+            "readinessTrend": "Tendencia Readiness",
+            "sleepTrend": "Tendencia Sueño",
+            "trainingLoad": "Carga de Entrenamiento",
+            "highLoad": "ALTA CARGA",
+            "optimal": "ÓPTIMO",
+            "prime": "Prime",
+            "rest": "Rest"
+        },
+        "weeklyReport": {
+            "title": "REPORTE SEMANAL",
+            "thisWeek": "Esta Semana",
+            "bodyWeight": "Peso Corporal",
+            "totalLost": "Total perdido",
+            "variation": "Variación",
+            "avgDeficit": "Déficit Prom.",
+            "consistency": "Consistencia",
+            "totalActivity": "Actividad Total",
+            "strength": "Fuerza",
+            "tennis": "Tenis",
+            "insightsTitle": "LUKENFIT INSIGHTS",
+            "footer": "LUKENFIT REPORT",
+            "sessions": "sesiones",
+            "matches": "partidos",
+            "daysOnTrack": "días on track"
+        },
+        "fastLog": {
+            "title": "Fast-Log",
+            "recent": "Recientes",
+            "myCombo": "Mi Combo",
+            "done": "¡Listo!",
+            "combos": "Combos",
+            "foods": "Alimentos"
+        },
+        "mealTiming": {
+            "title": "Timing Nutricional",
+            "empty": "Registrá comidas con horarios para ver análisis de timing",
+            "firstMeal": "PRIMERA COMIDA",
+            "lastMeal": "ÚLTIMA COMIDA",
+            "eatingWindow": "VENTANA ALIMENTARIA",
+            "ifPattern": "días con ventana <10h (IF pattern)",
+            "sleepImpact": {
+                "title": "Impacto en Sueño",
+                "gap": "Gap Comida → Cama",
+                "warning": "⚠️ Comés muy cerca de dormir. Intentá 2.5-3h antes de acostarte.",
+                "bad": "🔴 {count} días con comidas después de 21:00",
+                "good": "✅ Timing óptimo para calidad de sueño"
+            },
+            "workoutNutrition": {
+                "title": "Nutrición de Entreno",
+                "avgCarbs": "PROMEDIO CARBS",
+                "avgProtein": "PROMEDIO PROTEIN",
+                "daysWithData": "Promedio en días de entreno ({count} días)"
+            },
+            "consistency": {
+                "title": "Consistencia de Horarios",
+                "veryConsistent": "MUY CONSISTENTE",
+                "moderate": "MODERADO",
+                "variable": "VARIABLE"
+            }
+        },
+        "weeklyPlan": {
+            "title": "Periodización",
+            "subtitle": "Distribución de calorías",
+            "edit": "Editar",
+            "status": {
+                "onTrack": "✓ En camino a {target} kg",
+                "adjust": "⚠️ Ajusta intensidad para mantener déficit"
+            },
+            "intensity": {
+                "high": "Alta",
+                "moderate": "Moderado",
+                "recovery": "Recuperación"
+            }
+        },
+        "correlation": {
+            "labsTitle": "Luken Labs",
+            "whatIs": "¿Qué es Luken Labs?",
+            "explanation": "Aquí buscamos correlaciones ocultas entre tus hábitos. No son verdades absolutas, sino patrones que surgen de tus propios datos para ayudarte a ajustar tu rendimiento.",
+            "points": {
+                "fuel": "Fuel: ¿Consumir más carbohidratos el día anterior mejora el volumen de tus entrenos hoy?",
+                "recovery": "Recovery: ¿Qué tanto afecta un entreno de alto volumen a tu sueño profundo esa misma noche?",
+                "discipline": "Discipline: ¿Existe una conexión entre la calidad de tu sueño y tu capacidad de mantenerte en rango calórico?"
+            },
+            "charts": {
+                "fuelVsPerf": "Combustible vs Rendimiento",
+                "fuelSubtitle": "Carga Carbos (Ayer) vs Duración Entreno (Hoy)",
+                "recoveryCost": "Costo de Recuperación",
+                "recoverySubtitle": "Duración Entreno (Hoy) vs Deep Sleep (Noche)",
+                "willpower": "Fuerza de Voluntad",
+                "willpowerSubtitle": "Score Sueño (Hoy) vs Adherencia Calórica (Hoy)",
+                "xCarbs": "Carbohidratos (g)",
+                "yDuration": "Duración Entrenamiento (min)",
+                "yDeepSleep": "Sueño Profundo (min)",
+                "xReadiness": "Índice de Preparación (Oura)",
+                "yCalories": "Calorías Consumidas"
+            },
+            "strength": {
+                "strong": "Fuerte",
+                "moderate": "Moderada",
+                "weak": "Débil",
+                "noise": "Ruido"
+            },
+            "noData": "Sin datos suficientes",
+            "footer": "Los patrones se vuelven más claros a medida que registras más días. Sigue trackeando para desbloquear insights reales."
         }
     },
     "navigation": {
@@ -321,9 +532,12 @@
         "today": "Hoy",
         "goal": "Meta",
         "remaining": "Restantes",
-        "addSteps": "Agregar Pasos",
-        "stepsPlaceholder": "8000",
-        "save": "Guardar"
+        "addSteps": "REGISTRAR PASOS",
+        "stepsPlaceholder": "ej: 8000",
+        "save": "Guardar",
+        "history": "HISTORIAL",
+        "chartLabel": "Pasos 7 días",
+        "unit": "pasos"
     },
     "workouts": {
         "title": "Entrenos",
@@ -336,6 +550,172 @@
         "notes": "Notas",
         "weeklyPlan": "Plan Semanal",
         "edit": "Editar",
-        "done": "Listo"
+        "done": "Listo",
+        "total": "Total",
+        "workoutsLabel": "Entrenamientos",
+        "time": "Tiempo",
+        "totalMinutes": "Minutos Totales",
+        "gym": "Gym",
+        "tennis": "Tenis",
+        "sleep": "Sueño",
+        "readiness": "Readiness",
+        "logActivityPrompt": "Registra tu actividad para hoy.",
+        "importGravl": "Importar Gravl",
+        "effort": {
+            "title": "Radar de Esfuerzo",
+            "intensity": "Intensidad",
+            "volume": "Volumen",
+            "viewMetrics": "Ver métricas",
+            "factors": "Factores que influyen:",
+            "volumeRatio": "Volumen 7d/30d:",
+            "trend": "Tendencia:",
+            "capacity": {
+                "high": "Alta Capacidad",
+                "normal": "Normal",
+                "recovery": "Necesitas Rest"
+            },
+            "insight": {
+                "highReadiness": "Readiness alto + volumen moderado = capacidad alta (zona izquierda/verde).",
+                "lowReadiness": "Readiness bajo + volumen alto = necesitas recuperación (zona derecha/naranja)."
+            },
+            "warnings": {
+                "future": "Fecha futura: Esta proyección se basa en tu historial. No hay datos reales de Oura o entrenamientos para esta fecha.",
+                "stale": "Datos de Oura desactualizados: Los scores de readiness y sueño son del {{date}}. Sincroniza tu Oura Ring para obtener datos más recientes."
+            }
+        },
+        "exercise": {
+            "title": "Ejercicios",
+            "noExercises": "Sin ejercicios registrados",
+            "startPrompt": "Hacé click en \"Agregar\" para comenzar",
+            "itemTitle": "Ejercicio",
+            "name": "Nombre",
+            "sets": "Series",
+            "reps": "Reps",
+            "weight": "Peso (kg)",
+            "quickAdd": "Quick Add",
+            "duplicateTip": "💡 Usá \"Quick Add\" para duplicar el último ejercicio",
+            "add": "Agregar"
+        },
+        "scanner": {
+            "title": "Importar desde Gravl",
+            "subtitle": "Sube capturas de tu entrenamiento",
+            "uploadPrompt": "Toca para subir imágenes",
+            "uploadSubPrompt": "Soporta múltiples capturas",
+            "selected": "Seleccionadas",
+            "analyze": "Analizar Entrenamiento",
+            "analyzing": "Analizando con Gemini IA...",
+            "review": "Revisar Resultados",
+            "reviewPrompt": "Verifica que los datos sean correctos antes de guardar. Puedes editar el JSON directamente si es necesario.",
+            "error": "Error al analizar las imágenes. Intenta nuevamente.",
+            "invalidJson": "El JSON no es válido. Por favor corrige el formato.",
+            "back": "Volver",
+            "save": "Confirmar y Guardar"
+        }
+    },
+
+    "food": {
+        "camera": {
+            "title": "Escanear Comida",
+            "takePicture": "Tomar Foto",
+            "scanButton": "Escanear Comida",
+            "analyzing": "Analizando imagen...",
+            "helper": "Toma una foto de tu comida para análisis automático con IA",
+            "editTitle": "Editar Comida Detectada",
+            "nameLabel": "Nombre de la Comida",
+            "namePlaceholder": "Ej: Bife con batatas",
+            "typeLabel": "Tipo de Comida",
+            "ingredientsLabel": "Ingredientes Detectados",
+            "ingredientsPlaceholderAmount": "160g",
+            "ingredientsPlaceholderName": "Bife de Chorizo",
+            "macrosLabel": "Macronutrientes"
+        },
+        "history": {
+            "title": "Historial de Comidas",
+            "recent": "Recientes",
+            "searchPlaceholder": "Buscar pollo, arroz...",
+            "noResults": "No se encontraron resultados",
+            "tryAgain": "Probá con otro término de búsqueda",
+            "empty": "No hay comidas registradas"
+        },
+        "item": {
+            "edit": "Editar",
+            "delete": "Eliminar",
+            "duplicate": "Duplicar"
+        }
+    },
+
+    "progress": {
+        "title": "Progreso",
+        "subtitle": "Fotos, medidas y análisis",
+        "photos": {
+            "title": "Fotos",
+            "addPhoto": "Subir Foto de Progreso",
+            "newPhoto": "Nueva Foto",
+            "date": "Fecha",
+            "angle": "Ángulo",
+            "notes": "Notas (opcional)",
+            "notesPlaceholder": "Ej: Después de 4 semanas",
+            "selectPhoto": "Seleccionar Foto",
+            "uploading": "Subiendo...",
+            "noPhotos": "Sin fotos aún",
+            "noPhotosDesc": "Subí tu primera foto de progreso para comenzar a trackear tu transformación.",
+            "view": "Vista",
+            "weight": "Peso",
+            "deleteConfirm": "¿Eliminar esta foto?"
+        },
+        "analytics": {
+            "title": "Análisis",
+            "headerTitle": "Análisis Predictivo",
+            "headerSubtitle": "Correlaciones y predicciones basadas en {{count}} mediciones",
+            "noDataTitle": "Sin datos para analizar",
+            "noDataDesc": "Necesitás medidas corporales y fotos con peso para ver análisis.",
+            "insufficientDataTitle": "Datos insuficientes",
+            "insufficientDataDesc": "Necesitás al menos 3 mediciones con diferentes pesos para calcular correlaciones y predicciones.",
+            "tip": "Tip",
+            "tipDesc": "Registrá tus medidas cada semana mientras tu peso cambia.",
+            "waistPredictions": "Predicciones de Cintura",
+            "correlations": "Correlaciones",
+            "aboutPredictions": "Sobre las predicciones",
+            "aboutPredictionsDesc": "Las predicciones se basan en regresión lineal de tus datos históricos.",
+            "weeks": "{{count}} Semanas"
+        },
+        "timeline": {
+            "title": "Línea de Tiempo",
+            "noPhotosDesc": "Subí fotos de progreso para ver tu línea de tiempo.",
+            "context": "Contexto del Progreso"
+        },
+        "measurements": {
+            "title": "Medidas",
+            "newMeasurement": "Nueva Medición",
+            "save": "Guardar Medidas",
+            "saving": "Guardando...",
+            "noMeasurementsTitle": "Sin medidas aún",
+            "noMeasurementsDesc": "Registrá tus medidas corporales para trackear tu progreso más allá del peso.",
+            "latestMeasurement": "Última Medición",
+            "history": "Historial",
+            "deleteConfirm": "¿Eliminar esta medición?",
+            "chest": "Pecho",
+            "waist": "Cintura",
+            "hips": "Cadera",
+            "bicepsLeft": "Bíceps (izq)",
+            "bicepsRight": "Bíceps (der)",
+            "thighLeft": "Muslo (izq)",
+            "thighRight": "Muslo (der)",
+            "bodyFat": "% Grasa"
+        },
+        "comparison": {
+            "title": "Comparar",
+            "label": "COMPARAR",
+            "transformation": "Transformación",
+            "share": "Compartir",
+            "before": "ANTES",
+            "after": "DESPUÉS",
+            "weightChange": "Cambio de Peso",
+            "time": "Tiempo",
+            "changeBefore": "Cambiar Antes",
+            "changeAfter": "Cambiar Después",
+            "noData": "Sin datos",
+            "days": "días"
+        }
     }
 }

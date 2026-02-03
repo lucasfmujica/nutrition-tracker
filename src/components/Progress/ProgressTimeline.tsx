@@ -3,12 +3,13 @@
  * Features month grouping, horizontal scroll, and contextual measurement data
  */
 
-import React, { useState, useRef, useMemo } from 'react';
-import { Calendar, X, Scale, Ruler, Activity } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { groupPhotosByMonth, getAngleBadge } from '../../utils/progressUtils';
-import type { ProgressPhoto, BodyMeasurement } from '../../types/domain';
+import { enUS, es } from 'date-fns/locale';
+import { Activity, Calendar, Ruler, Scale, X } from 'lucide-react';
+import React, { useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { BodyMeasurement, ProgressPhoto } from '../../types/domain';
+import { getAngleBadge, groupPhotosByMonth } from '../../utils/progressUtils';
 
 interface ProgressTimelineProps {
     photos: ProgressPhoto[];
@@ -21,6 +22,9 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
     measurements,
     onPhotoSelect,
 }) => {
+    const { t, i18n } = useTranslation();
+    const dateLocale = i18n.language === 'es' ? es : enUS;
+
     const [selectedPhoto, setSelectedPhoto] = useState<ProgressPhoto | null>(null);
     const [activeMonth, setActiveMonth] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -52,7 +56,11 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
 
     const scrollToMonth = (monthKey: string) => {
         const element = document.getElementById(`month-${monthKey}`);
-        element?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+        element?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'start',
+        });
         setActiveMonth(monthKey);
     };
 
@@ -63,7 +71,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                 <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
                     <Calendar size={20} className="text-blue-500" />
                 </div>
-                <h3 className="font-bold text-lg">Línea de Tiempo</h3>
+                <h3 className="font-bold text-lg">{t('progress.timeline.title')}</h3>
             </div>
 
             {/* Month Tabs (Horizontal Scroll) */}
@@ -77,8 +85,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                                 activeMonth === month
                                     ? 'bg-blue-500 text-white shadow-md'
                                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                            }`}
-                        >
+                            }`}>
                             {monthLabel}
                         </button>
                     ))}
@@ -88,11 +95,15 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
             {/* Timeline Scroll Container */}
             <div
                 ref={scrollRef}
-                className="overflow-x-auto space-x-4 flex pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide"
-            >
+                className="overflow-x-auto space-x-4 flex pb-4 scroll-smooth snap-x snap-mandatory scrollbar-hide">
                 {groupedPhotos.map(({ month, monthLabel, photos: monthPhotos }) => (
-                    <div key={month} id={`month-${month}`} className="snap-start flex-shrink-0">
-                        <p className="text-xs text-slate-400 font-bold mb-2">{monthLabel}</p>
+                    <div
+                        key={month}
+                        id={`month-${month}`}
+                        className="snap-start flex-shrink-0">
+                        <p className="text-xs text-slate-400 font-bold mb-2">
+                            {monthLabel}
+                        </p>
                         <div className="flex gap-3">
                             {monthPhotos.map((photo) => {
                                 const isSelected = selectedPhoto?.id === photo.id;
@@ -104,16 +115,19 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                                             isSelected
                                                 ? 'ring-4 ring-blue-500 scale-105 shadow-lg'
                                                 : 'hover:ring-2 hover:ring-blue-300 shadow-sm'
-                                        }`}
-                                    >
+                                        }`}>
                                         <img
-                                            src={photo.thumbnailUrl || photo.photoUrl}
+                                            src={
+                                                photo.thumbnailUrl || photo.photoUrl
+                                            }
                                             className="w-full h-full object-cover"
                                             alt={`Photo ${photo.date}`}
                                         />
                                         {/* Date Label */}
                                         <div className="absolute bottom-1 left-1 right-1 bg-black/60 backdrop-blur-sm rounded text-white text-[10px] font-bold text-center py-0.5">
-                                            {format(parseISO(photo.date), 'd MMM', { locale: es })}
+                                            {format(parseISO(photo.date), 'd MMM', {
+                                                locale: dateLocale,
+                                            })}
                                         </div>
                                         {/* Angle Badge */}
                                         {photo.angle && (
@@ -135,18 +149,23 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                     <div className="flex items-start justify-between mb-3">
                         <div>
                             <p className="text-sm text-slate-500 font-medium">
-                                {format(parseISO(selectedPhoto.date), "d 'de' MMMM, yyyy", {
-                                    locale: es,
-                                })}
+                                {format(
+                                    parseISO(selectedPhoto.date),
+                                    i18n.language === 'es'
+                                        ? "d 'de' MMMM, yyyy"
+                                        : 'MMMM d, yyyy',
+                                    {
+                                        locale: dateLocale,
+                                    },
+                                )}
                             </p>
                             <h4 className="text-lg font-bold text-slate-900">
-                                Contexto del Progreso
+                                {t('progress.timeline.context')}
                             </h4>
                         </div>
                         <button
                             onClick={() => setSelectedPhoto(null)}
-                            className="text-slate-400 hover:text-slate-600"
-                        >
+                            className="text-slate-400 hover:text-slate-600">
                             <X size={20} />
                         </button>
                     </div>
@@ -157,7 +176,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                             <div className="bg-white rounded-lg p-3 border border-slate-100">
                                 <p className="text-xs text-slate-500 font-medium flex items-center gap-1">
                                     <Scale size={12} />
-                                    Peso
+                                    {t('progress.photos.weight')}
                                 </p>
                                 <p className="text-xl font-bold text-slate-900">
                                     {selectedPhoto.weight} kg
@@ -170,7 +189,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                             <div className="bg-white rounded-lg p-3 border border-slate-100">
                                 <p className="text-xs text-slate-500 font-medium flex items-center gap-1">
                                     <Ruler size={12} />
-                                    Cintura
+                                    {t('progress.measurements.waist')}
                                 </p>
                                 <p className="text-xl font-bold text-slate-900">
                                     {photoContext.measurement.waist} cm
@@ -183,7 +202,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                             <div className="bg-white rounded-lg p-3 border border-slate-100">
                                 <p className="text-xs text-slate-500 font-medium flex items-center gap-1">
                                     <Activity size={12} />
-                                    Grasa Corporal
+                                    {t('progress.measurements.bodyFat')}
                                 </p>
                                 <p className="text-xl font-bold text-slate-900">
                                     {photoContext.measurement.bodyFatPercent}%
@@ -196,7 +215,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                             <div className="bg-white rounded-lg p-3 border border-slate-100">
                                 <p className="text-xs text-slate-500 font-medium flex items-center gap-1">
                                     <Ruler size={12} />
-                                    Pecho
+                                    {t('progress.measurements.chest')}
                                 </p>
                                 <p className="text-xl font-bold text-slate-900">
                                     {photoContext.measurement.chest} cm
@@ -208,8 +227,12 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                     {/* Notes */}
                     {selectedPhoto.notes && (
                         <div className="mt-3 bg-white rounded-lg p-3 border border-slate-100">
-                            <p className="text-xs text-slate-500 font-medium mb-1">Notas</p>
-                            <p className="text-sm text-slate-700">{selectedPhoto.notes}</p>
+                            <p className="text-xs text-slate-500 font-medium mb-1">
+                                {t('progress.photos.notes')}
+                            </p>
+                            <p className="text-sm text-slate-700">
+                                {selectedPhoto.notes}
+                            </p>
                         </div>
                     )}
                 </div>
