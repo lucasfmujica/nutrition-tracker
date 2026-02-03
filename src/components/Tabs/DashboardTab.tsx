@@ -141,7 +141,12 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
     );
 
     // Meal Timing Analytics Engine
-    const mealTimingInsights = useMealTimingAnalytics(foodLog, ouraLog, workoutLog);
+    const mealTimingInsights = useMealTimingAnalytics(
+        foodLog,
+        ouraLog,
+        workoutLog,
+        dashboardDate,
+    );
 
     // Weekly Report Modal State
     const [showWeeklyReport, setShowWeeklyReport] = useState(false);

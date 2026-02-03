@@ -41,16 +41,26 @@ export const useMealTimingAnalytics = (
     foodLog: FoodEntry[],
     ouraLog: OuraEntry[],
     workouts: Workout[],
+    referenceDate: string,
 ): MealTimingInsights => {
     return useMemo(() => {
-        // Filter to last 30 days of data
-        const now = new Date();
-        const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        // Filter to last 30 days relative to referenceDate
+        const refDate = new Date(referenceDate);
+        const thirtyDaysAgo = new Date(refDate.getTime() - 30 * 24 * 60 * 60 * 1000);
         const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0];
 
-        const last30DaysFoods = foodLog.filter((f) => f.date >= thirtyDaysAgoStr && f.time);
-        const last30DaysOura = ouraLog.filter((o) => o.date >= thirtyDaysAgoStr);
-        const last30DaysWorkouts = workouts.filter((w) => w.date >= thirtyDaysAgoStr);
+        // Filter range: [referenceDate - 30 days, referenceDate]
+        // This ensures we don't show future data if the user goes back in time,
+        // but we mainly care about the window leading UP to the current view.
+        const last30DaysFoods = foodLog.filter(
+            (f) => f.date >= thirtyDaysAgoStr && f.date <= referenceDate && f.time,
+        );
+        const last30DaysOura = ouraLog.filter(
+            (o) => o.date >= thirtyDaysAgoStr && o.date <= referenceDate,
+        );
+        const last30DaysWorkouts = workouts.filter(
+            (w) => w.date >= thirtyDaysAgoStr && w.date <= referenceDate,
+        );
 
         if (last30DaysFoods.length === 0) {
             return {
@@ -101,10 +111,12 @@ export const useMealTimingAnalytics = (
         // 2. SLEEP IMPACT ANALYSIS
         const mealSleepGaps: number[] = [];
         const sleepScores: number[] = [];
-        const lateEatingDays = Array.from(dailyWindows.entries()).filter(([date, window]) => {
-            const lastMealHour = parseInt(window.last.split(':')[0]);
-            return lastMealHour >= 21;
-        }).length;
+        const lateEatingDays = Array.from(dailyWindows.entries()).filter(
+            ([date, window]) => {
+                const lastMealHour = parseInt(window.last.split(':')[0]);
+                return lastMealHour >= 21;
+            },
+        ).length;
 
         dailyWindows.forEach((window, date) => {
             const ouraDay = last30DaysOura.find((o) => o.date === date);
@@ -138,11 +150,19 @@ export const useMealTimingAnalytics = (
             if (dayMeals.length > 0) {
                 // Simplified: Average macros for workout days
                 // In a real implementation, would check meal times relative to workout time
-                const totalCarbs = dayMeals.reduce((sum, f) => sum + (f.carbs || 0), 0);
-                const totalProtein = dayMeals.reduce((sum, f) => sum + (f.protein || 0), 0);
+                const totalCarbs = dayMeals.reduce(
+                    (sum, f) => sum + (f.carbs || 0),
+                    0,
+                );
+                const totalProtein = dayMeals.reduce(
+                    (sum, f) => sum + (f.protein || 0),
+                    0,
+                );
 
-                if (totalCarbs > 0) preWorkoutCarbs.push(totalCarbs / dayMeals.length);
-                if (totalProtein > 0) postWorkoutProtein.push(totalProtein / dayMeals.length);
+                if (totalCarbs > 0)
+                    preWorkoutCarbs.push(totalCarbs / dayMeals.length);
+                if (totalProtein > 0)
+                    postWorkoutProtein.push(totalProtein / dayMeals.length);
             }
         });
 
@@ -153,7 +173,8 @@ export const useMealTimingAnalytics = (
 
         const avgPostWorkoutProtein =
             postWorkoutProtein.length > 0
-                ? postWorkoutProtein.reduce((a, b) => a + b, 0) / postWorkoutProtein.length
+                ? postWorkoutProtein.reduce((a, b) => a + b, 0) /
+                  postWorkoutProtein.length
                 : 0;
 
         // 4. CONSISTENCY ANALYSIS
@@ -191,13 +212,14 @@ export const useMealTimingAnalytics = (
             },
             hasData: true,
         };
-    }, [foodLog, ouraLog, workouts]);
+    }, [foodLog, ouraLog, workouts, referenceDate]);
 };
 
 // ========== HELPER FUNCTIONS ==========
 
 /**
  * Convert time strings (HH:mm) to average time
+ * Fixes "21:60" bug by calculating total minutes first, then converting back.
  */
 function calculateAvgTime(times: string[]): string {
     if (times.length === 0) return '--:--';
@@ -207,9 +229,9 @@ function calculateAvgTime(times: string[]): string {
         return sum + h * 60 + m;
     }, 0);
 
-    const avg = totalMinutes / times.length;
-    const hours = Math.floor(avg / 60);
-    const mins = Math.round(avg % 60);
+    const avgTotalMinutes = Math.round(totalMinutes / times.length);
+    const hours = Math.floor(avgTotalMinutes / 60);
+    const mins = avgTotalMinutes % 60;
 
     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
 }
@@ -221,7 +243,7 @@ function hoursDiff(time1: string, time2: string): number {
     const [h1, m1] = time1.split(':').map(Number);
     const [h2, m2] = time2.split(':').map(Number);
 
-    let diff = (h2 * 60 + m2) - (h1 * 60 + m1);
+    let diff = h2 * 60 + m2 - (h1 * 60 + m1);
 
     // Handle crossing midnight
     if (diff < 0) diff += 24 * 60;
@@ -232,7 +254,9 @@ function hoursDiff(time1: string, time2: string): number {
 /**
  * Calculate average hours difference for eating windows
  */
-function calculateAvgHoursDiff(windows: Array<{ first: string; last: string }>): number {
+function calculateAvgHoursDiff(
+    windows: Array<{ first: string; last: string }>,
+): number {
     if (windows.length === 0) return 0;
 
     const diffs = windows.map((w) => hoursDiff(w.first, w.last));
@@ -251,7 +275,8 @@ function calculateTimeVariance(times: string[]): number {
     });
 
     const avg = minutes.reduce((a, b) => a + b, 0) / minutes.length;
-    const variance = minutes.reduce((sum, m) => sum + Math.pow(m - avg, 2), 0) / minutes.length;
+    const variance =
+        minutes.reduce((sum, m) => sum + Math.pow(m - avg, 2), 0) / minutes.length;
 
     return Math.sqrt(variance); // Standard deviation in minutes
 }

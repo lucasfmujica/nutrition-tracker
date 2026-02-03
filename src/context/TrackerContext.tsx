@@ -18,13 +18,13 @@ import { useOuraSync } from '../hooks/useOuraSync';
 import { useQuickLog } from '../hooks/useQuickLog';
 import { useSafetyNet } from '../hooks/useSafetyNet';
 import { useSocial } from '../hooks/useSocial';
-import { useWeeklySnapshot } from '../hooks/useWeeklySnapshot';
 import { useSupabase } from '../hooks/useSupabase';
 import { useTrackerActions } from '../hooks/useTrackerActions';
 import { useTrackerAnalytics } from '../hooks/useTrackerAnalytics';
 import { useTrackerSync } from '../hooks/useTrackerSync';
 import { useTrackerUIState } from '../hooks/useTrackerUIState';
 import { useWeeklyPlan } from '../hooks/useWeeklyPlan';
+import { useWeeklySnapshot } from '../hooks/useWeeklySnapshot';
 import { useWeightEditing } from '../hooks/useWeightEditing';
 import { useWorkoutEntry } from '../hooks/useWorkoutEntry';
 import { useWorkouts } from '../hooks/useWorkouts';
@@ -123,7 +123,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
     // 2. Core Domains - all use the same useCloud
     const workouts = useWorkouts(supabase, useCloud);
     const biometrics = useBiometrics(supabase, useCloud);
-    const weeklyPlanHook = useWeeklyPlan();
+    const weeklyPlanHook = useWeeklyPlan(supabase.user?.id);
 
     // 3. Modo Escudo (Safety Net)
     const safetyNet = useSafetyNet(

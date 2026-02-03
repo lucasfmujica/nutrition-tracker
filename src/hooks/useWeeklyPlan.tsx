@@ -10,9 +10,10 @@ type WeeklyPlan = Record<number, PlannedWorkout | null>;
  * Provides CRUD operations for weekly plan stored in Supabase.
  * Falls back to DEFAULT_WEEKLY_PLAN if user hasn't customized yet.
  *
+ * @param userId - Optional user ID to fetch plan for (prevents fetching/defaulting when not auth)
  * @returns {Object} Plan state and management functions
  */
-export const useWeeklyPlan = () => {
+export const useWeeklyPlan = (userId?: string) => {
     const [plan, setPlan] = useState<WeeklyPlan>({});
     const [isLoading, setIsLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -22,29 +23,20 @@ export const useWeeklyPlan = () => {
      * Fetch user's weekly plan from Supabase
      */
     const fetchPlan = useCallback(async () => {
+        // If no user yet, don't do anything (keep loading or previous state)
+        if (!userId) {
+            setIsLoading(true);
+            return;
+        }
+
         try {
             setIsLoading(true);
             setError(null);
 
-            if (!supabase) {
-                setPlan(DEFAULT_WEEKLY_PLAN);
-                setIsLoading(false);
-                return;
-            }
-
-            const {
-                data: { user },
-            } = await supabase.auth.getUser();
-            if (!user) {
-                setPlan(DEFAULT_WEEKLY_PLAN);
-                setIsLoading(false);
-                return;
-            }
-
             const { data, error: fetchError } = await supabase
                 .from('weekly_plan')
                 .select('*')
-                .eq('user_id', user.id);
+                .eq('user_id', userId);
 
             if (fetchError) throw fetchError;
 
@@ -67,47 +59,46 @@ export const useWeeklyPlan = () => {
         } catch (err: any) {
             console.error('Error fetching weekly plan:', err);
             setError(err.message || 'Error al obtener el plan semanal');
-            // Fallback to default on error
-            setPlan(DEFAULT_WEEKLY_PLAN);
+            // Do NOT overwrite with default on error, might be temporary network issue
+            // Keep previous state or empty
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [userId]);
 
     /**
      * Delete a specific day from the plan (set to rest)
      * @param {number} dayIndex - 0-6
      */
-    const deleteDayPlan = useCallback(async (dayIndex: number) => {
-        try {
-            if (!supabase) throw new Error('Supabase no configurado');
+    const deleteDayPlan = useCallback(
+        async (dayIndex: number) => {
+            try {
+                if (!supabase) throw new Error('Supabase no configurado');
+                if (!userId) throw new Error('Usuario no autenticado');
 
-            const {
-                data: { user },
-            } = await supabase.auth.getUser();
-            if (!user) throw new Error('Usuario no autenticado');
+                const { error: deleteError } = await supabase
+                    .from('weekly_plan')
+                    .delete()
+                    .eq('user_id', userId)
+                    .eq('day_of_week', dayIndex);
 
-            const { error: deleteError } = await supabase
-                .from('weekly_plan')
-                .delete()
-                .eq('user_id', user.id)
-                .eq('day_of_week', dayIndex);
+                if (deleteError) throw deleteError;
 
-            if (deleteError) throw deleteError;
+                // Update local state - set to null explicitly so it shows as rest
+                setPlan((prev) => ({
+                    ...prev,
+                    [dayIndex]: null,
+                }));
 
-            // Update local state - set to null explicitly so it shows as rest
-            setPlan((prev) => ({
-                ...prev,
-                [dayIndex]: null,
-            }));
-
-            return true;
-        } catch (err: any) {
-            console.error('Error deleting day from weekly plan:', err);
-            setError(err.message || 'Error al borrar el día');
-            return false;
-        }
-    }, []);
+                return true;
+            } catch (err: any) {
+                console.error('Error deleting day from weekly plan:', err);
+                setError(err.message || 'Error al borrar el día');
+                return false;
+            }
+        },
+        [userId],
+    );
 
     /**
      * Update a specific day in the plan
@@ -118,18 +109,14 @@ export const useWeeklyPlan = () => {
         async (dayIndex: number, workoutData: PlannedWorkout | null) => {
             try {
                 if (!supabase) throw new Error('Supabase no configurado');
-
-                const {
-                    data: { user },
-                } = await supabase.auth.getUser();
-                if (!user) throw new Error('Usuario no autenticado');
+                if (!userId) throw new Error('Usuario no autenticado');
 
                 // If setting to rest, delete the day from the plan
                 if (workoutData === null) {
                     const { error: deleteError } = await supabase
                         .from('weekly_plan')
                         .delete()
-                        .eq('user_id', user.id)
+                        .eq('user_id', userId)
                         .eq('day_of_week', dayIndex);
 
                     if (deleteError) throw deleteError;
@@ -150,7 +137,7 @@ export const useWeeklyPlan = () => {
                     .from('weekly_plan')
                     .upsert(
                         {
-                            user_id: user.id,
+                            user_id: userId,
                             day_of_week: dayIndex,
                             workout_type: dataToSave.type,
                             workout_name: dataToSave.name,
@@ -176,10 +163,10 @@ export const useWeeklyPlan = () => {
                 return false;
             }
         },
-        [],
+        [userId],
     );
 
-    // Fetch on mount
+    // Fetch on mount or when userId changes
     useEffect(() => {
         fetchPlan();
     }, [fetchPlan]);
