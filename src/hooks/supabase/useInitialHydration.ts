@@ -92,11 +92,15 @@ export const useInitialHydration = ({
 
         // Basic guards
         if (supabase.loading || showAuth === null) {
-            console.log('[Data] Guard: supabase.loading or showAuth is null, skipping');
+            console.log(
+                '[Data] Guard: supabase.loading or showAuth is null, skipping',
+            );
             return;
         }
         if (showAuth && !offlineMode) {
-            console.log('[Data] Guard: showAuth is true and not in offline mode, skipping');
+            console.log(
+                '[Data] Guard: showAuth is true and not in offline mode, skipping',
+            );
             return;
         }
 
@@ -104,7 +108,10 @@ export const useInitialHydration = ({
         if (!supabase.isAuthenticated || !supabase.user) {
             console.log(
                 '[Data] Auth not ready, waiting for session confirmation before loading data',
-                { isAuthenticated: supabase.isAuthenticated, hasUser: !!supabase.user }
+                {
+                    isAuthenticated: supabase.isAuthenticated,
+                    hasUser: !!supabase.user,
+                },
             );
             return;
         }
@@ -394,13 +401,14 @@ export const useInitialHydration = ({
                     } else {
                         // 🔒 IMPROVED TIMEOUT FEEDBACK: Clear action message for user
                         if (timeoutOccurred && !hasCachedData) {
-                            // 🔒 CRITICAL FIX: Reset hasInitialized on timeout to allow retry
-                            console.log('[Data] Supabase timeout with no cache, resetting hasInitialized for retry');
-                            hasInitialized.current = false;
+                            console.warn(
+                                '[Data] Supabase timeout with no cache, allowing partial hydration',
+                            );
+                            // Don't reset hasInitialized - let the app load with what we have (even if empty)
 
                             resolveLoading('supabase-timeout-no-cache');
                             setSaveStatus(
-                                '❌ Error de conexión - Recargá la página para reintentar',
+                                '❌ Error de conexión - Intentando cargar modo offline...',
                             );
                             setTimeout(() => setSaveStatus(''), 5000);
                             console.error(
@@ -420,9 +428,10 @@ export const useInitialHydration = ({
                                 '[Data] Timeout occurred but showing cached data',
                             );
                         } else if (!hasCachedData) {
-                            // 🔒 CRITICAL FIX: Reset hasInitialized when no data available
-                            console.log('[Data] No Supabase data and no cache, resetting hasInitialized');
-                            hasInitialized.current = false;
+                            console.warn(
+                                '[Data] No Supabase data and no cache, allowing empty state',
+                            );
+                            // Don't reset hasInitialized - let the app load empty
 
                             resolveLoading('supabase-no-data-no-cache');
                             setSaveStatus('⚠️ Sin conexión');
@@ -438,9 +447,8 @@ export const useInitialHydration = ({
             } catch (err) {
                 console.error('[Data] Error loading data:', err);
 
-                // 🔒 CRITICAL FIX: Reset hasInitialized on error to allow retry
-                console.log('[Data] Resetting hasInitialized due to error, will retry on next render');
-                hasInitialized.current = false;
+                console.warn('[Data] Error during load, allowing partial hydration');
+                // Don't reset hasInitialized - let the app load with what we have
 
                 // Ensure loading is resolved on error
                 if (!loadingResolved) {
@@ -448,7 +456,7 @@ export const useInitialHydration = ({
                 }
 
                 // Show user-friendly error message
-                setSaveStatus('❌ Error al cargar - Reintentando...');
+                setSaveStatus('❌ Error al cargar - Modo offline activado');
                 setTimeout(() => setSaveStatus(''), 3000);
             }
             // Note: No finally block needed - resolveLoading handles all cases
@@ -479,8 +487,6 @@ export const useInitialHydration = ({
         setStepsLog,
         setOuraLog,
         setWaterLog,
-        setMealTemplates,
-        setIsLoading,
         setSaveStatus,
         setShowOnboarding,
         setCacheStale,
