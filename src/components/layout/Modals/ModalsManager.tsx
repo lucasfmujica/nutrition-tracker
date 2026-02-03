@@ -1,18 +1,18 @@
 import React from 'react';
 import { useTracker } from '../../../context/TrackerContext';
+import { useSmartMealType } from '../../../hooks/useSmartMealType';
+import { FoodEntry } from '../../../types/domain';
+import { FoodHistoryPanel } from '../../Food/FoodHistoryPanel';
+import { BarcodeScannerModal } from '../../Modals/BarcodeScannerModal';
 import { DeleteConfirmModal } from '../../Modals/DeleteConfirmModal';
 import { FoodCameraModal } from '../../Modals/FoodCameraModal';
 import { FoodFormModal } from '../../Modals/FoodFormModal';
 import { FoodSearchModal } from '../../Modals/FoodSearchModal';
-import { BarcodeScannerModal } from '../../Modals/BarcodeScannerModal';
-import { FoodHistoryPanel } from '../../Food/FoodHistoryPanel';
 import { ImportModal } from '../../Modals/ImportModal';
 import { MondayBriefingModal } from '../../Modals/MondayBriefingModal';
 import { WorkoutFormModal } from '../../Modals/WorkoutFormModal';
 import { WorkoutScanner } from '../../Workouts/WorkoutScanner';
 import { WeeklyReport } from './WeeklyReport';
-import { FoodEntry } from '../../../types/domain';
-import { useSmartMealType } from '../../../hooks/useSmartMealType';
 
 export const ModalsManager: React.FC = () => {
     const {
@@ -115,7 +115,10 @@ export const ModalsManager: React.FC = () => {
         try {
             await saveFoodEntry(newEntry);
         } catch (err) {
-            console.error('[ModalsManager] Error duplicating food from history:', err);
+            console.error(
+                '[ModalsManager] Error duplicating food from history:',
+                err,
+            );
         }
     };
 
@@ -163,7 +166,7 @@ export const ModalsManager: React.FC = () => {
                 }}
                 title="📥 Importar Comida"
                 description="Pegá el JSON de la comida generado por la IA."
-                placeholder={`{"meal": "Almuerzo", "name": "Pollo", "calories": 500, "protein": 40}`}
+                placeholder={`{"meal": "lunch", "name": "Pollo", "calories": 500, "protein": 40}`}
                 value={importText}
                 onChange={(val: string) => {
                     setImportText(val);
@@ -336,11 +339,11 @@ export const ModalsManager: React.FC = () => {
                                             })
                                         }
                                         className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all">
-                                        <option>Desayuno</option>
-                                        <option>Almuerzo</option>
-                                        <option>Merienda</option>
-                                        <option>Cena</option>
-                                        <option>Snack</option>
+                                        <option value="breakfast">Desayuno</option>
+                                        <option value="lunch">Almuerzo</option>
+                                        <option value="snack">Merienda</option>
+                                        <option value="dinner">Cena</option>
+                                        <option value="other">Snack</option>
                                     </select>
                                 </div>
                                 <div>

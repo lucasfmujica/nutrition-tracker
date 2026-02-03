@@ -1,5 +1,6 @@
 import { FileImage } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
 import { useCorrelationAnalytics } from '../../hooks/useCorrelationAnalytics';
 import { useMealTimingAnalytics } from '../../hooks/useMealTimingAnalytics';
@@ -89,6 +90,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
     getTotalsForDate,
     getTargetsForDate,
 }) => {
+    const { t } = useTranslation();
     const waterData = getWaterForDate(dashboardDate);
     const {
         foodLog,
@@ -196,8 +198,12 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
             {/* Date Navigator - Clean Desktop Design */}
             <div className="flex items-center lg:items-start lg:w-full lg:mb-8 justify-center lg:justify-between px-1">
                 <div className="hidden lg:block">
-                    <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-                    <p className="text-sm text-gray-500">Resumen diario</p>
+                    <h1 className="text-2xl font-bold text-gray-900">
+                        {t('dashboard.title')}
+                    </h1>
+                    <p className="text-sm text-gray-500">
+                        {t('dashboard.subtitle')}
+                    </p>
                 </div>
 
                 {/* Date Navigation + Safety Net Toggle */}
@@ -214,7 +220,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                         <LukenFitDatePicker
                             selectedDate={dashboardDate}
                             onChange={setDashboardDate}
-                            label="Fecha"
+                            label={t('weight.date')}
                         />
                     </div>
                 </div>
@@ -274,7 +280,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                         onClick={handleOpenWeeklyReport}
                         className="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-purple-200/50 hover:shadow-xl hover:shadow-purple-200/70 transition-all active:scale-[0.99] flex items-center justify-center gap-3">
                         <FileImage className="w-5 h-5" />
-                        Generar Reporte Semanal
+                        {t('dashboard.weeklyReport')}
                     </button>
                 </div>
 

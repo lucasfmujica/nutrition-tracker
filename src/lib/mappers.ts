@@ -44,6 +44,8 @@ export const mappers = {
         onboarding_completed: profile.onboardingCompleted,
         tutorial_completed: profile.tutorialCompleted,
         ios_shortcuts_configured: profile.iosShortcutsConfigured,
+        unit_system: profile.unitSystem,
+        language: profile.language,
     }),
 
     // Profile: Supabase -> localStorage format (for compatibility)
@@ -75,6 +77,8 @@ export const mappers = {
         onboardingCompleted: dbProfile.onboarding_completed ?? false,
         tutorialCompleted: dbProfile.tutorial_completed ?? false,
         iosShortcutsConfigured: dbProfile.ios_shortcuts_configured ?? false,
+        unitSystem: dbProfile.unit_system as 'metric' | 'imperial', // Type assertion as DB might be text
+        language: dbProfile.language as 'es' | 'en',
     }),
 
     // Targets: localStorage -> Supabase (stored in profiles table)

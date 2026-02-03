@@ -91,19 +91,19 @@ export const useProteinPacing = (
 
         // Map meal types to slots
         const mealToSlot: Record<string, string> = {
-            Desayuno: 'breakfast',
-            Almuerzo: 'lunch',
-            Merienda: 'snack',
-            Cena: 'dinner',
-            Snack: 'snack',
-            'Pre-entreno': 'workout',
-            'Post-entreno': 'workout',
+            breakfast: 'breakfast',
+            lunch: 'lunch',
+            snack: 'snack',
+            dinner: 'dinner',
+            other: 'snack',
+            preworkout: 'workout',
+            postworkout: 'workout',
         };
 
         // Calculate protein per slot
         const slotProtein: Record<string, number> = {};
         dayFoods.forEach((food) => {
-            const mealType = (food.meal || 'Snack').trim();
+            const mealType = (food.meal || 'other').trim();
             const slotId = mealToSlot[mealType] || 'snack';
             slotProtein[slotId] =
                 (slotProtein[slotId] || 0) + (Number(food.protein) || 0);

@@ -3,11 +3,11 @@
  * Allows users to search by food name, select, and log with custom amounts
  */
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Search, X, Loader2, Database, Globe, ChevronDown } from 'lucide-react';
+import { ChevronDown, Database, Globe, Loader2, Search, X } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useTracker } from '../../context/TrackerContext';
 import { useFoodSearch } from '../../hooks/useFoodSearch';
 import { useSmartMealType } from '../../hooks/useSmartMealType';
-import { useTracker } from '../../context/TrackerContext';
 import type { FoodSearchResult } from '../../services/foodApi/types';
 import { FoodEntry } from '../../types/domain';
 import { getArgentinaDateString } from '../../utils/dateUtils';
@@ -44,7 +44,8 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
     const inputRef = useRef<HTMLInputElement>(null);
 
     // Meal selection - auto-detect based on current time
-    const [selectedMeal, setSelectedMeal] = useState<FoodEntry['meal']>(getAutoMealType());
+    const [selectedMeal, setSelectedMeal] =
+        useState<FoodEntry['meal']>(getAutoMealType());
     const [isSaving, setIsSaving] = useState(false);
 
     // Focus input when modal opens
@@ -113,12 +114,10 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
     return (
         <div
             className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-12 sm:pt-20 overflow-y-auto"
-            onClick={onClose}
-        >
+            onClick={onClose}>
             <div
                 className="bg-white rounded-3xl w-full max-w-md shadow-2xl border border-gray-100 mb-24"
-                onClick={(e) => e.stopPropagation()}
-            >
+                onClick={(e) => e.stopPropagation()}>
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100">
                     <h2 className="text-lg font-bold text-slate-900">
@@ -126,8 +125,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                     </h2>
                     <button
                         onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
-                    >
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors">
                         <X size={18} />
                     </button>
                 </div>
@@ -150,8 +148,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                         {query && (
                             <button
                                 onClick={() => setQuery('')}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-slate-200 text-slate-500 hover:bg-slate-300"
-                            >
+                                className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-slate-200 text-slate-500 hover:bg-slate-300">
                                 <X size={14} />
                             </button>
                         )}
@@ -163,7 +160,10 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                     {/* Loading State */}
                     {isLoading && (
                         <div className="flex items-center justify-center py-8">
-                            <Loader2 size={24} className="animate-spin text-blue-500" />
+                            <Loader2
+                                size={24}
+                                className="animate-spin text-blue-500"
+                            />
                             <span className="ml-2 text-slate-500">Buscando...</span>
                         </div>
                     )}
@@ -189,13 +189,22 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                     )}
 
                     {/* Empty State */}
-                    {!isLoading && !selectedFood && hasSearched && results.length === 0 && !error && (
-                        <div className="text-center py-8 text-slate-400">
-                            <Database size={32} className="mx-auto mb-2 opacity-50" />
-                            <p>No se encontraron resultados</p>
-                            <p className="text-xs mt-1">Probá con otro término de búsqueda</p>
-                        </div>
-                    )}
+                    {!isLoading &&
+                        !selectedFood &&
+                        hasSearched &&
+                        results.length === 0 &&
+                        !error && (
+                            <div className="text-center py-8 text-slate-400">
+                                <Database
+                                    size={32}
+                                    className="mx-auto mb-2 opacity-50"
+                                />
+                                <p>No se encontraron resultados</p>
+                                <p className="text-xs mt-1">
+                                    Probá con otro término de búsqueda
+                                </p>
+                            </div>
+                        )}
 
                     {/* Selected Food Editor */}
                     {selectedFood && calculatedMacros && (
@@ -203,8 +212,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                             {/* Back Button */}
                             <button
                                 onClick={clearSelection}
-                                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                            >
+                                className="text-sm text-blue-600 hover:text-blue-700 font-medium">
                                 ← Volver a resultados
                             </button>
 
@@ -217,7 +225,9 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                                             alt={selectedFood.name}
                                             className="w-16 h-16 rounded-xl object-cover bg-white"
                                             onError={(e) => {
-                                                (e.target as HTMLImageElement).style.display = 'none';
+                                                (
+                                                    e.target as HTMLImageElement
+                                                ).style.display = 'none';
                                             }}
                                         />
                                     )}
@@ -244,7 +254,14 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                                     <input
                                         type="number"
                                         value={amount}
-                                        onChange={(e) => setAmount(Math.max(0, parseInt(e.target.value) || 0))}
+                                        onChange={(e) =>
+                                            setAmount(
+                                                Math.max(
+                                                    0,
+                                                    parseInt(e.target.value) || 0,
+                                                ),
+                                            )
+                                        }
                                         className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
                                     />
                                 </div>
@@ -255,12 +272,19 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                                     <div className="relative">
                                         <select
                                             value={unit}
-                                            onChange={(e) => setUnit(e.target.value as 'g' | 'serving')}
-                                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer"
-                                        >
+                                            onChange={(e) =>
+                                                setUnit(
+                                                    e.target.value as
+                                                        | 'g'
+                                                        | 'serving',
+                                                )
+                                            }
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer">
                                             <option value="g">gramos</option>
                                             <option value="serving">
-                                                porción {selectedFood.servingSizeGrams && `(${selectedFood.servingSizeGrams}g)`}
+                                                porción{' '}
+                                                {selectedFood.servingSizeGrams &&
+                                                    `(${selectedFood.servingSizeGrams}g)`}
                                             </option>
                                         </select>
                                         <ChevronDown
@@ -279,16 +303,23 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                                 <div className="relative">
                                     <select
                                         value={selectedMeal}
-                                        onChange={(e) => setSelectedMeal(e.target.value as FoodEntry['meal'])}
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer"
-                                    >
-                                        <option value="Desayuno">Desayuno</option>
-                                        <option value="Almuerzo">Almuerzo</option>
-                                        <option value="Merienda">Merienda</option>
-                                        <option value="Cena">Cena</option>
-                                        <option value="Snack">Snack</option>
-                                        <option value="Pre-entreno">Pre-entreno</option>
-                                        <option value="Post-entreno">Post-entreno</option>
+                                        onChange={(e) =>
+                                            setSelectedMeal(
+                                                e.target.value as FoodEntry['meal'],
+                                            )
+                                        }
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer">
+                                        <option value="breakfast">Desayuno</option>
+                                        <option value="lunch">Almuerzo</option>
+                                        <option value="snack">Merienda</option>
+                                        <option value="dinner">Cena</option>
+                                        <option value="other">Snack</option>
+                                        <option value="Pre-entreno">
+                                            Pre-entreno
+                                        </option>
+                                        <option value="Post-entreno">
+                                            Post-entreno
+                                        </option>
                                     </select>
                                     <ChevronDown
                                         size={16}
@@ -300,11 +331,32 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                             {/* Calculated Macros */}
                             <div className="bg-slate-50 rounded-2xl p-4">
                                 <div className="grid grid-cols-5 gap-2 text-center">
-                                    <MacroValue label="Cal" value={calculatedMacros.calories} unit="" highlight />
-                                    <MacroValue label="Prot" value={calculatedMacros.protein} unit="g" />
-                                    <MacroValue label="Carbs" value={calculatedMacros.carbs} unit="g" />
-                                    <MacroValue label="Grasa" value={calculatedMacros.fat} unit="g" />
-                                    <MacroValue label="Fibra" value={calculatedMacros.fiber} unit="g" />
+                                    <MacroValue
+                                        label="Cal"
+                                        value={calculatedMacros.calories}
+                                        unit=""
+                                        highlight
+                                    />
+                                    <MacroValue
+                                        label="Prot"
+                                        value={calculatedMacros.protein}
+                                        unit="g"
+                                    />
+                                    <MacroValue
+                                        label="Carbs"
+                                        value={calculatedMacros.carbs}
+                                        unit="g"
+                                    />
+                                    <MacroValue
+                                        label="Grasa"
+                                        value={calculatedMacros.fat}
+                                        unit="g"
+                                    />
+                                    <MacroValue
+                                        label="Fibra"
+                                        value={calculatedMacros.fiber}
+                                        unit="g"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -317,8 +369,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                         <button
                             onClick={handleSave}
                             disabled={isSaving || amount <= 0}
-                            className="w-full bg-gradient-to-br from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 disabled:from-slate-300 disabled:to-slate-400 py-4 rounded-2xl text-white font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] disabled:shadow-none flex items-center justify-center gap-2"
-                        >
+                            className="w-full bg-gradient-to-br from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 disabled:from-slate-300 disabled:to-slate-400 py-4 rounded-2xl text-white font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] disabled:shadow-none flex items-center justify-center gap-2">
                             {isSaving ? (
                                 <>
                                     <Loader2 size={18} className="animate-spin" />
@@ -343,8 +394,7 @@ const FoodResultItem: React.FC<{
 }> = ({ food, onSelect }) => (
     <button
         onClick={onSelect}
-        className="w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl transition-colors group"
-    >
+        className="w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl transition-colors group">
         <div className="flex gap-3">
             {food.imageUrl && (
                 <img
@@ -363,13 +413,17 @@ const FoodResultItem: React.FC<{
                             {food.name}
                         </p>
                         {food.brand && (
-                            <p className="text-xs text-slate-500 truncate">{food.brand}</p>
+                            <p className="text-xs text-slate-500 truncate">
+                                {food.brand}
+                            </p>
                         )}
                     </div>
                     <SourceBadge source={food.source} />
                 </div>
                 <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
-                    <span className="font-bold text-orange-600">{food.calories} kcal</span>
+                    <span className="font-bold text-orange-600">
+                        {food.calories} kcal
+                    </span>
                     <span>P: {food.protein}g</span>
                     <span>C: {food.carbs}g</span>
                     <span>G: {food.fat}g</span>
@@ -379,16 +433,15 @@ const FoodResultItem: React.FC<{
     </button>
 );
 
-const SourceBadge: React.FC<{ source: FoodSearchResult['source'] }> = ({ source }) => {
+const SourceBadge: React.FC<{ source: FoodSearchResult['source'] }> = ({
+    source,
+}) => {
     const isOFF = source === 'openfoodfacts';
     return (
         <span
             className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                isOFF
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-blue-100 text-blue-700'
-            }`}
-        >
+                isOFF ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+            }`}>
             {isOFF ? <Globe size={10} /> : <Database size={10} />}
             {isOFF ? 'OFF' : 'USDA'}
         </span>
@@ -405,7 +458,8 @@ const MacroValue: React.FC<{
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
             {label}
         </p>
-        <p className={`text-lg font-bold ${highlight ? 'text-orange-600' : 'text-slate-900'}`}>
+        <p
+            className={`text-lg font-bold ${highlight ? 'text-orange-600' : 'text-slate-900'}`}>
             {value}
             <span className="text-xs font-normal text-slate-400">{unit}</span>
         </p>

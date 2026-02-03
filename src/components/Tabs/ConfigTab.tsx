@@ -1,4 +1,6 @@
 import React, { ChangeEvent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useTracker } from '../../context/TrackerContext';
 import {
     CustomTargets,
     FoodEntry,
@@ -7,7 +9,13 @@ import {
     WeightEntry,
     Workout,
 } from '../../types/domain';
+
 import { calculateMacros } from '../../utils/macroCalculator';
+import {
+    convertWeightForDisplay,
+    getWeightUnit,
+    parseWeightToKg,
+} from '../../utils/unitUtils';
 import { IOSShortcutQR } from '../Settings/iOSShortcutQR';
 import { OuraTokenSetup } from '../Settings/OuraTokenSetup';
 
@@ -52,7 +60,11 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
     // User ID
     userId,
 }) => {
+    const { t, i18n } = useTranslation();
+    const { unitSystem, updateUnitSystem } = useTracker();
     const [isRecalculating, setIsRecalculating] = useState(false);
+
+    const unitLabel = getWeightUnit(unitSystem);
 
     const handleAutoRecalculate = async () => {
         setIsRecalculating(true);
@@ -104,10 +116,10 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
     return (
         <div className="w-full max-w-none space-y-6">
             <div className="mb-2 px-1">
-                <h1 className="text-2xl font-bold text-gray-900">Configuración</h1>
-                <p className="text-sm text-gray-500">
-                    Ajustes de perfil y objetivos
-                </p>
+                <h1 className="text-2xl font-bold text-gray-900">
+                    {t('config.title')}
+                </h1>
+                <p className="text-sm text-gray-500">{t('config.subtitle')}</p>
             </div>
 
             {/* Profile Card */}
@@ -131,7 +143,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                 {/* Avatar Selection */}
                 <div className="mb-8">
                     <label className="block text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-3">
-                        Avatar
+                        {t('config.avatar')}
                     </label>
                     <div className="grid grid-cols-8 gap-2">
                         {[
@@ -171,10 +183,65 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     </div>
                 </div>
 
+                {/* Preferences Section: Unit System & Language */}
+                <div className="mb-8">
+                    <h2 className="text-xs font-black text-gray-400 mb-4 uppercase tracking-[0.2em] flex items-center gap-2">
+                        {t('config.preferences.title')}
+                    </h2>
+
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
+                        {t('config.preferences.unitSystem')}
+                    </label>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => updateUnitSystem('metric')}
+                            className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${
+                                unitSystem === 'metric'
+                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                    : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                            }`}>
+                            {t('config.preferences.metric')}
+                        </button>
+                        <button
+                            onClick={() => updateUnitSystem('imperial')}
+                            className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${
+                                unitSystem === 'imperial'
+                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                    : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                            }`}>
+                            {t('config.preferences.imperial')}
+                        </button>
+                    </div>
+
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1 mt-4">
+                        {t('config.preferences.language')}
+                    </label>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => i18n.changeLanguage('es')}
+                            className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${
+                                i18n.language === 'es'
+                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                    : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                            }`}>
+                            {t('config.preferences.spanish')}
+                        </button>
+                        <button
+                            onClick={() => i18n.changeLanguage('en')}
+                            className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${
+                                i18n.language === 'en'
+                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                    : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                            }`}>
+                            {t('config.preferences.english')}
+                        </button>
+                    </div>
+                </div>
+
                 {/* URL Avatar Override */}
                 <div className="mb-8">
                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
-                        O URL de Imagen Personalizada
+                        {t('config.custom_image')}
                     </label>
                     <input
                         type="text"
@@ -189,21 +256,21 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                 customTargets,
                             )
                         }
-                        placeholder="https://..."
+                        placeholder={t('config.custom_image_placeholder')}
                         className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                     />
                     <p className="text-[10px] text-gray-400 mt-2 px-1">
-                        Si ingresas una URL, se usará en lugar del emoji.
+                        {t('config.custom_image_help')}
                     </p>
                 </div>
 
                 <h2 className="text-xs font-black text-gray-400 mb-4 uppercase tracking-[0.2em] flex items-center gap-2">
-                    PERFIL Y DATOS
+                    {t('config.section_profile')}
                 </h2>
                 <div className="grid grid-cols-2 gap-6">
                     <div className="col-span-2">
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
-                            Nombre
+                            {t('config.name')}
                         </label>
                         <input
                             type="text"
@@ -215,25 +282,30 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                 )
                             }
                             className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 text-lg font-bold text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
-                            placeholder="Tu nombre"
+                            placeholder={t('config.name_placeholder')}
                         />
                     </div>
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
                             {weightHistory && weightHistory.length > 0
-                                ? 'Peso Inicial (kg)'
-                                : 'Peso Actual (kg)'}
+                                ? `${t('config.startWeight')} (${unitLabel})`
+                                : `${t('config.currentWeight')} (${unitLabel})`}
                         </label>
                         <input
                             type="number"
                             step="0.1"
-                            value={profile.currentWeight}
+                            value={convertWeightForDisplay(
+                                profile.currentWeight,
+                                unitSystem,
+                            ).toFixed(1)}
                             onChange={(e) =>
                                 updateConfig(
                                     {
                                         ...profile,
-                                        currentWeight:
-                                            parseFloat(e.target.value) || 0,
+                                        currentWeight: parseWeightToKg(
+                                            e.target.value,
+                                            unitSystem,
+                                        ),
                                     },
                                     customTargets,
                                 )
@@ -243,18 +315,23 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     </div>
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
-                            Peso Objetivo (kg)
+                            {t('config.targetWeight')} ({unitLabel})
                         </label>
                         <input
                             type="number"
                             step="0.1"
-                            value={profile.targetWeight}
+                            value={convertWeightForDisplay(
+                                profile.targetWeight,
+                                unitSystem,
+                            ).toFixed(1)}
                             onChange={(e) =>
                                 updateConfig(
                                     {
                                         ...profile,
-                                        targetWeight:
-                                            parseFloat(e.target.value) || 0,
+                                        targetWeight: parseWeightToKg(
+                                            e.target.value,
+                                            unitSystem,
+                                        ),
                                     },
                                     customTargets,
                                 )
@@ -264,7 +341,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     </div>
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
-                            Altura (cm)
+                            {t('config.height')} (cm)
                         </label>
                         <input
                             type="number"
@@ -283,7 +360,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     </div>
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
-                            Meta de Pasos
+                            {t('config.stepGoal')}
                         </label>
                         <input
                             type="number"
@@ -307,7 +384,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     </div>
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
-                            Edad
+                            {t('config.age')}
                         </label>
                         <input
                             type="number"
@@ -336,11 +413,10 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h2 className="text-xs font-black text-purple-600 mb-1 uppercase tracking-[0.2em] flex items-center gap-2">
-                                🧮 AUTO-CÁLCULO CIENTÍFICO
+                                🧮 {t('config.autoCalculate.title')}
                             </h2>
                             <p className="text-xs text-gray-600">
-                                Ajusta tus datos y recalcula objetivos
-                                automáticamente
+                                {t('config.autoCalculate.subtitle')}
                             </p>
                         </div>
                     </div>
@@ -348,7 +424,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                         <div>
                             <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 px-1">
-                                Género
+                                {t('config.gender')}
                             </label>
                             <select
                                 value={profile.gender || 'male'}
@@ -364,14 +440,18 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     )
                                 }
                                 className="w-full bg-white/80 border border-purple-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all">
-                                <option value="male">Masculino</option>
-                                <option value="female">Femenino</option>
+                                <option value="male">
+                                    {t('config.options.gender.male')}
+                                </option>
+                                <option value="female">
+                                    {t('config.options.gender.female')}
+                                </option>
                             </select>
                         </div>
 
                         <div>
                             <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 px-1">
-                                Días Entrenamiento
+                                {t('config.trainingDays')}
                             </label>
                             <input
                                 type="number"
@@ -404,7 +484,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
 
                         <div>
                             <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 px-1">
-                                Objetivo
+                                {t('config.goal')}
                             </label>
                             <select
                                 value={profile.goal || 'cut'}
@@ -421,15 +501,21 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     )
                                 }
                                 className="w-full bg-white/80 border border-purple-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all">
-                                <option value="cut">Bajar Peso</option>
-                                <option value="maintain">Mantener</option>
-                                <option value="bulk">Subir Peso</option>
+                                <option value="cut">
+                                    {t('config.options.goal.cut')}
+                                </option>
+                                <option value="maintain">
+                                    {t('config.options.goal.maintain')}
+                                </option>
+                                <option value="bulk">
+                                    {t('config.options.goal.bulk')}
+                                </option>
                             </select>
                         </div>
 
                         <div>
                             <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 px-1">
-                                Nivel Actividad
+                                {t('config.activityLevel')}
                             </label>
                             <select
                                 value={profile.activityLevel || 'moderate'}
@@ -448,11 +534,21 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     )
                                 }
                                 className="w-full bg-white/80 border border-purple-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all">
-                                <option value="sedentary">Sedentario</option>
-                                <option value="light">Ligero</option>
-                                <option value="moderate">Moderado</option>
-                                <option value="active">Activo</option>
-                                <option value="very_active">Muy Activo</option>
+                                <option value="sedentary">
+                                    {t('config.options.activityLevel.sedentary')}
+                                </option>
+                                <option value="light">
+                                    {t('config.options.activityLevel.light')}
+                                </option>
+                                <option value="moderate">
+                                    {t('config.options.activityLevel.moderate')}
+                                </option>
+                                <option value="active">
+                                    {t('config.options.activityLevel.active')}
+                                </option>
+                                <option value="very_active">
+                                    {t('config.options.activityLevel.very_active')}
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -464,19 +560,19 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                         {isRecalculating ? (
                             <>
                                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                Recalculando...
+                                {t('config.autoCalculate.loading')}
                             </>
                         ) : (
-                            <>🎯 Recalcular Objetivos con Fórmula Científica</>
+                            <>{t('config.autoCalculate.button')}</>
                         )}
                     </button>
 
                     <div className="mt-4 p-3 bg-white/60 border border-purple-200 rounded-xl">
-                        <p className="text-xs text-purple-900 font-medium leading-relaxed">
-                            <span className="font-black">✨ Mejoras aplicadas:</span>{' '}
-                            Déficit 20% (no 500kcal fijo) · Grasa mínima por kg ·
-                            Proteína optimizada · Basado en Mifflin-St Jeor
-                        </p>
+                        <div className="mt-4 p-3 bg-white/60 border border-purple-200 rounded-xl">
+                            <p className="text-xs text-purple-900 font-medium leading-relaxed">
+                                {t('config.autoCalculate.explanation')}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -484,12 +580,12 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
             {/* Rest Day Targets */}
             <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
                 <h2 className="text-xs font-black text-gray-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-2">
-                    OBJETIVOS (REST DAY)
+                    {t('config.targets.title')}
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
-                            Calorías
+                            {t('config.targets.calories')}
                         </label>
                         <input
                             type="number"
@@ -505,7 +601,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     </div>
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1 text-green-600">
-                            Prot (g)
+                            {t('config.targets.protein')}
                         </label>
                         <input
                             type="number"
@@ -521,7 +617,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     </div>
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1 text-yellow-600">
-                            Carbs (g)
+                            {t('config.targets.carbs')}
                         </label>
                         <input
                             type="number"
@@ -537,7 +633,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     </div>
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1 text-red-600">
-                            Grasas (g)
+                            {t('config.targets.fat')}
                         </label>
                         <input
                             type="number"
@@ -553,7 +649,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     </div>
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
-                            Fibra (g)
+                            {t('config.targets.fiber')}
                         </label>
                         <input
                             type="number"
@@ -574,12 +670,12 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
             <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-full -mr-12 -mt-12 opacity-50" />
                 <h2 className="text-xs font-black text-gray-400 mb-6 uppercase tracking-[0.2em] flex items-center gap-2">
-                    TRAINING DAY BONUS
+                    {t('config.trainingBonus.title')}
                 </h2>
                 <div className="grid grid-cols-2 gap-6 relative z-10">
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
-                            Kcal extra
+                            {t('config.trainingBonus.calories')}
                         </label>
                         <input
                             type="number"
@@ -596,7 +692,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     </div>
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
-                            Carbs (g)
+                            {t('config.trainingBonus.carbs')}
                         </label>
                         <input
                             type="number"
@@ -612,10 +708,12 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     </div>
                 </div>
                 <p className="text-xs text-amber-600 mt-4 font-bold bg-amber-50 inline-block px-3 py-1 rounded-full border border-amber-100">
-                    Training Day:{' '}
-                    {customTargets.calories +
-                        (customTargets.trainingDayCaloriesBonus || 0)}{' '}
-                    kcal · {customTargets.trainingDayCarbs}g carbs
+                    {t('config.trainingBonus.summary', {
+                        calories:
+                            customTargets.calories +
+                            (customTargets.trainingDayCaloriesBonus || 0),
+                        carbs: customTargets.trainingDayCarbs,
+                    })}
                 </p>
             </div>
 
@@ -652,9 +750,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
 
             {/* Sync Status */}
             <div className="bg-blue-50/50 border border-blue-100 border-dashed rounded-2xl p-4 flex items-center justify-between">
-                <p className="text-xs text-blue-600 font-bold">
-                    💾 Sincronización automática activa
-                </p>
+                <p className="text-xs text-blue-600 font-bold">{t('config.sync')}</p>
                 <div className="flex gap-1">
                     <div
                         className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce"
@@ -677,26 +773,26 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     <span className="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 flex items-center justify-center">
                         📤
                     </span>
-                    EXPORTAR
+                    {t('config.export.title')}
                 </h2>
                 <div className="grid grid-cols-2 gap-3">
                     <button
                         onClick={exportForClaude}
                         className="bg-cyan-50 hover:bg-cyan-100 text-cyan-700 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors">
-                        🤖 Claude
+                        🤖 {t('config.export.claude')}
                     </button>
                     <button
                         onClick={exportForNutritionist}
                         className="bg-pink-50 hover:bg-pink-100 text-pink-700 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors">
-                        🩺 Nutri
+                        🩺 {t('config.export.nutritionist')}
                     </button>
                     <button
                         onClick={exportBackup}
                         className="bg-amber-50 hover:bg-amber-100 text-amber-700 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors">
-                        📤 Backup
+                        📤 {t('config.export.backup')}
                     </button>
                     <label className="bg-gray-50 hover:bg-gray-100 text-gray-700 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-colors">
-                        📥 Importar
+                        📥 {t('config.export.import')}
                         <input
                             type="file"
                             accept=".json"
@@ -741,7 +837,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                 </div>
 
                 <p className="text-xs text-gray-400 mt-4 text-center">
-                    ⚠️ Importar reemplaza TODOS los datos
+                    {t('config.export.warning')}
                 </p>
             </div>
         </div>

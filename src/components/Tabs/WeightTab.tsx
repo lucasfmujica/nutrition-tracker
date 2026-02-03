@@ -1,6 +1,13 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useTracker } from '../../context/TrackerContext';
 import { useWeightForm } from '../../hooks/ui/useWeightForm';
 import { Profile, WeightEntry, WeightProjection } from '../../types/domain';
+import {
+    convertWeightForDisplay,
+    getWeightInputStep,
+    getWeightUnit,
+} from '../../utils/unitUtils';
 import { WeightLineChart } from '../Charts/WeightLineChart';
 import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
@@ -43,20 +50,42 @@ export const WeightTab: React.FC<WeightTabProps> = ({
     confirmDelete,
     formatTime,
 }) => {
+    const { t } = useTranslation();
     const { weight, setWeight, time, setTime, date, setDate, error, handleSubmit } =
         useWeightForm() as any;
 
+    const { unitSystem } = useTracker();
+
     const currentWeight =
         getMostRecentWeight(weightHistory)?.weight || profile.currentWeight;
-    const remaining = (currentWeight - profile.targetWeight).toFixed(1);
+
+    // Convert for display
+    const displayCurrentWeight = convertWeightForDisplay(
+        currentWeight,
+        unitSystem,
+    ).toFixed(1);
+    const displayTargetWeight = convertWeightForDisplay(
+        profile.targetWeight,
+        unitSystem,
+    ).toFixed(1);
+    const remainingVal = currentWeight - profile.targetWeight;
+    const displayRemaining = Math.abs(
+        convertWeightForDisplay(remainingVal, unitSystem),
+    ).toFixed(1);
+
+    // Determine sign for remaining (though remainingVal is raw diff, prompt used absolute in logic)
+    // The original logic was: const remaining = (currentWeight - profile.targetWeight).toFixed(1);
+    // If negative, it implies "gain needed"? Usually "Faltan" implies distance.
+
+    const unitLabel = getWeightUnit(unitSystem);
 
     return (
         <div className="w-full space-y-6">
             <div className="mb-2 px-1">
-                <h1 className="text-2xl font-bold text-gray-900">Peso</h1>
-                <p className="text-sm text-gray-500">
-                    Seguimiento de progreso corporal
-                </p>
+                <h1 className="text-2xl font-bold text-gray-900">
+                    {t('weight.title')}
+                </h1>
+                <p className="text-sm text-gray-500">{t('weight.subtitle')}</p>
             </div>
 
             {/* Entry Form */}
@@ -65,7 +94,7 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                     <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
                         ⚖️
                     </span>
-                    NUEVO REGISTRO
+                    {t('weight.newEntry')}
                 </h2>
                 <div className="flex flex-col gap-3">
                     <div className="flex flex-col sm:flex-row gap-2 w-full">
@@ -73,20 +102,22 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                             <LukenFitDatePicker
                                 selectedDate={date}
                                 onChange={setDate}
-                                label="Fecha"
+                                label={t('weight.date')}
                             />
                         </div>
                         <div className="flex gap-2 w-full sm:flex-[1.5]">
                             <input
                                 type="number"
-                                step="0.1"
+                                step={getWeightInputStep(unitSystem)}
                                 value={weight}
                                 onChange={(e) => setWeight(e.target.value)}
-                                placeholder="84.5"
+                                placeholder={
+                                    unitSystem === 'imperial' ? '186.0' : '84.5'
+                                }
                                 className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-lg min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
                             />
                             <span className="flex items-center text-gray-500 text-sm font-medium">
-                                kg
+                                {unitLabel}
                             </span>
                         </div>
                     </div>
@@ -101,7 +132,7 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                             onClick={handleSubmit}
                             disabled={!weight}
                             className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 px-6 py-3 rounded-xl font-bold text-white shadow-lg shadow-blue-500/30 transition-all">
-                            Guardar
+                            {t('weight.save')}
                         </button>
                     </div>
                 </div>
@@ -110,30 +141,32 @@ export const WeightTab: React.FC<WeightTabProps> = ({
 
             {/* Progress Summary */}
             <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-                <h2 className="text-sm font-bold text-gray-900 mb-4">Progreso</h2>
+                <h2 className="text-sm font-bold text-gray-900 mb-4">
+                    {t('weight.progress')}
+                </h2>
                 <div className="grid grid-cols-3 gap-4 text-center">
                     <div className="p-3 bg-gray-50 rounded-xl">
                         <div className="text-xl font-bold text-gray-900">
-                            {currentWeight}
+                            {displayCurrentWeight}
                         </div>
                         <div className="text-xs text-gray-400 font-medium mt-1">
-                            Actual
+                            {t('weight.current')} ({unitLabel})
                         </div>
                     </div>
                     <div className="p-3 bg-gray-50 rounded-xl">
                         <div className="text-xl font-bold text-blue-600">
-                            {profile.targetWeight}
+                            {displayTargetWeight}
                         </div>
                         <div className="text-xs text-gray-400 font-medium mt-1">
-                            Objetivo
+                            {t('weight.target')}
                         </div>
                     </div>
                     <div className="p-3 bg-gray-50 rounded-xl">
                         <div className="text-xl font-bold text-amber-500">
-                            {remaining}
+                            {displayRemaining}
                         </div>
                         <div className="text-xs text-gray-400 font-medium mt-1">
-                            Faltan
+                            {t('weight.remaining')}
                         </div>
                     </div>
                 </div>
@@ -150,7 +183,7 @@ export const WeightTab: React.FC<WeightTabProps> = ({
             {weightProjection && (
                 <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
                     <h2 className="text-sm font-bold text-gray-900 mb-4">
-                        Proyección
+                        {t('weight.projection')}
                     </h2>
                     <div className="grid grid-cols-2 gap-4 mb-4">
                         <div className="text-center p-3 bg-gray-50 rounded-xl">
@@ -162,17 +195,20 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                                         {weightProjection.adjustedTrend > 0
                                             ? '+'
                                             : ''}
-                                        {weightProjection.adjustedTrend.toFixed(1)}
+                                        {convertWeightForDisplay(
+                                            weightProjection.adjustedTrend,
+                                            unitSystem,
+                                        ).toFixed(1)}
                                     </>
                                 ) : (
                                     '—'
                                 )}{' '}
                                 <span className="text-xs font-normal text-gray-500">
-                                    kg
+                                    {unitLabel}
                                 </span>
                             </div>
                             <div className="text-xs text-gray-400 font-medium mt-1">
-                                Por semana
+                                {t('weight.perWeek')}
                             </div>
                         </div>
                         <div className="text-center p-3 bg-gray-50 rounded-xl">
@@ -182,7 +218,7 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                                     : '-'}
                             </div>
                             <div className="text-xs text-gray-400 font-medium mt-1">
-                                Para llegar
+                                {t('weight.toGo')}
                             </div>
                         </div>
                     </div>
@@ -190,7 +226,7 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                     {weightProjection.formattedGoalDate && (
                         <div className="text-center p-2 bg-blue-900/20 rounded mb-3">
                             <span className="text-sm text-gray-300">
-                                Fecha estimada:{' '}
+                                {t('weight.estimatedDate')}:{' '}
                             </span>
                             <span className="text-sm font-bold text-blue-400">
                                 {weightProjection.formattedGoalDate}
@@ -210,7 +246,7 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                     )}
 
                     <p className="text-xs text-gray-500 mt-3 text-center">
-                        Basado en tu tendencia real de los últimos 14 días
+                        {t('weight.trendDisclaimer')}
                     </p>
                 </div>
             )}
@@ -219,7 +255,7 @@ export const WeightTab: React.FC<WeightTabProps> = ({
             {weightHistory.length > 0 && (
                 <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                     <h2 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-widest">
-                        Historial
+                        {t('weight.history')}
                     </h2>
                     <div className="space-y-1 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                         {weightHistory.map((entry, idx) => (
@@ -266,9 +302,12 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                                         <div className="flex items-center gap-4">
                                             <div className="text-right flex flex-col items-end">
                                                 <span className="font-black text-xl text-gray-900">
-                                                    {entry.weight}
+                                                    {convertWeightForDisplay(
+                                                        entry.weight,
+                                                        unitSystem,
+                                                    ).toFixed(1)}
                                                     <span className="text-xs font-medium text-gray-400 ml-1">
-                                                        kg
+                                                        {unitLabel}
                                                     </span>
                                                 </span>
                                                 {idx < weightHistory.length - 1 && (
@@ -284,10 +323,13 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                                                               ? '↑'
                                                               : '='}
                                                         {Math.abs(
-                                                            entry.weight -
-                                                                weightHistory[
-                                                                    idx + 1
-                                                                ].weight,
+                                                            convertWeightForDisplay(
+                                                                entry.weight -
+                                                                    weightHistory[
+                                                                        idx + 1
+                                                                    ].weight,
+                                                                unitSystem,
+                                                            ),
                                                         ).toFixed(1)}
                                                     </span>
                                                 )}
@@ -317,7 +359,7 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                                                         confirmDelete(
                                                             'weight',
                                                             entry.id,
-                                                            `${entry.weight} kg (${entry.date})`,
+                                                            `${convertWeightForDisplay(entry.weight, unitSystem).toFixed(1)} ${unitLabel} (${entry.date})`,
                                                         )
                                                     }
                                                     className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">

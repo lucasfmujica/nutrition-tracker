@@ -1,5 +1,13 @@
-import { Activity, Calendar, Info, Target, TrendingDown, TrendingUp } from 'lucide-react';
+import {
+    Activity,
+    Calendar,
+    Info,
+    Target,
+    TrendingDown,
+    TrendingUp,
+} from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { WeightProjectionChart } from '../Charts/WeightProjectionChart';
 
 interface PathPoint {
@@ -47,6 +55,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
         coachMessage,
         goal = 'cut',
     }) => {
+        const { t } = useTranslation();
         const [showAdherenceTooltip, setShowAdherenceTooltip] = useState(false);
         const isGainingGoal = goal === 'bulk';
         // Loading / insufficient data state
@@ -62,10 +71,10 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                             <Activity className="w-8 h-8 text-primary opacity-50" />
                         </div>
                         <h3 className="text-slate-900 font-satoshi text-3xl tracking-tight uppercase mb-2">
-                            Calibrando Motor
+                            {t('dashboard.predictive.calibrating.title')}
                         </h3>
                         <p className="text-slate-500 text-sm font-medium max-w-[220px] leading-relaxed">
-                            Analizando flujos de datos para proyectar tu futuro...
+                            {t('dashboard.predictive.calibrating.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -82,10 +91,12 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                             🏆
                         </span>
                         <h3 className="text-4xl font-satoshi text-slate-900 leading-tight mb-2 tracking-tight">
-                            ¡OBJETIVO ALCANZADO!
+                            {t('dashboard.predictive.goalReached.title')}
                         </h3>
                         <p className="text-accent text-lg font-bold uppercase tracking-widest">
-                            ESTADO: {targetWeight} KG CONQUISTADOS
+                            {t('dashboard.predictive.goalReached.subtitle', {
+                                weight: targetWeight,
+                            })}
                         </p>
                     </div>
                 </div>
@@ -100,7 +111,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                     text: '—',
                     color: 'text-slate-300',
                     bg: 'bg-slate-50',
-                    label: 'STABLE',
+                    label: t('dashboard.predictive.status.stable'),
                 };
             }
 
@@ -112,7 +123,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                         text: `+${adjustedTrend.toFixed(1)}`,
                         color: 'text-accent',
                         bg: 'bg-accent/10',
-                        label: 'GANANDO',
+                        label: t('dashboard.predictive.status.gaining'),
                     };
                 }
                 return {
@@ -120,7 +131,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                     text: `${adjustedTrend.toFixed(1)}`,
                     color: 'text-fat',
                     bg: 'bg-fat/10',
-                    label: 'PERDIENDO',
+                    label: t('dashboard.predictive.status.losing'),
                 };
             } else {
                 // CUT MODE: Negative trend is good (green), positive is bad (red)
@@ -130,7 +141,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                         text: `${Math.abs(adjustedTrend).toFixed(1)}`,
                         color: 'text-accent',
                         bg: 'bg-accent/10',
-                        label: 'QUEMANDO',
+                        label: t('dashboard.predictive.status.burning'),
                     };
                 }
                 return {
@@ -138,7 +149,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                     text: `+${adjustedTrend.toFixed(1)}`,
                     color: 'text-fat',
                     bg: 'bg-fat/10',
-                    label: 'GANANDO',
+                    label: t('dashboard.predictive.status.gaining'),
                 };
             }
         };
@@ -150,27 +161,27 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                     color: 'text-accent',
                     bg: 'bg-accent/10',
                     bar: 'bg-accent',
-                    label: 'ESTADO ÓPTIMO',
+                    label: t('dashboard.predictive.adherence.optimal'),
                 };
             if (adherencePercent >= 70)
                 return {
                     color: 'text-primary',
                     bg: 'bg-primary/10',
                     bar: 'bg-primary',
-                    label: 'SISTEMA ESTABLE',
+                    label: t('dashboard.predictive.adherence.stable'),
                 };
             if (adherencePercent >= 50)
                 return {
                     color: 'text-carbs',
                     bg: 'bg-carbs/10',
                     bar: 'bg-carbs',
-                    label: 'INCONSISTENTE',
+                    label: t('dashboard.predictive.adherence.inconsistent'),
                 };
             return {
                 color: 'text-fat',
                 bg: 'bg-fat/10',
                 bar: 'bg-fat',
-                label: 'ESTADO CRÍTICO',
+                label: t('dashboard.predictive.adherence.critical'),
             };
         };
 
@@ -200,7 +211,9 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                                 <div className="flex items-center gap-1.5">
                                     <span className="w-1.5 h-1.5 rounded-full bg-accent animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]" />
                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] whitespace-nowrap">
-                                        Active Predictive Analysis
+                                        {t(
+                                            'dashboard.predictive.labels.activeAnalysis',
+                                        )}
                                     </span>
                                 </div>
                             </div>
@@ -210,13 +223,14 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                             <div className="flex items-center gap-2 group cursor-default">
                                 <span className="w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_10px_rgba(0,102,238,0.2)]" />
                                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                                    PESO ACTUAL
+                                    {t('dashboard.predictive.labels.currentWeight')}
                                 </span>
                             </div>
                             <div className="flex items-center gap-2 group cursor-default">
                                 <span className="w-2.5 h-2.5 rounded-full border-2 border-accent" />
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                                    META ({targetWeight}KG)
+                                    {t('dashboard.predictive.labels.goal')} (
+                                    {targetWeight}KG)
                                 </span>
                             </div>
                         </div>
@@ -228,19 +242,20 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                         <div className="flex items-center gap-2 mb-3">
                             <Calendar className="w-4 h-4 text-primary" />
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                                PROYECCIÓN DE OBJETIVO
+                                {t('dashboard.predictive.labels.projection')}
                             </span>
                         </div>
                         <div className="flex flex-col gap-2">
                             <p className="text-3xl sm:text-5xl font-satoshi text-slate-900 tracking-tight group-hover:text-primary transition-colors duration-500">
-                                {formattedGoalDate?.toUpperCase() || 'CALCULANDO...'}
+                                {formattedGoalDate?.toUpperCase() ||
+                                    t('dashboard.predictive.labels.calculating')}
                             </p>
                             <div className="flex items-center gap-2">
                                 <span className="text-xl sm:text-2xl font-satoshi text-accent leading-none">
                                     {weeksToGoal} sem
                                 </span>
                                 <span className="text-[9px] font-bold text-slate-400 uppercase">
-                                    ESTIMADO
+                                    {t('dashboard.predictive.labels.estimated')}
                                 </span>
                             </div>
                         </div>
@@ -252,12 +267,17 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                     <div className="flex justify-between items-end mb-2.5">
                         <div className="flex items-center gap-1.5">
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                                ADHERENCIA AL SISTEMA
+                                {t('dashboard.predictive.labels.systemAdherence')}
                             </span>
                             <button
-                                onClick={() => setShowAdherenceTooltip(!showAdherenceTooltip)}
+                                onClick={() =>
+                                    setShowAdherenceTooltip(!showAdherenceTooltip)
+                                }
                                 className="w-4 h-4 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center transition-colors group relative">
-                                <Info size={10} className="text-slate-500 group-hover:text-slate-700" />
+                                <Info
+                                    size={10}
+                                    className="text-slate-500 group-hover:text-slate-700"
+                                />
                             </button>
                         </div>
                         <span
@@ -271,7 +291,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                         <div className="mb-3 p-4 bg-blue-50 border border-blue-100 rounded-xl text-xs">
                             <div className="flex justify-between items-start mb-2">
                                 <h4 className="font-black text-blue-900 uppercase tracking-wide text-[10px]">
-                                    CÓMO SE CALCULA
+                                    {t('dashboard.predictive.tooltip.title')}
                                 </h4>
                                 <button
                                     onClick={() => setShowAdherenceTooltip(false)}
@@ -280,36 +300,74 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                                 </button>
                             </div>
                             <p className="text-blue-800 mb-3">
-                                Tu adherencia se calcula promediando 3 métricas de los últimos 7 días:
+                                {t('dashboard.predictive.tooltip.intro')}
                             </p>
                             <div className="space-y-2 mb-3">
                                 <div className="flex items-start gap-2">
-                                    <span className="text-blue-600 font-bold">1.</span>
+                                    <span className="text-blue-600 font-bold">
+                                        1.
+                                    </span>
                                     <div>
-                                        <span className="font-bold text-blue-900">Calorías:</span>
-                                        <span className="text-blue-700"> Dentro del rango según tu objetivo ({goal === 'cut' ? '-40% a +10%' : goal === 'bulk' ? '-10% a +50%' : '±15%'})</span>
+                                        <span className="font-bold text-blue-900">
+                                            {t(
+                                                'dashboard.predictive.tooltip.calories',
+                                            )}
+                                        </span>
+                                        <span className="text-blue-700">
+                                            {' '}
+                                            {t(
+                                                'dashboard.predictive.tooltip.caloriesDesc',
+                                            )}{' '}
+                                            (
+                                            {goal === 'cut'
+                                                ? '-40% a +10%'
+                                                : goal === 'bulk'
+                                                  ? '-10% a +50%'
+                                                  : '±15%'}
+                                            )
+                                        </span>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-2">
-                                    <span className="text-blue-600 font-bold">2.</span>
+                                    <span className="text-blue-600 font-bold">
+                                        2.
+                                    </span>
                                     <div>
-                                        <span className="font-bold text-blue-900">Proteína:</span>
-                                        <span className="text-blue-700"> Mínimo 85% del objetivo</span>
+                                        <span className="font-bold text-blue-900">
+                                            {t(
+                                                'dashboard.predictive.tooltip.protein',
+                                            )}
+                                        </span>
+                                        <span className="text-blue-700">
+                                            {' '}
+                                            {t(
+                                                'dashboard.predictive.tooltip.proteinDesc',
+                                            )}
+                                        </span>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-2">
-                                    <span className="text-blue-600 font-bold">3.</span>
+                                    <span className="text-blue-600 font-bold">
+                                        3.
+                                    </span>
                                     <div>
-                                        <span className="font-bold text-blue-900">Pasos:</span>
-                                        <span className="text-blue-700"> Mínimo 80% del objetivo (6,400 pasos)</span>
+                                        <span className="font-bold text-blue-900">
+                                            {t('dashboard.predictive.tooltip.steps')}
+                                        </span>
+                                        <span className="text-blue-700">
+                                            {' '}
+                                            {t(
+                                                'dashboard.predictive.tooltip.stepsDesc',
+                                            )}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                             <p className="text-blue-800 font-bold text-[11px]">
-                                Score = (checks OK) / 21 días × 100
+                                {t('dashboard.predictive.tooltip.score')}
                             </p>
                             <p className="text-blue-700 mt-2 text-[10px]">
-                                Mejorá tu adherencia cumpliendo más días con tus metas de calorías, proteína y pasos.
+                                {t('dashboard.predictive.tooltip.tip')}
                             </p>
                         </div>
                     )}
@@ -342,7 +400,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                         className={`rounded-2xl p-5 ${trend.bg} border border-slate-100 shadow-sm flex flex-col justify-between transition-all duration-300 hover:border-slate-200 hover:-translate-y-1`}>
                         <div className="flex justify-between items-start mb-3">
                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                                VECTOR TENDENCIA
+                                {t('dashboard.predictive.labels.trendVector')}
                             </span>
                             <TrendIcon className={`w-4 h-4 ${trend.color}`} />
                         </div>
@@ -352,7 +410,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                                 {trend.text}
                             </span>
                             <span className="text-[9px] font-bold text-slate-400 uppercase">
-                                kg/sem
+                                {t('dashboard.predictive.units.kgPerWeek')}
                             </span>
                         </div>
                     </div>
@@ -361,7 +419,9 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                     <div className="rounded-2xl p-5 bg-white border border-slate-100 shadow-sm flex flex-col justify-between transition-all duration-300 hover:border-primary/20 hover:-translate-y-1">
                         <div className="flex justify-between items-start mb-3">
                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                                {isGainingGoal ? 'KG POR GANAR' : 'KG POR PERDER'}
+                                {isGainingGoal
+                                    ? t('dashboard.predictive.labels.toGain')
+                                    : t('dashboard.predictive.labels.toLose')}
                             </span>
                             <Target className="w-4 h-4 text-primary opacity-60" />
                         </div>
@@ -370,7 +430,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                                 {remainingWeight?.toFixed(1) || '—'}
                             </span>
                             <span className="text-[9px] font-bold text-primary uppercase whitespace-nowrap">
-                                kg pend.
+                                {t('dashboard.predictive.units.kgPending')}
                             </span>
                         </div>
                     </div>

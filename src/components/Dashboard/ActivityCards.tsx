@@ -1,5 +1,6 @@
 import { Droplets, Footprints, LucideIcon, Minus, Plus } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ActivityCardProps {
     title: string;
@@ -79,27 +80,28 @@ interface ActivityCardsProps {
 
 export const ActivityCards: React.FC<ActivityCardsProps> = React.memo(
     ({ steps, stepsTarget, water, waterTarget, onAddWater, onRemoveWater }) => {
+        const { t } = useTranslation();
         return (
             <div className="flex gap-3 mb-6">
                 {/* Steps Card */}
                 <div data-tutorial="steps-card" className="flex-1">
                     <ActivityCard
-                        title="Pasos"
+                        title={t('dashboard.activity.steps')}
                         value={steps}
                         target={stepsTarget}
-                        unit="Pasos"
+                        unit={t('dashboard.activity.steps')}
                         icon={Footprints}
                         color="bg-orange-500"
-                        subtext={`Meta: ${stepsTarget}`}
+                        subtext={`${t('dashboard.activity.goal')}: ${stepsTarget}`}
                     />
                 </div>
 
                 {/* Water Card */}
                 <ActivityCard
-                    title="Agua"
+                    title={t('dashboard.activity.water')}
                     value={water}
                     target={waterTarget}
-                    unit="Vasos"
+                    unit={t('dashboard.activity.glasses')}
                     icon={Droplets}
                     color="bg-blue-400"
                     onAdd={onAddWater}

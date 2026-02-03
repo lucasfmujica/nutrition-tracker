@@ -35,7 +35,17 @@ export interface Profile {
     // Macro calculation fields (optional - used for auto-calculation)
     gender?: 'male' | 'female'; // TODO: Add to DB schema
     trainingDaysPerWeek?: number; // TODO: Add to DB schema (0-7)
+    unitSystem?: 'metric' | 'imperial';
+    language?: 'es' | 'en';
 }
+
+export type UnitSystem = 'metric' | 'imperial';
+export type Language = 'es' | 'en';
+
+export const CONVERSION_CONSTANTS = {
+    KG_TO_LBS: 2.20462,
+    LBS_TO_KG: 0.453592,
+} as const;
 
 export interface WeightEntry {
     id: string;
@@ -44,18 +54,21 @@ export interface WeightEntry {
     timestamp: number;
 }
 
+// Basic types
+export type MealType =
+    | 'breakfast'
+    | 'lunch'
+    | 'snack'
+    | 'dinner'
+    | 'other'
+    | 'preworkout'
+    | 'postworkout';
+
 export interface FoodEntry {
     id: string;
     date: string;
     time: string | null;
-    meal:
-        | 'Desayuno'
-        | 'Almuerzo'
-        | 'Merienda'
-        | 'Cena'
-        | 'Snack'
-        | 'Pre-entreno'
-        | 'Post-entreno';
+    meal: MealType;
     name: string;
     description: string | null;
     calories: number;
@@ -124,14 +137,7 @@ export interface WaterEntry {
 export interface MealTemplate {
     id: string;
     name: string;
-    meal:
-        | 'Desayuno'
-        | 'Almuerzo'
-        | 'Merienda'
-        | 'Cena'
-        | 'Snack'
-        | 'Pre-entreno'
-        | 'Post-entreno';
+    meal: MealType;
     description: string | null;
     calories: number;
     protein: number;

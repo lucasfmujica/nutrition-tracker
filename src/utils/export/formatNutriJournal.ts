@@ -53,11 +53,11 @@ export const generateFoodJournal = ({
                 // Sort by time if available, otherwise by meal order
                 if (a.time && b.time) return a.time.localeCompare(b.time);
                 const mealOrder: Record<string, number> = {
-                    Desayuno: 1,
-                    Almuerzo: 2,
-                    Merienda: 3,
-                    Cena: 4,
-                    Snack: 5,
+                    breakfast: 1,
+                    lunch: 2,
+                    snack: 3,
+                    dinner: 4,
+                    other: 5,
                 };
                 return (mealOrder[a.meal] || 99) - (mealOrder[b.meal] || 99);
             });

@@ -1,9 +1,10 @@
+import { Camera, Clock, Plus, ScanBarcode, Search } from 'lucide-react';
 import React, { useMemo } from 'react';
-import { Search, ScanBarcode, Plus, Camera, Clock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
-import { useSmartMealType } from '../../hooks/useSmartMealType';
 import { useProteinPacing } from '../../hooks/useProteinPacing';
 import { useSmartMealCompass } from '../../hooks/useSmartMealCompass';
+import { useSmartMealType } from '../../hooks/useSmartMealType';
 import { FoodEntry, Macros, MealTemplate, WaterEntry } from '../../types/domain';
 import {
     FastLogCarousel,
@@ -83,6 +84,7 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
     setShowFoodForm,
     setEditingFoodId,
 }) => {
+    const { t } = useTranslation();
     const {
         frequentFoods,
         frequentCombos,
@@ -148,7 +150,7 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
     const handleSmartAdd = (suggestion: CompassSuggestion) => {
         setNewFood({
             date: selectedFoodDate,
-            meal: 'Snack',
+            meal: 'snack',
             name: suggestion.name,
             calories: suggestion.calories.toString(),
             protein: suggestion.protein.toString(),
@@ -219,13 +221,13 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
     const groupedMeals = useMemo(() => {
         if (!hasFoods) return [];
 
-        const MEAL_ORDER = ['Desayuno', 'Almuerzo', 'Merienda', 'Cena', 'Snack'];
+        const MEAL_ORDER = ['breakfast', 'lunch', 'snack', 'dinner', 'other'];
 
         const groups = foods.reduce((acc: any, food) => {
-            let meal = (food.meal || 'Snack').trim();
+            let meal = (food.meal || 'other').trim();
             const normalizedMeal =
                 MEAL_ORDER.find((m) => m.toLowerCase() === meal.toLowerCase()) ||
-                'Snack';
+                'other';
 
             if (!acc[normalizedMeal])
                 acc[normalizedMeal] = { items: [], totalCalories: 0 };
@@ -250,44 +252,43 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
                 <div className="flex items-center gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Diario</h1>
-                        <p className="text-sm text-gray-500">Registro de alimentos</p>
+                        <h1 className="text-2xl font-bold text-gray-900">
+                            {t('diary.title')}
+                        </h1>
+                        <p className="text-sm text-gray-500">
+                            {t('diary.subtitle')}
+                        </p>
                     </div>
                     {/* Quick Action Buttons */}
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => setShowFoodHistoryPanel(true)}
                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 active:bg-indigo-200 transition-colors"
-                            title="Historial de comidas"
-                        >
+                            title="Historial de comidas">
                             <Clock size={20} />
                         </button>
                         <button
                             onClick={() => setShowFoodSearchModal(true)}
                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 active:bg-blue-200 transition-colors"
-                            title="Buscar alimento"
-                        >
+                            title="Buscar alimento">
                             <Search size={20} />
                         </button>
                         <button
                             onClick={() => setShowBarcodeModal(true)}
                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 active:bg-emerald-200 transition-colors"
-                            title="Escanear código de barras"
-                        >
+                            title="Escanear código de barras">
                             <ScanBarcode size={20} />
                         </button>
                         <button
                             onClick={() => setShowFoodScanModal(true)}
                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-purple-50 text-purple-600 hover:bg-purple-100 active:bg-purple-200 transition-colors"
-                            title="Escanear con cámara AI"
-                        >
+                            title="Escanear con cámara AI">
                             <Camera size={20} />
                         </button>
                         <button
-                            onClick={() => handleAddFood('Almuerzo')}
+                            onClick={() => handleAddFood('lunch')}
                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300 transition-colors"
-                            title="Agregar manualmente"
-                        >
+                            title="Agregar manualmente">
                             <Plus size={20} />
                         </button>
                     </div>
@@ -296,7 +297,7 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                     <LukenFitDatePicker
                         selectedDate={selectedFoodDate}
                         onChange={setSelectedFoodDate}
-                        label="Fecha"
+                        label={t('weight.date')}
                     />
                 </div>
             </div>
@@ -326,36 +327,42 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                         <span className="text-2xl">🍽️</span>
                     </div>
                     <h3 className="text-gray-900 font-bold text-lg mb-1">
-                        Sin comidas registradas
+                        {t('diary.noFoods.title')}
                     </h3>
                     <p className="text-gray-500 text-sm">
-                        Registra tu primera comida del día.
+                        {t('diary.noFoods.subtitle')}
                     </p>
                     <button
-                        onClick={() => handleAddFood('Desayuno')}
+                        onClick={() => handleAddFood('breakfast')}
                         className="mt-6 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-blue-600/20">
-                        Registrar Comida
+                        {t('diary.noFoods.button')}
                     </button>
                 </div>
             ) : (
                 <div className="space-y-4 pb-12">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {groupedMeals.map((group) => (
-                            <MealSection
-                                key={group.type}
-                                title={group.type}
-                                foods={group.items}
-                                totals={{ calories: group.calories }}
-                                onAddFood={() => handleAddFood(group.type)}
-                                onEditFood={handleEditFood}
-                                onToggleFavorite={handleToggleFavorite}
-                                onDuplicateFood={handleDuplicateFood}
-                                favoriteMap={favoriteMap}
-                                onDeleteFood={(food) =>
-                                    confirmDelete('food', food.id, food.name)
-                                }
-                            />
-                        ))}
+                        {groupedMeals.map((group) => {
+                            const getMealTranslation = (type: string) => {
+                                return t(`mealTypes.${type}`);
+                            };
+
+                            return (
+                                <MealSection
+                                    key={group.type}
+                                    title={getMealTranslation(group.type)}
+                                    foods={group.items}
+                                    totals={{ calories: group.calories }}
+                                    onAddFood={() => handleAddFood(group.type)}
+                                    onEditFood={handleEditFood}
+                                    onToggleFavorite={handleToggleFavorite}
+                                    onDuplicateFood={handleDuplicateFood}
+                                    favoriteMap={favoriteMap}
+                                    onDeleteFood={(food) =>
+                                        confirmDelete('food', food.id, food.name)
+                                    }
+                                />
+                            );
+                        })}
                     </div>
 
                     <DaySummary
@@ -400,7 +407,7 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
 
             {hasFoods && (
                 <p className="text-xs text-gray-500 text-center">
-                    ← Desliza para eliminar
+                    {t('diary.swipeHint')}
                 </p>
             )}
         </div>

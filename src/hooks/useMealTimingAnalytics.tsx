@@ -179,15 +179,15 @@ export const useMealTimingAnalytics = (
 
         // 4. CONSISTENCY ANALYSIS
         const breakfastTimes = last30DaysFoods
-            .filter((f) => f.meal === 'Desayuno' && f.time)
+            .filter((f) => f.meal === 'breakfast' && f.time)
             .map((f) => f.time!);
 
         const lunchTimes = last30DaysFoods
-            .filter((f) => f.meal === 'Almuerzo' && f.time)
+            .filter((f) => f.meal === 'lunch' && f.time)
             .map((f) => f.time!);
 
         const dinnerTimes = last30DaysFoods
-            .filter((f) => f.meal === 'Cena' && f.time)
+            .filter((f) => f.meal === 'dinner' && f.time)
             .map((f) => f.time!);
 
         return {

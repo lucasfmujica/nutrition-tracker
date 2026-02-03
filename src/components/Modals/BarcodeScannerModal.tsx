@@ -3,19 +3,19 @@
  * Looks up nutritional info from OpenFoodFacts database
  */
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-    X,
-    Camera,
-    Loader2,
     AlertCircle,
-    RefreshCw,
-    ChevronDown,
     Barcode,
+    Camera,
+    ChevronDown,
+    Loader2,
+    RefreshCw,
     Search,
+    X,
 } from 'lucide-react';
-import { useBarcodeScanner } from '../../hooks/useBarcodeScanner';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTracker } from '../../context/TrackerContext';
+import { useBarcodeScanner } from '../../hooks/useBarcodeScanner';
 import type { FoodEntry } from '../../types/domain';
 import { getArgentinaDateString } from '../../utils/dateUtils';
 
@@ -55,7 +55,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
     const hasStartedRef = useRef(false);
 
     // Meal selection
-    const [selectedMeal, setSelectedMeal] = useState<FoodEntry['meal']>('Almuerzo');
+    const [selectedMeal, setSelectedMeal] = useState<FoodEntry['meal']>('lunch');
     const [isSaving, setIsSaving] = useState(false);
 
     // Start scanner when modal opens
@@ -76,7 +76,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
             hasStartedRef.current = false;
             stopScanning();
             resetScanner();
-            setSelectedMeal('Almuerzo');
+            setSelectedMeal('lunch');
         }
     }, [isOpen, stopScanning, resetScanner]);
 
@@ -137,12 +137,10 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
     return (
         <div
             className="fixed inset-0 bg-black/90 z-50 flex items-start justify-center p-4 pt-8 overflow-y-auto"
-            onClick={onClose}
-        >
+            onClick={onClose}>
             <div
                 className="bg-white rounded-3xl w-full max-w-md shadow-2xl mb-24"
-                onClick={(e) => e.stopPropagation()}
-            >
+                onClick={(e) => e.stopPropagation()}>
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100">
                     <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -151,8 +149,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                     </h2>
                     <button
                         onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
-                    >
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors">
                         <X size={18} />
                     </button>
                 </div>
@@ -162,10 +159,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                     <div className="p-4">
                         <div className="relative rounded-2xl overflow-hidden bg-black aspect-[4/3]">
                             {/* Scanner container */}
-                            <div
-                                id={SCANNER_ELEMENT_ID}
-                                className="w-full h-full"
-                            />
+                            <div id={SCANNER_ELEMENT_ID} className="w-full h-full" />
 
                             {/* Scanning overlay */}
                             {isScanning && !scannedBarcode && (
@@ -186,7 +180,10 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                             {/* Initializing state */}
                             {isInitializing && (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80 text-white">
-                                    <Loader2 size={32} className="animate-spin mb-2" />
+                                    <Loader2
+                                        size={32}
+                                        className="animate-spin mb-2"
+                                    />
                                     <p className="text-sm">Iniciando cámara...</p>
                                 </div>
                             )}
@@ -194,21 +191,28 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                             {/* Looking up state */}
                             {isLookingUp && (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80 text-white">
-                                    <Loader2 size={32} className="animate-spin mb-2" />
+                                    <Loader2
+                                        size={32}
+                                        className="animate-spin mb-2"
+                                    />
                                     <p className="text-sm">Buscando producto...</p>
-                                    <p className="text-xs text-slate-400 mt-1">{scannedBarcode}</p>
+                                    <p className="text-xs text-slate-400 mt-1">
+                                        {scannedBarcode}
+                                    </p>
                                 </div>
                             )}
 
                             {/* Error state */}
                             {error && (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-white p-6 text-center">
-                                    <AlertCircle size={40} className="text-red-400 mb-3" />
+                                    <AlertCircle
+                                        size={40}
+                                        className="text-red-400 mb-3"
+                                    />
                                     <p className="text-sm">{error}</p>
                                     <button
                                         onClick={handleScanAgain}
-                                        className="mt-4 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-xl text-sm font-medium flex items-center gap-2"
-                                    >
+                                        className="mt-4 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-xl text-sm font-medium flex items-center gap-2">
                                         <RefreshCw size={16} />
                                         Reintentar
                                     </button>
@@ -235,15 +239,17 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                             Producto no encontrado
                         </h3>
                         <p className="text-sm text-slate-500 mb-4">
-                            El código <span className="font-mono font-bold">{scannedBarcode}</span> no
-                            está en nuestra base de datos.
+                            El código{' '}
+                            <span className="font-mono font-bold">
+                                {scannedBarcode}
+                            </span>{' '}
+                            no está en nuestra base de datos.
                         </p>
 
                         <div className="space-y-3">
                             <button
                                 onClick={handleScanAgain}
-                                className="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium flex items-center justify-center gap-2 transition-colors"
-                            >
+                                className="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium flex items-center justify-center gap-2 transition-colors">
                                 <Camera size={18} />
                                 Escanear otro código
                             </button>
@@ -254,8 +260,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                         onClose();
                                         onOpenFoodSearch();
                                     }}
-                                    className="w-full py-3 rounded-2xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium flex items-center justify-center gap-2 transition-colors"
-                                >
+                                    className="w-full py-3 rounded-2xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium flex items-center justify-center gap-2 transition-colors">
                                     <Search size={18} />
                                     Buscar por nombre
                                 </button>
@@ -276,7 +281,9 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                         alt={product.name}
                                         className="w-16 h-16 rounded-xl object-cover bg-white flex-shrink-0"
                                         onError={(e) => {
-                                            (e.target as HTMLImageElement).style.display = 'none';
+                                            (
+                                                e.target as HTMLImageElement
+                                            ).style.display = 'none';
                                         }}
                                     />
                                 )}
@@ -305,7 +312,14 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                 <input
                                     type="number"
                                     value={amount}
-                                    onChange={(e) => setAmount(Math.max(0, parseInt(e.target.value) || 0))}
+                                    onChange={(e) =>
+                                        setAmount(
+                                            Math.max(
+                                                0,
+                                                parseInt(e.target.value) || 0,
+                                            ),
+                                        )
+                                    }
                                     className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
                                 />
                             </div>
@@ -316,12 +330,17 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                 <div className="relative">
                                     <select
                                         value={unit}
-                                        onChange={(e) => setUnit(e.target.value as 'g' | 'serving')}
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer"
-                                    >
+                                        onChange={(e) =>
+                                            setUnit(
+                                                e.target.value as 'g' | 'serving',
+                                            )
+                                        }
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer">
                                         <option value="g">gramos</option>
                                         <option value="serving">
-                                            porción {product.servingSizeGrams && `(${product.servingSizeGrams}g)`}
+                                            porción{' '}
+                                            {product.servingSizeGrams &&
+                                                `(${product.servingSizeGrams}g)`}
                                         </option>
                                     </select>
                                     <ChevronDown
@@ -340,16 +359,21 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                             <div className="relative">
                                 <select
                                     value={selectedMeal}
-                                    onChange={(e) => setSelectedMeal(e.target.value as FoodEntry['meal'])}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer"
-                                >
-                                    <option value="Desayuno">Desayuno</option>
-                                    <option value="Almuerzo">Almuerzo</option>
-                                    <option value="Merienda">Merienda</option>
-                                    <option value="Cena">Cena</option>
-                                    <option value="Snack">Snack</option>
+                                    onChange={(e) =>
+                                        setSelectedMeal(
+                                            e.target.value as FoodEntry['meal'],
+                                        )
+                                    }
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer">
+                                    <option value="breakfast">Desayuno</option>
+                                    <option value="lunch">Almuerzo</option>
+                                    <option value="snack">Merienda</option>
+                                    <option value="dinner">Cena</option>
+                                    <option value="other">Snack</option>
                                     <option value="Pre-entreno">Pre-entreno</option>
-                                    <option value="Post-entreno">Post-entreno</option>
+                                    <option value="Post-entreno">
+                                        Post-entreno
+                                    </option>
                                 </select>
                                 <ChevronDown
                                     size={16}
@@ -361,19 +385,38 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                         {/* Calculated Macros */}
                         <div className="bg-slate-50 rounded-2xl p-4">
                             <div className="grid grid-cols-5 gap-2 text-center">
-                                <MacroValue label="Cal" value={calculatedMacros.calories} highlight />
-                                <MacroValue label="Prot" value={calculatedMacros.protein} suffix="g" />
-                                <MacroValue label="Carbs" value={calculatedMacros.carbs} suffix="g" />
-                                <MacroValue label="Grasa" value={calculatedMacros.fat} suffix="g" />
-                                <MacroValue label="Fibra" value={calculatedMacros.fiber} suffix="g" />
+                                <MacroValue
+                                    label="Cal"
+                                    value={calculatedMacros.calories}
+                                    highlight
+                                />
+                                <MacroValue
+                                    label="Prot"
+                                    value={calculatedMacros.protein}
+                                    suffix="g"
+                                />
+                                <MacroValue
+                                    label="Carbs"
+                                    value={calculatedMacros.carbs}
+                                    suffix="g"
+                                />
+                                <MacroValue
+                                    label="Grasa"
+                                    value={calculatedMacros.fat}
+                                    suffix="g"
+                                />
+                                <MacroValue
+                                    label="Fibra"
+                                    value={calculatedMacros.fiber}
+                                    suffix="g"
+                                />
                             </div>
                         </div>
 
                         {/* Scan Another Button */}
                         <button
                             onClick={handleScanAgain}
-                            className="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium flex items-center justify-center gap-2 transition-colors"
-                        >
+                            className="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium flex items-center justify-center gap-2 transition-colors">
                             <Camera size={16} />
                             Escanear otro producto
                         </button>
@@ -386,8 +429,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                         <button
                             onClick={handleSave}
                             disabled={isSaving || amount <= 0}
-                            className="w-full bg-gradient-to-br from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:from-slate-300 disabled:to-slate-400 py-4 rounded-2xl text-white font-bold shadow-lg shadow-emerald-500/20 transition-all active:scale-[0.98] disabled:shadow-none flex items-center justify-center gap-2"
-                        >
+                            className="w-full bg-gradient-to-br from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:from-slate-300 disabled:to-slate-400 py-4 rounded-2xl text-white font-bold shadow-lg shadow-emerald-500/20 transition-all active:scale-[0.98] disabled:shadow-none flex items-center justify-center gap-2">
                             {isSaving ? (
                                 <>
                                     <Loader2 size={18} className="animate-spin" />
@@ -415,9 +457,12 @@ const MacroValue: React.FC<{
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
             {label}
         </p>
-        <p className={`text-lg font-bold ${highlight ? 'text-orange-600' : 'text-slate-900'}`}>
+        <p
+            className={`text-lg font-bold ${highlight ? 'text-orange-600' : 'text-slate-900'}`}>
             {value}
-            {suffix && <span className="text-xs font-normal text-slate-400">{suffix}</span>}
+            {suffix && (
+                <span className="text-xs font-normal text-slate-400">{suffix}</span>
+            )}
         </p>
     </div>
 );

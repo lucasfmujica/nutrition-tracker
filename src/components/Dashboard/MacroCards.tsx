@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Macros } from '../../types/domain';
 
 interface MacroCardProps {
@@ -11,6 +12,7 @@ interface MacroCardProps {
 
 const MacroCard: React.FC<MacroCardProps> = React.memo(
     ({ label, current, target, unit = 'g', colorVar }) => {
+        const { t } = useTranslation();
         const percentage = Math.min((current / target) * 100, 100);
         const remaining = Math.max(0, target - current);
 
@@ -25,7 +27,7 @@ const MacroCard: React.FC<MacroCardProps> = React.memo(
                             {remaining.toFixed(0)}
                         </span>
                         <span className="text-[10px] text-gray-400 mb-1">
-                            {unit} left
+                            {unit} {t('dashboard.macros.left')}
                         </span>
                     </div>
 
@@ -57,24 +59,25 @@ interface MacroCardsProps {
 
 export const MacroCards: React.FC<MacroCardsProps> = React.memo(
     ({ totals, targets }) => {
+        const { t } = useTranslation();
         if (!targets || !totals) return null; // Safety check
 
         return (
             <div className="flex gap-3 mb-6" data-tutorial="macro-bars">
                 <MacroCard
-                    label="Proteína"
+                    label={t('dashboard.macros.protein')}
                     current={totals.protein}
                     target={targets.protein}
                     colorVar="--color-protein"
                 />
                 <MacroCard
-                    label="Carbos"
+                    label={t('dashboard.macros.carbs')}
                     current={totals.carbs}
                     target={targets.carbs}
                     colorVar="--color-carbs"
                 />
                 <MacroCard
-                    label="Grasas"
+                    label={t('dashboard.macros.fat')}
                     current={totals.fat}
                     target={targets.fat}
                     colorVar="--color-fat"

@@ -215,6 +215,8 @@ export type Database = {
                     training_day_calories_bonus: number | null;
                     training_day_carbs: number | null;
                     tutorial_completed: boolean | null;
+                    unit_system: 'metric' | 'imperial';
+                    language: 'es' | 'en';
                     updated_at: string | null;
                     user_id: string;
                 };
@@ -241,6 +243,8 @@ export type Database = {
                     training_day_calories_bonus?: number | null;
                     training_day_carbs?: number | null;
                     tutorial_completed?: boolean | null;
+                    unit_system?: 'metric' | 'imperial';
+                    language?: 'es' | 'en';
                     updated_at?: string | null;
                     user_id: string;
                 };
@@ -267,6 +271,8 @@ export type Database = {
                     training_day_calories_bonus?: number | null;
                     training_day_carbs?: number | null;
                     tutorial_completed?: boolean | null;
+                    unit_system?: 'metric' | 'imperial';
+                    language?: 'es' | 'en';
                     updated_at?: string | null;
                     user_id?: string;
                 };

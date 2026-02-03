@@ -113,7 +113,7 @@ export const useMealTemplates = ({
         const newTemplate: MealTemplate = {
             id: `tpl-${Date.now()}`,
             name: templateToSave.name,
-            meal: templateToSave.meal || 'Almuerzo',
+            meal: templateToSave.meal || 'lunch',
             description: templateToSave.description || '',
             calories: templateToSave.calories || 0,
             protein: templateToSave.protein || 0,

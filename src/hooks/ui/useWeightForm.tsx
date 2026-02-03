@@ -5,9 +5,11 @@ import {
     getArgentinaDateString,
     getArgentinaTimestamp,
 } from '../../utils/dateUtils';
+import { parseWeightToKg } from '../../utils/unitUtils';
 
 export const useWeightForm = () => {
-    const { weightHistory, saveWeightHistory, saveWeightEntry } = useTracker();
+    const { weightHistory, saveWeightHistory, saveWeightEntry, unitSystem } =
+        useTracker();
 
     const [weight, setWeight] = useState<string>('');
     const [time, setTime] = useState<string>('09:00');
@@ -29,7 +31,7 @@ export const useWeightForm = () => {
             const entry: WeightEntry = {
                 id: `wh-${Date.now()}`,
                 date: date,
-                weight: parseFloat(weight),
+                weight: parseWeightToKg(weight, unitSystem),
                 timestamp: timestamp,
             };
 

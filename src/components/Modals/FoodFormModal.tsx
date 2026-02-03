@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Search, Loader2, Database, Globe, X } from 'lucide-react';
-import { FoodEntry } from '../../types/domain';
-import { searchFoods, calculateMacros } from '../../services/foodApi';
+import { Database, Globe, Loader2, Search, X } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { calculateMacros, searchFoods } from '../../services/foodApi';
 import type { FoodSearchResult } from '../../services/foodApi/types';
+import { FoodEntry } from '../../types/domain';
 
 interface FoodFormModalProps {
     isOpen: boolean;
@@ -36,7 +36,8 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
     // Amount state for search results
     const [searchAmount, setSearchAmount] = useState(100);
     const [searchUnit, setSearchUnit] = useState<'g' | 'serving'>('g');
-    const [selectedSearchFood, setSelectedSearchFood] = useState<FoodSearchResult | null>(null);
+    const [selectedSearchFood, setSelectedSearchFood] =
+        useState<FoodSearchResult | null>(null);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -91,7 +92,10 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
     // Handle clicking outside results
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
-            if (resultsRef.current && !resultsRef.current.contains(e.target as Node)) {
+            if (
+                resultsRef.current &&
+                !resultsRef.current.contains(e.target as Node)
+            ) {
                 setShowResults(false);
             }
         };
@@ -110,7 +114,9 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
         setSelectedSearchFood(result);
         setSelectedFromSearch(true);
         setShowResults(false);
-        setSearchQuery(result.brand ? `${result.name} (${result.brand})` : result.name);
+        setSearchQuery(
+            result.brand ? `${result.name} (${result.brand})` : result.name,
+        );
 
         // Set default amount based on serving size
         if (result.servingSizeGrams) {
@@ -127,7 +133,8 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
         if (!selectedSearchFood) return;
 
         const macros = calculateMacros(selectedSearchFood, searchAmount, searchUnit);
-        const amountStr = searchUnit === 'g' ? `${searchAmount}g` : `${searchAmount} porción(es)`;
+        const amountStr =
+            searchUnit === 'g' ? `${searchAmount}g` : `${searchAmount} porción(es)`;
 
         onFoodChange({
             ...food,
@@ -217,44 +224,48 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                             setSearchResults([]);
                                             setSelectedSearchFood(null);
                                         }}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                                    >
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                                         <X size={16} />
                                     </button>
                                 )}
                             </div>
 
                             {/* Search Results Dropdown */}
-                            {showResults && searchResults.length > 0 && !selectedSearchFood && (
-                                <div className="absolute z-20 w-full mt-1 bg-white rounded-xl shadow-lg border border-slate-200 max-h-64 overflow-y-auto">
-                                    {searchResults.map((result) => (
-                                        <button
-                                            key={result.id}
-                                            onClick={() => handleSelectSearchResult(result)}
-                                            className="w-full text-left px-3 py-2.5 hover:bg-slate-50 border-b border-slate-100 last:border-0 transition-colors"
-                                        >
-                                            <div className="flex items-center justify-between gap-2">
-                                                <div className="min-w-0 flex-1">
-                                                    <p className="text-sm font-medium text-slate-900 truncate">
-                                                        {result.name}
-                                                    </p>
-                                                    {result.brand && (
-                                                        <p className="text-xs text-slate-500 truncate">
-                                                            {result.brand}
+                            {showResults &&
+                                searchResults.length > 0 &&
+                                !selectedSearchFood && (
+                                    <div className="absolute z-20 w-full mt-1 bg-white rounded-xl shadow-lg border border-slate-200 max-h-64 overflow-y-auto">
+                                        {searchResults.map((result) => (
+                                            <button
+                                                key={result.id}
+                                                onClick={() =>
+                                                    handleSelectSearchResult(result)
+                                                }
+                                                className="w-full text-left px-3 py-2.5 hover:bg-slate-50 border-b border-slate-100 last:border-0 transition-colors">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <div className="min-w-0 flex-1">
+                                                        <p className="text-sm font-medium text-slate-900 truncate">
+                                                            {result.name}
                                                         </p>
-                                                    )}
+                                                        {result.brand && (
+                                                            <p className="text-xs text-slate-500 truncate">
+                                                                {result.brand}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex items-center gap-2 flex-shrink-0">
+                                                        <span className="text-xs font-bold text-orange-600">
+                                                            {result.calories} kcal
+                                                        </span>
+                                                        <SourceBadge
+                                                            source={result.source}
+                                                        />
+                                                    </div>
                                                 </div>
-                                                <div className="flex items-center gap-2 flex-shrink-0">
-                                                    <span className="text-xs font-bold text-orange-600">
-                                                        {result.calories} kcal
-                                                    </span>
-                                                    <SourceBadge source={result.source} />
-                                                </div>
-                                            </div>
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
 
                             {/* Selected Search Food Preview */}
                             {selectedSearchFood && previewMacros && (
@@ -268,8 +279,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                                 setSelectedSearchFood(null);
                                                 setSearchQuery('');
                                             }}
-                                            className="text-slate-400 hover:text-slate-600"
-                                        >
+                                            className="text-slate-400 hover:text-slate-600">
                                             <X size={14} />
                                         </button>
                                     </div>
@@ -279,34 +289,56 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                         <input
                                             type="number"
                                             value={searchAmount}
-                                            onChange={(e) => setSearchAmount(Math.max(0, parseInt(e.target.value) || 0))}
+                                            onChange={(e) =>
+                                                setSearchAmount(
+                                                    Math.max(
+                                                        0,
+                                                        parseInt(e.target.value) ||
+                                                            0,
+                                                    ),
+                                                )
+                                            }
                                             className="w-20 px-2 py-1.5 bg-white border border-blue-200 rounded-lg text-sm text-center font-bold"
                                         />
                                         <select
                                             value={searchUnit}
-                                            onChange={(e) => setSearchUnit(e.target.value as 'g' | 'serving')}
-                                            className="flex-1 px-2 py-1.5 bg-white border border-blue-200 rounded-lg text-sm"
-                                        >
+                                            onChange={(e) =>
+                                                setSearchUnit(
+                                                    e.target.value as
+                                                        | 'g'
+                                                        | 'serving',
+                                                )
+                                            }
+                                            className="flex-1 px-2 py-1.5 bg-white border border-blue-200 rounded-lg text-sm">
                                             <option value="g">gramos</option>
                                             <option value="serving">
-                                                porción {selectedSearchFood.servingSizeGrams && `(${selectedSearchFood.servingSizeGrams}g)`}
+                                                porción{' '}
+                                                {selectedSearchFood.servingSizeGrams &&
+                                                    `(${selectedSearchFood.servingSizeGrams}g)`}
                                             </option>
                                         </select>
                                     </div>
 
                                     {/* Preview macros */}
                                     <div className="flex items-center justify-between text-xs">
-                                        <span className="font-bold text-orange-600">{previewMacros.calories} kcal</span>
-                                        <span className="text-slate-600">P: {previewMacros.protein}g</span>
-                                        <span className="text-slate-600">C: {previewMacros.carbs}g</span>
-                                        <span className="text-slate-600">G: {previewMacros.fat}g</span>
+                                        <span className="font-bold text-orange-600">
+                                            {previewMacros.calories} kcal
+                                        </span>
+                                        <span className="text-slate-600">
+                                            P: {previewMacros.protein}g
+                                        </span>
+                                        <span className="text-slate-600">
+                                            C: {previewMacros.carbs}g
+                                        </span>
+                                        <span className="text-slate-600">
+                                            G: {previewMacros.fat}g
+                                        </span>
                                     </div>
 
                                     {/* Apply button */}
                                     <button
                                         onClick={applySearchSelection}
-                                        className="w-full mt-2 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors"
-                                    >
+                                        className="w-full mt-2 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors">
                                         Usar estos valores
                                     </button>
                                 </div>
@@ -315,7 +347,9 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                             {/* Divider */}
                             <div className="flex items-center gap-3 mt-3 mb-1">
                                 <div className="flex-1 h-px bg-slate-200" />
-                                <span className="text-xs text-slate-400 uppercase font-bold">o ingresá manualmente</span>
+                                <span className="text-xs text-slate-400 uppercase font-bold">
+                                    o ingresá manualmente
+                                </span>
                                 <div className="flex-1 h-px bg-slate-200" />
                             </div>
                         </div>
@@ -336,11 +370,13 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                     })
                                 }
                                 className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer">
-                                <option>Desayuno</option>
-                                <option>Almuerzo</option>
-                                <option>Merienda</option>
-                                <option>Cena</option>
-                                <option>Snack</option>
+                                <option value="breakfast">Desayuno</option>
+                                <option value="lunch">Almuerzo</option>
+                                <option value="snack">Merienda</option>
+                                <option value="dinner">Cena</option>
+                                <option value="other">Snack / Otros</option>
+                                <option value="preworkout">Pre-Entreno</option>
+                                <option value="postworkout">Post-Entreno</option>
                             </select>
                         </div>
                         <div>
@@ -505,16 +541,15 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
 };
 
 // Source badge component
-const SourceBadge: React.FC<{ source: FoodSearchResult['source'] }> = ({ source }) => {
+const SourceBadge: React.FC<{ source: FoodSearchResult['source'] }> = ({
+    source,
+}) => {
     const isOFF = source === 'openfoodfacts';
     return (
         <span
             className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${
-                isOFF
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-blue-100 text-blue-700'
-            }`}
-        >
+                isOFF ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+            }`}>
             {isOFF ? <Globe size={8} /> : <Database size={8} />}
             {isOFF ? 'OFF' : 'USDA'}
         </span>

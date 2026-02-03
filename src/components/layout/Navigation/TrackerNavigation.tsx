@@ -1,7 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../../context/TrackerContext';
 
 export const TrackerNavigation: React.FC = () => {
+    const { t } = useTranslation();
     const { activeTab, setActiveTab } = useTracker() as any;
 
     if (!['pasos', 'oura'].includes(activeTab)) return null;
@@ -18,13 +20,15 @@ export const TrackerNavigation: React.FC = () => {
                                 ? 'text-blue-600 border-b-2 border-blue-600'
                                 : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
                         }`}>
-                        {tab === 'oura' ? '💍 Oura' : '👟 Pasos'}
+                        {tab === 'oura'
+                            ? `💍 ${t('tabs.oura')}`
+                            : `👟 ${t('tabs.steps')}`}
                     </button>
                 ))}
                 <button
                     onClick={() => setActiveTab('dashboard')}
                     className="ml-auto text-gray-500 text-xs px-2">
-                    ← Volver
+                    ← {t('navigation.back')}
                 </button>
             </div>
         </nav>

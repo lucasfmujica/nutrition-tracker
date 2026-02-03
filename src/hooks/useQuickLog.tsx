@@ -131,10 +131,10 @@ export const useQuickLog = (
             const getSmartMealType = (timeStr: string) => {
                 const hour = parseInt(timeStr.split(':')[0], 10);
 
-                if (hour >= 5 && hour < 12) return 'Desayuno';
-                if (hour >= 12 && hour < 16) return 'Almuerzo';
-                if (hour >= 16 && hour < 20) return 'Merienda';
-                return 'Cena'; // 20:00 - 05:00
+                if (hour >= 5 && hour < 12) return 'breakfast';
+                if (hour >= 12 && hour < 16) return 'lunch';
+                if (hour >= 16 && hour < 20) return 'snack';
+                return 'dinner'; // 20:00 - 05:00
             };
 
             const itemsToLog = itemOrCombo.items ? itemOrCombo.items : [itemOrCombo];

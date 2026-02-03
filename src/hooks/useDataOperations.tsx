@@ -204,7 +204,7 @@ export const useDataOperations = ({
                         `f-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                     date: entry.date || getArgentinaDateString(),
                     time: entry.time || '',
-                    meal: entry.meal || 'Almuerzo',
+                    meal: entry.meal || 'lunch',
                     name: entry.name || 'Comida importada',
                     description: entry.description || '',
                     calories: parseInt(entry.calories) || 0,

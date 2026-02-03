@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { WeightEntry } from '../types/domain';
+import { Profile, WeightEntry } from '../types/domain';
+import { convertWeightForDisplay, parseWeightToKg } from '../utils/unitUtils';
 
 interface BiometricsActions {
+    profile: Profile;
     weightHistory: WeightEntry[];
     saveWeightHistory: (history: WeightEntry[]) => Promise<void>;
     saveWeightEntry: (entry: WeightEntry) => Promise<any>;
@@ -24,7 +26,10 @@ export const useWeightEditing = (biometrics: BiometricsActions) => {
         const entry = biometrics.weightHistory.find((w) => w.id === id);
         if (entry) {
             setEditingWeightId(id);
-            setEditingWeightValue(entry.weight.toString());
+            const unitSystem = biometrics.profile.unitSystem || 'metric';
+            const displayWeight = convertWeightForDisplay(entry.weight, unitSystem);
+            // setEditingWeightValue(entry.weight.toString());
+            setEditingWeightValue(displayWeight.toFixed(1));
         }
     };
 
@@ -37,9 +42,13 @@ export const useWeightEditing = (biometrics: BiometricsActions) => {
         if (!editingWeightId) return;
         const entry = biometrics.weightHistory.find((w) => w.id === editingWeightId);
         if (entry) {
+            const unitSystem = biometrics.profile.unitSystem || 'metric';
+            const weightKg = parseWeightToKg(editingWeightValue, unitSystem);
+
             const updatedEntry: WeightEntry = {
                 ...entry,
-                weight: parseFloat(editingWeightValue),
+                // weight: parseFloat(editingWeightValue),
+                weight: weightKg,
             };
 
             // 1. Update local storage and profile

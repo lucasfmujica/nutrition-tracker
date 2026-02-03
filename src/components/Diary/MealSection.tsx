@@ -1,6 +1,8 @@
 import { Coffee, Cookie, Moon, Plus, Sun, Sunrise } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FoodEntry } from '../../types/domain';
+import { getMealTypeName } from '../../utils/mealTypeUtils';
 import { FoodItem } from './FoodItem';
 
 interface MealSectionProps {
@@ -26,15 +28,16 @@ export const MealSection: React.FC<MealSectionProps> = ({
     onToggleFavorite,
     favoriteMap,
 }) => {
+    const { t } = useTranslation();
     const getIcon = () => {
         switch (title) {
-            case 'Desayuno':
+            case 'breakfast':
                 return <Sunrise className="text-orange-500" size={20} />;
-            case 'Almuerzo':
+            case 'lunch':
                 return <Sun className="text-yellow-500" size={20} />;
-            case 'Merienda':
+            case 'snack':
                 return <Coffee className="text-amber-700" size={20} />; // Adjusted brown color
-            case 'Cena':
+            case 'dinner':
                 return <Moon className="text-indigo-500" size={20} />;
             default:
                 return <Cookie className="text-pink-500" size={20} />;
@@ -47,7 +50,9 @@ export const MealSection: React.FC<MealSectionProps> = ({
             <div className="flex justify-between items-center p-4 bg-gray-50/50 border-b border-gray-100">
                 <div className="flex items-center gap-2">
                     {getIcon()}
-                    <h3 className="text-gray-900 font-bold text-base">{title}</h3>
+                    <h3 className="text-gray-900 font-bold text-base">
+                        {getMealTypeName(title, t)}
+                    </h3>
                 </div>
                 <span className="text-sm font-semibold text-gray-900 bg-white px-2 py-0.5 rounded-lg border border-gray-100 shadow-sm">
                     {totals.calories}{' '}
@@ -65,7 +70,9 @@ export const MealSection: React.FC<MealSectionProps> = ({
                         onEdit={() => onEditFood(food)}
                         onTemplate={() => onToggleFavorite(food)}
                         onDelete={() => onDeleteFood(food)}
-                        onDuplicate={onDuplicateFood ? () => onDuplicateFood(food) : undefined}
+                        onDuplicate={
+                            onDuplicateFood ? () => onDuplicateFood(food) : undefined
+                        }
                     />
                 ))}
                 {foods.length === 0 && (

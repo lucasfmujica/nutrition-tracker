@@ -28,6 +28,7 @@ import { useWeeklySnapshot } from '../hooks/useWeeklySnapshot';
 import { useWeightEditing } from '../hooks/useWeightEditing';
 import { useWorkoutEntry } from '../hooks/useWorkoutEntry';
 import { useWorkouts } from '../hooks/useWorkouts';
+import { UnitSystem } from '../types/domain';
 import { Database } from '../types/supabase';
 
 // Define the shape of the Context
@@ -61,6 +62,9 @@ export type TrackerContextType = ReturnType<typeof useTrackerSync> &
         };
         addStepsEntry: () => void;
         weeklyPlan: any; // Add weeklyPlan to context type
+        unitSystem: UnitSystem;
+        setUnitSystem: (system: UnitSystem) => void;
+        updateUnitSystem: (system: UnitSystem) => Promise<void>;
     };
 
 const TrackerContext = createContext<TrackerContextType | null>(null);
@@ -357,6 +361,29 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         uiState.setNewSteps('');
     };
 
+    // 21. Unit System
+    const [unitSystem, setUnitSystem] = useState<UnitSystem>(
+        biometrics.profile?.unitSystem || 'metric',
+    );
+
+    // Sync local state with profile changes from cloud/DB
+    useEffect(() => {
+        if (
+            biometrics.profile?.unitSystem &&
+            biometrics.profile.unitSystem !== unitSystem
+        ) {
+            setUnitSystem(biometrics.profile.unitSystem);
+        }
+    }, [biometrics.profile?.unitSystem]);
+
+    const updateUnitSystem = async (system: UnitSystem) => {
+        setUnitSystem(system);
+        if (biometrics.profile) {
+            const newProfile = { ...biometrics.profile, unitSystem: system };
+            await biometrics.saveProfile(newProfile);
+        }
+    };
+
     // Combine everything into value
     const value = useMemo(
         () => ({
@@ -412,6 +439,11 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
             ...weeklyPlanHook,
             weeklyPlan: weeklyPlanHook.plan, // Alias for backward compatibility if needed
 
+            // Unit System
+            unitSystem,
+            setUnitSystem,
+            updateUnitSystem,
+
             // Supabase
             supabase,
         }),
@@ -439,6 +471,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
             changeDate,
             addStepsEntry,
             weeklyPlanHook,
+            unitSystem,
         ],
     );
 

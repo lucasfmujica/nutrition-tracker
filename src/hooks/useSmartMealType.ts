@@ -16,10 +16,10 @@ export const useSmartMealType = () => {
             }),
         );
 
-        if (hour >= 6 && hour < 11) return 'Desayuno';
-        if (hour >= 11 && hour < 16) return 'Almuerzo';
-        if (hour >= 16 && hour < 20) return 'Merienda';
-        return 'Cena';
+        if (hour >= 6 && hour < 11) return 'breakfast';
+        if (hour >= 11 && hour < 16) return 'lunch';
+        if (hour >= 16 && hour < 20) return 'snack';
+        return 'dinner';
     }, []);
 
     return { getAutoMealType };

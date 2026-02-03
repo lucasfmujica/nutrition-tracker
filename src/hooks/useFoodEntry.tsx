@@ -45,7 +45,7 @@ export const useFoodEntry = ({
     const [newFood, setNewFood] = useState<FoodFormState>({
         date: getArgentinaDateString(),
         time: '12:00',
-        meal: 'Almuerzo',
+        meal: 'lunch',
         name: '',
         description: '',
         calories: '',
@@ -80,7 +80,7 @@ export const useFoodEntry = ({
                 id: isEditing ? (editingFoodId as string) : crypto.randomUUID(),
                 date: newFood.date || getArgentinaDateString(),
                 time: newFood.time || '',
-                meal: newFood.meal || 'Snack',
+                meal: newFood.meal || 'snack',
                 name: newFood.name.trim(),
                 description: newFood.description?.trim() || '',
                 calories: parseInt(newFood.calories) || 0,
@@ -117,7 +117,7 @@ export const useFoodEntry = ({
             setNewFood({
                 date: getArgentinaDateString(),
                 time: '12:00',
-                meal: 'Almuerzo',
+                meal: 'lunch',
                 name: '',
                 description: '',
                 calories: '',

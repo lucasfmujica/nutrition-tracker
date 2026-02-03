@@ -183,10 +183,10 @@ export const FoodCameraInput: React.FC = () => {
                         value={selectedMealType}
                         onChange={(e) => setSelectedMealType(e.target.value)}
                         className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                        <option value="Desayuno">Desayuno</option>
-                        <option value="Almuerzo">Almuerzo</option>
-                        <option value="Merienda">Merienda</option>
-                        <option value="Cena">Cena</option>
+                        <option value="breakfast">Desayuno</option>
+                        <option value="lunch">Almuerzo</option>
+                        <option value="snack">Merienda</option>
+                        <option value="dinner">Cena</option>
                     </select>
                 </div>
 

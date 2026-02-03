@@ -1,0 +1,217 @@
+{
+    "tabs": {
+        "dashboard": "Summary",
+        "meals": "Meals",
+        "workouts": "Workouts",
+        "weight": "Weight",
+        "steps": "Steps",
+        "config": "Settings",
+        "social": "Social",
+        "progress": "Progress",
+        "oura": "Oura"
+    },
+    "mealTypes": {
+        "breakfast": "Breakfast",
+        "lunch": "Lunch",
+        "snack": "Snack",
+        "dinner": "Dinner",
+        "other": "Other",
+        "preworkout": "Pre-Workout",
+        "postworkout": "Post-Workout"
+    },
+    "weight": {
+        "title": "Weight",
+        "subtitle": "Body progress tracking",
+        "newEntry": "NEW ENTRY",
+        "save": "Save",
+        "date": "Date",
+        "progress": "Progress",
+        "current": "Current",
+        "target": "Goal",
+        "remaining": "Remaining",
+        "history": "History",
+        "projection": "Projection",
+        "perWeek": "Per week",
+        "toGo": "To go",
+        "estimatedDate": "Estimated date",
+        "trendDisclaimer": "Based on your actual trend from the last 14 days"
+    },
+    "units": {
+        "kg": "kg",
+        "lbs": "lbs",
+        "cm": "cm",
+        "kcal": "kcal",
+        "grams": "g"
+    },
+    "config": {
+        "title": "Settings",
+        "subtitle": "Profile and goal settings",
+        "section_profile": "PROFILE & DATA",
+        "name": "Name",
+        "name_placeholder": "Your name",
+        "currentWeight": "Current Weight",
+        "startWeight": "Start Weight",
+        "targetWeight": "Goal Weight",
+        "height": "Height",
+        "stepGoal": "Step Goal",
+        "age": "Age",
+        "gender": "Gender",
+        "trainingDays": "Training Days",
+        "goal": "Goal",
+        "activityLevel": "Activity Level",
+        "autoCalculate": {
+            "title": "SCIENTIFIC AUTO-CALCULATION",
+            "subtitle": "Adjust data and recalculate goals automatically",
+            "button": "Recalculate Goals with Scientific Formula",
+            "loading": "Recalculating...",
+            "explanation": "✨ Improvements active: 20% deficit · Min fat per kg · Optimized protein · Based on Mifflin-St Jeor"
+        },
+        "targets": {
+            "title": "TARGETS (REST DAY)",
+            "calories": "Calories",
+            "protein": "Prot (g)",
+            "carbs": "Carbs (g)",
+            "fat": "Fat (g)",
+            "fiber": "Fiber (g)"
+        },
+        "trainingBonus": {
+            "title": "TRAINING DAY BONUS",
+            "calories": "Extra Kcal",
+            "carbs": "Carbs (g)",
+            "summary": "Training Day: {{calories}} kcal · {{carbs}}g carbs"
+        },
+        "export": {
+            "title": "EXPORT",
+            "claude": "Claude",
+            "nutritionist": "Nutri",
+            "backup": "Backup",
+            "import": "Import",
+            "warning": "⚠️ Import replaces ALL data"
+        },
+        "preferences": {
+            "title": "PREFERENCES",
+            "unitSystem": "Unit System",
+            "metric": "Metric (kg/cm)",
+            "imperial": "Imperial (lbs/ft)",
+            "language": "Language",
+            "spanish": "Español",
+            "english": "English"
+        },
+        "options": {
+            "gender": {
+                "male": "Male",
+                "female": "Female"
+            },
+            "goal": {
+                "cut": "Lose Weight",
+                "maintain": "Maintain",
+                "bulk": "Gain Muscle"
+            },
+            "activityLevel": {
+                "sedentary": "Sedentary",
+                "light": "Lightly Active",
+                "moderate": "Moderately Active",
+                "active": "Active",
+                "very_active": "Very Active"
+            }
+        },
+        "avatar": "AVATAR",
+        "custom_image": "OR CUSTOM IMAGE URL",
+        "custom_image_placeholder": "https://...",
+        "custom_image_help": "If you enter a URL, it will be used instead of the emoji.",
+        "sync": "💾 Auto-sync active"
+    },
+    "diary": {
+        "title": "Diary",
+        "subtitle": "Food log",
+        "noFoods": {
+            "title": "No meals logged",
+            "subtitle": "Log your first meal of the day.",
+            "button": "Log Meal"
+        },
+        "swipeHint": "← Swipe to delete"
+    },
+    "dashboard": {
+        "title": "Summary",
+        "subtitle": "Daily overview",
+        "weeklyReport": "Generate Weekly Report",
+        "summary": {
+            "remaining_title": "Calories Remaining",
+            "shield": "SHIELD",
+            "training": "TRAINING",
+            "recovery": "RECOVERY",
+            "standard": "STANDARD",
+            "maintenance_mode": "Maintenance Mode Active",
+            "maintenance": "Maintenance",
+            "target": "Goal",
+            "consumed": "Consumed",
+            "remaining": "Remaining"
+        },
+        "macros": {
+            "protein": "Protein",
+            "carbs": "Carbs",
+            "fat": "Fat",
+            "left": "left"
+        },
+        "activity": {
+            "steps": "Steps",
+            "water": "Water",
+            "glasses": "Glasses",
+            "goal": "Goal"
+        },
+        "predictive": {
+            "calibrating": {
+                "title": "Calibrating Engine",
+                "subtitle": "Analyzing data streams to project your future..."
+            },
+            "goalReached": {
+                "title": "GOAL REACHED!",
+                "subtitle": "STATUS: {{weight}} KG CONQUERED"
+            },
+            "status": {
+                "stable": "STABLE",
+                "losing": "LOSING",
+                "gaining": "GAINING",
+                "burning": "BURNING"
+            },
+            "adherence": {
+                "optimal": "OPTIMAL STATE",
+                "stable": "SYSTEM STABLE",
+                "inconsistent": "INCONSISTENT",
+                "critical": "CRITICAL STATE"
+            },
+            "labels": {
+                "engine": "ANALYTICS ENGINE",
+                "activeAnalysis": "Active Predictive Analysis",
+                "currentWeight": "CURRENT WEIGHT",
+                "goal": "GOAL",
+                "projection": "TARGET PROJECTION",
+                "calculating": "CALCULATING...",
+                "estimated": "ESTIMATED",
+                "systemAdherence": "SYSTEM ADHERENCE",
+                "trendVector": "TREND VECTOR",
+                "toLose": "KG TO LOSE",
+                "toGain": "KG TO GAIN"
+            },
+            "units": {
+                "kgPerWeek": "kg/wk",
+                "kgPending": "kg left"
+            },
+            "tooltip": {
+                "title": "HOW IT'S CALCULATED",
+                "intro": "Your adherence matches average 3 metrics from last 7 days:",
+                "calories": "Calories:",
+                "caloriesDesc": "Within range based on your goal",
+                "protein": "Protein:",
+                "proteinDesc": "Minimum 85% of target",
+                "steps": "Steps:",
+                "stepsDesc": "Minimum 80% of target (6,400 steps)",
+                "score": "Score = (checks OK) / 21 days × 100",
+                "tip": "Improve adherence by hitting pixel goals more often."
+            }
+        }
+    },
+    "navigation": {
+        "back": "Back"
+    }
+}

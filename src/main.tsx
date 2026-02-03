@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import NutritionTracker from './NutritionTracker';
+import './i18n/config';
 import './index.css';
 
 // Global error handlers to suppress browser extension errors

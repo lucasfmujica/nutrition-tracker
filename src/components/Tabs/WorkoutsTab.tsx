@@ -357,8 +357,13 @@ interface EditableWeeklyPlanProps {
 const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
     setSelectedWorkoutDate,
 }) => {
-    // Use plan from TrackerContext to ensure calorie calculations update correctly
-    const { plan, isEditing, setIsEditing, updateDayPlan } = useTracker();
+    // TODO: Implement plan feature in TrackerContext
+    // Temporarily using local state until context is ready
+    const [plan] = useState<any>({});
+    const [isEditing, setIsEditing] = useState(false);
+    const updateDayPlan = async (dayIndex: number, workout: any) => {
+        console.log('updateDayPlan not implemented yet', dayIndex, workout);
+    };
     const [editingDay, setEditingDay] = useState<number | null>(null);
     const [isSaving, setIsSaving] = useState(false);
 
