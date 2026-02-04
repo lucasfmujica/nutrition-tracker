@@ -670,10 +670,10 @@
                 "good": "✅ Optimal timing for sleep quality"
             },
             "workoutNutrition": {
-                "title": "Workout Nutrition",
-                "avgCarbs": "PRE-WORKOUT CARBS",
-                "avgProtein": "POST-WORKOUT PROTEIN",
-                "daysWithData": "On {{count}} workout days"
+                "title": "Workout Intake",
+                "avgCarbs": "ACTUAL CARBS (PRE)",
+                "avgProtein": "ACTUAL PROTEIN (POST)",
+                "daysWithData": "Based on what you've logged"
             },
             "consistency": {
                 "title": "Schedule Consistency",

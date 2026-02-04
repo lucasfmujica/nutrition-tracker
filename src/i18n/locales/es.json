@@ -676,10 +676,10 @@
                 "good": "✅ Timing óptimo para calidad de sueño"
             },
             "workoutNutrition": {
-                "title": "Nutrición de Entreno",
-                "avgCarbs": "CARBOS PRE-ENTRENO",
-                "avgProtein": "PROTEÍNA POST-ENTRENO",
-                "daysWithData": "En {{count}} días de entreno"
+                "title": "Ingesta en Entrenos",
+                "avgCarbs": "CARBOS REALES (PRE)",
+                "avgProtein": "PROTEÍNA REAL (POST)",
+                "daysWithData": "Basado en promedios de lo que comiste"
             },
             "consistency": {
                 "title": "Consistencia de Horarios",
