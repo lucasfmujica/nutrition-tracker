@@ -51,6 +51,12 @@
             "saving": "Saving...",
             "errorSaving": "Error saving",
             "successSaving": "Token saved"
+        },
+        "weeklyView": {
+            "title": "Weekly Summary",
+            "date": "Date",
+            "noData": "No Oura data",
+            "syncPrompt": "Sync your ring to see weekly data"
         }
     },
     "auth": {
@@ -755,6 +761,8 @@
     },
     "common": {
         "date": "Date",
+        "today": "Today",
+        "locale": "en",
         "install": "Install",
         "howToUse": "How to use",
         "save": "Save",

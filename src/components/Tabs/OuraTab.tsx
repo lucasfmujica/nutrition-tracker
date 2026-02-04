@@ -5,6 +5,7 @@ import { useTracker } from '../../context/TrackerContext';
 import { OuraEntry, Profile } from '../../types/domain';
 import { getArgentinaDateString } from '../../utils/dateUtils';
 import { OuraBentoGrid, OuraData } from '../Oura/OuraBentoGrid';
+import { OuraWeeklyView } from '../Oura/OuraWeeklyView';
 import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
 interface OuraTabProps {
@@ -23,6 +24,7 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
         getStepsForDate,
         profile,
         setActiveTab,
+        stepsLog,
     } = useTracker() as any;
     const [selectedDate, setSelectedDate] = useState(getArgentinaDateString());
     const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
@@ -138,10 +140,14 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
             )}
 
             {hasToken && (
-                <OuraBentoGrid
-                    data={dailyData}
-                    stepGoal={profile?.stepGoal || 8000}
-                />
+                <>
+                    <OuraBentoGrid
+                        data={dailyData}
+                        stepGoal={profile?.stepGoal || 8000}
+                    />
+
+                    <OuraWeeklyView ouraLog={ouraLog} stepsLog={stepsLog || []} />
+                </>
             )}
 
             {isSyncing && (

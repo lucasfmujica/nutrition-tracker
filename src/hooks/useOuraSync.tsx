@@ -155,10 +155,10 @@ export const useOuraSync = ({
 
             try {
                 const today = getArgentinaDateString();
-                const sevenDaysAgo = addDaysToDate(today, -7);
+                const sevenDaysAgo = addDaysToDate(today, -6); // Last 7 days including today
 
                 console.log(
-                    `[OuraSync] Fetching data from ${sevenDaysAgo} to ${today}...`,
+                    `[OuraSync] Fetching data from ${sevenDaysAgo} to ${today} (7 days including today)...`,
                 );
 
                 // Parallel Fetch

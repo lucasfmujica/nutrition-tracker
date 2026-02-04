@@ -51,6 +51,12 @@
             "saving": "Guardando...",
             "errorSaving": "Error al guardar",
             "successSaving": "Token guardado"
+        },
+        "weeklyView": {
+            "title": "Resumen Semanal",
+            "date": "Fecha",
+            "noData": "Sin datos de Oura",
+            "syncPrompt": "Sincronizá tu anillo para ver los datos semanales"
         }
     },
 
@@ -756,6 +762,8 @@
     },
     "common": {
         "date": "Fecha",
+        "today": "Hoy",
+        "locale": "es",
         "install": "Instalar",
         "howToUse": "Cómo usar",
         "save": "Guardar",
