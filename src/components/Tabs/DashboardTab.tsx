@@ -272,25 +272,22 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                         periodizationState={periodizationIntensity}
                     />
                     <PerformanceForecastCard />
+                    <WeeklyPlanningCard
+                        periodization={weeklyPeriodization}
+                        targetWeight={profile?.targetWeight || 75}
+                    />
                     {plateauData && plateauData.isInPlateau && (
                         <PlateauAlertCard plateauData={plateauData} />
                     )}
                 </div>
 
-                {/* 2. THE INSIGHTS TRIO (Balanced Column Row) */}
-                <div className="md:col-span-1 lg:col-span-4 min-w-0">
+                {/* 2. THE INSIGHTS DUO (Balanced Column Row) */}
+                <div className="md:col-span-1 lg:col-span-6 min-w-0">
                     <IdealDayCard pilot={idealDayPilot} />
                 </div>
 
-                <div className="md:col-span-1 lg:col-span-4 min-w-0">
+                <div className="md:col-span-1 lg:col-span-6 min-w-0">
                     <MealTimingCard insights={mealTimingInsights} />
-                </div>
-
-                <div className="md:col-span-2 lg:col-span-4 min-w-0">
-                    <WeeklyPlanningCard
-                        periodization={weeklyPeriodization}
-                        targetWeight={profile?.targetWeight || 75}
-                    />
                 </div>
 
                 {/* 3. INPUT & FEEDBACK (Primary Interaction) */}
