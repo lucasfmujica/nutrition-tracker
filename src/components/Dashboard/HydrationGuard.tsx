@@ -23,7 +23,8 @@ export interface HydrationTarget {
 interface HydrationGuardProps {
     currentIntake: number;
     hydrationTarget: HydrationTarget;
-    onAddWater?: (amount: number) => void;
+    onAddWater?: () => void;
+    onRemoveWater?: () => void;
 }
 
 /**
@@ -81,6 +82,8 @@ const WeatherBadge: React.FC<{
 export const HydrationGuard: React.FC<HydrationGuardProps> = ({
     currentIntake,
     hydrationTarget,
+    onAddWater,
+    onRemoveWater,
 }) => {
     const { t, i18n } = useTranslation();
     const {
@@ -138,10 +141,13 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
     const coachTip = getCoachTip();
 
     return (
-        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-5 rounded-2xl border border-blue-100 shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-5 rounded-2xl border border-blue-100 shadow-sm relative overflow-hidden">
+            {/* Background Decoration */}
+            <div className="absolute right-0 top-0 w-32 h-32 bg-blue-100 rounded-full blur-3xl opacity-20 -mr-10 -mt-10" />
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 relative z-10">
                 <div className="flex items-center gap-2">
-                    <div className="p-2 bg-blue-500 rounded-xl">
+                    <div className="p-2 bg-blue-500 rounded-xl shadow-lg shadow-blue-500/20">
                         <Droplets size={18} className="text-white" />
                     </div>
                     <h3 className="font-bold text-gray-900">
@@ -156,19 +162,42 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
                 </div>
             </div>
 
-            <div className="mb-4">
+            <div className="mb-4 relative z-10">
                 <div className="flex items-end justify-between mb-2">
-                    <div>
-                        <span className="text-3xl font-bold text-gray-900">
-                            {displayIntake}
-                        </span>
-                        <span className="text-lg text-gray-500 ml-1">
-                            {displayUnit}
-                        </span>
+                    <div className="flex items-center gap-4">
+                        <div>
+                            <span className="text-3xl font-black text-gray-900 tracking-tight">
+                                {displayIntake}
+                            </span>
+                            <span className="text-lg text-gray-500 ml-1 font-medium">
+                                {displayUnit}
+                            </span>
+                        </div>
+
+                        {/* Controls */}
+                        {(onAddWater || onRemoveWater) && (
+                            <div className="flex items-center gap-1 bg-white rounded-lg p-1 shadow-sm border border-blue-100">
+                                {onRemoveWater && (
+                                    <button
+                                        onClick={onRemoveWater}
+                                        className="w-8 h-8 flex items-center justify-center rounded-md text-blue-400 hover:bg-blue-50 hover:text-blue-600 active:bg-blue-100 transition-colors">
+                                        -
+                                    </button>
+                                )}
+                                <div className="w-px h-4 bg-gray-100 mx-0.5" />
+                                {onAddWater && (
+                                    <button
+                                        onClick={onAddWater}
+                                        className="w-8 h-8 flex items-center justify-center rounded-md text-blue-600 hover:bg-blue-50 active:bg-blue-100 transition-colors">
+                                        +
+                                    </button>
+                                )}
+                            </div>
+                        )}
                     </div>
                     <div className="text-right">
-                        <span className="text-sm text-gray-500">
-                            {t('dashboard.activity.goal')}:{' '}
+                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-0.5">
+                            {t('dashboard.activity.goal')}
                         </span>
                         <span className="text-lg font-bold text-blue-600">
                             {displayTarget}

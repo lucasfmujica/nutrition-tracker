@@ -18,16 +18,45 @@ export const mapOuraReadiness = (apiData: any): Partial<OuraEntry>[] => {
 export const mapOuraSleep = (apiData: any): Partial<OuraEntry>[] => {
     if (!apiData || !apiData.data) return [];
 
-    return apiData.data.map((item: any) => ({
-        date: item.day,
-        sleepScore: item.score,
-        // Mapping additional fields based on oura_log schema
-        // Note: Oura V2 daily_sleep might differ from sleep periods.
-        // We map what we can match to OuraEntry type.
-        // OuraEntry: deep_sleep_mins, rem_sleep_mins, sleep_hours, bedtime, wake_time
-        // item.contributors might have deep_sleep, rem_sleep etc.
-        // For now we map the score as requested.
-    }));
+    return apiData.data
+        .map((item: any) => ({
+            date: item.day,
+            sleepScore: item.score,
+            // Fallback fields from daily summary
+            bedtime: item.timestamp
+                ? new Date(item.timestamp).toLocaleTimeString('es-AR', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: false,
+                  })
+                : null,
+            wakeTime: item.timestamp // daily_sleep doesn't have explicit end, so rely on sleep details primarily
+                ? null // Placeholder
+                : null,
+        }))
+        .map((entry: any, index: number) => {
+            // Daily Sleep doesn't give us clean bedtime/waketime strings directly in the same format as sleep sessions sometimes.
+            // But let's try to inspect the raw item structure if we could.
+            // Actually, daily_sleep V2 has `bedtime_start` and `bedtime_end`.
+            const raw = apiData.data[index];
+            return {
+                ...entry,
+                bedtime: raw.bedtime_start
+                    ? new Date(raw.bedtime_start).toLocaleTimeString('es-AR', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: false,
+                      })
+                    : null,
+                wakeTime: raw.bedtime_end
+                    ? new Date(raw.bedtime_end).toLocaleTimeString('es-AR', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: false,
+                      })
+                    : null,
+            };
+        });
 };
 
 export const mapOuraSleepDetails = (apiData: any): Partial<OuraEntry>[] => {
@@ -80,9 +109,9 @@ export const mapOuraActivity = (
 /**
  * Merges separate API responses into comprehensive entries for oura_log and steps_log
  * @param {Array} readiness Data from daily_readiness
- * @param {Array} sleep Data from daily_sleep
+ * @param {Array} sleep Data from daily_sleep (Daily Summary)
  * @param {Array} activity Data from daily_activity
- * @param {Array} sleepDetails Data from sleep (detailed sessions)
+ * @param {Array} sleepDetails Data from sleep (Detailed Sessions)
  * @returns {Object} { ouraLogEntries, stepsLogEntries }
  */
 export const mergeOuraData = (
@@ -127,14 +156,14 @@ export const mergeOuraData = (
                 sleepScore: s.sleepScore || 0,
                 activityScore: a.activityScore || 0,
 
-                // Detailed fields
+                // Detailed fields - Prefer detailed session (sd), fallback to daily summary (s)
                 hrv: sd.hrv || 0,
                 restingHr: sd.restingHr || 0,
                 sleepHours: sd.sleepHours || 0,
                 deepSleepMins: sd.deepSleepMins || 0,
                 remSleepMins: sd.remSleepMins || 0,
-                bedtime: sd.bedtime || null,
-                wakeTime: sd.wakeTime || null,
+                bedtime: sd.bedtime || s.bedtime || null,
+                wakeTime: sd.wakeTime || s.wakeTime || null,
             });
         }
 

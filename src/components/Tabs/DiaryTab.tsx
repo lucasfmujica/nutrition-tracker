@@ -3,7 +3,6 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
 import { useProteinPacing } from '../../hooks/useProteinPacing';
-import { useSmartMealCompass } from '../../hooks/useSmartMealCompass';
 import { useSmartMealType } from '../../hooks/useSmartMealType';
 import { FoodEntry, Macros, MealTemplate, WaterEntry } from '../../types/domain';
 import {
@@ -13,33 +12,12 @@ import {
 } from '../Dashboard/FastLogCarousel';
 import { HydrationGuard, HydrationTarget } from '../Dashboard/HydrationGuard';
 import { DaySummary } from '../Diary/DaySummary';
-import { CompassSuggestion, MealCompassCard } from '../Diary/MealCompassCard';
 import { MealSection } from '../Diary/MealSection';
 import { ProteinTimeline } from '../Diary/ProteinTimeline';
 import { WeeklyCalendarNav } from '../Diary/WeeklyCalendarNav';
 import { WeeklyMealPlanView } from '../Diary/WeeklyMealPlanView';
 import { FoodCameraInput } from '../Food/FoodCameraInput';
 import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
-
-interface MealCompassWrapperProps {
-    foodLog: FoodEntry[];
-    remaining: Macros;
-    onAdd: (suggestion: CompassSuggestion) => void;
-}
-
-const MealCompassWrapper: React.FC<MealCompassWrapperProps> = ({
-    foodLog,
-    remaining,
-    onAdd,
-}) => {
-    const suggestions = useSmartMealCompass(foodLog, remaining);
-    return (
-        <MealCompassCard
-            suggestions={suggestions as CompassSuggestion[]}
-            onSelect={onAdd}
-        />
-    );
-};
 
 interface DiaryTabProps {
     // Date state
@@ -58,6 +36,7 @@ interface DiaryTabProps {
     };
     hydrationTarget: HydrationTarget;
     addWaterGlass: (date: string) => void;
+    removeWaterGlass: (date: string) => void;
 
     // Actions
     confirmDelete: (type: string, id: string, name: string) => void;
@@ -78,6 +57,7 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
     getWaterForDate,
     hydrationTarget,
     addWaterGlass,
+    removeWaterGlass,
     confirmDelete,
     newFood,
     setNewFood,
@@ -147,20 +127,6 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
         setShowFoodForm(true);
     };
 
-    const handleSmartAdd = (suggestion: CompassSuggestion) => {
-        setNewFood({
-            date: selectedFoodDate,
-            meal: 'snack',
-            name: suggestion.name,
-            calories: suggestion.calories.toString(),
-            protein: suggestion.protein.toString(),
-            carbs: suggestion.carbs.toString(),
-            fat: suggestion.fat.toString(),
-            fiber: suggestion.fiber?.toString() || '0',
-        });
-        setShowFoodForm(true);
-    };
-
     const handleToggleFavorite = (food: FoodEntry) => {
         // Check if food matches an existing template
         const existingTemplate = getFoodTemplate(food);
@@ -194,29 +160,6 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
             console.error('[DiaryTab] Error duplicating food:', err);
         }
     };
-
-    const compassData = useMemo(() => {
-        const totals = getTotalsForDate(selectedFoodDate);
-        const rawTargets = getTargetsForDate(selectedFoodDate);
-        const targets = rawTargets || {
-            calories: 2000,
-            protein: 150,
-            carbs: 200,
-            fat: 70,
-            fiber: 25,
-        };
-
-        const textRemaining: Macros = {
-            calories: targets.calories - totals.calories,
-            protein: targets.protein - (totals.protein || 0),
-            carbs: targets.carbs - (totals.carbs || 0),
-            fat: targets.fat - (totals.fat || 0),
-            fiber: (targets.fiber || 0) - (totals.fiber || 0),
-        };
-
-        const show = textRemaining.calories >= 200;
-        return { remaining: textRemaining, show };
-    }, [selectedFoodDate, getTotalsForDate, getTargetsForDate]);
 
     const groupedMeals = useMemo(() => {
         if (!hasFoods) return [];
@@ -376,6 +319,13 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                 </div>
             )}
 
+            <HydrationGuard
+                currentIntake={getWaterForDate(selectedFoodDate).ml || 0}
+                hydrationTarget={hydrationTarget}
+                onAddWater={() => addWaterGlass(selectedFoodDate)}
+                onRemoveWater={() => removeWaterGlass(selectedFoodDate)}
+            />
+
             <FastLogCarousel
                 frequentFoods={frequentFoods as FastLogFood[]}
                 frequentCombos={frequentCombos as FastLogCombo[]}
@@ -386,19 +336,6 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                 slots={proteinPacing.slots}
                 remaining={proteinPacing.remainingProtein}
                 targetProtein={proteinPacing.targetProtein}
-            />
-
-            {compassData.show && (
-                <MealCompassWrapper
-                    foodLog={foodLog}
-                    remaining={compassData.remaining}
-                    onAdd={handleSmartAdd}
-                />
-            )}
-
-            <HydrationGuard
-                currentIntake={getWaterForDate(selectedFoodDate).ml || 0}
-                hydrationTarget={hydrationTarget}
             />
 
             {hasFoods && (
