@@ -130,6 +130,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 user_id: userId,
                 date: argentinaDate,
                 steps: parseInt(value, 10),
+                source: 'ios-health', // Tag as iOS Health source for smart merge
             };
             conflictTarget = 'user_id, date';
         } else {

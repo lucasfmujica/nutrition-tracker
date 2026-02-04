@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getCurrentWeather } from '../services/weatherService';
 import { Workout } from '../types/domain';
 import { getArgentinaDateString } from '../utils/dateUtils';
@@ -52,17 +53,24 @@ const calculateHeatBonus = (weather: WeatherData | null) => {
         return { bonus: 0, needsElectrolytes: false };
     }
 
-    const { temperature, humidity } = weather;
+    const { temperature, humidity, unit } = weather;
+
+    // Normalize temperature to Celsius for checking thresholds
+    let tempInCelsius = temperature;
+    if (unit === 'F') {
+        tempInCelsius = (temperature - 32) * (5 / 9);
+    }
+
     let bonus = 0;
     let needsElectrolytes = false;
 
     // Check mild heat conditions
-    if (temperature > TEMP_THRESHOLD_MILD || humidity > HUMIDITY_THRESHOLD) {
+    if (tempInCelsius > TEMP_THRESHOLD_MILD || humidity > HUMIDITY_THRESHOLD) {
         bonus += HEAT_BONUS_MILD; // +500ml
     }
 
     // Check high heat conditions (additional bonus + electrolyte recommendation)
-    if (temperature > TEMP_THRESHOLD_HIGH) {
+    if (tempInCelsius > TEMP_THRESHOLD_HIGH) {
         bonus += HEAT_BONUS_HIGH; // +300ml (total 800ml)
         needsElectrolytes = true;
     }
@@ -77,6 +85,7 @@ export const useHydrationTarget = (
     workoutLog: Workout[],
     date: string,
 ): HydrationTarget => {
+    const { i18n } = useTranslation();
     const [weather, setWeather] = useState<WeatherData | null>(null);
     const [isLoadingWeather, setIsLoadingWeather] = useState(false);
 
@@ -95,7 +104,8 @@ export const useHydrationTarget = (
         const loadWeather = async () => {
             try {
                 setIsLoadingWeather(true);
-                const weatherData = await getCurrentWeather();
+                // Pass language to weather service (en -> NYC/F, es -> BA/C)
+                const weatherData = await getCurrentWeather(i18n.language);
                 setWeather(weatherData);
             } catch (error) {
                 console.error('[useHydrationTarget] Error loading weather:', error);
@@ -106,7 +116,7 @@ export const useHydrationTarget = (
         };
 
         loadWeather();
-    }, [isToday]);
+    }, [isToday, i18n.language]);
 
     // Calculate hydration target (memoized for performance)
     const hydrationData = useMemo(() => {
@@ -132,6 +142,7 @@ export const useHydrationTarget = (
                       temperature: weather.temperature,
                       humidity: weather.humidity,
                       location: weather.location,
+                      unit: weather.unit, // Pass unit to UI
                   }
                 : null,
             isLoadingWeather,

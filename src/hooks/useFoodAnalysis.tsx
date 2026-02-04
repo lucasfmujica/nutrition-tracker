@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getGeminiVisionModel } from '../services/ai/geminiVision';
 
 export interface FoodAnalysisItem {
@@ -49,6 +50,7 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
     const [isLoading, setIsLoading] = useState(false);
     const [result, setResult] = useState<FoodAnalysisResult | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const { i18n } = useTranslation();
 
     /**
      * Analyze food image using Gemini Vision API
@@ -69,8 +71,8 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
             // Convert file to base64
             const base64Image = await fileToBase64(file);
 
-            // Get model instance
-            const model = getGeminiVisionModel();
+            // Get model instance with current language
+            const model = getGeminiVisionModel(i18n.language);
 
             // Prepare the image part
             const imagePart = {
@@ -87,7 +89,9 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
                         role: 'user',
                         parts: [
                             {
-                                text: 'Describe la comida en la imagen y calcula sus macros.',
+                                text: i18n.language.startsWith('en')
+                                    ? 'Describe the food in this image and calculate macros.'
+                                    : 'Describe la comida en la imagen y calcula sus macros.',
                             },
                             imagePart,
                         ],
@@ -104,14 +108,18 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
             // Handle case where no meal is detected
             if (!parsedResult.meal_detected) {
                 throw new Error(
-                    'No se pudo detectar comida en la imagen. Intenta con una foto más clara.',
+                    i18n.language.startsWith('en')
+                        ? 'Could not detect food in the image. Try a clearer photo.'
+                        : 'No se pudo detectar comida en la imagen. Intenta con una foto más clara.',
                 );
             }
 
             // Validate response essentials
             if (!parsedResult.items || !parsedResult.total_macros) {
                 throw new Error(
-                    'La IA no pudo calcular los macros correctamente. Intenta de nuevo.',
+                    i18n.language.startsWith('en')
+                        ? 'AI could not calculate macros correctly. Please try again.'
+                        : 'La IA no pudo calcular los macros correctamente. Intenta de nuevo.',
                 );
             }
 
@@ -126,21 +134,25 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
         } catch (err: any) {
             console.error('[useFoodAnalysis] Error analyzing food:', err);
 
-            let errorMessage =
-                'Error al analizar la imagen. Por favor, intenta nuevamente.';
+            let errorMessage = i18n.language.startsWith('en')
+                ? 'Error analyzing image. Please try again.'
+                : 'Error al analizar la imagen. Por favor, intenta nuevamente.';
 
             if (err.message?.includes('API key')) {
-                errorMessage =
-                    'Error de configuración de API. Verifica la clave de Gemini.';
+                errorMessage = i18n.language.startsWith('en')
+                    ? 'API configuration error. Check Gemini key.'
+                    : 'Error de configuración de API. Verifica la clave de Gemini.';
             } else if (err.message?.includes('JSON')) {
-                errorMessage =
-                    'Error al procesar la respuesta de IA. Intenta con otra imagen.';
+                errorMessage = i18n.language.startsWith('en')
+                    ? 'Error processing AI response. Try another image.'
+                    : 'Error al procesar la respuesta de IA. Intenta con otra imagen.';
             } else if (
                 err.message?.includes('quota') ||
                 err.message?.includes('limit')
             ) {
-                errorMessage =
-                    'Límite de API alcanzado. Por favor, intenta más tarde.';
+                errorMessage = i18n.language.startsWith('en')
+                    ? 'API limit reached. Please try again later.'
+                    : 'Límite de API alcanzado. Por favor, intenta más tarde.';
             }
 
             setError(errorMessage);

@@ -218,6 +218,14 @@
             "spanish": "Español",
             "english": "English"
         },
+        "stepsTracking": {
+            "title": "Steps Tracking",
+            "subtitle": "Choose how you want to track your daily steps",
+            "autoSync": "Auto-sync from Oura Ring",
+            "autoSyncDesc": "Automatically import steps from your Oura Ring daily",
+            "manualMode": "You can track steps manually or use the iOS Health shortcut",
+            "autoMode": "Oura steps will sync automatically. Manual entries will always be preserved."
+        },
         "options": {
             "gender": {
                 "male": "Male",
@@ -776,7 +784,9 @@
         "at": "at",
         "today": "Today",
         "yesterday": "Yesterday",
-        "tomorrow": "Tomorrow"
+        "tomorrow": "Tomorrow",
+        "favorites": "Favorites",
+        "scan": "Scan"
     },
     "modals": {
         "barcode": {

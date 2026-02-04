@@ -32,7 +32,7 @@ export const CaptionGenerator: React.FC<CaptionGeneratorProps> = ({
     measurements,
     onCaptionGenerated,
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [caption, setCaption] = useState('');
     const [hashtags, setHashtags] = useState<string[]>([]);
     const [isGenerating, setIsGenerating] = useState(false);
@@ -53,7 +53,9 @@ export const CaptionGenerator: React.FC<CaptionGeneratorProps> = ({
                 measurements,
             };
 
-            const result = await generateTransformationCaption(transformationData);
+            const result = await generateTransformationCaption(transformationData, {
+                language: i18n.language,
+            });
             setCaption(result.caption);
             setHashtags(result.hashtags);
             setPreviousCaptions([...previousCaptions, result.caption]);
@@ -80,6 +82,7 @@ export const CaptionGenerator: React.FC<CaptionGeneratorProps> = ({
             const result = await regenerateCaption(
                 transformationData,
                 previousCaptions,
+                i18n.language,
             );
             setCaption(result.caption);
             setHashtags(result.hashtags);

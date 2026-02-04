@@ -305,6 +305,8 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         saveOuraEntry: biometrics.saveOuraEntry,
         saveStepsEntry: biometrics.saveStepsEntry,
         ouraPersonalToken: biometrics.profile?.ouraPersonalToken,
+        profile: biometrics.profile,
+        stepsLog: biometrics.stepsLog,
     });
 
     // 18. Social Feature

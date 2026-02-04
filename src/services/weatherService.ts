@@ -11,51 +11,35 @@
 
 import { storage } from '../utils/storage';
 
-// Buenos Aires coordinates
+// Buenos Aires coordinates (Default)
 const BA_LATITUDE = -34.6037;
 const BA_LONGITUDE = -58.3816;
 
-// Cache configuration
-const CACHE_KEY = 'weather-cache-ba';
-const CACHE_DURATION_MS = 4 * 60 * 60 * 1000; // 4 hours
+// New York coordinates (English)
+const NYC_LATITUDE = 40.7128;
+const NYC_LONGITUDE = -74.006;
 
-// Open-Meteo API endpoint (free, no auth required)
-const API_URL = `https://api.open-meteo.com/v1/forecast?latitude=${BA_LATITUDE}&longitude=${BA_LONGITUDE}&current=temperature_2m,relative_humidity_2m`;
+// Cache configuration
+const CACHE_KEY_PREFIX = 'weather-cache-';
+const CACHE_DURATION_MS = 4 * 60 * 60 * 1000; // 4 hours
 
 export interface WeatherData {
     temperature: number;
     humidity: number;
     location: string;
     cachedAt: string;
+    unit: 'C' | 'F';
 }
 
 /**
- * Get current Argentina timestamp in ISO format with -03:00 offset
- * @returns {string} ISO timestamp in Argentina timezone
+ * Get current timestamp in ISO format
  */
-const getArgentinaTimestamp = (): string => {
-    const now = new Date();
-    const argentinaTime = new Date(
-        now.toLocaleString('en-US', {
-            timeZone: 'America/Argentina/Buenos_Aires',
-        }),
-    );
-
-    // Format as ISO string with -03:00 offset
-    const year = argentinaTime.getFullYear();
-    const month = String(argentinaTime.getMonth() + 1).padStart(2, '0');
-    const day = String(argentinaTime.getDate()).padStart(2, '0');
-    const hours = String(argentinaTime.getHours()).padStart(2, '0');
-    const minutes = String(argentinaTime.getMinutes()).padStart(2, '0');
-    const seconds = String(argentinaTime.getSeconds()).padStart(2, '0');
-
-    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}-03:00`;
+const getTimestamp = (): string => {
+    return new Date().toISOString();
 };
 
 /**
  * Check if cached weather data is still valid (< 4 hours old)
- * @param {Object} cache - Cached weather data
- * @returns {boolean} True if cache is valid
  */
 const isCacheValid = (cache: WeatherData): boolean => {
     if (!cache || !cache.cachedAt) return false;
@@ -69,11 +53,21 @@ const isCacheValid = (cache: WeatherData): boolean => {
 
 /**
  * Fetch current weather from Open-Meteo API
- * @returns {Promise<Object|null>} Weather data or null on error
  */
-const fetchWeatherFromAPI = async (): Promise<WeatherData | null> => {
+const fetchWeatherFromAPI = async (
+    language: string,
+): Promise<WeatherData | null> => {
     try {
-        const response = await fetch(API_URL);
+        const isEnglish = language.startsWith('en');
+        const lat = isEnglish ? NYC_LATITUDE : BA_LATITUDE;
+        const lon = isEnglish ? NYC_LONGITUDE : BA_LONGITUDE;
+        const unitParam = isEnglish ? '&temperature_unit=fahrenheit' : '';
+        const unit = isEnglish ? 'F' : 'C';
+        const locationName = isEnglish ? 'New York (Long Island)' : 'Buenos Aires';
+
+        const api_url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m${unitParam}`;
+
+        const response = await fetch(api_url);
 
         if (!response.ok) {
             console.warn('[WeatherService] API request failed:', response.status);
@@ -94,8 +88,9 @@ const fetchWeatherFromAPI = async (): Promise<WeatherData | null> => {
         return {
             temperature: Math.round(temperature), // Round to nearest degree
             humidity: Math.round(humidity), // Round to nearest %
-            location: 'Buenos Aires',
-            cachedAt: getArgentinaTimestamp(),
+            location: locationName,
+            cachedAt: getTimestamp(),
+            unit: unit,
         };
     } catch (error: any) {
         console.error('[WeatherService] Error fetching weather:', {
@@ -107,25 +102,20 @@ const fetchWeatherFromAPI = async (): Promise<WeatherData | null> => {
 };
 
 /**
- * Get current weather for Buenos Aires with caching
- * Returns cached data if < 4 hours old, otherwise fetches fresh data
- *
- * @returns {Promise<Object|null>}
- * {
- *   temperature: number,    // °C
- *   humidity: number,       // %
- *   location: string,       // "Buenos Aires"
- *   cachedAt: string        // ISO timestamp in Argentina TZ
- * }
- * Returns null if API unavailable and no valid cache
+ * Get current weather with caching, localized based on language
+ * English -> NYC (F)
+ * Spanish/Other -> BA (C)
  */
-export const getCurrentWeather = async (): Promise<WeatherData | null> => {
+export const getCurrentWeather = async (
+    language: string = 'es',
+): Promise<WeatherData | null> => {
     try {
+        const cacheKey = `${CACHE_KEY_PREFIX}${language.startsWith('en') ? 'en' : 'es'}`;
+
         // Try to load from cache
-        const cachedData = await storage.get(CACHE_KEY);
+        const cachedData = await storage.get(cacheKey);
 
         if (cachedData && cachedData.value) {
-            // Parse the value property (storage.get returns { value: "..." })
             const cache: WeatherData = JSON.parse(cachedData.value);
 
             // Return cached data if still valid
@@ -135,7 +125,7 @@ export const getCurrentWeather = async (): Promise<WeatherData | null> => {
         }
 
         // Cache is stale or missing, fetch fresh data
-        const freshWeather = await fetchWeatherFromAPI();
+        const freshWeather = await fetchWeatherFromAPI(language);
 
         if (!freshWeather) {
             // API failed, return stale cache if available as fallback
@@ -154,7 +144,7 @@ export const getCurrentWeather = async (): Promise<WeatherData | null> => {
         }
 
         // Save fresh data to cache
-        await storage.set(CACHE_KEY, JSON.stringify(freshWeather));
+        await storage.set(cacheKey, JSON.stringify(freshWeather));
 
         return freshWeather;
     } catch (error: any) {

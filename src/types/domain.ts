@@ -37,6 +37,8 @@ export interface Profile {
     trainingDaysPerWeek?: number; // TODO: Add to DB schema (0-7)
     unitSystem?: 'metric' | 'imperial';
     language?: 'es' | 'en';
+    // Steps tracking preferences
+    stepsAutoSync?: boolean; // Enable Oura Ring auto-sync for steps (default: false)
 }
 
 export type UnitSystem = 'metric' | 'imperial';
@@ -110,6 +112,8 @@ export interface StepsEntry {
     id: string;
     date: string;
     steps: number;
+    source?: 'manual' | 'oura' | 'ios-health';
+    updatedAt?: string;
 }
 
 export interface OuraEntry {

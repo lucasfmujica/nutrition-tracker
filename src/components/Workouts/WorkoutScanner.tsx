@@ -12,7 +12,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
     onSave,
     onCancel,
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [parsedResult, setParsedResult] = useState<string | null>(null);
@@ -38,7 +38,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
         setJsonError(null);
 
         try {
-            const result = await analyzeWorkoutImages(selectedFiles);
+            const result = await analyzeWorkoutImages(selectedFiles, i18n.language);
             setParsedResult(JSON.stringify(result, null, 2));
         } catch (error) {
             console.error('Analysis failed:', error);

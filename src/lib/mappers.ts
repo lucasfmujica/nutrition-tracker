@@ -46,6 +46,7 @@ export const mappers = {
         ios_shortcuts_configured: profile.iosShortcutsConfigured,
         unit_system: profile.unitSystem,
         language: profile.language,
+        steps_auto_sync: profile.stepsAutoSync,
     }),
 
     // Profile: Supabase -> localStorage format (for compatibility)
@@ -79,6 +80,7 @@ export const mappers = {
         iosShortcutsConfigured: dbProfile.ios_shortcuts_configured ?? false,
         unitSystem: dbProfile.unit_system as 'metric' | 'imperial', // Type assertion as DB might be text
         language: dbProfile.language as 'es' | 'en',
+        stepsAutoSync: (dbProfile as any).steps_auto_sync ?? false,
     }),
 
     // Targets: localStorage -> Supabase (stored in profiles table)
@@ -230,6 +232,7 @@ export const mappers = {
         user_id: userId,
         date: entry.date,
         steps: entry.steps,
+        source: entry.source || 'manual',
     }),
 
     // Steps: Supabase -> localStorage format
@@ -237,6 +240,8 @@ export const mappers = {
         id: dbEntry.id,
         date: dbEntry.date,
         steps: dbEntry.steps,
+        source: (dbEntry as any).source || 'manual',
+        updatedAt: (dbEntry as any).updated_at,
     }),
 
     // Oura: localStorage -> Supabase

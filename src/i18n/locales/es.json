@@ -219,6 +219,14 @@
             "spanish": "Español",
             "english": "English"
         },
+        "stepsTracking": {
+            "title": "Seguimiento de Pasos",
+            "subtitle": "Elegí cómo querés rastrear tus pasos diarios",
+            "autoSync": "Auto-sincronizar desde Oura Ring",
+            "autoSyncDesc": "Importa automáticamente los pasos de tu Oura Ring diariamente",
+            "manualMode": "Podés rastrear pasos manualmente o usar el shortcut de iOS Health",
+            "autoMode": "Los pasos de Oura se sincronizarán automáticamente. Tus entradas manuales siempre se preservarán."
+        },
         "options": {
             "gender": {
                 "male": "Masculino",
@@ -777,7 +785,9 @@
         "at": "a las",
         "today": "Hoy",
         "yesterday": "Ayer",
-        "tomorrow": "Mañana"
+        "tomorrow": "Mañana",
+        "favorites": "Favoritos",
+        "scan": "Escanear"
     },
     "modals": {
         "barcode": {

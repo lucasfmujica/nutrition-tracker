@@ -31,6 +31,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         trainingDaysPerWeek: 4,
         primaryGoal: 'maintain',
         hasOuraRing: false, // Multi-user: Oura Ring support
+        unitSystem: 'metric' as 'metric' | 'imperial',
     });
 
     const totalSteps = 3;
@@ -115,6 +116,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                 primary_goal: formData.primaryGoal,
                 activity_level: activityLevel,
                 has_oura_ring: formData.hasOuraRing,
+                unit_system: formData.unitSystem,
                 onboarding_completed: true,
             });
         } catch (err) {

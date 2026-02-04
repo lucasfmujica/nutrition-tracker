@@ -735,6 +735,60 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                 }}
             />
 
+            {/* Oura Steps Auto-Sync Settings */}
+            {profile.hasOuraRing && (
+                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                    <h2 className="text-sm font-bold mb-2 flex items-center gap-2">
+                        <span className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                            👟
+                        </span>
+                        {t('config.stepsTracking.title')}
+                    </h2>
+                    <p className="text-xs text-gray-500 mb-4">
+                        {t('config.stepsTracking.subtitle')}
+                    </p>
+
+                    <label className="flex items-center justify-between p-3 bg-gray-50 rounded-lg mb-2 cursor-pointer hover:bg-gray-100 transition-colors">
+                        <div>
+                            <span className="text-sm font-medium block mb-1">
+                                {t('config.stepsTracking.autoSync')}
+                            </span>
+                            <p className="text-xs text-gray-500">
+                                {t('config.stepsTracking.autoSyncDesc')}
+                            </p>
+                        </div>
+                        <input
+                            type="checkbox"
+                            checked={profile.stepsAutoSync ?? false}
+                            onChange={(e) =>
+                                updateConfig(
+                                    {
+                                        ...profile,
+                                        stepsAutoSync: e.target.checked,
+                                    },
+                                    customTargets,
+                                )
+                            }
+                            className="w-12 h-6 appearance-none bg-gray-300 rounded-full relative cursor-pointer transition-colors checked:bg-purple-600 before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-white before:top-0.5 before:left-0.5 before:transition-transform checked:before:translate-x-6"
+                        />
+                    </label>
+
+                    {!profile.stepsAutoSync && (
+                        <div className="text-xs text-gray-600 bg-blue-50 p-3 rounded-lg flex items-start gap-2">
+                            <span className="text-blue-600 shrink-0">ℹ️</span>
+                            <span>{t('config.stepsTracking.manualMode')}</span>
+                        </div>
+                    )}
+
+                    {profile.stepsAutoSync && (
+                        <div className="text-xs text-green-600 bg-green-50 p-3 rounded-lg flex items-start gap-2">
+                            <span className="shrink-0">✅</span>
+                            <span>{t('config.stepsTracking.autoMode')}</span>
+                        </div>
+                    )}
+                </div>
+            )}
+
             {/* iOS Shortcuts QR Code */}
             {userId && (
                 <IOSShortcutQR

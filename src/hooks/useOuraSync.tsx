@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { OuraEntry, StepsEntry } from '../types/domain';
+import { OuraEntry, Profile, StepsEntry } from '../types/domain';
 import { addDaysToDate, getArgentinaDateString } from '../utils/dateUtils';
 import {
     mapOuraActivity,
@@ -20,6 +20,10 @@ interface UseOuraSyncParams {
     saveStepsEntry: (entry: StepsEntry) => Promise<any>;
     /** Per-user Oura token. Falls back to VITE_OURA_TOKEN env var if not provided. */
     ouraPersonalToken?: string;
+    /** User profile with stepsAutoSync preference */
+    profile?: Profile | null;
+    /** Current steps log for conflict detection */
+    stepsLog?: StepsEntry[];
 }
 
 interface SyncResult {
@@ -32,6 +36,8 @@ export const useOuraSync = ({
     saveOuraEntry,
     saveStepsEntry,
     ouraPersonalToken,
+    profile,
+    stepsLog = [],
 }: UseOuraSyncParams) => {
     const supabase = useSupabase();
     const [isSyncing, setIsSyncing] = useState(false);
@@ -186,12 +192,56 @@ export const useOuraSync = ({
                     await saveOuraEntry(entry);
                 }
 
-                /*
-                // 2. Activity (Steps Log) - DISABLED as per user request
-                for (const entry of stepsLogEntries) {
-                    await saveStepsEntry(entry);
+                // 2. Activity (Steps Log) - Smart Merge with user-controlled auto-sync
+                // Check if user has enabled Oura steps sync
+                if (!profile?.stepsAutoSync) {
+                    console.log(
+                        '[OuraSync] Steps auto-sync disabled by user preference',
+                    );
+                } else {
+                    console.log(
+                        `[OuraSync] Steps auto-sync enabled - processing ${stepsLogEntries.length} entries`,
+                    );
+
+                    // User has enabled Oura - sync steps with smart merge
+                    for (const ouraEntry of stepsLogEntries) {
+                        const existing = stepsLog.find(
+                            (s) => s.date === ouraEntry.date,
+                        );
+
+                        if (!existing) {
+                            // No conflict - insert Oura data
+                            await saveStepsEntry({
+                                ...ouraEntry,
+                                source: 'oura',
+                            });
+                            console.log(
+                                `[OuraSync] Saved Oura steps for ${ouraEntry.date}: ${ouraEntry.steps}`,
+                            );
+                        } else {
+                            // Entry exists - check source
+                            if (
+                                existing.source === 'manual' ||
+                                existing.source === 'ios-health'
+                            ) {
+                                // User manually logged - respect their data
+                                console.log(
+                                    `[OuraSync] Preserving ${existing.source} entry for ${ouraEntry.date} (${existing.steps} steps)`,
+                                );
+                                // Don't overwrite manual/iOS entries even if Oura auto-sync is ON
+                            } else if (existing.source === 'oura') {
+                                // Update existing Oura entry with fresh data
+                                await saveStepsEntry({
+                                    ...ouraEntry,
+                                    source: 'oura',
+                                });
+                                console.log(
+                                    `[OuraSync] Updated Oura steps for ${ouraEntry.date}: ${ouraEntry.steps}`,
+                                );
+                            }
+                        }
+                    }
                 }
-                */
 
                 // Success
                 const userId = supabase.user?.id;

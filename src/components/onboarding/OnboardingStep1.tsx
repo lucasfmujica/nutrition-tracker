@@ -8,6 +8,7 @@ interface OnboardingStep1Props {
         height: string;
         age: string;
         gender: string;
+        unitSystem: 'metric' | 'imperial';
     };
     handlers: {
         updateField: (field: string, value: any) => void;
@@ -44,6 +45,27 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                     🇺🇸 EN
                 </button>
             </div>
+            {/* Unit System Selection */}
+            <div className="flex justify-center gap-2 mb-6">
+                <button
+                    onClick={() => updateField('unitSystem', 'metric')}
+                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                        data.unitSystem === 'metric'
+                            ? 'bg-white text-gray-900 shadow-lg shadow-white/10 scale-105'
+                            : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700'
+                    }`}>
+                    📏 Metric (kg/cm)
+                </button>
+                <button
+                    onClick={() => updateField('unitSystem', 'imperial')}
+                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                        data.unitSystem === 'imperial'
+                            ? 'bg-white text-gray-900 shadow-lg shadow-white/10 scale-105'
+                            : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700'
+                    }`}>
+                    ⚖️ Imperial (lbs/ft)
+                </button>
+            </div>
 
             <div className="text-center mb-6">
                 <span className="text-3xl mb-2 block">👋</span>
@@ -77,7 +99,8 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <label className="block text-sm text-gray-400 mb-1.5">
-                        {t('onboarding.step1.currentWeight')} *
+                        {t('onboarding.step1.currentWeight')} (
+                        {data.unitSystem === 'metric' ? 'kg' : 'lbs'}) *
                     </label>
                     <input
                         type="number"
@@ -85,7 +108,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                         onChange={(e) =>
                             updateField('currentWeight', e.target.value)
                         }
-                        placeholder="75"
+                        placeholder={data.unitSystem === 'metric' ? '75' : '165'}
                         className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white text-center text-lg"
                     />
                 </div>

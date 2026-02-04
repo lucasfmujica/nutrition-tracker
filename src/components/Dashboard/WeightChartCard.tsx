@@ -22,7 +22,11 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
     currentWeight,
     weeklyTrend,
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const isImperial = i18n.language.startsWith('en');
+    const unitLabel = isImperial ? 'lbs' : 'kg';
+    const weightMultiplier = isImperial ? 2.20462 : 1;
+
     // Format data for chart - Show last 14 days for more context
     const chartData = [...data]
         .filter((entry) => {
@@ -37,7 +41,7 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
             const [day, month] = entry.date.split('-').reverse().slice(0, 2);
             return {
                 date: `${day}/${month}`,
-                weight: entry.weight,
+                weight: parseFloat((entry.weight * weightMultiplier).toFixed(1)), // Convert for chart
             };
         });
 
@@ -55,7 +59,9 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                           .slice(0, 2);
                       return {
                           date: `${day}/${month}`,
-                          weight: entry.weight,
+                          weight: parseFloat(
+                              (entry.weight * weightMultiplier).toFixed(1),
+                          ),
                       };
                   });
 
@@ -102,7 +108,8 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
     }
 
     const isLoss = (displayTrend || 0) <= 0;
-    const absTrend = Math.abs(displayTrend || 0).toFixed(1);
+    const absTrend = Math.abs((displayTrend || 0) * weightMultiplier).toFixed(1);
+    const displayCurrentWeight = (currentWeight * weightMultiplier).toFixed(1);
 
     return (
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50 mb-6">
@@ -118,15 +125,15 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                 </div>
                 <div className="text-right flex-shrink-0">
                     <span className="block text-2xl font-bold text-gray-900 whitespace-nowrap">
-                        {currentWeight}{' '}
+                        {displayCurrentWeight}{' '}
                         <span className="text-sm font-normal text-gray-400">
-                            {t('units.kg', { defaultValue: 'kg' })}
+                            {unitLabel}
                         </span>
                     </span>
                     <span
                         className={`text-xs font-bold px-2 py-0.5 rounded-full ${isLoss ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                         {displayTrend && displayTrend > 0 ? '+' : ''}
-                        {displayTrend !== null ? absTrend : '0.0'} kg/sem
+                        {displayTrend !== null ? absTrend : '0.0'} {unitLabel}/sem
                     </span>
                 </div>
             </div>
@@ -177,7 +184,10 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                                     strokeWidth: 1,
                                     strokeDasharray: '4 4',
                                 }}
-                                formatter={(value: any) => [`${value} kg`, 'Peso']}
+                                formatter={(value: any) => [
+                                    `${value} ${unitLabel}`,
+                                    t('dashboard.weightChart.title'),
+                                ]}
                             />
                             <Area
                                 type="monotone"

@@ -6,6 +6,7 @@ export interface WeatherStatus {
     temperature: number;
     humidity: number;
     location?: string;
+    unit?: 'C' | 'F';
 }
 
 export interface HydrationTarget {
@@ -52,8 +53,10 @@ const WeatherBadge: React.FC<{
         );
     }
 
-    const { temperature, humidity, location } = weatherStatus;
-    const isHot = temperature > 28;
+    const { temperature, humidity, location, unit = 'C' } = weatherStatus;
+    // Check threshold in C. If F, convert to C for logic.
+    const tempC = unit === 'F' ? (temperature - 32) * (5 / 9) : temperature;
+    const isHot = tempC > 28;
 
     return (
         <div className="flex items-center gap-2 text-sm">
@@ -63,7 +66,7 @@ const WeatherBadge: React.FC<{
                 <Cloud size={16} className="text-blue-500" />
             )}
             <span className="font-medium text-gray-700">
-                {temperature}°C - {location}
+                {temperature}°{unit} - {location}
             </span>
             <span className="text-gray-400">•</span>
             <Droplets size={14} className="text-blue-400" />
@@ -79,7 +82,7 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
     currentIntake,
     hydrationTarget,
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const {
         target,
         baseline,
@@ -90,6 +93,20 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
         isLoadingWeather,
     } = hydrationTarget;
 
+    // Unit conversion for display (User req: English -> oz)
+    const isImperial = i18n.language.startsWith('en');
+    const displayIntake = isImperial
+        ? Math.round(currentIntake * 0.0338)
+        : currentIntake;
+    const displayTarget = isImperial ? Math.round(target * 0.0338) : target;
+    const displayBaseline = isImperial ? Math.round(baseline * 0.0338) : baseline;
+    const displayUnit = isImperial ? 'fl oz' : 'ml';
+
+    const heatBonusDisplay = isImperial ? Math.round(heatBonus * 0.0338) : heatBonus;
+    const activityBonusDisplay = isImperial
+        ? Math.round(activityBonus * 0.0338)
+        : activityBonus;
+
     const progress = Math.min((currentIntake / target) * 100, 100);
     const isOnTrack = currentIntake >= target * 0.8;
 
@@ -97,21 +114,21 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
         if (needsElectrolytes) {
             return t('dashboard.hydration.tips.electrolytes', {
                 temp: weatherStatus?.temperature,
-                amount: 800, // Hardcoded in original logic, ideally dynamic
+                amount: isImperial ? '28 fl oz' : 800, // Hardcoded in logic
             });
         }
 
         if (activityBonus > 0 && hydrationTarget.activityMinutes > 0) {
             return t('dashboard.hydration.tips.activity', {
                 minutes: hydrationTarget.activityMinutes,
-                amount: activityBonus,
+                amount: activityBonusDisplay + (isImperial ? ' fl oz' : 'ml'),
             });
         }
 
         if (heatBonus > 0) {
             return t('dashboard.hydration.tips.heat', {
                 temp: weatherStatus?.temperature,
-                amount: heatBonus,
+                amount: heatBonusDisplay + (isImperial ? ' fl oz' : 'ml'),
             });
         }
 
@@ -143,16 +160,19 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
                 <div className="flex items-end justify-between mb-2">
                     <div>
                         <span className="text-3xl font-bold text-gray-900">
-                            {currentIntake}
+                            {displayIntake}
                         </span>
-                        <span className="text-lg text-gray-500 ml-1">ml</span>
+                        <span className="text-lg text-gray-500 ml-1">
+                            {displayUnit}
+                        </span>
                     </div>
                     <div className="text-right">
                         <span className="text-sm text-gray-500">
                             {t('dashboard.activity.goal')}:{' '}
                         </span>
                         <span className="text-lg font-bold text-blue-600">
-                            {target}ml
+                            {displayTarget}
+                            {displayUnit}
                         </span>
                     </div>
                 </div>

@@ -4,7 +4,7 @@
  * Features: Image capture, AI analysis, editable results, auto meal-type selection
  */
 
-import { Camera, Loader2, Save, X } from 'lucide-react';
+import { Camera, Image as ImageIcon, Loader2, Save, X } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
@@ -27,6 +27,7 @@ interface Macros {
 
 export const FoodCameraInput: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const galleryInputRef = useRef<HTMLInputElement>(null);
     const { analyzeFood, isLoading, result, error, resetResult } = useFoodAnalysis();
     const { saveFoodEntry } = useTracker();
     const { getAutoMealType } = useSmartMealType();
@@ -72,7 +73,12 @@ export const FoodCameraInput: React.FC = () => {
                     fiber: 0,
                 },
             );
-            setSelectedMealType(getAutoMealType());
+
+            // Use file timestamp if available, otherwise default to current time via auto-meal logic
+            const fileDate = file.lastModified
+                ? new Date(file.lastModified)
+                : undefined;
+            setSelectedMealType(getAutoMealType(fileDate));
         }
 
         // Reset file input
@@ -350,28 +356,46 @@ export const FoodCameraInput: React.FC = () => {
                 className="hidden"
             />
 
+            <input
+                ref={galleryInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileSelect}
+                className="hidden"
+            />
+
             {error && (
                 <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl">
                     <p className="text-sm text-red-700">{error}</p>
                 </div>
             )}
 
-            <button
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isLoading}
-                className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-bold shadow-lg shadow-emerald-200/50 hover:shadow-xl hover:shadow-emerald-200/70 transition-all active:scale-[0.99] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
-                {isLoading ? (
-                    <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        {t('food.camera.analyzing')}
-                    </>
-                ) : (
-                    <>
-                        <Camera className="w-5 h-5" />
-                        {t('food.camera.scanButton')}
-                    </>
-                )}
-            </button>
+            <div className="space-y-3">
+                <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isLoading}
+                    className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-bold shadow-lg shadow-emerald-200/50 hover:shadow-xl hover:shadow-emerald-200/70 transition-all active:scale-[0.99] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                    {isLoading ? (
+                        <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            {t('food.camera.analyzing')}
+                        </>
+                    ) : (
+                        <>
+                            <Camera className="w-5 h-5" />
+                            {t('food.camera.scanButton')}
+                        </>
+                    )}
+                </button>
+
+                <button
+                    onClick={() => galleryInputRef.current?.click()}
+                    disabled={isLoading}
+                    className="w-full py-4 bg-white border-2 border-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-all active:scale-[0.99] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <ImageIcon className="w-5 h-5" />
+                    {t('food.camera.galleryButton') || 'Galería'}
+                </button>
+            </div>
 
             <p className="text-xs text-gray-500 text-center mt-3">
                 {t('food.camera.helper')}

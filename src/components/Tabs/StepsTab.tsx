@@ -90,9 +90,21 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                             <div
                                 key={idx}
                                 className="flex justify-between items-center py-2 border-b border-slate-50 last:border-0 text-sm">
-                                <span className="text-slate-500 font-medium">
-                                    {entry.date}
-                                </span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-slate-500 font-medium">
+                                        {entry.date}
+                                    </span>
+                                    {entry.source === 'oura' && (
+                                        <span className="px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 text-[9px] font-bold">
+                                            OURA
+                                        </span>
+                                    )}
+                                    {entry.source === 'ios-health' && (
+                                        <span className="px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 text-[9px] font-bold">
+                                            iOS
+                                        </span>
+                                    )}
+                                </div>
                                 <span
                                     className={`font-black text-base ${entry.steps >= stepGoal ? 'text-cyan-600' : 'text-slate-400'}`}>
                                     {entry.steps.toLocaleString()}
