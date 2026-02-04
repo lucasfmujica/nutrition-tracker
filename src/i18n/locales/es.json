@@ -726,7 +726,24 @@
                 "yDuration": "Duración Entrenamiento (min)",
                 "yDeepSleep": "Sueño Profundo (min)",
                 "xReadiness": "Índice de Preparación (Oura)",
-                "yCalories": "Calorías Consumidas"
+                "yCalories": "Calorías Consumidas",
+                "interpretations": {
+                    "fuelVsPerf": {
+                        "positive": "🔥 ¡Viene funcionando! Más carbos ayer se traducen en entrenos más largos hoy.",
+                        "negative": "🤷‍♂️ No hay un impacto claro de los carbos de ayer en la duración de hoy.",
+                        "neutral": "🧪 Sigue trackeando para ver si los carbos impulsan tus sesiones."
+                    },
+                    "recoveryCost": {
+                        "positive": "💤 El esfuerzo paga: tus entrenos intensos están impulsando tu sueño profundo.",
+                        "negative": "🧘‍♂️ Tu sueño profundo parece independiente de la duración del entreno.",
+                        "neutral": "🧪 Analizando cómo el volumen de hoy afecta tu descanso esta noche."
+                    },
+                    "willpower": {
+                        "positive": "🧠 Conexión detectada: cuando mejor dormís, mejor controlás tu dieta.",
+                        "negative": "🍕 Tu adherencia calórica parece no depender directamente del sueño.",
+                        "neutral": "🧪 Buscando si el descanso de Oura protege tu fuerza de voluntad."
+                    }
+                }
             },
             "strength": {
                 "strong": "Fuerte",

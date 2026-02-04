@@ -26,6 +26,7 @@ interface ScatterCardProps {
     xLabel: string;
     yLabel: string;
     color: string;
+    chartId: 'fuelVsPerf' | 'recoveryCost' | 'willpower';
 }
 
 const ScatterCard: React.FC<ScatterCardProps> = ({
@@ -35,6 +36,7 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
     xLabel,
     yLabel,
     color,
+    chartId,
 }) => {
     const { t } = useTranslation();
     // Calculate simple linear regression for the trend line
@@ -113,6 +115,25 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
     };
 
     const strength = rValue !== null ? getCorrelationStrength(rValue) : null;
+
+    const getInterpretation = () => {
+        if (rValue === null || data.length < 5)
+            return t(
+                `dashboard.correlation.charts.interpretations.${chartId}.neutral`,
+            );
+
+        const isPositive = chartId === 'willpower' ? rValue < -0.3 : rValue > 0.3;
+        // Note: For willpower (Readiness vs Calories), a negative correlation means higher readiness = lower calories (better adherence), so positive insight.
+        // For others, positive correlation means more X = more Y.
+
+        if (isPositive)
+            return t(
+                `dashboard.correlation.charts.interpretations.${chartId}.positive`,
+            );
+        return t(`dashboard.correlation.charts.interpretations.${chartId}.negative`);
+    };
+
+    const interpretation = getInterpretation();
 
     return (
         <div className="bg-white/80 backdrop-blur-md rounded-3xl p-6 border border-slate-100 shadow-sm min-w-[340px] flex-1 group transition-all hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1">
@@ -267,6 +288,12 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                     </div>
                 )}
             </div>
+
+            <div className="mt-4 pt-4 border-t border-slate-50">
+                <p className="text-[11px] leading-relaxed text-slate-600 font-medium italic">
+                    {interpretation}
+                </p>
+            </div>
         </div>
     );
 };
@@ -352,6 +379,7 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                         xLabel={t('dashboard.correlation.charts.xCarbs')}
                         yLabel={t('dashboard.correlation.charts.yDuration')}
                         color="#EF4444" // Red for Fuel/Fire
+                        chartId="fuelVsPerf"
                     />
                 )}
 
@@ -363,6 +391,7 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                         xLabel={t('dashboard.correlation.charts.yDuration')} // Swapped x/y intent in original?
                         yLabel={t('dashboard.correlation.charts.yDeepSleep')}
                         color="#8B5CF6" // Purple for Sleep
+                        chartId="recoveryCost"
                     />
                 )}
 
@@ -376,6 +405,7 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                         xLabel={t('dashboard.correlation.charts.xReadiness')}
                         yLabel={t('dashboard.correlation.charts.yCalories')}
                         color="#10B981" // Green for Health
+                        chartId="willpower"
                     />
                 )}
             </div>

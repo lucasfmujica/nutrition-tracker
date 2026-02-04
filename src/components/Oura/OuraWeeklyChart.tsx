@@ -27,7 +27,7 @@ export const OuraWeeklyChart: React.FC<OuraWeeklyChartProps> = ({ ouraLog }) => 
     const chartData = useMemo(() => {
         const today = getArgentinaDateString();
         const days: string[] = [];
-        for (let i = 6; i >= 0; i--) {
+        for (let i = 7; i >= 1; i--) {
             days.push(addDaysToDate(today, -i));
         }
 

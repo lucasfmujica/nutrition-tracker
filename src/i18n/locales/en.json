@@ -720,7 +720,24 @@
                 "yDuration": "Workout Duration (min)",
                 "yDeepSleep": "Deep Sleep (min)",
                 "xReadiness": "Readiness Score (Oura)",
-                "yCalories": "Consumed Calories"
+                "yCalories": "Consumed Calories",
+                "interpretations": {
+                    "fuelVsPerf": {
+                        "positive": "🔥 It's working! More carbs yesterday lead to longer workouts today.",
+                        "negative": "🤷‍♂️ No clear impact of yesterday's carbs on today's duration.",
+                        "neutral": "🧪 Keep tracking to see if carbs fuel your sessions."
+                    },
+                    "recoveryCost": {
+                        "positive": "💤 Effort pays off: intense workouts are boosting your deep sleep.",
+                        "negative": "🧘‍♂️ Your deep sleep seems independent of workout duration.",
+                        "neutral": "🧪 Analyzing how today's volume affects your rest tonight."
+                    },
+                    "willpower": {
+                        "positive": "🧠 Connection found: better sleep leads to better diet control.",
+                        "negative": "🍕 Your calorie adherence doesn't seem tied to your sleep.",
+                        "neutral": "🧪 Seeking if Oura's rest protects your willpower."
+                    }
+                }
             },
             "strength": {
                 "strong": "Strong",
