@@ -268,6 +268,8 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                         periodizationState={periodizationIntensity}
                     />
 
+                    <IdealDayCard pilot={idealDayPilot} />
+
                     <FoodCameraInput />
 
                     <MacroCards
@@ -303,7 +305,6 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
 
                 {/* Right Column - Analytics & Weight (33%) */}
                 <div className="lg:w-4/12 space-y-4 lg:space-y-6">
-                    <IdealDayCard pilot={idealDayPilot} />
                     <PlateauAlertCard plateauData={plateauData} />
 
                     <WeeklyPlanningCard
