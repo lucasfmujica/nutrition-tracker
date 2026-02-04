@@ -57,6 +57,12 @@
             "date": "Fecha",
             "noData": "Sin datos de Oura",
             "syncPrompt": "Sincronizá tu anillo para ver los datos semanales"
+        },
+        "schedule": {
+            "title": "Horario de Sueño",
+            "bedtime": "Hora de dormir",
+            "wakeTime": "Hora de despertar",
+            "basedOn": "Basado en tu promedio de 30 días"
         }
     },
 
@@ -671,8 +677,8 @@
             },
             "workoutNutrition": {
                 "title": "Nutrición de Entreno",
-                "avgCarbs": "PROMEDIO CARBS",
-                "avgProtein": "PROMEDIO PROTEIN",
+                "avgCarbs": "CARBOS PROM.",
+                "avgProtein": "PROTEÍNA PROM.",
                 "daysWithData": "Promedio en días de entreno ({{count}} días)"
             },
             "consistency": {

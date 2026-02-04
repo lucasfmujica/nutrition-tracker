@@ -57,6 +57,12 @@
             "date": "Date",
             "noData": "No Oura data",
             "syncPrompt": "Sync your ring to see weekly data"
+        },
+        "schedule": {
+            "title": "Sleep Schedule",
+            "bedtime": "Bedtime",
+            "wakeTime": "Wake Time",
+            "basedOn": "Based on your 30-day average"
         }
     },
     "auth": {
@@ -765,7 +771,6 @@
     },
     "common": {
         "date": "Date",
-        "today": "Today",
         "locale": "en",
         "install": "Install",
         "howToUse": "How to use",
@@ -794,7 +799,6 @@
         "and": "And",
         "of": "of",
         "at": "at",
-        "today": "Today",
         "yesterday": "Yesterday",
         "tomorrow": "Tomorrow",
         "favorites": "Favorites",

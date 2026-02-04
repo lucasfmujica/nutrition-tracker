@@ -236,6 +236,7 @@ const NutritionTrackerContent = () => {
                                         getWaterForDate={getWaterForDate}
                                         hydrationTarget={hydrationTarget}
                                         addWaterGlass={addWaterGlass}
+                                        removeWaterGlass={removeWaterGlass}
                                         confirmDelete={confirmDelete}
                                         newFood={newFood}
                                         setNewFood={setNewFood}
@@ -297,7 +298,9 @@ const NutritionTrackerContent = () => {
                                         userFriendCode={userFriendCode}
                                         socialLoading={socialLoading}
                                         leaderboardMetric={leaderboardMetric}
-                                        onLeaderboardMetricChange={setLeaderboardMetric}
+                                        onLeaderboardMetricChange={
+                                            setLeaderboardMetric
+                                        }
                                         showAddFriendModal={showAddFriendModal}
                                         onShowAddFriendModal={setShowAddFriendModal}
                                         onSendFriendRequest={sendFriendRequest}
@@ -308,9 +311,7 @@ const NutritionTrackerContent = () => {
                                         onToggleReaction={toggleReaction}
                                     />
                                 ) : null}
-                                {activeTab === 'progreso' ? (
-                                    <ProgressTab />
-                                ) : null}
+                                {activeTab === 'progreso' ? <ProgressTab /> : null}
                                 {activeTab === 'oura' ? (
                                     <OuraTab ouraLog={ouraLog} />
                                 ) : null}

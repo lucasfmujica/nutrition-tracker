@@ -5,11 +5,6 @@ import { useTracker } from '../../context/TrackerContext';
 import { useProteinPacing } from '../../hooks/useProteinPacing';
 import { useSmartMealType } from '../../hooks/useSmartMealType';
 import { FoodEntry, Macros, MealTemplate, WaterEntry } from '../../types/domain';
-import {
-    FastLogCarousel,
-    FastLogCombo,
-    FastLogFood,
-} from '../Dashboard/FastLogCarousel';
 import { HydrationGuard, HydrationTarget } from '../Dashboard/HydrationGuard';
 import { DaySummary } from '../Diary/DaySummary';
 import { MealSection } from '../Diary/MealSection';
@@ -66,9 +61,6 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
 }) => {
     const { t } = useTranslation();
     const {
-        frequentFoods,
-        frequentCombos,
-        quickLog,
         foodLog,
         customTargets,
         setShowSaveTemplateModal,
@@ -324,12 +316,6 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                 hydrationTarget={hydrationTarget}
                 onAddWater={() => addWaterGlass(selectedFoodDate)}
                 onRemoveWater={() => removeWaterGlass(selectedFoodDate)}
-            />
-
-            <FastLogCarousel
-                frequentFoods={frequentFoods as FastLogFood[]}
-                frequentCombos={frequentCombos as FastLogCombo[]}
-                onQuickLog={quickLog}
             />
 
             <ProteinTimeline
