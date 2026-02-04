@@ -298,79 +298,79 @@
             "side": "Side",
             "back": "Back",
             "other": "Other"
+        }
+    },
+    "social": {
+        "title": "Social",
+        "subtitle": "Connect with friends",
+        "invite": "Invite",
+        "feed": {
+            "title": "Activity",
+            "subtitle": "Last 7 days",
+            "noActivity": "No recent activity",
+            "noActivityDesc": "When you or your friends log activities, they will appear here"
         },
-        "social": {
-            "title": "Social",
-            "subtitle": "Connect with friends",
-            "invite": "Invite",
-            "feed": {
-                "title": "Activity",
-                "subtitle": "Last 7 days",
-                "noActivity": "No recent activity",
-                "noActivityDesc": "When you or your friends log activities, they will appear here"
-            },
-            "friends": {
-                "title": "Friends",
-                "count_one": "{{count}} friend",
-                "count_other": "{{count}} friends",
-                "addFriend": "Add friend",
-                "requests": "Friend Requests",
-                "pending_one": "pending",
-                "pending_other": "pending",
-                "noFriends": "No friends yet",
-                "noFriendsDesc": "Add friends to see their progress and compete in the Leaderboard",
-                "remove": "Remove friend",
-                "confirmRemove": "Confirm removal"
-            },
-            "leaderboard": {
-                "title": "Leaderboard",
-                "subtitle": "This week",
-                "noData": "No data",
-                "noDataDesc": "Add friends to see the leaderboard",
-                "you": "(You)",
-                "metrics": {
-                    "streak": "Streak",
-                    "workouts": "Workouts",
-                    "weight": "Weight",
-                    "deficit": "Deficit"
-                }
-            },
-            "addFriend": {
-                "title": "Add Friend",
-                "yourCode": "Your Friend Code",
-                "shareTip": "Share this code with your friends",
-                "childTip": "or",
-                "friendCode": "Friend's Code",
-                "placeholder": "Ex: ABCD1234",
-                "send": "Send Request",
-                "sending": "Sending...",
-                "sent": "Request sent",
-                "error": "Error sending request"
-            },
-            "activity": {
-                "workout_logged": "logged a workout",
-                "weight_milestone": "reached a weight milestone",
-                "streak_achieved": "achieved a streak",
-                "goal_reached": "reached their goal",
-                "friend_added": "added a friend",
-                "default": "activity",
-                "ago": "{{time}} ago",
-                "now": "just now"
-            },
-            "requests": {
-                "sent": "Request sent {{time}}",
-                "today": "Today",
-                "yesterday": "Yesterday",
-                "daysAgo": "{{count}} days ago"
+        "friends": {
+            "title": "Friends",
+            "count_one": "{{count}} friend",
+            "count_other": "{{count}} friends",
+            "addFriend": "Add friend",
+            "requests": "Friend Requests",
+            "pending_one": "pending",
+            "pending_other": "pending",
+            "noFriends": "No friends yet",
+            "noFriendsDesc": "Add friends to see their progress and compete in the Leaderboard",
+            "remove": "Remove friend",
+            "confirmRemove": "Confirm removal"
+        },
+        "leaderboard": {
+            "title": "Leaderboard",
+            "subtitle": "This week",
+            "noData": "No data",
+            "noDataDesc": "Add friends to see the leaderboard",
+            "you": "(You)",
+            "metrics": {
+                "streak": "Streak",
+                "workouts": "Workouts",
+                "weight": "Weight",
+                "deficit": "Deficit"
             }
         },
-        "foodItem": {
-            "needsReview": "Needs Review",
-            "saveFavorite": "Save as favorite",
-            "removeFavorite": "Remove from favorites",
-            "edit": "Edit",
-            "delete": "Delete"
+        "addFriend": {
+            "title": "Add Friend",
+            "yourCode": "Your Friend Code",
+            "shareTip": "Share this code with your friends",
+            "childTip": "or",
+            "friendCode": "Friend's Code",
+            "placeholder": "Ex: ABCD1234",
+            "send": "Send Request",
+            "sending": "Sending...",
+            "sent": "Request sent",
+            "error": "Error sending request"
+        },
+        "activity": {
+            "workout_logged": "logged a workout",
+            "weight_milestone": "reached a weight milestone",
+            "streak_achieved": "achieved a streak",
+            "goal_reached": "reached their goal",
+            "friend_added": "added a friend",
+            "default": "activity",
+            "ago": "{{time}} ago",
+            "now": "just now"
+        },
+        "requests": {
+            "sent": "Request sent {{time}}",
+            "today": "Today",
+            "yesterday": "Yesterday",
+            "daysAgo": "{{count}} days ago"
         }
+    },
+    "foodItem": {
+        "needsReview": "Needs Review",
+        "saveFavorite": "Save as favorite",
+        "removeFavorite": "Remove from favorites",
+        "edit": "Edit",
+        "delete": "Delete"
     },
     "dashboard": {
         "title": "Summary",
@@ -428,11 +428,18 @@
             "loading": "Loading weather...",
             "noData": "No weather data",
             "tips": {
-                "heat": "🔥 It's {{temp}}°C. Add {{amount}}ml for heat compensation.",
+                "heat": "🔥 It's {{temp}}°C. Add {{amount}}ml due to heat.",
                 "electrolytes": "🔥 It's {{temp}}°C with high humidity. Add {{amount}}ml and electrolytes.",
                 "activity": "💪 {{minutes}} min activity. You need {{amount}}ml extra.",
-                "ideal": "✅ Ideal conditions. Maintain your baseline."
+                "ideal": "✅ Ideal conditions. Keep your baseline."
             }
+        },
+        "trainingWidget": {
+            "title": "Weekly Training",
+            "activity": "Activity",
+            "gym": "Gym",
+            "tennis": "Tennis",
+            "keepMoving": "Keep moving!"
         },
         "coach": {
             "insight": "Coach Insight",
@@ -551,13 +558,52 @@
             "highLoad": "HIGH LOAD",
             "optimal": "OPTIMAL",
             "prime": "Prime",
-            "rest": "Rest"
+            "rest": "Rest",
+            "whyStatement": "Why this statement?",
+            "whyReadiness": "Your 3-day averages exceed your 7-day ones, indicating rising capacity.",
+            "whyVolume": "You've accumulated significant volume; the algorithm prioritizes muscle recovery despite good scores.",
+            "whyStandard": "Your metrics show physiological stability, suggesting standard capacity.",
+            "calculation": {
+                "calculating": "Calculating...",
+                "gathering": "Gathering data",
+                "needOura": "We need at least 3 days of Oura data to generate your forecast.",
+                "analyzing": "Analyzing trends",
+                "moreData": "We need more consistency in recent data."
+            },
+            "peak": {
+                "title": "Peak Performance",
+                "copy": "🔥 Tomorrow is your ideal day to train hard or go for PRs."
+            },
+            "good": {
+                "title": "Good Forecast",
+                "copy": "👍 Good recovery. You can train normally tomorrow."
+            },
+            "caution": {
+                "title": "Caution",
+                "copy": "⚠️ Downward trend detected. Consider moderating intensity tomorrow."
+            },
+            "recovery": {
+                "title": "Recovery Needed",
+                "copy": "😴 Your body needs rest. Prioritize sleep and mobility tomorrow."
+            },
+            "rest_volume": {
+                "title": "Prioritize Rest",
+                "copy": "💪 High recent volume. Give your muscles time to recover."
+            },
+            "sleep_focus": {
+                "title": "Prioritize Sleep",
+                "copy": "😴 Low sleep today. Go to bed early to optimize tomorrow."
+            },
+            "steady": {
+                "title": "Steady",
+                "copy": "Your training capacity is normal. Keep the pace."
+            }
         },
         "weeklyReport": {
             "title": "WEEKLY REPORT",
             "thisWeek": "This Week",
             "bodyWeight": "Body Weight",
-            "totalLost": "Total Lost",
+            "totalLost": "Total lost",
             "variation": "Variation",
             "avgDeficit": "Avg Deficit",
             "consistency": "Consistency",
@@ -568,7 +614,14 @@
             "footer": "LUKENFIT REPORT",
             "sessions": "sessions",
             "matches": "matches",
-            "daysOnTrack": "days on track"
+            "daysOnTrack": "days on track",
+            "feedback": {
+                "greatWeek": "Great week! You're burning fat and keeping the pace.",
+                "discipline": "Weight is going down, discipline is up. Keep it up!",
+                "protein": "Perfect protein. You're protecting your muscle mass.",
+                "mvp": "MVP of the week for your gym consistency.",
+                "consistencyKey": "Consistency is key. Let's go for next week!"
+            }
         },
         "fastLog": {
             "title": "Fast-Log",

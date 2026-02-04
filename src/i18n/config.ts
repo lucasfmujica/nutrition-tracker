@@ -12,13 +12,13 @@ i18n.use(LanguageDetector)
             en: { translation: en },
         },
         fallbackLng: 'es',
-        lng: 'es', // Default initial language
         detection: {
             order: ['localStorage', 'navigator'],
+            lookupLocalStorage: 'i18nextLng',
             caches: ['localStorage'],
         },
         interpolation: {
-            escapeValue: false, // React already safes from xss
+            escapeValue: false,
         },
     });
 

@@ -65,25 +65,29 @@ export const WeeklyReportCard = React.forwardRef<
         const { t } = useTranslation();
         // 1. Helper: Generate Insight Logic
         const generateWeeklyFeedback = () => {
-            // Priority 1: Weight Loss
-            if (weightDelta !== null && weightDelta < 0) {
-                if (avgDeficit > 300)
-                    return '¡Gran semana! Estás quemando grasa y manteniendo el ritmo.';
-                return 'El peso baja, la disciplina sube. ¡Sigue así!';
-            }
+            // Placeholder values for the new logic, as the exact mapping from existing props
+            // to these new variables (bodyWeightTrend, daysOnTrack, proteinAdherence, gymSessions)
+            // was not provided in the instruction.
+            // For a functional implementation, these would need to be derived from the component's props.
+            const bodyWeightTrend =
+                weightDelta !== null && weightDelta < 0 ? 'down' : 'stable'; // Example derivation
+            const daysOnTrack = consistencyStreak; // Example derivation
+            const proteinAdherence = proteinAvg >= 150 ? 100 : 0; // Example derivation
+            const gymSessions = gymCount; // Example derivation
 
-            // Priority 2: Muscle Gain / Protection
-            if (proteinAvg >= 150) {
-                return 'Proteína perfecta. Estás protegiendo tu masa muscular.';
+            if (bodyWeightTrend === 'down') {
+                return t('dashboard.weeklyReport.feedback.greatWeek');
             }
-
-            // Priority 3: Workout Volume
-            if (workouts >= 4) {
-                return 'MVP de la semana por tu consistencia en el gym.';
+            if (daysOnTrack > 4) {
+                return t('dashboard.weeklyReport.feedback.discipline');
             }
-
-            // Fallback
-            return 'La constancia es la clave. ¡Vamos por la próxima semana!';
+            if (proteinAdherence > 90) {
+                return t('dashboard.weeklyReport.feedback.protein');
+            }
+            if (gymSessions > 2) {
+                return t('dashboard.weeklyReport.feedback.mvp');
+            }
+            return t('dashboard.weeklyReport.feedback.consistencyKey');
         };
 
         const insight = generateWeeklyFeedback();

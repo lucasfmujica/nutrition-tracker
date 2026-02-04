@@ -23,14 +23,11 @@ export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ entry, metric })
     };
 
     const formatValue = (value: number, metric: LeaderboardMetric): string => {
-        const daysLabel = i18n.language === 'es' ? 'días' : 'days';
-        const workoutsLabel = i18n.language === 'es' ? 'entrenos' : 'workouts';
-
         switch (metric) {
             case 'streak':
-                return `${value} ${daysLabel}`;
+                return `${value} ${t('units.days', { count: value })}`;
             case 'workouts':
-                return `${value} ${workoutsLabel}`;
+                return `${value} ${t('units.workouts', { count: value })}`;
             case 'weight':
                 const sign = value < 0 ? '' : '+';
                 return `${sign}${value.toFixed(1)} kg`;

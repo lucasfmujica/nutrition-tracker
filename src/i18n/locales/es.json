@@ -299,79 +299,79 @@
             "side": "Lado",
             "back": "Espalda",
             "other": "Otro"
+        }
+    },
+    "social": {
+        "title": "Social",
+        "subtitle": "Conecta con amigos",
+        "invite": "Invitar",
+        "feed": {
+            "title": "Actividad",
+            "subtitle": "Últimos 7 días",
+            "noActivity": "Sin actividad reciente",
+            "noActivityDesc": "Cuando tú o tus amigos registren actividades, aparecerán aquí"
         },
-        "social": {
-            "title": "Social",
-            "subtitle": "Conecta con amigos",
-            "invite": "Invitar",
-            "feed": {
-                "title": "Actividad",
-                "subtitle": "Últimos 7 días",
-                "noActivity": "Sin actividad reciente",
-                "noActivityDesc": "Cuando tú o tus amigos registren actividades, aparecerán aquí"
-            },
-            "friends": {
-                "title": "Amigos",
-                "count_one": "{{count}} amigo",
-                "count_other": "{{count}} amigos",
-                "addFriend": "Agregar amigo",
-                "requests": "Solicitudes de Amistad",
-                "pending_one": "pendiente",
-                "pending_other": "pendientes",
-                "noFriends": "Sin amigos aún",
-                "noFriendsDesc": "Agrega amigos para ver sus progresos y competir en el Ranking",
-                "remove": "Eliminar amigo",
-                "confirmRemove": "Confirmar eliminación"
-            },
-            "leaderboard": {
-                "title": "Ranking",
-                "subtitle": "Esta semana",
-                "noData": "Sin datos",
-                "noDataDesc": "Agrega amigos para ver el ranking",
-                "you": "(Tú)",
-                "metrics": {
-                    "streak": "Racha",
-                    "workouts": "Entrenos",
-                    "weight": "Peso",
-                    "deficit": "Déficit"
-                }
-            },
-            "addFriend": {
-                "title": "Agregar Amigo",
-                "yourCode": "Tu Código de Amigo",
-                "shareTip": "Comparte este código con tus amigos",
-                "childTip": "o",
-                "friendCode": "Código de tu Amigo",
-                "placeholder": "Ej: ABCD1234",
-                "send": "Enviar Solicitud",
-                "sending": "Enviando...",
-                "sent": "Solicitud enviada",
-                "error": "Error al enviar solicitud"
-            },
-            "activity": {
-                "workout_logged": "registró un entreno",
-                "weight_milestone": "alcanzó un hito de peso",
-                "streak_achieved": "logró una racha",
-                "goal_reached": "alcanzó su meta",
-                "friend_added": "agregó un amigo",
-                "default": "actividad",
-                "ago": "hace {{time}}",
-                "now": "ahora"
-            },
-            "requests": {
-                "sent": "Solicitud enviada {{time}}",
-                "today": "Hoy",
-                "yesterday": "Ayer",
-                "daysAgo": "Hace {{count}} días"
+        "friends": {
+            "title": "Amigos",
+            "count_one": "{{count}} amigo",
+            "count_other": "{{count}} amigos",
+            "addFriend": "Agregar amigo",
+            "requests": "Solicitudes de Amistad",
+            "pending_one": "pendiente",
+            "pending_other": "pendientes",
+            "noFriends": "Sin amigos aún",
+            "noFriendsDesc": "Agrega amigos para ver sus progresos y competir en el Ranking",
+            "remove": "Eliminar amigo",
+            "confirmRemove": "Confirmar eliminación"
+        },
+        "leaderboard": {
+            "title": "Ranking",
+            "subtitle": "Esta semana",
+            "noData": "Sin datos",
+            "noDataDesc": "Agrega amigos para ver el ranking",
+            "you": "(Tú)",
+            "metrics": {
+                "streak": "Racha",
+                "workouts": "Entrenos",
+                "weight": "Peso",
+                "deficit": "Déficit"
             }
         },
-        "foodItem": {
-            "needsReview": "Necesita Revisión",
-            "saveFavorite": "Guardar como favorito",
-            "removeFavorite": "Quitar de favoritos",
-            "edit": "Editar",
-            "delete": "Eliminar"
+        "addFriend": {
+            "title": "Agregar Amigo",
+            "yourCode": "Tu Código de Amigo",
+            "shareTip": "Comparte este código con tus amigos",
+            "childTip": "o",
+            "friendCode": "Código de tu Amigo",
+            "placeholder": "Ej: ABCD1234",
+            "send": "Enviar Solicitud",
+            "sending": "Enviando...",
+            "sent": "Solicitud enviada",
+            "error": "Error al enviar solicitud"
+        },
+        "activity": {
+            "workout_logged": "registró un entreno",
+            "weight_milestone": "alcanzó un hito de peso",
+            "streak_achieved": "logró una racha",
+            "goal_reached": "alcanzó su meta",
+            "friend_added": "agregó un amigo",
+            "default": "actividad",
+            "ago": "hace {{time}}",
+            "now": "ahora"
+        },
+        "requests": {
+            "sent": "Solicitud enviada {{time}}",
+            "today": "Hoy",
+            "yesterday": "Ayer",
+            "daysAgo": "Hace {{count}} días"
         }
+    },
+    "foodItem": {
+        "needsReview": "Necesita Revisión",
+        "saveFavorite": "Guardar como favorito",
+        "removeFavorite": "Quitar de favoritos",
+        "edit": "Editar",
+        "delete": "Eliminar"
     },
     "dashboard": {
         "title": "Resumen",
@@ -434,6 +434,13 @@
                 "activity": "💪 {{minutes}} min actividad. Necesitás {{amount}}ml extra.",
                 "ideal": "✅ Condiciones ideales. Mantené tu línea base."
             }
+        },
+        "trainingWidget": {
+            "title": "Entrenamiento Semanal",
+            "activity": "Actividad",
+            "gym": "Gym",
+            "tennis": "Tenis",
+            "keepMoving": "¡Sigue sumando movimiento!"
         },
         "coach": {
             "insight": "Coach Insight",
@@ -552,7 +559,46 @@
             "highLoad": "ALTA CARGA",
             "optimal": "ÓPTIMO",
             "prime": "Prime",
-            "rest": "Rest"
+            "rest": "Rest",
+            "whyStatement": "¿Por qué esta frase?",
+            "whyReadiness": "Tus promedios de 3 días superan a los de 7 días, indicando un ascenso en tu capacidad.",
+            "whyVolume": "Has acumulado mucho volumen; el algoritmo prioriza la recuperación muscular aunque los scores sean buenos.",
+            "whyStandard": "Tus métricas muestran estabilidad fisiológica, lo que sugiere una capacidad estándar.",
+            "calculation": {
+                "calculating": "Calculando...",
+                "gathering": "Recopilando datos",
+                "needOura": "Necesitamos al menos 3 días de datos de Oura para generar tu pronóstico.",
+                "analyzing": "Analizando tendencias",
+                "moreData": "Necesitamos más consistencia en los datos recientes."
+            },
+            "peak": {
+                "title": "Peak Performance",
+                "copy": "🔥 Mañana es tu día ideal para entrenar duro o buscar PRs."
+            },
+            "good": {
+                "title": "Buen Pronóstico",
+                "copy": "👍 Buena recuperación. Puedes entrenar con normalidad mañana."
+            },
+            "caution": {
+                "title": "Precaución",
+                "copy": "⚠️ Tendencia descendente detectada. Considera moderar la intensidad mañana."
+            },
+            "recovery": {
+                "title": "Recuperación Necesaria",
+                "copy": "😴 Tu cuerpo necesita descanso. Prioriza sueño y movilidad mañana."
+            },
+            "rest_volume": {
+                "title": "Prioriza el Descanso",
+                "copy": "💪 Alto volumen reciente. Dale tiempo a tus músculos para recuperarse."
+            },
+            "sleep_focus": {
+                "title": "Prioriza Dormir",
+                "copy": "😴 Sueño bajo hoy. Acuéstate temprano para optimizar mañana."
+            },
+            "steady": {
+                "title": "Estabilidad",
+                "copy": "Tu capacidad de entrenamiento es normal. Mantén el ritmo."
+            }
         },
         "weeklyReport": {
             "title": "REPORTE SEMANAL",
@@ -569,7 +615,14 @@
             "footer": "LUKENFIT REPORT",
             "sessions": "sesiones",
             "matches": "partidos",
-            "daysOnTrack": "días on track"
+            "daysOnTrack": "días on track",
+            "feedback": {
+                "greatWeek": "¡Gran semana! Estás quemando grasa y manteniendo el ritmo.",
+                "discipline": "El peso baja, la disciplina sube. ¡Sigue así!",
+                "protein": "Proteína perfecta. Estás protegiendo tu masa muscular.",
+                "mvp": "MVP de la semana por tu consistencia en el gym.",
+                "consistencyKey": "La constancia es la clave. ¡Vamos por la próxima semana!"
+            }
         },
         "fastLog": {
             "title": "Fast-Log",

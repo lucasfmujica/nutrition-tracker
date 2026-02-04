@@ -188,16 +188,21 @@ export const PerformanceForecastCard: React.FC = () => {
                         </div>
 
                         <div className="bg-blue-50/50 p-2.5 rounded-lg">
-                            <p className="text-[10px] text-blue-700 italic leading-snug">
-                                <strong>¿Por qué esta frase?</strong>{' '}
-                                {(parseFloat(metrics.readinessTrend ?? '0') || 0) >
-                                    3 &&
-                                (parseFloat(metrics.sleepTrend ?? '0') || 0) > 2
-                                    ? 'Tus promedios de 3 días superan a los de 7 días, indicando un ascenso en tu capacidad.'
-                                    : (metrics.volume48h ?? 0) > 10000
-                                      ? 'Has acumulado mucho volumen; el algoritmo prioriza la recuperación muscular aunque los scores sean buenos.'
-                                      : 'Tus métricas muestran estabilidad fisiológica, lo que sugiere una capacidad estándar.'}
-                            </p>
+                            <div
+                                className={`p-4 rounded-xl border border-blue-200 bg-white/50`}>
+                                <p className="text-[10px] text-blue-700 italic leading-snug">
+                                    <strong>
+                                        {t('dashboard.forecast.whyStatement')}
+                                    </strong>{' '}
+                                    {forecastCode === 'peak' &&
+                                        t('dashboard.forecast.whyReadiness')}
+                                    {forecastCode === 'rest_volume' &&
+                                        t('dashboard.forecast.whyVolume')}
+                                    {forecastCode !== 'peak' &&
+                                        forecastCode !== 'rest_volume' &&
+                                        t('dashboard.forecast.whyStandard')}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>

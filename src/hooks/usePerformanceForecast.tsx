@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { OuraEntry, Workout } from '../types/domain';
 import { addDaysToDate, getArgentinaDateString } from '../utils/dateUtils';
 
@@ -33,14 +34,16 @@ export const usePerformanceForecast = (
     workoutLog: Workout[],
     referenceDate: string | null = null,
 ): PerformanceForecast => {
+    const { t } = useTranslation();
+
     return useMemo(() => {
         // 0. Base Guards
         if (!ouraLog || ouraLog.length < 3) {
             return {
-                status: 'Calculando...',
+                status: t('dashboard.forecast.calculation.calculating'),
                 forecastCode: 'insufficient_data',
-                title: 'Recopilando datos',
-                copy: 'Necesitamos al menos 3 días de datos de Oura para generar tu pronóstico.',
+                title: t('dashboard.forecast.calculation.gathering'),
+                copy: t('dashboard.forecast.calculation.needOura'),
                 icon: 'loading',
                 metrics: {},
             };
@@ -81,10 +84,10 @@ export const usePerformanceForecast = (
 
         if (!avg3d || !avg7d || avg7d.count < 5) {
             return {
-                status: 'Calculando...',
+                status: t('dashboard.forecast.calculation.calculating'),
                 forecastCode: 'insufficient_data',
-                title: 'Analizando tendencias',
-                copy: 'Necesitamos más consistencia en los datos recientes.',
+                title: t('dashboard.forecast.calculation.analyzing'),
+                copy: t('dashboard.forecast.calculation.moreData'),
                 icon: 'cloud',
                 metrics: {},
             };
@@ -116,18 +119,14 @@ export const usePerformanceForecast = (
 
         // 4. Decision Logic with MORE STATES
         let status = 'Normal';
-        let title = 'Estabilidad';
-        let copy = 'Tu capacidad de entrenamiento es normal. Mantén el ritmo.';
-        let icon = 'cloud-sun';
         let forecastCode = 'steady';
+        let icon = 'cloud-sun';
         let gradient = 'from-blue-50 to-indigo-50';
         let textColor = 'text-blue-700';
 
         // PEAK: Both metrics trending up significantly (>3%)
         if (readinessTrendPct > 3 && sleepTrendPct > 2) {
             status = 'Peak';
-            title = 'Peak Performance';
-            copy = '🔥 Mañana es tu día ideal para entrenar duro o buscar PRs.';
             icon = 'sun';
             forecastCode = 'peak';
             gradient = 'from-amber-50 to-orange-100';
@@ -140,8 +139,6 @@ export const usePerformanceForecast = (
             todaySleep >= 70
         ) {
             status = 'Good';
-            title = 'Buen Pronóstico';
-            copy = '👍 Buena recuperación. Puedes entrenar con normalidad mañana.';
             icon = 'cloud-sun';
             forecastCode = 'good';
             gradient = 'from-green-50 to-emerald-50';
@@ -150,9 +147,6 @@ export const usePerformanceForecast = (
         // CAUTION: Declining trends but not critical
         else if (readinessTrendPct < -3 || sleepTrendPct < -5) {
             status = 'Caution';
-            title = 'Precaución';
-            copy =
-                '⚠️ Tendencia descendente detectada. Considera moderar la intensidad mañana.';
             icon = 'cloud';
             forecastCode = 'caution';
             gradient = 'from-yellow-50 to-amber-50';
@@ -161,9 +155,6 @@ export const usePerformanceForecast = (
         // RECOVERY: Both metrics clearly declining
         else if (readinessTrendPct < -5 && sleepTrendPct < -3) {
             status = 'Recovery';
-            title = 'Recuperación Necesaria';
-            copy =
-                '😴 Tu cuerpo necesita descanso. Prioriza sueño y movilidad mañana.';
             icon = 'cloud-rain';
             forecastCode = 'recovery';
             gradient = 'from-slate-100 to-gray-200';
@@ -172,9 +163,6 @@ export const usePerformanceForecast = (
         // REST PRIORITY: High recent volume with declining metrics
         else if (isHighVolume && (readinessTrendPct < 0 || todayReadiness < 70)) {
             status = 'Rest Priority';
-            title = 'Prioriza el Descanso';
-            copy =
-                '💪 Alto volumen reciente. Dale tiempo a tus músculos para recuperarse.';
             icon = 'battery-charging';
             forecastCode = 'rest_volume';
             gradient = 'from-purple-50 to-pink-50';
@@ -183,8 +171,6 @@ export const usePerformanceForecast = (
         // LOW SLEEP: Today's sleep was particularly poor
         else if (todaySleep < 60) {
             status = 'Sleep Focus';
-            title = 'Prioriza Dormir';
-            copy = '😴 Sueño bajo hoy. Acuéstate temprano para optimizar mañana.';
             icon = 'moon';
             forecastCode = 'sleep_focus';
             gradient = 'from-indigo-50 to-purple-50';
@@ -194,8 +180,8 @@ export const usePerformanceForecast = (
         return {
             status,
             forecastCode,
-            title,
-            copy,
+            title: t(`dashboard.forecast.${forecastCode}.title`),
+            copy: t(`dashboard.forecast.${forecastCode}.copy`),
             icon,
             ui: {
                 gradient,

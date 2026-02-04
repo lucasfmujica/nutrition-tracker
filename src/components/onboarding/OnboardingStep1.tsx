@@ -18,11 +18,33 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
     data,
     handlers,
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { updateField } = handlers;
 
     return (
         <div className="space-y-5">
+            {/* Language Selection */}
+            <div className="flex justify-center gap-2 mb-6">
+                <button
+                    onClick={() => i18n.changeLanguage('es')}
+                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                        i18n.language === 'es'
+                            ? 'bg-white text-gray-900 shadow-lg shadow-white/10 scale-105'
+                            : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700'
+                    }`}>
+                    🇦🇷 ES
+                </button>
+                <button
+                    onClick={() => i18n.changeLanguage('en')}
+                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                        i18n.language === 'en'
+                            ? 'bg-white text-gray-900 shadow-lg shadow-white/10 scale-105'
+                            : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700'
+                    }`}>
+                    🇺🇸 EN
+                </button>
+            </div>
+
             <div className="text-center mb-6">
                 <span className="text-3xl mb-2 block">👋</span>
                 <h2 className="text-xl font-bold text-white">
