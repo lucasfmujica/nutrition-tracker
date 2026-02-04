@@ -109,21 +109,21 @@ export const IdealDayCard: React.FC<IdealDayCardProps> = ({ pilot }) => {
 
             {/* Optimal Window Summary */}
             <div className="grid grid-cols-2 gap-3 mb-6">
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                    <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 min-w-0">
+                    <p className="text-[10px] text-slate-500 font-bold uppercase mb-1 truncate">
                         {t('dashboard.idealDay.optimalSleep')}
                     </p>
-                    <p className="text-lg font-black text-slate-900">
+                    <p className="text-base lg:text-lg font-black text-slate-900 truncate">
                         {optimalWindow.bedtime}{' '}
                         <span className="text-xs font-normal text-slate-400">→</span>{' '}
                         {optimalWindow.wakeTime}
                     </p>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                    <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 min-w-0">
+                    <p className="text-[10px] text-slate-500 font-bold uppercase mb-1 truncate">
                         {t('dashboard.idealDay.metabolicWindow')}
                     </p>
-                    <p className="text-lg font-black text-slate-900">
+                    <p className="text-base lg:text-lg font-black text-slate-900 truncate">
                         {optimalWindow.eatingWindow.start}{' '}
                         <span className="text-xs font-normal text-slate-400">→</span>{' '}
                         {optimalWindow.eatingWindow.end}

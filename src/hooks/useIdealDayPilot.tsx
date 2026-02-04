@@ -157,10 +157,13 @@ function calculateAvgTimeS(times: string[]): string {
     let sumMinutes = 0;
     times.forEach((t) => {
         const [h, m] = t.split(':').map(Number);
+        if (isNaN(h) || isNaN(m)) return;
+
         let mins = h * 60 + m;
-        // Handle bedtime crossing midnight (e.g. 23:00 vs 00:30)
-        // If it's before 04:00, assume it's late night and add 24h
-        if (h < 4) mins += 24 * 60;
+        // Handle bedtime crossing midnight (e.g. 23:00 vs 01:00)
+        // We use a 12-hour threshold (noon) as the "pivot" point.
+        // If someone goes to bed between 00:00 and 12:00, we treat it as 24:00+h
+        if (h < 12) mins += 24 * 60;
         sumMinutes += mins;
     });
 

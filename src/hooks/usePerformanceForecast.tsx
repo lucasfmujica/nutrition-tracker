@@ -199,5 +199,5 @@ export const usePerformanceForecast = (
                 volume48h,
             },
         };
-    }, [ouraLog, workoutLog, referenceDate]);
+    }, [ouraLog, workoutLog, referenceDate, t]);
 };

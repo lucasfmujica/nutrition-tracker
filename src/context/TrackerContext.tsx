@@ -7,6 +7,7 @@ import React, {
     useRef,
     useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useBiometrics } from '../hooks/useBiometrics';
 import { useDataOperations } from '../hooks/useDataOperations';
 import { useExport } from '../hooks/useExport';
@@ -77,6 +78,7 @@ interface TrackerProviderProps {
 export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) => {
     // Service Layer
     const supabase = useSupabase();
+    const { i18n } = useTranslation();
 
     // CRITICAL FIX: Unified useCloud flag with stability during token refresh
     // Single source of truth for cloud connectivity status
@@ -447,6 +449,9 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
             setUnitSystem,
             updateUnitSystem,
 
+            // Language (Forces re-render on language change)
+            language: i18n.language,
+
             // Supabase
             supabase,
         }),
@@ -475,6 +480,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
             addStepsEntry,
             weeklyPlanHook,
             unitSystem,
+            i18n.language,
         ],
     );
 
