@@ -112,8 +112,8 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
     const displayCurrentWeight = (currentWeight * weightMultiplier).toFixed(1);
 
     return (
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50 mb-6">
-            <div className="flex justify-between items-start mb-6 gap-2 w-full">
+        <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 mb-6 group transition-all duration-300">
+            <div className="flex justify-between items-start mb-8 gap-4 w-full">
                 <div className="min-w-0 flex-1">
                     <h3 className="text-gray-900 font-bold text-lg truncate w-full">
                         {t('dashboard.weightChart.title')}

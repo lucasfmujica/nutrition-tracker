@@ -212,28 +212,30 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
 
     return (
         <div className="space-y-6 pb-8 lg:pb-8">
-            {/* Date Navigator - Clean Desktop Design */}
-            <div className="flex items-center lg:items-start lg:w-full lg:mb-8 justify-center lg:justify-between px-1">
-                <div className="hidden lg:block">
-                    <h1 className="text-2xl font-bold text-gray-900">
+            {/* Dashboard Header - Unified Lab Style */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-1 mb-8">
+                <div className="space-y-1">
+                    <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight uppercase font-satoshi">
                         {t('dashboard.title')}
                     </h1>
-                    <p className="text-sm text-gray-500">
-                        {t('dashboard.subtitle')}
-                    </p>
+                    <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">
+                            {t('dashboard.subtitle')}
+                        </p>
+                    </div>
                 </div>
 
-                {/* Date Navigation + Safety Net Toggle */}
-                <div className="flex flex-col-reverse lg:flex-row items-center gap-3 w-full lg:w-auto">
-                    <div className="w-full lg:w-auto">
+                {/* Controls: Safety Net & Date Picker */}
+                <div className="flex items-center gap-3 self-stretch md:self-auto">
+                    <div className="flex-1 md:flex-none">
                         <SafetyNetToggle
                             isActive={isSafetyNetActive(dashboardDate)}
                             onToggle={() => toggleSafetyNet(dashboardDate)}
                             statusMessage={getStatusMessage(dashboardDate)}
                         />
                     </div>
-
-                    <div className="w-full lg:min-w-[200px] lg:w-auto">
+                    <div className="flex-1 md:min-w-[220px]">
                         <LukenFitDatePicker
                             selectedDate={dashboardDate}
                             onChange={setDashboardDate}
@@ -243,10 +245,10 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                 </div>
             </div>
 
-            {/* Dashboard Content - Bento Grid Layout */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 w-full max-w-full overflow-hidden items-start">
-                {/* HERO ROW: THE ENGINE (Main Projection & Status) */}
-                <div className="md:col-span-2 lg:col-span-8 min-w-0 h-full">
+            {/* Dashboard Content - Premium Bento Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 w-full max-w-full overflow-hidden items-stretch">
+                {/* 1. HERO & PERSPECTIVE (Engine is the Focus) */}
+                <div className="md:col-span-2 lg:col-span-8 min-w-0">
                     <PredictiveWeightCard
                         formattedGoalDate={weightProjection.formattedGoalDate}
                         realistTrend={weightProjection.realistTrend}
@@ -262,7 +264,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                     />
                 </div>
 
-                <div className="md:col-span-2 lg:col-span-4 flex flex-col gap-6 h-full">
+                <div className="md:col-span-2 lg:col-span-4 flex flex-col gap-6">
                     <SummaryCard
                         totals={dashboardTotals}
                         targets={periodizedTargets}
@@ -270,9 +272,12 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                         periodizationState={periodizationIntensity}
                     />
                     <PerformanceForecastCard />
+                    {plateauData && plateauData.isInPlateau && (
+                        <PlateauAlertCard plateauData={plateauData} />
+                    )}
                 </div>
 
-                {/* STRATEGY ROW: GUIDANCE & TIMING */}
+                {/* 2. THE INSIGHTS TRIO (Balanced Column Row) */}
                 <div className="md:col-span-1 lg:col-span-4 min-w-0">
                     <IdealDayCard pilot={idealDayPilot} />
                 </div>
@@ -281,19 +286,19 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                     <MealTimingCard insights={mealTimingInsights} />
                 </div>
 
-                <div className="md:col-span-1 lg:col-span-4 min-w-0">
+                <div className="md:col-span-2 lg:col-span-4 min-w-0">
                     <WeeklyPlanningCard
                         periodization={weeklyPeriodization}
                         targetWeight={profile?.targetWeight || 75}
                     />
                 </div>
 
-                {/* ACTION & TRACKING ROW: INPUTS & MACROS */}
-                <div className="md:col-span-2 lg:col-span-6 min-w-0">
+                {/* 3. INPUT & FEEDBACK (Primary Interaction) */}
+                <div className="md:col-span-2 lg:col-span-7 min-w-0">
                     <FoodCameraInput />
                 </div>
 
-                <div className="md:col-span-2 lg:col-span-6 flex flex-col gap-6">
+                <div className="md:col-span-2 lg:col-span-5 flex flex-col gap-6">
                     <MacroCards
                         totals={dashboardTotals}
                         targets={dashboardTargets}
@@ -308,12 +313,8 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                     />
                 </div>
 
-                {/* PERFORMANCE ROW: WORKOUTS & ALERTS */}
-                <div className="md:col-span-1 lg:col-span-4 min-w-0">
-                    <PlateauAlertCard plateauData={plateauData} />
-                </div>
-
-                <div className="md:col-span-2 lg:col-span-8 min-w-0">
+                {/* 4. PERFORMANCE & LOGS */}
+                <div className="md:col-span-2 lg:col-span-12 min-w-0">
                     <TrainingWidget
                         gymCount={workoutAnalysis.gymCount}
                         tennisCount={workoutAnalysis.tennisCount}
@@ -322,12 +323,12 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                     />
                 </div>
 
-                {/* ANALYTICS ROW: CORRELATIONS (Deep Insights) */}
+                {/* 5. DEEP ANALYTICS ENGINE */}
                 <div className="md:col-span-2 lg:col-span-12 min-w-0">
                     <CorrelationSection analytics={correlationAnalytics} />
                 </div>
 
-                {/* HISTORY ROW: DATA TRENDS */}
+                {/* 6. HISTORY & TRENDS */}
                 <div className="md:col-span-2 lg:col-span-8 min-w-0">
                     <WeightChartCard
                         data={weightHistory}
@@ -344,13 +345,17 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                     <WeightProjectionCard projection={weightProjection} />
                 </div>
 
-                {/* BOTTOM ACTIONS */}
-                <div className="md:col-span-2 lg:col-span-12 pt-2">
+                {/* 7. BOTTOM ACTION */}
+                <div className="md:col-span-2 lg:col-span-12">
                     <button
                         onClick={handleOpenWeeklyReport}
-                        className="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-purple-200/50 hover:shadow-xl hover:shadow-purple-200/70 transition-all active:scale-[0.99] flex items-center justify-center gap-3">
-                        <FileImage className="w-5 h-5" />
-                        {t('dashboard.generateWeeklyReport')}
+                        className="w-full py-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white rounded-[2.5rem] font-bold shadow-2xl hover:shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-4 group border border-slate-700/50">
+                        <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <FileImage className="w-5 h-5 text-primary" />
+                        </div>
+                        <span className="text-xl tracking-tight uppercase font-satoshi">
+                            {t('dashboard.generateWeeklyReport')}
+                        </span>
                     </button>
                 </div>
             </div>

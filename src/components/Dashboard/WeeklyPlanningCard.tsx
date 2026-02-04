@@ -77,7 +77,7 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
     };
 
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
+        <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-xl h-full group transition-all duration-300 hover:border-indigo-100">
             {/* Header */}
             <div className="flex items-center justify-between mb-4 gap-2">
                 <div className="flex items-center gap-2 min-w-0">

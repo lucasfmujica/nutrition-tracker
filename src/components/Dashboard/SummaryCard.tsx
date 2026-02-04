@@ -31,12 +31,12 @@ export const SummaryCard: React.FC<SummaryCardProps> = React.memo(
 
         return (
             <div
-                className="card bg-white p-5 shadow-sm rounded-2xl mb-4 relative overflow-hidden"
+                className="bg-white p-8 shadow-xl rounded-[2.5rem] border border-slate-100 relative overflow-hidden group transition-all duration-300 hover:border-blue-200"
                 data-tutorial="calorie-ring">
                 {/* Background decoration */}
                 <div
-                    className={`absolute top-0 right-0 w-32 h-32 rounded-full -mr-10 -mt-10 opacity-50 pointer-events-none ${
-                        safetyNetActive ? 'bg-blue-50' : 'bg-blue-50'
+                    className={`absolute top-0 right-0 w-32 h-32 rounded-full -mr-10 -mt-10 opacity-30 pointer-events-none ${
+                        safetyNetActive ? 'bg-blue-100' : 'bg-blue-50'
                     }`}></div>
 
                 <div className="relative z-10">

@@ -17,12 +17,17 @@ export const TrainingWidget: React.FC<TrainingWidgetProps> = ({
     const { t } = useTranslation();
 
     return (
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50 w-full">
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-gray-900 font-bold text-lg">
-                    {t('dashboard.trainingWidget.title')}
-                </h3>
-                <span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+        <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 w-full group transition-all duration-300 hover:border-amber-100">
+            <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-amber-50 rounded-xl">
+                        <Dumbbell className="text-amber-500 w-5 h-5 transition-transform group-hover:rotate-12" />
+                    </div>
+                    <h3 className="text-slate-900 font-bold text-xl tracking-tight">
+                        {t('dashboard.trainingWidget.title')}
+                    </h3>
+                </div>
+                <span className="bg-amber-100 text-amber-700 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-[0.15em] border border-amber-200/50">
                     {t('dashboard.trainingWidget.activity')}
                 </span>
             </div>

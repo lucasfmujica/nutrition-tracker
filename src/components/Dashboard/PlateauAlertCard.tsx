@@ -59,7 +59,8 @@ export const PlateauAlertCard: React.FC<PlateauAlertCardProps> = ({
     };
 
     return (
-        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200/50 p-5 shadow-sm">
+        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-[2rem] border border-amber-200/50 p-6 shadow-xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-amber-200/20 blur-2xl rounded-full -translate-y-1/2 translate-x-1/2" />
             {/* Header */}
             <div className="flex items-start gap-3 mb-4">
                 <div className="flex items-center justify-center w-10 h-10 bg-amber-100 rounded-xl flex-shrink-0">

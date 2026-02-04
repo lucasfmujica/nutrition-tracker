@@ -34,8 +34,8 @@ export const WeightProjectionCard: React.FC<WeightProjectionCardProps> = ({
     if (!projection) return null;
 
     return (
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50">
-            <h3 className="text-gray-900 font-bold text-lg mb-4">
+        <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 h-full group transition-all duration-300">
+            <h3 className="text-slate-900 font-bold text-xl tracking-tight mb-6">
                 {t('dashboard.projection.title')}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">

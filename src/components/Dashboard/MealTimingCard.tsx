@@ -81,10 +81,12 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
     };
 
     return (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-50">
-            <div className="flex items-center gap-2 mb-4">
-                <Clock className="text-indigo-600" size={20} />
-                <h3 className="text-gray-900 font-bold text-lg">
+        <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-100 group hover:border-indigo-100 transition-all duration-300">
+            <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-indigo-50 rounded-xl group-hover:scale-110 transition-transform">
+                    <Clock className="text-indigo-600" size={20} />
+                </div>
+                <h3 className="text-slate-900 font-bold text-xl tracking-tight">
                     {t('dashboard.mealTiming.title')}
                 </h3>
             </div>

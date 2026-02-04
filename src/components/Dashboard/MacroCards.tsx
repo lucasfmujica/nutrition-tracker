@@ -17,7 +17,7 @@ const MacroCard: React.FC<MacroCardProps> = React.memo(
         const remaining = Math.max(0, target - current);
 
         return (
-            <div className="bg-white p-3 rounded-2xl border border-gray-50 shadow-sm flex-1 flex flex-col justify-between relative overflow-hidden">
+            <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm flex-1 flex flex-col justify-between relative overflow-hidden group hover:border-primary/20 transition-colors">
                 <div className="relative z-10">
                     <span className="text-xs text-gray-500 font-medium mb-1 block">
                         {label}

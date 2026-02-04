@@ -19,7 +19,7 @@ const ActivityCard: React.FC<ActivityCardProps> = React.memo(
         const percentage = Math.min((value / target) * 100, 100);
 
         return (
-            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-50 relative overflow-hidden flex-1">
+            <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden flex-1 group hover:border-primary/20 transition-colors">
                 <div className="flex items-start justify-between mb-2">
                     <div className={`p-2 rounded-full ${color}`}>
                         <Icon size={20} className="text-white" />
