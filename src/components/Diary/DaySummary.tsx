@@ -26,19 +26,19 @@ export const DaySummary: React.FC<DaySummaryProps> = ({ totals, targets }) => {
             <div className="flex gap-2 text-center">
                 {[
                     {
-                        label: 'Prot',
+                        label: t('dashboard.macros.protein'),
                         current: totals.protein,
                         target: targets.protein,
                         color: 'bg-green-500',
                     },
                     {
-                        label: 'Carbs',
+                        label: t('dashboard.macros.carbs'),
                         current: totals.carbs,
                         target: targets.carbs,
                         color: 'bg-amber-500',
                     },
                     {
-                        label: 'Grasas',
+                        label: t('dashboard.macros.fat'),
                         current: totals.fat,
                         target: targets.fat,
                         color: 'bg-orange-500',
