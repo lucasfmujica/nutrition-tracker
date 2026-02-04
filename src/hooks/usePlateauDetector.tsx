@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CustomTargets, WeightEntry } from '../types/domain';
 import { addDaysToDate, getArgentinaDateString } from '../utils/dateUtils';
 
@@ -46,6 +47,8 @@ export const usePlateauDetector = (
     weightHistory: WeightEntry[],
     customTargets: CustomTargets,
 ): PlateauAnalysis => {
+    const { t } = useTranslation();
+
     return useMemo(() => {
         // Default return if insufficient data
         if (!weightHistory || weightHistory.length < 7) {
@@ -117,12 +120,16 @@ export const usePlateauDetector = (
 
             suggestion = {
                 type: 'plateau',
-                message: `Tu peso se mantiene estable en ~${week2Avg.toFixed(1)} kg. Es hora de romper el plateau.`,
+                message: t('dashboard.plateau.message', {
+                    weight: week2Avg.toFixed(1),
+                }),
                 options: [
                     {
                         id: 'refeed',
-                        label: 'Día Refeed',
-                        description: `Un día a ${refeedCalories} kcal para resetear el metabolismo`,
+                        label: t('dashboard.plateau.refeedLabel'),
+                        description: t('dashboard.plateau.refeedDesc', {
+                            calories: refeedCalories,
+                        }),
                         action: {
                             type: 'refeed',
                             calories: refeedCalories,
@@ -131,8 +138,10 @@ export const usePlateauDetector = (
                     },
                     {
                         id: 'deficit',
-                        label: 'Déficit 10%',
-                        description: `3 días a ${deficitCalories} kcal para acelerar la pérdida`,
+                        label: t('dashboard.plateau.deficitLabel'),
+                        description: t('dashboard.plateau.deficitDesc', {
+                            calories: deficitCalories,
+                        }),
                         action: {
                             type: 'deficit',
                             calories: deficitCalories,
@@ -157,5 +166,5 @@ export const usePlateauDetector = (
             },
             variance,
         };
-    }, [weightHistory, customTargets]);
+    }, [weightHistory, customTargets, t]);
 };

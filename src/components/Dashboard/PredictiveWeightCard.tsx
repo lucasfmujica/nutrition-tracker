@@ -206,7 +206,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                             </div>
                             <div>
                                 <h3 className="text-slate-900 font-satoshi text-xl sm:text-2xl tracking-tight leading-none mb-1">
-                                    ANALYTICS ENGINE
+                                    {t('dashboard.predictive.labels.engine')}
                                 </h3>
                                 <div className="flex items-center gap-1.5">
                                     <span className="w-1.5 h-1.5 rounded-full bg-accent animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]" />
@@ -230,7 +230,8 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                                 <span className="w-2.5 h-2.5 rounded-full border-2 border-accent" />
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                                     {t('dashboard.predictive.labels.goal')} (
-                                    {targetWeight}KG)
+                                    {targetWeight}
+                                    {t('units.kg', { defaultValue: 'KG' })})
                                 </span>
                             </div>
                         </div>
@@ -252,7 +253,8 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                             </p>
                             <div className="flex items-center gap-2">
                                 <span className="text-xl sm:text-2xl font-satoshi text-accent leading-none">
-                                    {weeksToGoal} sem
+                                    {weeksToGoal}{' '}
+                                    {t('units.weeks', { defaultValue: 'sem' })}
                                 </span>
                                 <span className="text-[9px] font-bold text-slate-400 uppercase">
                                     {t('dashboard.predictive.labels.estimated')}
@@ -282,7 +284,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                         </div>
                         <span
                             className={`text-[10px] font-black uppercase tracking-widest ${adherence.color} px-2 py-0.5 rounded-md ${adherence.bg} border border-slate-100`}>
-                            {adherence.label} // {adherencePercent}%
+                            {adherence.label} • {adherencePercent}%
                         </span>
                     </div>
 

@@ -1,5 +1,6 @@
 import { Clock, Target } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface ProteinSlot {
     id: string;
@@ -23,6 +24,8 @@ export const ProteinTimeline: React.FC<ProteinTimelineProps> = ({
     slots,
     remaining,
 }) => {
+    const { t } = useTranslation();
+
     if (!slots || slots.length === 0) return null;
 
     const getStatusStyles = (status: ProteinSlot['status']) => {
@@ -75,10 +78,10 @@ export const ProteinTimeline: React.FC<ProteinTimelineProps> = ({
                     </div>
                     <div>
                         <h3 className="text-sm font-bold text-gray-900">
-                            Protein Pacing
+                            {t('proteinPacing.title')}
                         </h3>
                         <p className="text-[10px] text-gray-500">
-                            Distribución óptima de proteína
+                            {t('proteinPacing.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -87,7 +90,7 @@ export const ProteinTimeline: React.FC<ProteinTimelineProps> = ({
                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 rounded-full">
                     <Target className="w-3.5 h-3.5 text-purple-600" />
                     <span className="text-xs font-bold text-purple-700">
-                        {remaining}g restantes
+                        {t('proteinPacing.remaining', { amount: remaining })}
                     </span>
                 </div>
             </div>
@@ -122,8 +125,8 @@ export const ProteinTimeline: React.FC<ProteinTimelineProps> = ({
                                 </div>
 
                                 {/* Label */}
-                                <span className="mt-2 text-[10px] font-medium text-gray-500">
-                                    {slot.name}
+                                <span className="mt-2 text-[10px] font-medium text-gray-500 text-center">
+                                    {t(slot.name)}
                                 </span>
 
                                 {/* Protein Amount */}
@@ -140,15 +143,21 @@ export const ProteinTimeline: React.FC<ProteinTimelineProps> = ({
             <div className="flex items-center justify-center gap-4 mt-4 pt-3 border-t border-gray-50">
                 <div className="flex items-center gap-1">
                     <div className="w-2 h-2 rounded-full bg-green-500" />
-                    <span className="text-[9px] text-gray-500">Completo</span>
+                    <span className="text-[9px] text-gray-500">
+                        {t('proteinPacing.complete')}
+                    </span>
                 </div>
                 <div className="flex items-center gap-1">
                     <div className="w-2 h-2 rounded-full bg-blue-500" />
-                    <span className="text-[9px] text-gray-500">Activo</span>
+                    <span className="text-[9px] text-gray-500">
+                        {t('proteinPacing.active')}
+                    </span>
                 </div>
                 <div className="flex items-center gap-1">
                     <div className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-                    <span className="text-[9px] text-gray-500">Perdido</span>
+                    <span className="text-[9px] text-gray-500">
+                        {t('proteinPacing.missed')}
+                    </span>
                 </div>
             </div>
         </div>

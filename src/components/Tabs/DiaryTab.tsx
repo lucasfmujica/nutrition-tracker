@@ -264,31 +264,31 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                         <button
                             onClick={() => setShowFoodHistoryPanel(true)}
                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 active:bg-indigo-200 transition-colors"
-                            title="Historial de comidas">
+                            title={t('diary.quickActions.history')}>
                             <Clock size={20} />
                         </button>
                         <button
                             onClick={() => setShowFoodSearchModal(true)}
                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 active:bg-blue-200 transition-colors"
-                            title="Buscar alimento">
+                            title={t('diary.quickActions.search')}>
                             <Search size={20} />
                         </button>
                         <button
                             onClick={() => setShowBarcodeModal(true)}
                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 active:bg-emerald-200 transition-colors"
-                            title="Escanear código de barras">
+                            title={t('diary.quickActions.barcode')}>
                             <ScanBarcode size={20} />
                         </button>
                         <button
                             onClick={() => setShowFoodScanModal(true)}
                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-purple-50 text-purple-600 hover:bg-purple-100 active:bg-purple-200 transition-colors"
-                            title="Escanear con cámara AI">
+                            title={t('diary.quickActions.camera')}>
                             <Camera size={20} />
                         </button>
                         <button
                             onClick={() => handleAddFood('lunch')}
                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300 transition-colors"
-                            title="Agregar manualmente">
+                            title={t('diary.quickActions.manual')}>
                             <Plus size={20} />
                         </button>
                     </div>
@@ -342,14 +342,10 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                 <div className="space-y-4 pb-12">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {groupedMeals.map((group) => {
-                            const getMealTranslation = (type: string) => {
-                                return t(`mealTypes.${type}`);
-                            };
-
                             return (
                                 <MealSection
                                     key={group.type}
-                                    title={getMealTranslation(group.type)}
+                                    title={group.type}
                                     foods={group.items}
                                     totals={{ calories: group.calories }}
                                     onAddFood={() => handleAddFood(group.type)}

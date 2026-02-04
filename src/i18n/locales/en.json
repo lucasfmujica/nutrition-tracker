@@ -140,12 +140,29 @@
         "estimatedDate": "Estimated date",
         "trendDisclaimer": "Based on your actual trend from the last 14 days"
     },
+    "proteinPacing": {
+        "title": "Protein Pacing",
+        "subtitle": "Optimal protein distribution",
+        "remaining": "{{amount}}g remaining",
+        "complete": "Complete",
+        "active": "Active",
+        "missed": "Missed",
+        "slots": {
+            "breakfast": "Breakfast",
+            "lunch": "Lunch",
+            "snack": "Snack",
+            "dinner": "Dinner",
+            "workout": "Workout"
+        }
+    },
     "units": {
         "kg": "kg",
         "lbs": "lbs",
         "cm": "cm",
         "kcal": "kcal",
-        "grams": "g"
+        "grams": "g",
+        "weeks": "wk",
+        "days": "days"
     },
     "config": {
         "title": "Settings",
@@ -228,6 +245,16 @@
     "diary": {
         "title": "Diary",
         "subtitle": "Food log",
+        "quickActions": {
+            "history": "Food history",
+            "search": "Search food",
+            "barcode": "Scan barcode",
+            "camera": "Scan with AI camera",
+            "manual": "Add manually"
+        },
+        "noFoodsInMeal": "No foods",
+        "addMeal": "Add {{meal}}",
+        "addItem": "Add item",
         "noFoods": {
             "title": "No meals logged",
             "subtitle": "Log your first meal of the day.",
@@ -418,7 +445,20 @@
             },
             "goalReached": {
                 "title": "GOAL REACHED!",
-                "subtitle": "STATUS: {{weight}} KG CONQUERED"
+                "subtitle": "STATUS: {{weight}} KG CONQUERED",
+                "message": "You've reached your goal! Time to maintain."
+            },
+            "coach": {
+                "moreData": "Log more data to generate your projection.",
+                "stable": "Stable weight. Excellent maintenance!",
+                "upwardsTrend": "Upwards trend. Adjust if not desired.",
+                "downwardsTrend": "Downwards trend. Adjust if not desired.",
+                "downwardsTrendBulk": "Downwards trend. Increase your calories.",
+                "upwardsTrendCut": "Upwards trend. Review your calorie deficit.",
+                "highAdherence": "Excellent adherence. Keep it up!",
+                "goodProgress": "Good progress. Add more consistent days.",
+                "keepGoing": "Every day counts. Focus today.",
+                "rebound": "Get back on track. Your goal is waiting."
             },
             "status": {
                 "stable": "STABLE",
@@ -491,9 +531,13 @@
         },
         "plateau": {
             "detected": "Plateau Detected",
-            "suggestion": "Adjust calories",
             "applied": "Applied",
-            "basedOn": "Based on analysis of last 14 days of weight"
+            "basedOn": "Based on analysis of last 14 days of weight",
+            "message": "Your weight has been stable at ~{{weight}} kg. Time to break the plateau.",
+            "refeedLabel": "Refeed Day",
+            "refeedDesc": "One day at {{calories}} kcal to reset metabolism",
+            "deficitLabel": "10% Deficit",
+            "deficitDesc": "3 days at {{calories}} kcal to accelerate loss"
         },
         "forecast": {
             "title": "Tomorrow's Outlook",
@@ -911,11 +955,29 @@
             },
             "insight": {
                 "highReadiness": "High readiness + moderate volume = high capacity (left/green zone).",
-                "lowReadiness": "Low readiness + high volume = recovery needed (right/orange zone)."
+                "lowReadiness": "Low readiness + high volume = recovery needed (right/orange zone).",
+                "recovered": "Your body is recovered. Good day for normal intensity training.",
+                "doneGym": "Great job! {{volume}} kg volume logged. Focus on nutrition and recovery.",
+                "doneOther": "Workout logged! Now prioritize recovery.",
+                "overreaching": "High volume this week. Reduce intensity to avoid accumulated fatigue.",
+                "caution": "Fatigue signals detected. Moderate intensity today.",
+                "prime": "You're at your best! Ideal day for high intensity or PR.",
+                "normal": "Normal training capacity. Keep your planned pace.",
+                "needMoreData": "Need more data."
             },
             "warnings": {
                 "future": "Future date: This projection is based on your history. No real Oura or workout data for this date.",
                 "stale": "Oura data outdated: Readiness and sleep scores are from {{date}}. Sync your Oura Ring to get recent data."
+            },
+            "status": {
+                "optimal": "Optimal",
+                "prime": "Prime",
+                "recovering": "Recovering",
+                "overreaching": "Overreaching",
+                "done": "Done",
+                "caution": "Caution",
+                "normal": "Normal",
+                "unknown": "Unknown"
             }
         },
         "exercise": {

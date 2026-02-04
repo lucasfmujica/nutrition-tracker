@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     CustomTargets,
     FoodEntry,
@@ -34,6 +35,7 @@ export const useWeightProjection = (
     profile: Profile,
     getTargetsForDate: (date: string) => CustomTargets,
 ): WeightProjection => {
+    const { t, i18n } = useTranslation();
     const TARGET_WEIGHT = profile?.targetWeight || 75;
     const STEP_GOAL = profile?.stepGoal || 10000;
     // Use profile weight as fallback, but prefer today's log for specific calculations
@@ -233,7 +235,9 @@ export const useWeightProjection = (
                 adjustedTrend: realistTrend,
                 weeksToGoal: null,
                 daysToGoal: null,
-                remainingWeight: currentWeight ? Math.abs(currentWeight - TARGET_WEIGHT) : 0,
+                remainingWeight: currentWeight
+                    ? Math.abs(currentWeight - TARGET_WEIGHT)
+                    : 0,
                 status: 'not_losing' as const, // We use 'not_losing' to indicate no projection
             };
         }
@@ -246,7 +250,7 @@ export const useWeightProjection = (
         // Check if goal is reached
         if (!currentWeight || remainingWeight <= 0) {
             return {
-                projectedGoalDate: 'Meta alcanzada! 🎉',
+                projectedGoalDate: t('dashboard.predictive.goalReached.title'),
                 adjustedTrend: 0,
                 weeksToGoal: '0',
                 daysToGoal: 0,
@@ -289,7 +293,14 @@ export const useWeightProjection = (
             remainingWeight,
             status: 'on_track' as const,
         };
-    }, [currentWeight, realistTrend, adherenceData.adherenceScore, TARGET_WEIGHT, profile?.goal]);
+    }, [
+        currentWeight,
+        realistTrend,
+        adherenceData.adherenceScore,
+        TARGET_WEIGHT,
+        profile?.goal,
+        t,
+    ]);
 
     /**
      * Generate projected path for chart visualization
@@ -361,7 +372,7 @@ export const useWeightProjection = (
         if (projection.status === 'goal_reached') {
             return {
                 emoji: '🎉',
-                text: '¡Llegaste a tu meta! Es hora de mantener.',
+                text: t('dashboard.predictive.goalReached.message'),
             };
         }
 
@@ -370,16 +381,22 @@ export const useWeightProjection = (
             if (realistTrend === null) {
                 return {
                     emoji: '📊',
-                    text: 'Registra más datos para ver tu estabilidad.',
+                    text: t('dashboard.predictive.coach.moreData'),
                 };
             }
             const absWeeklyChange = Math.abs(realistTrend || 0);
             if (absWeeklyChange <= 0.2) {
-                return { emoji: '✅', text: 'Peso estable. ¡Excelente mantenimiento!' };
+                return { emoji: '✅', text: t('dashboard.predictive.coach.stable') };
             } else if (realistTrend && realistTrend > 0) {
-                return { emoji: '📈', text: 'Tendencia al alza. Ajusta si no es deseado.' };
+                return {
+                    emoji: '📈',
+                    text: t('dashboard.predictive.coach.upwardsTrend'),
+                };
             } else {
-                return { emoji: '📉', text: 'Tendencia a la baja. Ajusta si no es deseado.' };
+                return {
+                    emoji: '📉',
+                    text: t('dashboard.predictive.coach.downwardsTrend'),
+                };
             }
         }
 
@@ -389,65 +406,69 @@ export const useWeightProjection = (
                 if (realistTrend && realistTrend < 0) {
                     return {
                         emoji: '⚠️',
-                        text: 'Tendencia a la baja. Aumenta tus calorías.',
+                        text: t('dashboard.predictive.coach.downwardsTrendBulk'),
                     };
                 }
                 return {
                     emoji: '📊',
-                    text: 'Registra más datos para generar tu proyección.',
+                    text: t('dashboard.predictive.coach.moreData'),
                 };
             } else {
                 // Cut mode: not losing is the issue
                 if (realistTrend && realistTrend > 0) {
                     return {
                         emoji: '⚠️',
-                        text: 'Tendencia al alza. Revisa tu déficit calórico.',
+                        text: t('dashboard.predictive.coach.upwardsTrendCut'),
                     };
                 }
                 return {
                     emoji: '📊',
-                    text: 'Registra más datos para generar tu proyección.',
+                    text: t('dashboard.predictive.coach.moreData'),
                 };
             }
         }
 
         if (adherencePercent >= 80) {
-            return { emoji: '🔥', text: 'Excelente adherencia. ¡Sigue así!' };
+            return {
+                emoji: '🔥',
+                text: t('dashboard.predictive.coach.highAdherence'),
+            };
         } else if (adherencePercent >= 60) {
             return {
                 emoji: '👍',
-                text: 'Buen progreso. Suma más días consistentes.',
+                text: t('dashboard.predictive.coach.goodProgress'),
             };
         } else if (adherencePercent >= 40) {
-            return { emoji: '💪', text: 'Cada día cuenta. Enfócate hoy.' };
+            return { emoji: '💪', text: t('dashboard.predictive.coach.keepGoing') };
         } else {
-            return { emoji: '🎯', text: 'Retoma el ritmo. Tu meta te espera.' };
+            return { emoji: '🎯', text: t('dashboard.predictive.coach.rebound') };
         }
-    }, [adherenceData, projection.status, realistTrend, profile?.goal]);
+    }, [adherenceData, projection.status, realistTrend, profile?.goal, t]);
 
     /**
-     * Format goal date in Argentine locale
+     * Format goal date in user locale
      */
     const formattedGoalDate = useMemo(() => {
         if (
             !projection.projectedGoalDate ||
-            projection.projectedGoalDate.includes('🎉')
+            projection.projectedGoalDate.match(/Meta alcanzada|Goal reached/)
         ) {
             return projection.projectedGoalDate;
         }
 
         try {
             const date = new Date(projection.projectedGoalDate + 'T12:00:00');
-            return new Intl.DateTimeFormat('es-AR', {
+            const locale = i18n.language === 'es' ? 'es-AR' : 'en-US';
+            return new Intl.DateTimeFormat(locale, {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric',
                 timeZone: 'America/Argentina/Buenos_Aires',
             }).format(date);
         } catch {
-            return 'Calculando...';
+            return t('dashboard.predictive.labels.calculating');
         }
-    }, [projection.projectedGoalDate]);
+    }, [projection.projectedGoalDate, i18n.language, t]);
 
     return {
         // Core metrics

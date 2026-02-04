@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { OuraEntry, WeightAnalytics, Workout } from '../types/domain';
 import { addDaysToDate, getArgentinaDateString } from '../utils/dateUtils';
 
@@ -33,12 +34,14 @@ export const useEffortAnalytics = (
     weightAnalytics: WeightAnalytics,
     selectedDate?: string,
 ): EffortAnalytics => {
+    const { t } = useTranslation();
+
     return useMemo(() => {
         // 0. Base Data Checks
         if (!workoutLog || !ouraLog || !weightAnalytics) {
             return {
-                status: 'Unknown',
-                insight: 'Need more data.',
+                status: 'unknown',
+                insight: t('workouts.effort.insight.needMoreData'),
                 metrics: {
                     volumeRatio: '0',
                     readiness: 75,
@@ -137,50 +140,47 @@ export const useEffortAnalytics = (
         let score = Math.max(5, Math.min(95, baseScore));
 
         // 4. Determine Status and Insight Based on Score and Context
-        let status = 'Optimal';
-        let insight =
-            'Tu cuerpo está recuperado. Buen día para entrenar con intensidad normal.';
+        let status = 'optimal';
+        let insight = t('workouts.effort.insight.recovered');
 
         // Override if trained today
         if (hasTrainedToday) {
-            status = 'Done';
+            status = 'done';
             insight = hasGymToday
-                ? `¡Gran trabajo! ${todayVolume.toLocaleString()} kg de volumen registrado. Enfócate en nutrición y recuperación.`
-                : '¡Entreno registrado! Ahora prioriza la recuperación.';
+                ? t('workouts.effort.insight.doneGym', {
+                      volume: todayVolume.toLocaleString(),
+                  })
+                : t('workouts.effort.insight.doneOther');
             // Score stays where recovery metrics put it, but shifts slightly left
             score = Math.max(15, score - 15);
         }
         // High fatigue indicators
         else if (score > 75) {
             if (readiness < 60) {
-                status = 'Recuperación';
-                insight =
-                    'Tu readiness está baja. Considera un día de movilidad o descanso activo.';
+                status = 'recovering';
+                insight = t('workouts.effort.insight.lowReadinessWarning');
             } else if (volumeRatio > 1.3) {
-                status = 'Overreaching';
-                insight =
-                    'Volumen elevado esta semana. Reduce intensidad para evitar fatiga acumulada.';
+                status = 'overreaching';
+                insight = t('workouts.effort.insight.overreaching');
             } else {
-                status = 'Cuidado';
-                insight = 'Señales de fatiga detectadas. Modera la intensidad hoy.';
+                status = 'caution';
+                insight = t('workouts.effort.insight.caution');
             }
         }
         // Prime condition
         else if (score < 30 && readiness > 80) {
-            status = 'Prime';
-            insight =
-                '¡Estás en tu mejor momento! Día ideal para intensidad alta o PR.';
+            status = 'prime';
+            insight = t('workouts.effort.insight.prime');
         }
         // Good condition
         else if (score < 45) {
-            status = 'Óptimo';
-            insight = 'Buena recuperación. Puedes entrenar fuerte hoy.';
+            status = 'optimal';
+            insight = t('workouts.effort.insight.recovered');
         }
         // Normal condition (middle range)
         else {
-            status = 'Normal';
-            insight =
-                'Capacidad de entrenamiento normal. Mantén el ritmo planificado.';
+            status = 'normal';
+            insight = t('workouts.effort.insight.normal');
         }
 
         return {
@@ -196,5 +196,5 @@ export const useEffortAnalytics = (
             },
             score,
         };
-    }, [workoutLog, ouraLog, weightAnalytics, selectedDate]);
+    }, [workoutLog, ouraLog, weightAnalytics, selectedDate, t]);
 };

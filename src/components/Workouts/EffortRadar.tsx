@@ -34,21 +34,33 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
     // Determine color based on status
     let statusColor = 'text-green-600';
     let barColor = 'bg-green-500';
-    if (status === 'Overreaching' || status === 'Deload Needed') {
-        statusColor = 'text-orange-600';
-        barColor = 'bg-orange-500';
-    } else if (status === 'Recovering' || status === 'Recuperación') {
-        statusColor = 'text-blue-600';
-        barColor = 'bg-blue-500';
-    } else if (status === 'Prime') {
-        statusColor = 'text-purple-600';
-        barColor = 'bg-purple-500';
-    } else if (status === 'Done') {
-        statusColor = 'text-green-700';
-        barColor = 'bg-green-600';
-    } else if (status === 'Cuidado') {
-        statusColor = 'text-orange-700';
-        barColor = 'bg-orange-600';
+
+    // Using new lowercase keys from hook
+    switch (status) {
+        case 'overreaching':
+        case 'Deload Needed':
+            statusColor = 'text-orange-600';
+            barColor = 'bg-orange-500';
+            break;
+        case 'recovering':
+            statusColor = 'text-blue-600';
+            barColor = 'bg-blue-500';
+            break;
+        case 'prime':
+            statusColor = 'text-purple-600';
+            barColor = 'bg-purple-500';
+            break;
+        case 'done':
+            statusColor = 'text-green-700';
+            barColor = 'bg-green-600';
+            break;
+        case 'caution':
+            statusColor = 'text-orange-700';
+            barColor = 'bg-orange-600';
+            break;
+        default:
+            statusColor = 'text-green-600';
+            barColor = 'bg-green-500';
     }
 
     // Calculate pointer position (clamped 0-100%)
@@ -78,7 +90,7 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
                             d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                         />
                     </svg>
-                    Effort Radar
+                    {t('workouts.effort.title')}
                     <button
                         onClick={() => setShowMetrics(!showMetrics)}
                         className="ml-1 text-gray-400 hover:text-gray-600 transition-colors"
@@ -99,7 +111,7 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
                 </h3>
                 <span
                     className={`text-xs font-bold px-2 py-1 rounded-full bg-gray-50 uppercase tracking-wider ${statusColor}`}>
-                    {status}
+                    {t(`workouts.effort.status.${status}`, { defaultValue: status })}
                 </span>
             </div>
 

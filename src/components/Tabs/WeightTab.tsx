@@ -214,7 +214,7 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                         <div className="text-center p-3 bg-gray-50 rounded-xl">
                             <div className="text-xl font-bold text-blue-600">
                                 {weightProjection.weeksToGoal
-                                    ? `${weightProjection.weeksToGoal} sem`
+                                    ? `${weightProjection.weeksToGoal} ${t('units.weeks', { defaultValue: 'sem' })}`
                                     : '-'}
                             </div>
                             <div className="text-xs text-gray-400 font-medium mt-1">

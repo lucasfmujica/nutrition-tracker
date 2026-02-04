@@ -78,12 +78,13 @@ export const MealSection: React.FC<MealSectionProps> = ({
                 {foods.length === 0 && (
                     <div className="p-6 text-center">
                         <p className="text-sm text-gray-400 italic mb-2">
-                            Sin alimentos
+                            {t('diary.noFoodsInMeal')}
                         </p>
                         <button
                             onClick={onAddFood}
                             className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
-                            + Añadir {title}
+                            +{' '}
+                            {t('diary.addMeal', { meal: getMealTypeName(title, t) })}
                         </button>
                     </div>
                 )}
@@ -94,7 +95,7 @@ export const MealSection: React.FC<MealSectionProps> = ({
                 <button
                     onClick={onAddFood}
                     className="w-full py-3 flex items-center justify-center gap-2 text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-gray-50 transition-colors border-t border-gray-50">
-                    <Plus size={16} /> Agregar item
+                    <Plus size={16} /> {t('diary.addItem')}
                 </button>
             )}
         </div>
