@@ -256,17 +256,8 @@ export const mappers = {
         sleep_hours: entry.sleepHours,
         deep_sleep_mins: entry.deepSleepMins,
         rem_sleep_mins: entry.remSleepMins,
-        // Note: DB doesn't have bedtime/wake_time columns defined in some schemas, relying on what's there
-        // If they were added later, they should be here. The provided schema only showed them in mapOuraSleepDetails mapping but not prominently in CREATE TABLE in some past versions?
-        // Wait, viewing supabase-schema.sql earlier:
-        // ... sleep_hours, deep_sleep_mins, rem_sleep_mins, created_at
-        // No bedtime/wake_time columns in oura_log table definition!
-        // But they were used in ouraMappers.js...
-        // I will assume they might be missing from DB or just not synced.
-        // I'll leave them out of toDb if they don't exist in type DbOura (which is based on schema).
-        // DbOura (Row) based on schema:
-        // sleep_score, readiness_score, activity_score, hrv, resting_hr, sleep_hours, deep_sleep_mins, rem_sleep_mins.
-        // So bedtime/wake_time are NOT in DB. I will NOT map them to DB.
+        bedtime: entry.bedtime || null,
+        wake_time: entry.wakeTime || null,
     }),
 
     // Oura: Supabase -> localStorage format
@@ -281,8 +272,8 @@ export const mappers = {
         sleepHours: dbEntry.sleep_hours ? Number(dbEntry.sleep_hours) : null,
         deepSleepMins: dbEntry.deep_sleep_mins,
         remSleepMins: dbEntry.rem_sleep_mins,
-        bedtime: null, // Not in DB
-        wakeTime: null, // Not in DB
+        bedtime: dbEntry.bedtime || null,
+        wakeTime: dbEntry.wake_time || null,
     }),
 
     // Water: localStorage -> Supabase

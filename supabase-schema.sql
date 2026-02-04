@@ -121,6 +121,8 @@ CREATE TABLE oura_log (
   sleep_hours DECIMAL(4,2), -- Total sleep in hours
   deep_sleep_mins INTEGER,
   rem_sleep_mins INTEGER,
+  bedtime TIME, -- Time when user went to bed (HH:MM)
+  wake_time TIME, -- Time when user woke up (HH:MM)
   created_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(user_id, date)
 );

@@ -141,6 +141,7 @@ export type Database = {
             oura_log: {
                 Row: {
                     activity_score: number | null;
+                    bedtime: string | null;
                     created_at: string | null;
                     date: string;
                     deep_sleep_mins: number | null;
@@ -152,9 +153,11 @@ export type Database = {
                     sleep_hours: number | null;
                     sleep_score: number | null;
                     user_id: string;
+                    wake_time: string | null;
                 };
                 Insert: {
                     activity_score?: number | null;
+                    bedtime?: string | null;
                     created_at?: string | null;
                     date: string;
                     deep_sleep_mins?: number | null;
@@ -166,9 +169,11 @@ export type Database = {
                     sleep_hours?: number | null;
                     sleep_score?: number | null;
                     user_id: string;
+                    wake_time?: string | null;
                 };
                 Update: {
                     activity_score?: number | null;
+                    bedtime?: string | null;
                     created_at?: string | null;
                     date?: string;
                     deep_sleep_mins?: number | null;
@@ -180,6 +185,7 @@ export type Database = {
                     sleep_hours?: number | null;
                     sleep_score?: number | null;
                     user_id?: string;
+                    wake_time?: string | null;
                 };
                 Relationships: [
                     {
