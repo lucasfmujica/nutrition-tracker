@@ -1079,7 +1079,8 @@
         "camera": {
             "title": "Escanear Comida",
             "takePicture": "Tomar Foto",
-            "scanButton": "Escanear Comida",
+            "scanButton": "Sacar Foto",
+            "galleryButton": "Subir de Galería",
             "analyzing": "Analizando imagen...",
             "helper": "Toma una foto de tu comida para análisis automático con IA",
             "editTitle": "Editar Comida Detectada",

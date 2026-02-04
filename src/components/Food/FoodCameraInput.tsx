@@ -393,7 +393,7 @@ export const FoodCameraInput: React.FC = () => {
                     disabled={isLoading}
                     className="w-full py-4 bg-white border-2 border-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-all active:scale-[0.99] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
                     <ImageIcon className="w-5 h-5" />
-                    {t('food.camera.galleryButton') || 'Galería'}
+                    {t('food.camera.galleryButton')}
                 </button>
             </div>
 

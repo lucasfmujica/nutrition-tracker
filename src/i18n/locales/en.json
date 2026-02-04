@@ -1077,7 +1077,8 @@
         "camera": {
             "title": "Scan Food",
             "takePicture": "Take Picture",
-            "scanButton": "Scan Food",
+            "scanButton": "Take Photo",
+            "galleryButton": "Upload from Gallery",
             "analyzing": "Analyzing image...",
             "helper": "Take a photo of your food for automatic AI analysis",
             "editTitle": "Edit Detected Food",
