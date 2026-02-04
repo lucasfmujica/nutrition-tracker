@@ -365,7 +365,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                     )}
 
                     {/* Row 1: Meal type + Time */}
-                    <div className="grid grid-cols-[1.5fr_1fr] gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-[1.5fr_1fr] gap-3">
                         <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
                                 {t('modals.foodForm.meal')}

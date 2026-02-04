@@ -6,7 +6,7 @@
 import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale';
 import { Calendar, ChevronLeft, ChevronRight, Plus, Utensils } from 'lucide-react';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { FoodEntry, Macros } from '../../types/domain';
 import {
@@ -43,6 +43,26 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
     const { t, i18n } = useTranslation();
     const today = getArgentinaDateString();
     const [isExpanded, setIsExpanded] = useState(true);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+    // Scroll today into view on mobile
+    useEffect(() => {
+        if (scrollContainerRef.current) {
+            const todayElement =
+                scrollContainerRef.current.querySelector('[data-today="true"]');
+            if (todayElement) {
+                // Check if we are on mobile (roughly)
+                const isMobile = window.innerWidth < 768;
+                if (isMobile) {
+                    todayElement.scrollIntoView({
+                        behavior: 'smooth',
+                        inline: 'center',
+                        block: 'nearest',
+                    });
+                }
+            }
+        }
+    }, [selectedDate]); // Re-run when date changes (e.g. week change)
 
     const dateLocale = i18n.language === 'es' ? es : enUS;
 
@@ -175,7 +195,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
             </div>
 
             {/* Week Grid */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto" ref={scrollContainerRef}>
                 <table className="w-full min-w-[700px]">
                     {/* Day Headers */}
                     <thead>
@@ -189,6 +209,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                     onClick={() =>
                                         !day.isFuture && onDateSelect(day.date)
                                     }
+                                    data-today={day.isToday}
                                     className={`py-2 px-2 text-center cursor-pointer transition-colors ${
                                         day.isSelected
                                             ? 'bg-blue-100'
