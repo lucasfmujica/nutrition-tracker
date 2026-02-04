@@ -662,10 +662,10 @@
             "foods": "Alimentos"
         },
         "mealTiming": {
-            "title": "Timing Nutricional",
+            "title": "Timing Nutricional (30d)",
             "empty": "Registrá comidas con horarios para ver análisis de timing",
-            "firstMeal": "PRIMERA COMIDA",
-            "lastMeal": "ÚLTIMA COMIDA",
+            "firstMeal": "1ª COMIDA (PROM.)",
+            "lastMeal": "ÚLT. COMIDA (PROM.)",
             "eatingWindow": "VENTANA ALIMENTARIA",
             "ifPattern": "días con ventana <10h (Ayuno Intermitente)",
             "sleepImpact": {
@@ -677,9 +677,9 @@
             },
             "workoutNutrition": {
                 "title": "Nutrición de Entreno",
-                "avgCarbs": "CARBOS PROM.",
-                "avgProtein": "PROTEÍNA PROM.",
-                "daysWithData": "Promedio en días de entreno ({{count}} días)"
+                "avgCarbs": "CARBOS PRE-ENTRENO",
+                "avgProtein": "PROTEÍNA POST-ENTRENO",
+                "daysWithData": "En {{count}} días de entreno"
             },
             "consistency": {
                 "title": "Consistencia de Horarios",

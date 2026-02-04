@@ -656,24 +656,24 @@
             "foods": "Foods"
         },
         "mealTiming": {
-            "title": "Meal Timing",
+            "title": "Meal Timing (30d)",
             "empty": "Log meals with times to see timing analysis",
-            "firstMeal": "FIRST MEAL",
-            "lastMeal": "LAST MEAL",
+            "firstMeal": "1st MEAL (AVG)",
+            "lastMeal": "LAST MEAL (AVG)",
             "eatingWindow": "EATING WINDOW",
             "ifPattern": "days with window <10h (IF pattern)",
             "sleepImpact": {
                 "title": "Sleep Impact",
                 "gap": "Meal → Bed Gap",
                 "warning": "⚠️ Eating too close to bedtime. Try 2.5-3h before sleep.",
-                "bad": "🔴 {count} days with meals after 9:00 PM",
+                "bad": "🔴 {{count}} days with meals after 9:00 PM",
                 "good": "✅ Optimal timing for sleep quality"
             },
             "workoutNutrition": {
                 "title": "Workout Nutrition",
-                "avgCarbs": "AVG CARBS",
-                "avgProtein": "AVG PROTEIN",
-                "daysWithData": "Average on workout days ({count} days)"
+                "avgCarbs": "PRE-WORKOUT CARBS",
+                "avgProtein": "POST-WORKOUT PROTEIN",
+                "daysWithData": "On {{count}} workout days"
             },
             "consistency": {
                 "title": "Schedule Consistency",

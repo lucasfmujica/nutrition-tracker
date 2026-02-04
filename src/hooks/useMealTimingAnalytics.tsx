@@ -148,21 +148,35 @@ export const useMealTimingAnalytics = (
             const dayMeals = last30DaysFoods.filter((f) => f.date === w.date);
 
             if (dayMeals.length > 0) {
-                // Simplified: Average macros for workout days
-                // In a real implementation, would check meal times relative to workout time
-                const totalCarbs = dayMeals.reduce(
-                    (sum, f) => sum + (f.carbs || 0),
-                    0,
-                );
-                const totalProtein = dayMeals.reduce(
-                    (sum, f) => sum + (f.protein || 0),
-                    0,
-                );
+                // Better logic: Look for specific tags first
+                const preMeal = dayMeals.find((f) => f.meal === 'preworkout');
+                const postMeal = dayMeals.find((f) => f.meal === 'postworkout');
 
-                if (totalCarbs > 0)
-                    preWorkoutCarbs.push(totalCarbs / dayMeals.length);
-                if (totalProtein > 0)
-                    postWorkoutProtein.push(totalProtein / dayMeals.length);
+                if (preMeal) {
+                    preWorkoutCarbs.push(preMeal.carbs || 0);
+                } else {
+                    // Fallback: If no tag, take highest carb meal before/on workout day?
+                    // For now, let's just stick to tags to avoid "30g" avg confusion
+                    // or use the old averaging but ONLY if no tags are present.
+                    // Actually, let's take the largest carb meal as "pre-workout" proxy on workout days if no tag
+                    const maxCarbMeal = [...dayMeals].sort(
+                        (a, b) => (b.carbs || 0) - (a.carbs || 0),
+                    )[0];
+                    if (maxCarbMeal && maxCarbMeal.carbs > 20) {
+                        preWorkoutCarbs.push(maxCarbMeal.carbs);
+                    }
+                }
+
+                if (postMeal) {
+                    postWorkoutProtein.push(postMeal.protein || 0);
+                } else {
+                    const maxProteinMeal = [...dayMeals].sort(
+                        (a, b) => (b.protein || 0) - (a.protein || 0),
+                    )[0];
+                    if (maxProteinMeal && maxProteinMeal.protein > 15) {
+                        postWorkoutProtein.push(maxProteinMeal.protein);
+                    }
+                }
             }
         });
 
@@ -203,7 +217,10 @@ export const useMealTimingAnalytics = (
             workoutNutrition: {
                 avgPreWorkoutCarbs,
                 avgPostWorkoutProtein,
-                workoutDaysWithData: preWorkoutCarbs.length,
+                workoutDaysWithData: Math.max(
+                    preWorkoutCarbs.length,
+                    postWorkoutProtein.length,
+                ),
             },
             consistency: {
                 breakfastVariance: calculateTimeVariance(breakfastTimes),
@@ -218,22 +235,43 @@ export const useMealTimingAnalytics = (
 // ========== HELPER FUNCTIONS ==========
 
 /**
- * Convert time strings (HH:mm) to average time
- * Fixes "21:60" bug by calculating total minutes first, then converting back.
+ * Convert time strings (HH:mm) to average time using circular mean
+ * Fixes "21:60" bug and handles midnight crossings (e.g. 23:00 and 01:00 avg to 00:00)
  */
 function calculateAvgTime(times: string[]): string {
     if (times.length === 0) return '--:--';
 
-    const totalMinutes = times.reduce((sum, time) => {
+    // Use circular mean (unit circle) to handle midnight crossings
+    let sumSin = 0;
+    let sumCos = 0;
+
+    times.forEach((time) => {
         const [h, m] = time.split(':').map(Number);
-        return sum + h * 60 + m;
-    }, 0);
+        const minutes = h * 60 + m;
+        const angle = (minutes / (24 * 60)) * 2 * Math.PI;
+        sumSin += Math.sin(angle);
+        sumCos += Math.cos(angle);
+    });
 
-    const avgTotalMinutes = Math.round(totalMinutes / times.length);
-    const hours = Math.floor(avgTotalMinutes / 60);
-    const mins = avgTotalMinutes % 60;
+    const avgAngle = Math.atan2(sumSin / times.length, sumCos / times.length);
+    let avgMinutes = (avgAngle * (24 * 60)) / (2 * Math.PI);
 
-    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+    if (avgMinutes < 0) avgMinutes += 24 * 60;
+
+    const hours = Math.floor(avgMinutes / 60);
+    const mins = Math.round(avgMinutes % 60);
+
+    // Final check for 60 mins rounding
+    let fixedHours = hours;
+    let fixedMins = mins;
+    if (fixedMins === 60) {
+        fixedMins = 0;
+        fixedHours = (fixedHours + 1) % 24;
+    }
+
+    return `${fixedHours.toString().padStart(2, '0')}:${fixedMins
+        .toString()
+        .padStart(2, '0')}`;
 }
 
 /**
@@ -264,21 +302,38 @@ function calculateAvgHoursDiff(
 }
 
 /**
- * Calculate time variance (standard deviation in minutes)
+ * Calculate time variance (standard deviation in minutes) using circular statistics
  */
 function calculateTimeVariance(times: string[]): number {
-    if (times.length === 0) return 0;
+    if (times.length <= 1) return 0;
 
-    const minutes = times.map((t) => {
+    const angles = times.map((t) => {
         const [h, m] = t.split(':').map(Number);
-        return h * 60 + m;
+        return ((h * 60 + m) / (24 * 60)) * 2 * Math.PI;
     });
 
-    const avg = minutes.reduce((a, b) => a + b, 0) / minutes.length;
-    const variance =
-        minutes.reduce((sum, m) => sum + Math.pow(m - avg, 2), 0) / minutes.length;
+    let sumSin = 0;
+    let sumCos = 0;
+    angles.forEach((a) => {
+        sumSin += Math.sin(a);
+        sumCos += Math.cos(a);
+    });
 
-    return Math.sqrt(variance); // Standard deviation in minutes
+    const n = angles.length;
+    const avgSin = sumSin / n;
+    const avgCos = sumCos / n;
+    const r = Math.sqrt(avgSin * avgSin + avgCos * avgCos);
+
+    // Circular Standard Deviation: sqrt(-2 * ln(R))
+    // but in minutes it's more intuitive to show the linear spread around the mean
+    // if R is high (near 1), the spread is low.
+    if (r === 0) return 0;
+
+    const circularStdDev = Math.sqrt(-2 * Math.log(r));
+    // Wrap back to minutes: stdDev * (Total Minutes / 2*PI)
+    const stdDevMinutes = circularStdDev * ((24 * 60) / (2 * Math.PI));
+
+    return Math.min(stdDevMinutes, 720); // Cap at 12 hours
 }
 
 /**
