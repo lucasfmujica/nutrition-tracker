@@ -5,6 +5,7 @@ import { useTracker } from '../../context/TrackerContext';
 import { OuraEntry, Profile } from '../../types/domain';
 import { getArgentinaDateString } from '../../utils/dateUtils';
 import { OuraBentoGrid, OuraData } from '../Oura/OuraBentoGrid';
+import { OuraWeeklyChart } from '../Oura/OuraWeeklyChart';
 import { OuraWeeklyView } from '../Oura/OuraWeeklyView';
 import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
@@ -238,6 +239,8 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
                     />
 
                     <OuraWeeklyView ouraLog={ouraLog} stepsLog={stepsLog || []} />
+
+                    <OuraWeeklyChart ouraLog={ouraLog} />
                 </>
             )}
 

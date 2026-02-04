@@ -58,6 +58,10 @@
             "noData": "No Oura data",
             "syncPrompt": "Sync your ring to see weekly data"
         },
+        "weeklyChart": {
+            "title": "Recovery Trends",
+            "subtitle": "Visual analysis of your metrics over the last 7 days"
+        },
         "schedule": {
             "title": "Sleep Schedule",
             "bedtime": "Bedtime",

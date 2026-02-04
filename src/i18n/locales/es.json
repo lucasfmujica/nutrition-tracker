@@ -58,6 +58,10 @@
             "noData": "Sin datos de Oura",
             "syncPrompt": "Sincronizá tu anillo para ver los datos semanales"
         },
+        "weeklyChart": {
+            "title": "Tendencias de Recuperación",
+            "subtitle": "Análisis visual de tus métricas de los últimos 7 días"
+        },
         "schedule": {
             "title": "Horario de Sueño",
             "bedtime": "Hora de dormir",
