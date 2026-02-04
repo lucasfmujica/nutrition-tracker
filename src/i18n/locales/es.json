@@ -527,7 +527,7 @@
                 "proteinDesc": "Mínimo 85% del objetivo",
                 "steps": "Pasos:",
                 "stepsDesc": "Mínimo 80% del objetivo",
-                "score": "Score = (checks OK) / 21 días × 100",
+                "score": "Score = (Metas Cumplidas) / 21 días × 100",
                 "tip": "Mejorá tu adherencia cumpliendo más días con tus metas de calorías, proteína y pasos."
             }
         },
@@ -1023,6 +1023,8 @@
             "intensity": "Intensidad",
             "volume": "Volumen",
             "viewMetrics": "Ver métricas",
+            "readiness": "Readiness",
+            "sleep": "Sueño",
             "factors": "Factores que influyen:",
             "volumeRatio": "Volumen 7d/30d:",
             "trend": "Tendencia:",
@@ -1086,6 +1088,13 @@
             "invalidJson": "El JSON no es válido. Por favor corrige el formato.",
             "back": "Volver",
             "save": "Confirmar y Guardar"
+        },
+        "schedule": {
+            "title": "Horarios de Sueño",
+            "bedtime": "Promedio Irse a Dormir",
+            "wakeTime": "Promedio Despertar",
+            "consistency": "Consistencia",
+            "basedOn": "Promedio 30 días"
         }
     },
 
