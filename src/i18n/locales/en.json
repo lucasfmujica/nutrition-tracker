@@ -10,28 +10,7 @@
         "progress": "Progress",
         "oura": "Oura"
     },
-    "common": {
-        "workout": "Workout",
-        "min": "MIN",
-        "date": "DATE",
-        "close": "Close",
-        "loading": {
-            "syncingOura": "Syncing with Oura Ring...",
-            "calculatingPerformance": "Calculating performance forecast..."
-        },
-        "error": {
-            "loadingTitle": "Loading Error",
-            "loadingMessage": "The application is taking too long to load. This may be due to connection issues or corrupt cache data.",
-            "retry": "Retry",
-            "clearDataRetry": "Clear Data & Retry",
-            "persistentIssueAdvice": "If the problem persists, try accessing from another device."
-        }
-    },
-    "workouts": {
-        "sets": "SETS",
-        "reps": "REPS",
-        "noExercises": "No exercises logged in this workout."
-    },
+
     "oura": {
         "title": "Oura Ring",
         "subtitle": "Health and sleep data",
@@ -890,6 +869,19 @@
         }
     },
     "common": {
+        "workout": "Workout",
+        "min": "MIN",
+        "loadingState": {
+            "syncingOura": "Syncing with Oura Ring...",
+            "calculatingPerformance": "Calculating performance forecast..."
+        },
+        "errorState": {
+            "loadingTitle": "Loading Error",
+            "loadingMessage": "The application is taking too long to load. This may be due to connection issues or corrupt cache data.",
+            "retry": "Retry",
+            "clearDataRetry": "Clear Data & Retry",
+            "persistentIssueAdvice": "If the problem persists, try accessing from another device."
+        },
         "date": "Date",
         "locale": "en",
         "install": "Install",
@@ -1118,6 +1110,9 @@
         "unit": "steps"
     },
     "workouts": {
+        "sets": "SETS",
+        "reps": "REPS",
+        "noExercises": "No exercises logged in this workout.",
         "title": "Workouts",
         "subtitle": "Training history",
         "addWorkout": "Add Workout",

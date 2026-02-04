@@ -151,7 +151,7 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
     };
 
     if (showAuth === null && supabase.loading) {
-        return <LoadingScreen message={t('common.loading.syncingOura')} />;
+        return <LoadingScreen message={t('common.loadingState.syncingOura')} />;
     }
 
     if (showAuth === true && !offlineMode) {
@@ -185,16 +185,16 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
                 <div className="max-w-md w-full bg-white/10 backdrop-blur-lg rounded-2xl p-8 text-center">
                     <div className="text-6xl mb-4">⚠️</div>
                     <h1 className="text-2xl font-bold text-white mb-4">
-                        {t('common.error.loadingTitle')}
+                        {t('common.errorState.loadingTitle')}
                     </h1>
                     <p className="text-white/80 mb-6">
-                        {t('common.error.loadingMessage')}
+                        {t('common.errorState.loadingMessage')}
                     </p>
                     <div className="space-y-3">
                         <button
                             onClick={handleRetry}
                             className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
-                            🔄 {t('common.error.retry')}
+                            🔄 {t('common.errorState.retry')}
                         </button>
                         <button
                             onClick={() => {
@@ -203,11 +203,11 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
                                 window.location.reload();
                             }}
                             className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
-                            🗑️ {t('common.error.clearDataRetry')}
+                            🗑️ {t('common.errorState.clearDataRetry')}
                         </button>
                     </div>
                     <p className="text-white/60 text-sm mt-4">
-                        {t('common.error.persistentIssueAdvice')}
+                        {t('common.errorState.persistentIssueAdvice')}
                     </p>
                 </div>
             </div>
@@ -216,7 +216,9 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
 
     if (showAuth === null || (isLoading && showAuth === false)) {
         return (
-            <LoadingScreen message={t('common.loading.calculatingPerformance')} />
+            <LoadingScreen
+                message={t('common.loadingState.calculatingPerformance')}
+            />
         );
     }
 

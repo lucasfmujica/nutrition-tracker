@@ -10,28 +10,7 @@
         "progress": "Progreso",
         "oura": "Oura"
     },
-    "common": {
-        "workout": "Entreno",
-        "min": "MIN",
-        "date": "FECHA",
-        "close": "Cerrar",
-        "loading": {
-            "syncingOura": "Sincronizando con tu anillo Oura...",
-            "calculatingPerformance": "Calculando tu pronóstico de rendimiento..."
-        },
-        "error": {
-            "loadingTitle": "Error de Carga",
-            "loadingMessage": "La aplicación está tardando demasiado en cargar. Esto puede deberse a problemas de conexión o datos en caché corruptos.",
-            "retry": "Reintentar",
-            "clearDataRetry": "Limpiar Datos y Reintentar",
-            "persistentIssueAdvice": "Si el problema persiste, intenta acceder desde otro dispositivo."
-        }
-    },
-    "workouts": {
-        "sets": "SERIES",
-        "reps": "REPS",
-        "noExercises": "No hay ejercicios registrados en este entreno."
-    },
+
     "oura": {
         "title": "Oura Ring",
         "subtitle": "Datos de salud y sueño",
@@ -897,6 +876,19 @@
         }
     },
     "common": {
+        "workout": "Entreno",
+        "min": "MIN",
+        "loadingState": {
+            "syncingOura": "Sincronizando con tu anillo Oura...",
+            "calculatingPerformance": "Calculando tu pronóstico de rendimiento..."
+        },
+        "errorState": {
+            "loadingTitle": "Error de Carga",
+            "loadingMessage": "La aplicación está tardando demasiado en cargar. Esto puede deberse a problemas de conexión o datos en caché corruptos.",
+            "retry": "Reintentar",
+            "clearDataRetry": "Limpiar Datos y Reintentar",
+            "persistentIssueAdvice": "Si el problema persiste, intenta acceder desde otro dispositivo."
+        },
         "date": "Fecha",
         "locale": "es",
         "install": "Instalar",
@@ -1126,6 +1118,9 @@
         "unit": "pasos"
     },
     "workouts": {
+        "sets": "SERIES",
+        "reps": "REPS",
+        "noExercises": "No hay ejercicios registrados en este entreno.",
         "title": "Entrenos",
         "subtitle": "Historial de entrenamientos",
         "addWorkout": "Agregar Entreno",
