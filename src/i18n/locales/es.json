@@ -172,8 +172,10 @@
         "days": "días",
         "workouts": "entrenos",
         "workouts_one": "entreno",
-        "workouts_other": "entrenos"
+        "workouts_other": "entrenos",
+        "min": "min"
     },
+
     "config": {
         "title": "Configuración",
         "subtitle": "Ajustes de perfil y objetivos",
@@ -659,7 +661,7 @@
             "firstMeal": "PRIMERA COMIDA",
             "lastMeal": "ÚLTIMA COMIDA",
             "eatingWindow": "VENTANA ALIMENTARIA",
-            "ifPattern": "días con ventana <10h (IF pattern)",
+            "ifPattern": "días con ventana <10h (Ayuno Intermitente)",
             "sleepImpact": {
                 "title": "Impacto en Sueño",
                 "gap": "Gap Comida → Cama",
@@ -735,7 +737,8 @@
         "steps": "Pasos",
         "progress": "Progreso",
         "social": "Social",
-        "config": "Config"
+        "config": "Config",
+        "more": "Más"
     },
     "layout": {
         "loading": "Cargando...",
