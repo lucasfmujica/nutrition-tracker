@@ -243,10 +243,10 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                 </div>
             </div>
 
-            {/* Dashboard Content - Responsive Desktop Layout */}
-            <div className="flex flex-col lg:flex-row gap-6 items-start w-full max-w-full overflow-hidden">
-                {/* Left Column - Main Tracking (65%) */}
-                <div className="w-full lg:w-[65%] space-y-4 lg:space-y-6 min-w-0">
+            {/* Dashboard Content - Bento Grid Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 w-full max-w-full overflow-hidden items-start">
+                {/* HERO ROW: THE ENGINE (Main Projection & Status) */}
+                <div className="md:col-span-2 lg:col-span-8 min-w-0 h-full">
                     <PredictiveWeightCard
                         formattedGoalDate={weightProjection.formattedGoalDate}
                         realistTrend={weightProjection.realistTrend}
@@ -260,23 +260,44 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                         targetWeight={weightProjection.targetWeight}
                         goal={profile?.goal}
                     />
+                </div>
 
+                <div className="md:col-span-2 lg:col-span-4 flex flex-col gap-6 h-full">
                     <SummaryCard
                         totals={dashboardTotals}
                         targets={periodizedTargets}
                         safetyNetActive={isSafetyNetActive(dashboardDate)}
                         periodizationState={periodizationIntensity}
                     />
+                    <PerformanceForecastCard />
+                </div>
 
+                {/* STRATEGY ROW: GUIDANCE & TIMING */}
+                <div className="md:col-span-1 lg:col-span-4 min-w-0">
                     <IdealDayCard pilot={idealDayPilot} />
+                </div>
 
+                <div className="md:col-span-1 lg:col-span-4 min-w-0">
+                    <MealTimingCard insights={mealTimingInsights} />
+                </div>
+
+                <div className="md:col-span-1 lg:col-span-4 min-w-0">
+                    <WeeklyPlanningCard
+                        periodization={weeklyPeriodization}
+                        targetWeight={profile?.targetWeight || 75}
+                    />
+                </div>
+
+                {/* ACTION & TRACKING ROW: INPUTS & MACROS */}
+                <div className="md:col-span-2 lg:col-span-6 min-w-0">
                     <FoodCameraInput />
+                </div>
 
+                <div className="md:col-span-2 lg:col-span-6 flex flex-col gap-6">
                     <MacroCards
                         totals={dashboardTotals}
                         targets={dashboardTargets}
                     />
-
                     <ActivityCards
                         steps={getStepsForDate(dashboardDate)}
                         stepsTarget={profile?.stepGoal || 8000}
@@ -285,37 +306,29 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                         onAddWater={() => addWaterGlass(dashboardDate)}
                         onRemoveWater={() => removeWaterGlass(dashboardDate)}
                     />
+                </div>
 
-                    <CorrelationSection analytics={correlationAnalytics} />
+                {/* PERFORMANCE ROW: WORKOUTS & ALERTS */}
+                <div className="md:col-span-1 lg:col-span-4 min-w-0">
+                    <PlateauAlertCard plateauData={plateauData} />
+                </div>
 
+                <div className="md:col-span-2 lg:col-span-8 min-w-0">
                     <TrainingWidget
                         gymCount={workoutAnalysis.gymCount}
                         tennisCount={workoutAnalysis.tennisCount}
                         totalDuration={workoutAnalysis.totalDuration}
                         analysis={workoutAnalysis.analysis}
                     />
-
-                    <button
-                        onClick={handleOpenWeeklyReport}
-                        className="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-purple-200/50 hover:shadow-xl hover:shadow-purple-200/70 transition-all active:scale-[0.99] flex items-center justify-center gap-3">
-                        <FileImage className="w-5 h-5" />
-                        {t('dashboard.generateWeeklyReport')}
-                    </button>
                 </div>
 
-                {/* Right Column - Analytics & Weight (35%) */}
-                <div className="w-full lg:w-[35%] space-y-4 lg:space-y-6 min-w-0">
-                    <PlateauAlertCard plateauData={plateauData} />
+                {/* ANALYTICS ROW: CORRELATIONS (Deep Insights) */}
+                <div className="md:col-span-2 lg:col-span-12 min-w-0">
+                    <CorrelationSection analytics={correlationAnalytics} />
+                </div>
 
-                    <WeeklyPlanningCard
-                        periodization={weeklyPeriodization}
-                        targetWeight={profile?.targetWeight || 75}
-                    />
-
-                    <MealTimingCard insights={mealTimingInsights} />
-
-                    <PerformanceForecastCard />
-
+                {/* HISTORY ROW: DATA TRENDS */}
+                <div className="md:col-span-2 lg:col-span-8 min-w-0">
                     <WeightChartCard
                         data={weightHistory}
                         currentWeight={
@@ -325,8 +338,20 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                         targetWeight={profile.targetWeight}
                         weeklyTrend={weightProjection.adjustedTrend}
                     />
+                </div>
 
+                <div className="md:col-span-1 lg:col-span-4 min-w-0">
                     <WeightProjectionCard projection={weightProjection} />
+                </div>
+
+                {/* BOTTOM ACTIONS */}
+                <div className="md:col-span-2 lg:col-span-12 pt-2">
+                    <button
+                        onClick={handleOpenWeeklyReport}
+                        className="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-purple-200/50 hover:shadow-xl hover:shadow-purple-200/70 transition-all active:scale-[0.99] flex items-center justify-center gap-3">
+                        <FileImage className="w-5 h-5" />
+                        {t('dashboard.generateWeeklyReport')}
+                    </button>
                 </div>
             </div>
 
