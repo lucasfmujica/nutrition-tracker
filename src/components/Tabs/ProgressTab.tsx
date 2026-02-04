@@ -100,7 +100,7 @@ const TabButton: React.FC<{
     <button
         onClick={onClick}
         disabled={disabled}
-        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-bold text-sm transition-all whitespace-nowrap ${
+        className={`flex-none px-4 flex items-center justify-center gap-2 py-3 rounded-lg font-bold text-sm transition-all whitespace-nowrap ${
             isActive
                 ? 'bg-white text-purple-600 shadow-sm'
                 : disabled
