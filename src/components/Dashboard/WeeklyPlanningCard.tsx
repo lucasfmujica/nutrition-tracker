@@ -41,7 +41,7 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
     periodization,
     targetWeight,
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     if (!periodization?.weekDays) return null;
 
     const { weekDays, weeklyAverage, isOnTrack, dayDistribution } = periodization;
@@ -75,6 +75,11 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
                 };
         }
     };
+
+    const isImperial = i18n.language.startsWith('en');
+    const weightMultiplier = isImperial ? 2.20462 : 1;
+    const unitLabel = isImperial ? 'lbs' : 'kg';
+    const displayTarget = (targetWeight * weightMultiplier).toFixed(1);
 
     return (
         <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-xl h-full group transition-all duration-300 hover:border-indigo-100">
@@ -200,16 +205,17 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
 
             {/* Track Status */}
             <div
-                className={`mt-3 p-2 rounded-lg text-center ${
-                    isOnTrack ? 'bg-green-50' : 'bg-amber-50'
+                className={`mt-4 p-3 rounded-2xl text-center ${
+                    isOnTrack ? 'bg-emerald-50' : 'bg-amber-50'
                 }`}>
                 <span
-                    className={`text-[10px] font-medium ${
-                        isOnTrack ? 'text-green-700' : 'text-amber-700'
+                    className={`text-xs font-bold ${
+                        isOnTrack ? 'text-emerald-700' : 'text-amber-700'
                     }`}>
                     {isOnTrack
                         ? t('dashboard.weeklyPlan.status.onTrack', {
-                              target: targetWeight,
+                              target: displayTarget,
+                              unit: unitLabel,
                           })
                         : t('dashboard.weeklyPlan.status.adjust')}
                 </span>

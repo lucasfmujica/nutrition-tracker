@@ -692,7 +692,7 @@
             "subtitle": "Calorie distribution",
             "edit": "Edit",
             "status": {
-                "onTrack": "✓ On track to {target} kg",
+                "onTrack": "✓ On track to {{target}} {{unit}}",
                 "adjust": "⚠️ Adjust intensity to maintain deficit"
             },
             "intensity": {

@@ -246,7 +246,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
             </div>
 
             {/* Dashboard Content - Premium Bento Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 w-full max-w-full overflow-hidden items-stretch">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 w-full max-w-full  items-stretch">
                 {/* ROW 1: CORE METRICS */}
                 <div className="md:col-span-2 lg:col-span-8 min-w-0">
                     <PredictiveWeightCard

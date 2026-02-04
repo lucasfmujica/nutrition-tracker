@@ -698,7 +698,7 @@
             "subtitle": "Distribución de calorías",
             "edit": "Editar",
             "status": {
-                "onTrack": "✓ En camino a {{target}} kg",
+                "onTrack": "✓ En camino a {{target}} {{unit}}",
                 "adjust": "⚠️ Ajusta intensidad para mantener déficit"
             },
             "intensity": {
