@@ -277,6 +277,44 @@ export interface Friendship {
     acceptedAt: string | null;
 }
 
+export type ChallengeType =
+    | 'step_count'
+    | 'workout_frequency'
+    | 'calorie_deficit'
+    | 'distance';
+
+export interface Challenge {
+    id: string;
+    title: string;
+    description: string;
+    type: ChallengeType;
+    startDate: string;
+    endDate: string;
+    target: number;
+    unit: string;
+    participants: ChallengeParticipant[];
+    status: 'active' | 'upcoming' | 'ended';
+    image?: string;
+}
+
+export interface ChallengeParticipant {
+    userId: string;
+    avatar: string | null;
+    name: string;
+    progress: number; // Current value vs target
+    rank?: number;
+}
+
+export interface SocialGroup {
+    id: string;
+    name: string;
+    description: string;
+    members: string[]; // user IDs
+    image?: string;
+    isPrivate: boolean;
+    code?: string; // Invite code
+}
+
 // =====================================================
 // PROGRESS PHOTOS & BODY MEASUREMENTS
 // =====================================================

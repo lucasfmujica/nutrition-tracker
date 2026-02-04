@@ -3,16 +3,20 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     ActivityItem,
+    Challenge,
     Friend,
     FriendRequest,
     LeaderboardEntry,
     LeaderboardMetric,
+    SocialGroup,
 } from '../../types/domain';
 import { ActivityFeed } from '../Social/ActivityFeed';
 import { AddFriendModal } from '../Social/AddFriendModal';
+import { ChallengesSection } from '../Social/ChallengesSection';
 import { FriendRequestCard } from '../Social/FriendRequestCard';
 import { FriendsList } from '../Social/FriendsList';
 import { LeaderboardCard } from '../Social/LeaderboardCard';
+import { WorkoutDetailModal } from '../Social/WorkoutDetailModal';
 
 interface SocialTabProps {
     // Data
@@ -64,6 +68,90 @@ export const SocialTab: React.FC<SocialTabProps> = ({
 }) => {
     const { t } = useTranslation();
     const [requestsExpanded, setRequestsExpanded] = useState(true);
+    const [selectedActivity, setSelectedActivity] = useState<ActivityItem | null>(
+        null,
+    );
+    const [selectedGroupId, setSelectedGroupId] = useState<string>('all');
+
+    // Mock Groups Data
+    const groups: SocialGroup[] = [
+        {
+            id: 'all',
+            name: t('social.groups.all'),
+            description: '',
+            members: [],
+            isPrivate: false,
+        },
+        {
+            id: 'g1',
+            name: 'Gym Rats',
+            description: 'Hardcore lifters',
+            members: [],
+            isPrivate: true,
+        },
+        {
+            id: 'g2',
+            name: 'Run Club',
+            description: 'Weekend runners',
+            members: [],
+            isPrivate: false,
+        },
+        {
+            id: 'g3',
+            name: 'Healthy Eats',
+            description: 'Food sharing',
+            members: [],
+            isPrivate: true,
+        },
+    ];
+
+    // Filter content based on group (Mock logic)
+    const filteredFeed =
+        selectedGroupId === 'all'
+            ? activityFeed
+            : activityFeed.filter((_, i) => i % 2 === 0); // content filtering simulation
+
+    const filteredLeaderboard =
+        selectedGroupId === 'all' ? leaderboard : leaderboard.slice(0, 3); // content filtering simulation
+
+    // Mock Challenges Data
+    const challenges: Challenge[] = [
+        {
+            id: 'c1',
+            title: 'Summer Shred 2024',
+            description: 'Get ready for summer with this 30-day challenge',
+            type: 'workout_frequency',
+            startDate: new Date().toISOString(),
+            endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            target: 20,
+            unit: 'workouts',
+            status: 'active',
+            participants: [
+                { userId: '1', name: 'Alex', avatar: null, progress: 12 },
+                { userId: '2', name: 'Sarah', avatar: null, progress: 15 },
+                { userId: '3', name: 'Mike', avatar: null, progress: 8 },
+                { userId: '4', name: 'Emma', avatar: null, progress: 18 },
+                { userId: '5', name: 'Chris', avatar: null, progress: 5 },
+            ],
+            image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500&q=80',
+        },
+        {
+            id: 'c2',
+            title: '100k Steps Week',
+            description: 'Hit 100,000 steps in 7 days',
+            type: 'step_count',
+            startDate: new Date().toISOString(),
+            endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+            target: 100000,
+            unit: 'steps',
+            status: 'active',
+            participants: [
+                { userId: '1', name: 'Alex', avatar: null, progress: 45000 },
+                { userId: '2', name: 'Sarah', avatar: null, progress: 52000 },
+            ],
+            image: 'https://images.unsplash.com/photo-1552674605-469523170d9e?w=500&q=80',
+        },
+    ];
 
     return (
         <div className="w-full space-y-6 pb-24">
@@ -97,6 +185,25 @@ export const SocialTab: React.FC<SocialTabProps> = ({
                         </span>
                     </button>
                 </div>
+            </div>
+
+            {/* Group Selector */}
+            <div className="flex gap-2 overflow-x-auto pb-2 px-1 -mx-1 hide-scrollbar snap-x">
+                {groups.map((group) => (
+                    <button
+                        key={group.id}
+                        onClick={() => setSelectedGroupId(group.id)}
+                        className={`
+                            whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all snap-start
+                            ${
+                                selectedGroupId === group.id
+                                    ? 'bg-slate-900 text-white shadow-md shadow-slate-900/10'
+                                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                            }
+                        `}>
+                        {group.name}
+                    </button>
+                ))}
             </div>
 
             {/* Friend Requests Section */}
@@ -145,9 +252,16 @@ export const SocialTab: React.FC<SocialTabProps> = ({
                 </div>
             )}
 
+            {/* Challenges Section */}
+            <ChallengesSection
+                challenges={challenges}
+                onJoinChallenge={(id) => console.log('Join challenge', id)}
+                onViewChallengeDetails={(id) => console.log('View challenge', id)}
+            />
+
             {/* Leaderboard */}
             <LeaderboardCard
-                leaderboard={leaderboard}
+                leaderboard={filteredLeaderboard}
                 metric={leaderboardMetric}
                 onMetricChange={onLeaderboardMetricChange}
                 loading={socialLoading}
@@ -155,9 +269,10 @@ export const SocialTab: React.FC<SocialTabProps> = ({
 
             {/* Activity Feed */}
             <ActivityFeed
-                activities={activityFeed}
+                activities={filteredFeed}
                 loading={socialLoading}
                 onToggleReaction={onToggleReaction}
+                onActivityClick={setSelectedActivity}
             />
 
             {/* Friends List */}
@@ -174,6 +289,13 @@ export const SocialTab: React.FC<SocialTabProps> = ({
                 onClose={() => onShowAddFriendModal(false)}
                 userFriendCode={userFriendCode}
                 onSendRequest={onSendFriendRequest}
+            />
+
+            {/* Workout Detail Modal */}
+            <WorkoutDetailModal
+                isOpen={!!selectedActivity}
+                onClose={() => setSelectedActivity(null)}
+                activity={selectedActivity}
             />
         </div>
     );

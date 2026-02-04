@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../../context/TrackerContext';
 import { AuthUI } from '../../auth/AuthUI';
 import { OnboardingWizard } from '../../onboarding/OnboardingWizard';
@@ -9,6 +10,7 @@ interface AuthShellProps {
 }
 
 export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
+    const { t } = useTranslation();
     const {
         supabase,
         showAuth,
@@ -31,17 +33,23 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
     // If isLoading is true for more than 30 seconds, force exit and show error
     useEffect(() => {
         if (isLoading && showAuth === false && !supabase.loading) {
-            console.log('[AuthShell] Loading started, setting 30s emergency timeout');
+            console.log(
+                '[AuthShell] Loading started, setting 30s emergency timeout',
+            );
 
             loadingTimeoutRef.current = setTimeout(() => {
-                console.error('[AuthShell] EMERGENCY: Loading timeout after 30s, forcing exit');
+                console.error(
+                    '[AuthShell] EMERGENCY: Loading timeout after 30s, forcing exit',
+                );
                 setLoadingTimedOut(true);
                 setIsLoading(false);
             }, 30000);
         } else {
             // Clear timeout if loading finished normally
             if (loadingTimeoutRef.current) {
-                console.log('[AuthShell] Loading finished, clearing emergency timeout');
+                console.log(
+                    '[AuthShell] Loading finished, clearing emergency timeout',
+                );
                 clearTimeout(loadingTimeoutRef.current);
                 loadingTimeoutRef.current = null;
             }
@@ -143,7 +151,7 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
     };
 
     if (showAuth === null && supabase.loading) {
-        return <LoadingScreen message="Sincronizando con tu anillo Oura..." />;
+        return <LoadingScreen message={t('common.loading.syncingOura')} />;
     }
 
     if (showAuth === true && !offlineMode) {
@@ -176,17 +184,17 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
             <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
                 <div className="max-w-md w-full bg-white/10 backdrop-blur-lg rounded-2xl p-8 text-center">
                     <div className="text-6xl mb-4">⚠️</div>
-                    <h1 className="text-2xl font-bold text-white mb-4">Error de Carga</h1>
+                    <h1 className="text-2xl font-bold text-white mb-4">
+                        {t('common.error.loadingTitle')}
+                    </h1>
                     <p className="text-white/80 mb-6">
-                        La aplicación está tardando demasiado en cargar.
-                        Esto puede deberse a problemas de conexión o datos en caché corruptos.
+                        {t('common.error.loadingMessage')}
                     </p>
                     <div className="space-y-3">
                         <button
                             onClick={handleRetry}
-                            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-                        >
-                            🔄 Reintentar
+                            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                            🔄 {t('common.error.retry')}
                         </button>
                         <button
                             onClick={() => {
@@ -194,13 +202,12 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
                                 indexedDB.deleteDatabase('nutrition-tracker');
                                 window.location.reload();
                             }}
-                            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-                        >
-                            🗑️ Limpiar Datos y Reintentar
+                            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                            🗑️ {t('common.error.clearDataRetry')}
                         </button>
                     </div>
                     <p className="text-white/60 text-sm mt-4">
-                        Si el problema persiste, intenta acceder desde otro dispositivo.
+                        {t('common.error.persistentIssueAdvice')}
                     </p>
                 </div>
             </div>
@@ -209,7 +216,7 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
 
     if (showAuth === null || (isLoading && showAuth === false)) {
         return (
-            <LoadingScreen message="Calculando tu pronóstico de rendimiento..." />
+            <LoadingScreen message={t('common.loading.calculatingPerformance')} />
         );
     }
 

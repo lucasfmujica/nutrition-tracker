@@ -10,6 +10,28 @@
         "progress": "Progreso",
         "oura": "Oura"
     },
+    "common": {
+        "workout": "Entreno",
+        "min": "MIN",
+        "date": "FECHA",
+        "close": "Cerrar",
+        "loading": {
+            "syncingOura": "Sincronizando con tu anillo Oura...",
+            "calculatingPerformance": "Calculando tu pronóstico de rendimiento..."
+        },
+        "error": {
+            "loadingTitle": "Error de Carga",
+            "loadingMessage": "La aplicación está tardando demasiado en cargar. Esto puede deberse a problemas de conexión o datos en caché corruptos.",
+            "retry": "Reintentar",
+            "clearDataRetry": "Limpiar Datos y Reintentar",
+            "persistentIssueAdvice": "Si el problema persiste, intenta acceder desde otro dispositivo."
+        }
+    },
+    "workouts": {
+        "sets": "SERIES",
+        "reps": "REPS",
+        "noExercises": "No hay ejercicios registrados en este entreno."
+    },
     "oura": {
         "title": "Oura Ring",
         "subtitle": "Datos de salud y sueño",
@@ -381,6 +403,28 @@
             "sending": "Enviando...",
             "sent": "Solicitud enviada",
             "error": "Error al enviar solicitud"
+        },
+        "badges": {
+            "streakTitle": "¡Racha en Fuego!",
+            "streakSubtitle": "¡{{count}} días seguidos!",
+            "goalTitle": "¡Meta Destruida!",
+            "goalSubtitle": "Nuevo logro desbloqueado",
+            "milestoneTitle": "Hito de Peso",
+            "milestoneSubtitle": "¡Llegaste a {{weight}} kg!",
+            "achievementTitle": "Logro",
+            "achievementSubtitle": "¡Nivel superado!"
+        },
+        "challenges": {
+            "title": "Desafíos",
+            "subtitle": "Compite con amigos",
+            "participants": "participantes",
+            "join": "Unirse al Reto",
+            "joined": "Unido",
+            "view": "Ver Detalles"
+        },
+        "groups": {
+            "all": "Todos",
+            "create": "Crear Grupo"
         },
         "activity": {
             "workout_logged": "registró un entreno",

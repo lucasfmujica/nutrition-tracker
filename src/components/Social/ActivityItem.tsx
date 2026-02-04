@@ -3,18 +3,32 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityItem as ActivityItemType, ActivityType } from '../../types/domain';
 
+import { BadgeActivity } from './BadgeActivity';
 import { UserAvatar } from './UserAvatar';
 
 interface ActivityItemProps {
     activity: ActivityItemType;
     onToggleReaction?: (activityId: string) => void;
+    onClick?: (activity: ActivityItemType) => void;
 }
 
 export const ActivityItemComponent: React.FC<ActivityItemProps> = ({
     activity,
     onToggleReaction,
+    onClick,
 }) => {
     const { t, i18n } = useTranslation();
+
+    // Check if activity should be rendered as a badge
+    const isBadge = ['streak_achieved', 'goal_reached', 'weight_milestone'].includes(
+        activity.activityType,
+    );
+
+    if (isBadge) {
+        return (
+            <BadgeActivity activity={activity} onToggleReaction={onToggleReaction} />
+        );
+    }
 
     const getActivityConfig = (type: ActivityType) => {
         switch (type) {
@@ -109,8 +123,16 @@ export const ActivityItemComponent: React.FC<ActivityItemProps> = ({
     const reactionCount = activity.reactionCount || 0;
     const hasReacted = activity.hasReacted || false;
 
+    const isClickable = onClick && activity.activityType === 'workout_logged';
+
     return (
-        <div className="flex items-start gap-3 py-3 border-b border-slate-50 last:border-0">
+        <div
+            onClick={() => isClickable && onClick(activity)}
+            className={`flex items-start gap-3 py-3 border-b border-slate-50 last:border-0 transition-colors ${
+                isClickable
+                    ? 'cursor-pointer hover:bg-slate-50/50 active:bg-slate-50'
+                    : ''
+            }`}>
             {/* Activity Icon */}
             <div
                 className={`w-10 h-10 rounded-xl ${config.bg} flex items-center justify-center flex-shrink-0`}>

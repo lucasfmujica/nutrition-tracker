@@ -10,6 +10,28 @@
         "progress": "Progress",
         "oura": "Oura"
     },
+    "common": {
+        "workout": "Workout",
+        "min": "MIN",
+        "date": "DATE",
+        "close": "Close",
+        "loading": {
+            "syncingOura": "Syncing with Oura Ring...",
+            "calculatingPerformance": "Calculating performance forecast..."
+        },
+        "error": {
+            "loadingTitle": "Loading Error",
+            "loadingMessage": "The application is taking too long to load. This may be due to connection issues or corrupt cache data.",
+            "retry": "Retry",
+            "clearDataRetry": "Clear Data & Retry",
+            "persistentIssueAdvice": "If the problem persists, try accessing from another device."
+        }
+    },
+    "workouts": {
+        "sets": "SETS",
+        "reps": "REPS",
+        "noExercises": "No exercises logged in this workout."
+    },
     "oura": {
         "title": "Oura Ring",
         "subtitle": "Health and sleep data",
@@ -375,6 +397,28 @@
             "sending": "Sending...",
             "sent": "Request sent",
             "error": "Error sending request"
+        },
+        "badges": {
+            "streakTitle": "Streak on Fire!",
+            "streakSubtitle": "{{count}} days in a row!",
+            "goalTitle": "Goal Crushed!",
+            "goalSubtitle": "New achievement unlocked",
+            "milestoneTitle": "Weight Milestone",
+            "milestoneSubtitle": "Hit {{weight}} kg!",
+            "achievementTitle": "Achievement",
+            "achievementSubtitle": "Level up!"
+        },
+        "challenges": {
+            "title": "Challenges",
+            "subtitle": "Compete with friends",
+            "participants": "participants",
+            "join": "Join Challenge",
+            "joined": "Joined",
+            "view": "View Details"
+        },
+        "groups": {
+            "all": "All Friends",
+            "create": "Create Group"
         },
         "activity": {
             "workout_logged": "logged a workout",

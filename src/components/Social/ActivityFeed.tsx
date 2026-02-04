@@ -9,12 +9,14 @@ interface ActivityFeedProps {
     activities: ActivityItemType[];
     loading?: boolean;
     onToggleReaction?: (activityId: string) => void;
+    onActivityClick?: (activity: ActivityItemType) => void;
 }
 
 export const ActivityFeed: React.FC<ActivityFeedProps> = ({
     activities,
     loading = false,
     onToggleReaction,
+    onActivityClick,
 }) => {
     const { t } = useTranslation();
 
@@ -63,6 +65,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                             key={activity.id}
                             activity={activity}
                             onToggleReaction={onToggleReaction}
+                            onClick={onActivityClick}
                         />
                     ))}
                 </div>
