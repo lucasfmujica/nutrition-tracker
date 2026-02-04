@@ -717,6 +717,39 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                 </p>
             </div>
 
+            {/* Smart Hydration Setting */}
+            <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full -mr-12 -mt-12 opacity-50" />
+                <div className="relative z-10 flex items-center justify-between">
+                    <div>
+                        <h2 className="text-xs font-black text-blue-400 mb-1 uppercase tracking-[0.2em] flex items-center gap-2">
+                            💧 {t('config.smartHydration.title')}
+                        </h2>
+                        <p className="text-sm text-gray-500 max-w-md">
+                            {t('config.smartHydration.subtitle')}
+                        </p>
+                    </div>
+
+                    <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={profile.smartHydration ?? true}
+                            onChange={(e) =>
+                                updateConfig(
+                                    {
+                                        ...profile,
+                                        smartHydration: e.target.checked,
+                                    },
+                                    customTargets,
+                                )
+                            }
+                            className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+            </div>
+
             {/* Oura Ring Integration */}
             <OuraTokenSetup
                 hasOuraRing={profile.hasOuraRing ?? false}

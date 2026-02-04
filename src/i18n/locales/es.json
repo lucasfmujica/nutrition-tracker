@@ -255,7 +255,11 @@
         "custom_image": "O URL DE IMAGEN PERSONALIZADA",
         "custom_image_placeholder": "https://...",
         "custom_image_help": "Si ingresas una URL, se usará en lugar del emoji.",
-        "sync": "💾 Sincronización automática activa"
+        "sync": "💾 Sincronización automática activa",
+        "smartHydration": {
+            "title": "Hidratación Inteligente",
+            "subtitle": "Ajusta tu meta diaria según la temperatura y actividad."
+        }
     },
     "diary": {
         "title": "Diario",
@@ -443,9 +447,9 @@
             "loading": "Cargando clima...",
             "noData": "Sin datos climáticos",
             "tips": {
-                "heat": "🔥 Hace {{temp}}°C. Agregá {{amount}}ml por el calor.",
-                "electrolytes": "🔥 Hace {{temp}}°C con alta humedad. Agregá {{amount}}ml y electrolitos.",
-                "activity": "💪 {{minutes}} min actividad. Necesitás {{amount}}ml extra.",
+                "heat": "🔥 Hace {{temp}}°C. Agregá {{amount}} por el calor.",
+                "electrolytes": "🔥 Hace {{temp}}°C con alta humedad. Agregá {{amount}} y electrolitos.",
+                "activity": "💪 {{minutes}} min actividad. Necesitás {{amount}} extra.",
                 "ideal": "✅ Condiciones ideales. Mantené tu línea base."
             }
         },

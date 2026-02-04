@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getCurrentWeather } from '../services/weatherService';
-import { Workout } from '../types/domain';
+import { getDailyWeather } from '../services/weatherService';
+import { Profile, WaterEntry, Workout } from '../types/domain';
 import { getArgentinaDateString } from '../utils/dateUtils';
 
 // Constants
@@ -16,8 +16,11 @@ const HUMIDITY_THRESHOLD = 70; // %
 const HEAT_BONUS_MILD = 500; // ml
 const HEAT_BONUS_HIGH = 300; // ml (additional, total 800ml)
 
-import { HydrationTarget } from '../components/Dashboard/HydrationGuard';
-import { WeatherData } from '../services/weatherService';
+import {
+    HydrationTarget,
+    WeatherStatus,
+} from '../components/Dashboard/HydrationGuard';
+import { DailyWeather } from '../services/weatherService';
 
 /**
  * Calculate activity bonus from workout log
@@ -44,28 +47,24 @@ const calculateActivityMinutes = (workoutLog: Workout[], currentDate: string) =>
 /**
  * Calculate heat bonus based on weather conditions
  */
-const calculateHeatBonus = (weather: WeatherData | null) => {
-    if (
-        !weather ||
-        weather.temperature === undefined ||
-        weather.humidity === undefined
-    ) {
+const calculateHeatBonus = (weather: DailyWeather | null) => {
+    if (!weather || weather.maxTemp === undefined) {
         return { bonus: 0, needsElectrolytes: false };
     }
 
-    const { temperature, humidity, unit } = weather;
+    const { maxTemp, unit } = weather;
 
     // Normalize temperature to Celsius for checking thresholds
-    let tempInCelsius = temperature;
+    let tempInCelsius = maxTemp;
     if (unit === 'F') {
-        tempInCelsius = (temperature - 32) * (5 / 9);
+        tempInCelsius = (maxTemp - 32) * (5 / 9);
     }
 
     let bonus = 0;
     let needsElectrolytes = false;
 
     // Check mild heat conditions
-    if (tempInCelsius > TEMP_THRESHOLD_MILD || humidity > HUMIDITY_THRESHOLD) {
+    if (tempInCelsius > TEMP_THRESHOLD_MILD) {
         bonus += HEAT_BONUS_MILD; // +500ml
     }
 
@@ -84,28 +83,47 @@ const calculateHeatBonus = (weather: WeatherData | null) => {
 export const useHydrationTarget = (
     workoutLog: Workout[],
     date: string,
+    profile: Profile,
+    waterLog: WaterEntry[] = [],
 ): HydrationTarget => {
     const { i18n } = useTranslation();
-    const [weather, setWeather] = useState<WeatherData | null>(null);
+    const [weather, setWeather] = useState<DailyWeather | null>(null);
     const [isLoadingWeather, setIsLoadingWeather] = useState(false);
 
-    // Determine if the requested date is today
-    const isToday = useMemo(() => {
-        return date === getArgentinaDateString();
-    }, [date]);
+    // Get existing water entry for this date to check if we already have data
+    const existingEntry = useMemo(
+        () => waterLog.find((e) => e.date === date),
+        [waterLog, date],
+    );
 
-    // Fetch weather data only if it is today
+    // Check if smart hydration is enabled
+    const isSmartHydrationEnabled = profile.smartHydration !== false; // Default to true
+
+    // Fetch weather data
     useEffect(() => {
-        if (!isToday) {
+        // If smart hydration is disabled, don't fetch
+        if (!isSmartHydrationEnabled) {
             setWeather(null);
+            return;
+        }
+
+        // If we already have stored weather data for this date, use it
+        if (existingEntry?.maxTemp !== undefined && existingEntry?.weatherUnit) {
+            setWeather({
+                date,
+                maxTemp: existingEntry.maxTemp,
+                unit: existingEntry.weatherUnit,
+                location: existingEntry.weatherLocation || '',
+                isForecast: false, // Historical/Stored
+            });
             return;
         }
 
         const loadWeather = async () => {
             try {
                 setIsLoadingWeather(true);
-                // Pass language to weather service (en -> NYC/F, es -> BA/C)
-                const weatherData = await getCurrentWeather(i18n.language);
+                // Fetch max temp for the specific date
+                const weatherData = await getDailyWeather(date, i18n.language);
                 setWeather(weatherData);
             } catch (error) {
                 console.error('[useHydrationTarget] Error loading weather:', error);
@@ -116,19 +134,56 @@ export const useHydrationTarget = (
         };
 
         loadWeather();
-    }, [isToday, i18n.language]);
+    }, [
+        date,
+        i18n.language,
+        isSmartHydrationEnabled,
+        existingEntry?.maxTemp,
+        existingEntry?.weatherUnit,
+        existingEntry?.weatherLocation,
+    ]);
 
     // Calculate hydration target (memoized for performance)
     const hydrationData = useMemo(() => {
-        // Calculate activity bonus for the specific date
+        // 1. Activity Bonus (Always applies)
         const activityMinutes = calculateActivityMinutes(workoutLog, date);
         const activityBonus = activityMinutes * ML_PER_ACTIVITY_MINUTE;
 
-        // Calculate heat bonus (only applies if we have weather data, i.e., today)
-        const { bonus: heatBonus, needsElectrolytes } = calculateHeatBonus(weather);
+        // 2. Heat Bonus (Only if Smart Hydration enabled)
+        let heatBonus = 0;
+        let needsElectrolytes = false;
+        let weatherStatus: WeatherStatus | null = null;
 
-        // Final target (baseline + bonuses)
-        // CRITICAL: Baseline is 2500ml minimum, never reduced
+        if (isSmartHydrationEnabled) {
+            // Use stored daily target if available (consistency)
+            if (existingEntry?.dailyTarget) {
+                // Even if we use stored target, we recalculate breakdown for UI if possible
+                // But strictly, if we stored a target, we should probably respect it.
+                // For now, we assume the stored target was calculated with the same logic.
+                // We still calculate heat bonus based on weather to show the "Why" in UI.
+            }
+
+            const heatCalculation = calculateHeatBonus(weather);
+            heatBonus = heatCalculation.bonus;
+            needsElectrolytes = heatCalculation.needsElectrolytes;
+
+            if (weather) {
+                weatherStatus = {
+                    temperature: weather.maxTemp,
+                    humidity: 0, // Daily max temp API might not give humidity easily, simple version for now
+                    location: weather.location,
+                    unit: weather.unit,
+                };
+            }
+        }
+
+        // Final target
+        // If we have a stored daily target, use it?
+        // Logic: The stored target in DB is the "official" one for that day.
+        // But if user changes workouts, activity bonus changes.
+        // So we should probably re-calculate activity bonus live, but keep heat bonus fixed based on stored weather?
+        // Actually, let's keep it dynamic based on current inputs, but using stored weather ensures historical weather doesn't change.
+
         const target = BASELINE_ML + activityBonus + heatBonus;
 
         return {
@@ -137,18 +192,11 @@ export const useHydrationTarget = (
             activityBonus,
             heatBonus,
             needsElectrolytes,
-            weatherStatus: weather
-                ? {
-                      temperature: weather.temperature,
-                      humidity: weather.humidity,
-                      location: weather.location,
-                      unit: weather.unit, // Pass unit to UI
-                  }
-                : null,
+            weatherStatus,
             isLoadingWeather,
             activityMinutes,
         };
-    }, [workoutLog, weather, isLoadingWeather, date]);
+    }, [workoutLog, weather, isLoadingWeather, date, isSmartHydrationEnabled]);
 
     return hydrationData;
 };

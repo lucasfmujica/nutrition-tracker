@@ -12,9 +12,9 @@ export const mappers = {
         current_weight: profile.currentWeight,
         target_weight: profile.targetWeight,
         step_goal: profile.stepGoal || 8000,
-        age: profile.age,
         activity_level: profile.activityLevel,
         goal: profile.goal,
+        smart_hydration: profile.smartHydration ?? true,
     }),
 
     // Profile: Supabase -> localStorage format (for compatibility)
@@ -28,6 +28,7 @@ export const mappers = {
         age: dbProfile.age,
         activityLevel: dbProfile.activity_level,
         goal: dbProfile.goal,
+        smartHydration: dbProfile.smart_hydration ?? true,
     }),
 
     // Targets: localStorage -> Supabase (stored in profiles table)
@@ -238,6 +239,10 @@ export const mappers = {
         date: entry.date!,
         glasses: entry.glasses || 0,
         ml: entry.ml || (entry.glasses || 0) * 250,
+        daily_target: entry.dailyTarget || null,
+        max_temp: entry.maxTemp || null,
+        weather_unit: entry.weatherUnit || null,
+        weather_location: entry.weatherLocation || null,
     }),
 
     // Water: Supabase -> localStorage format
@@ -246,6 +251,10 @@ export const mappers = {
         date: dbEntry.date,
         glasses: dbEntry.glasses,
         ml: dbEntry.ml,
+        dailyTarget: dbEntry.daily_target || undefined,
+        maxTemp: dbEntry.max_temp || undefined,
+        weatherUnit: (dbEntry.weather_unit as 'C' | 'F') || undefined,
+        weatherLocation: dbEntry.weather_location || undefined,
     }),
 
     // Template: localStorage -> Supabase

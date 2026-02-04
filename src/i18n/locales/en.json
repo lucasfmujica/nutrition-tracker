@@ -254,7 +254,11 @@
         "custom_image": "OR CUSTOM IMAGE URL",
         "custom_image_placeholder": "https://...",
         "custom_image_help": "If you enter a URL, it will be used instead of the emoji.",
-        "sync": "💾 Auto-sync active"
+        "sync": "💾 Auto-sync active",
+        "smartHydration": {
+            "title": "Smart Hydration",
+            "subtitle": "Adjust daily target based on temperature and activity."
+        }
     },
     "diary": {
         "title": "Diary",
@@ -442,9 +446,9 @@
             "loading": "Loading weather...",
             "noData": "No weather data",
             "tips": {
-                "heat": "🔥 It's {{temp}}°C. Add {{amount}}ml due to heat.",
-                "electrolytes": "🔥 It's {{temp}}°C with high humidity. Add {{amount}}ml and electrolytes.",
-                "activity": "💪 {{minutes}} min activity. You need {{amount}}ml extra.",
+                "heat": "🔥 It's {{temp}}°C. Add {{amount}} due to heat.",
+                "electrolytes": "🔥 It's {{temp}}°C with high humidity. Add {{amount}} and electrolytes.",
+                "activity": "💪 {{minutes}} min activity. You need {{amount}} extra.",
                 "ideal": "✅ Ideal conditions. Keep your baseline."
             }
         },

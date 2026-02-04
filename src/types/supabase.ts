@@ -212,11 +212,13 @@ export type Database = {
                     target_fiber: number | null;
                     target_protein: number | null;
                     target_weight: number | null;
+                    step_goal: number | null;
                     training_day_calories_bonus: number | null;
                     training_day_carbs: number | null;
                     tutorial_completed: boolean | null;
                     unit_system: 'metric' | 'imperial';
                     language: 'es' | 'en';
+                    smart_hydration: boolean;
                     updated_at: string | null;
                     user_id: string;
                 };
@@ -240,11 +242,13 @@ export type Database = {
                     target_fiber?: number | null;
                     target_protein?: number | null;
                     target_weight?: number | null;
+                    step_goal?: number | null;
                     training_day_calories_bonus?: number | null;
                     training_day_carbs?: number | null;
                     tutorial_completed?: boolean | null;
                     unit_system?: 'metric' | 'imperial';
                     language?: 'es' | 'en';
+                    smart_hydration?: boolean;
                     updated_at?: string | null;
                     user_id: string;
                 };
@@ -268,11 +272,13 @@ export type Database = {
                     target_fiber?: number | null;
                     target_protein?: number | null;
                     target_weight?: number | null;
+                    step_goal?: number | null;
                     training_day_calories_bonus?: number | null;
                     training_day_carbs?: number | null;
                     tutorial_completed?: boolean | null;
                     unit_system?: 'metric' | 'imperial';
                     language?: 'es' | 'en';
+                    smart_hydration?: boolean;
                     updated_at?: string | null;
                     user_id?: string;
                 };
@@ -325,6 +331,10 @@ export type Database = {
                     glasses: number;
                     id: string;
                     ml: number;
+                    daily_target: number | null;
+                    max_temp: number | null;
+                    weather_unit: 'C' | 'F' | null;
+                    weather_location: string | null;
                     user_id: string;
                 };
                 Insert: {
@@ -333,6 +343,10 @@ export type Database = {
                     glasses?: number;
                     id?: string;
                     ml?: number;
+                    daily_target?: number | null;
+                    max_temp?: number | null;
+                    weather_unit?: 'C' | 'F' | null;
+                    weather_location?: string | null;
                     user_id: string;
                 };
                 Update: {
@@ -341,6 +355,10 @@ export type Database = {
                     glasses?: number;
                     id?: string;
                     ml?: number;
+                    daily_target?: number | null;
+                    max_temp?: number | null;
+                    weather_unit?: 'C' | 'F' | null;
+                    weather_location?: string | null;
                     user_id?: string;
                 };
                 Relationships: [

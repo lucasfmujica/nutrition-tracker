@@ -39,6 +39,7 @@ export interface Profile {
     language?: 'es' | 'en';
     // Steps tracking preferences
     stepsAutoSync?: boolean; // Enable Oura Ring auto-sync for steps (default: false)
+    smartHydration?: boolean; // Enable weather-based hydration targets
 }
 
 export type UnitSystem = 'metric' | 'imperial';
@@ -136,6 +137,10 @@ export interface WaterEntry {
     date: string;
     glasses: number;
     ml: number;
+    dailyTarget?: number;
+    maxTemp?: number;
+    weatherUnit?: 'C' | 'F';
+    weatherLocation?: string;
 }
 
 export interface MealTemplate {

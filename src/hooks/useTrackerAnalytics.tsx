@@ -27,6 +27,7 @@ interface AnalyticsParams {
     };
     nutrition: {
         foodLog: FoodEntry[];
+        waterLog: any[]; // TODO: Use WaterEntry type when available/imported or just any for now if type conflict
         getTotalsForDate: (date: string) => Macros;
         getTargetsForDate: (date: string) => CustomTargets;
     };
@@ -112,7 +113,12 @@ export const useTrackerAnalytics = ({
     const workoutAnalysis = useWorkoutAnalysis(workouts.workoutLog, dashboardDate);
 
     // Hydration Intelligence
-    const hydrationTarget = useHydrationTarget(workouts.workoutLog, dashboardDate);
+    const hydrationTarget = useHydrationTarget(
+        workouts.workoutLog,
+        dashboardDate,
+        biometrics.profile,
+        nutrition.waterLog,
+    );
 
     return {
         ...analytics,
