@@ -243,10 +243,10 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                 </div>
             </div>
 
-            {/* Dashboard Content - Flex Desktop Layout */}
-            <div className="flex flex-col lg:flex-row gap-6 items-start">
-                {/* Left Column - Main Tracking (67%) */}
-                <div className="w-full lg:w-8/12 space-y-4 lg:space-y-6">
+            {/* Dashboard Content - Responsive Desktop Layout */}
+            <div className="flex flex-col lg:flex-row gap-6 items-start w-full max-w-full overflow-hidden">
+                {/* Left Column - Main Tracking (65%) */}
+                <div className="w-full lg:w-[65%] space-y-4 lg:space-y-6 min-w-0">
                     <PredictiveWeightCard
                         formattedGoalDate={weightProjection.formattedGoalDate}
                         realistTrend={weightProjection.realistTrend}
@@ -303,8 +303,8 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                     </button>
                 </div>
 
-                {/* Right Column - Analytics & Weight (33%) */}
-                <div className="lg:w-4/12 space-y-4 lg:space-y-6">
+                {/* Right Column - Analytics & Weight (35%) */}
+                <div className="w-full lg:w-[35%] space-y-4 lg:space-y-6 min-w-0">
                     <PlateauAlertCard plateauData={plateauData} />
 
                     <WeeklyPlanningCard

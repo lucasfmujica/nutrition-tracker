@@ -198,19 +198,19 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                 <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent animate-[scan_4s_linear_infinite] z-20" />
 
                 {/* Header / Engine Status */}
-                <div className="px-8 pt-8 pb-4 relative z-10">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
+                <div className="px-5 sm:px-8 pt-6 sm:pt-8 pb-4 relative z-10">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 mb-6 sm:mb-8">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shadow-sm border border-primary/5 group-hover:scale-110 transition-transform duration-500">
                                 <Activity className="w-6 h-6 text-primary animate-pulse" />
                             </div>
-                            <div>
-                                <h3 className="text-slate-900 font-satoshi text-xl sm:text-2xl tracking-tight leading-none mb-1">
+                            <div className="min-w-0">
+                                <h3 className="text-slate-900 font-satoshi text-xl sm:text-2xl tracking-tight leading-none mb-1 truncate">
                                     {t('dashboard.predictive.labels.engine')}
                                 </h3>
-                                <div className="flex items-center gap-1.5">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-accent animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]" />
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] whitespace-nowrap">
+                                <div className="flex items-center gap-1.5 overflow-hidden">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-accent animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite] shrink-0" />
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] truncate">
                                         {t(
                                             'dashboard.predictive.labels.activeAnalysis',
                                         )}
@@ -238,25 +238,25 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                     </div>
 
                     {/* Hero Section: The Goal Date */}
-                    <div className="relative mb-8 p-6 rounded-3xl bg-slate-50 border border-slate-100 overflow-hidden">
+                    <div className="relative mb-6 sm:mb-8 p-5 sm:p-6 rounded-3xl bg-slate-50 border border-slate-100 overflow-hidden">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2" />
                         <div className="flex items-center gap-2 mb-3">
                             <Calendar className="w-4 h-4 text-primary" />
-                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] truncate">
                                 {t('dashboard.predictive.labels.projection')}
                             </span>
                         </div>
                         <div className="flex flex-col gap-2">
-                            <p className="text-3xl sm:text-5xl font-satoshi text-slate-900 tracking-tight group-hover:text-primary transition-colors duration-500">
+                            <p className="text-3xl sm:text-5xl font-satoshi text-slate-900 tracking-tight group-hover:text-primary transition-colors duration-500 truncate">
                                 {formattedGoalDate?.toUpperCase() ||
                                     t('dashboard.predictive.labels.calculating')}
                             </p>
-                            <div className="flex items-center gap-2">
-                                <span className="text-xl sm:text-2xl font-satoshi text-accent leading-none">
+                            <div className="flex items-center gap-2 overflow-hidden">
+                                <span className="text-xl sm:text-2xl font-satoshi text-accent leading-none whitespace-nowrap">
                                     {weeksToGoal}{' '}
                                     {t('units.weeks', { defaultValue: 'sem' })}
                                 </span>
-                                <span className="text-[9px] font-bold text-slate-400 uppercase">
+                                <span className="text-[9px] font-bold text-slate-400 uppercase truncate">
                                     {t('dashboard.predictive.labels.estimated')}
                                 </span>
                             </div>
@@ -396,42 +396,44 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                 </div>
 
                 {/* Intelligence Grid */}
-                <div className="px-8 py-6 grid grid-cols-2 gap-4 relative z-10 border-t border-slate-100 bg-slate-50/20">
+                <div className="px-5 sm:px-8 py-5 sm:py-6 grid grid-cols-2 gap-3 sm:gap-4 relative z-10 border-t border-slate-100 bg-slate-50/20">
                     {/* Trend Module */}
                     <div
-                        className={`rounded-2xl p-5 ${trend.bg} border border-slate-100 shadow-sm flex flex-col justify-between transition-all duration-300 hover:border-slate-200 hover:-translate-y-1`}>
-                        <div className="flex justify-between items-start mb-3">
-                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                        className={`rounded-2xl p-4 sm:p-5 ${trend.bg} border border-slate-100 shadow-sm flex flex-col justify-between transition-all duration-300 hover:border-slate-200 hover:-translate-y-1 min-w-0`}>
+                        <div className="flex justify-between items-start mb-2 sm:mb-3">
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] truncate">
                                 {t('dashboard.predictive.labels.trendVector')}
                             </span>
-                            <TrendIcon className={`w-4 h-4 ${trend.color}`} />
+                            <TrendIcon
+                                className={`w-4 h-4 ${trend.color} shrink-0`}
+                            />
                         </div>
-                        <div className="flex items-baseline gap-1.5">
+                        <div className="flex items-baseline gap-1 overflow-hidden">
                             <span
-                                className={`text-2xl sm:text-4xl font-satoshi ${trend.color} leading-none`}>
+                                className={`text-xl sm:text-4xl font-satoshi ${trend.color} leading-none truncate`}>
                                 {trend.text}
                             </span>
-                            <span className="text-[9px] font-bold text-slate-400 uppercase">
+                            <span className="text-[9px] font-bold text-slate-400 uppercase shrink-0">
                                 {t('dashboard.predictive.units.kgPerWeek')}
                             </span>
                         </div>
                     </div>
 
                     {/* Remaining Module */}
-                    <div className="rounded-2xl p-5 bg-white border border-slate-100 shadow-sm flex flex-col justify-between transition-all duration-300 hover:border-primary/20 hover:-translate-y-1">
-                        <div className="flex justify-between items-start mb-3">
-                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                    <div className="rounded-2xl p-4 sm:p-5 bg-white border border-slate-100 shadow-sm flex flex-col justify-between transition-all duration-300 hover:border-primary/20 hover:-translate-y-1 min-w-0">
+                        <div className="flex justify-between items-start mb-2 sm:mb-3">
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] truncate">
                                 {isGainingGoal
                                     ? t('dashboard.predictive.labels.toGain')
                                     : t('dashboard.predictive.labels.toLose')}
                             </span>
-                            <Target className="w-4 h-4 text-primary opacity-60" />
+                            <Target className="w-4 h-4 text-primary opacity-60 shrink-0" />
                         </div>
-                        <div className="flex items-baseline gap-1.5">
-                            <span className="text-2xl sm:text-4xl font-satoshi text-slate-900 leading-none">
+                        <div className="flex items-baseline gap-1 overflow-hidden">
+                            <span className="text-xl sm:text-4xl font-satoshi text-slate-900 leading-none truncate">
                                 {remainingWeight?.toFixed(1) || '—'}
                             </span>
-                            <span className="text-[9px] font-bold text-primary uppercase whitespace-nowrap">
+                            <span className="text-[9px] font-bold text-primary uppercase whitespace-nowrap shrink-0">
                                 {t('dashboard.predictive.units.kgPending')}
                             </span>
                         </div>
