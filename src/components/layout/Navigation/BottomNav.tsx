@@ -3,6 +3,7 @@ import {
     BarChart2,
     BookOpen,
     Camera,
+    Drumstick,
     Dumbbell,
     Footprints,
     Home,
@@ -114,7 +115,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             bg: 'bg-purple-400/10',
         },
         {
-            icon: <Camera size={20} />,
+            icon: <Drumstick size={20} />,
             label: t('common.scan')?.toUpperCase() || 'ESCANEAR',
             sublabel: 'VISION IA',
             onClick: () => setShowFoodScanModal(true),
@@ -187,7 +188,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         },
         {
             id: 'comidas',
-            icon: BookOpen,
+            icon: Utensils,
             label: t('navigation.meals').toUpperCase(),
             tutorialId: 'diary-tab',
         },

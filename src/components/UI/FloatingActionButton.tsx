@@ -1,5 +1,5 @@
 import gsap from 'gsap';
-import { Camera, Dumbbell, Import, Plus, Star, Utensils } from 'lucide-react';
+import { Drumstick, Dumbbell, Import, Plus, Star, Utensils } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -76,7 +76,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
             bg: 'bg-purple-500/10',
         },
         {
-            icon: <Camera size={20} />,
+            icon: <Drumstick size={20} />,
             label: (t('common.scan') || 'ESCANEAR').toUpperCase(),
             sublabel: 'RECONOCIMIENTO IA',
             onClick: onScanFood,

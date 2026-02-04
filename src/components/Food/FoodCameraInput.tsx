@@ -4,7 +4,14 @@
  * Features: Image capture, AI analysis, editable results, auto meal-type selection
  */
 
-import { Camera, Image as ImageIcon, Loader2, Save, X } from 'lucide-react';
+import {
+    Camera,
+    Drumstick,
+    Image as ImageIcon,
+    Loader2,
+    Save,
+    X,
+} from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
@@ -382,7 +389,7 @@ export const FoodCameraInput: React.FC = () => {
                         </>
                     ) : (
                         <>
-                            <Camera className="w-5 h-5" />
+                            <Drumstick className="w-5 h-5" />
                             {t('food.camera.scanButton')}
                         </>
                     )}

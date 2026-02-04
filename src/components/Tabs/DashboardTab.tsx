@@ -227,7 +227,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                 </div>
 
                 {/* Controls: Safety Net & Date Picker */}
-                <div className="flex items-center gap-3 self-stretch md:self-auto">
+                <div className="flex flex-col-reverse md:flex-row md:items-center gap-3 self-stretch md:self-auto">
                     <div className="flex-1 md:flex-none">
                         <SafetyNetToggle
                             isActive={isSafetyNetActive(dashboardDate)}

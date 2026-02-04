@@ -1,4 +1,4 @@
-import { Camera, Clock, Plus, ScanBarcode, Search } from 'lucide-react';
+import { Clock, Drumstick, Plus, ScanBarcode, Search } from 'lucide-react';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
@@ -218,7 +218,7 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                             onClick={() => setShowFoodScanModal(true)}
                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-purple-50 text-purple-600 hover:bg-purple-100 active:bg-purple-200 transition-colors"
                             title={t('diary.quickActions.camera')}>
-                            <Camera size={20} />
+                            <Drumstick size={20} />
                         </button>
                         <button
                             onClick={() => handleAddFood('lunch')}
