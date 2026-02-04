@@ -247,7 +247,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
 
             {/* Dashboard Content - Premium Bento Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 w-full max-w-full overflow-hidden items-stretch">
-                {/* 1. HERO & PERSPECTIVE (Engine is the Focus) */}
+                {/* ROW 1: CORE METRICS */}
                 <div className="md:col-span-2 lg:col-span-8 min-w-0">
                     <PredictiveWeightCard
                         formattedGoalDate={weightProjection.formattedGoalDate}
@@ -272,16 +272,20 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                         periodizationState={periodizationIntensity}
                     />
                     <PerformanceForecastCard />
-                    <WeeklyPlanningCard
-                        periodization={weeklyPeriodization}
-                        targetWeight={profile?.targetWeight || 75}
-                    />
                     {plateauData && plateauData.isInPlateau && (
                         <PlateauAlertCard plateauData={plateauData} />
                     )}
                 </div>
 
-                {/* 2. THE INSIGHTS DUO (Balanced Column Row) */}
+                {/* ROW 2: PERIODIZATION (100% Width) */}
+                <div className="md:col-span-2 lg:col-span-12 min-w-0">
+                    <WeeklyPlanningCard
+                        periodization={weeklyPeriodization}
+                        targetWeight={profile?.targetWeight || 75}
+                    />
+                </div>
+
+                {/* ROW 3: INTELLIGENT GUIDANCE (50/50 Duo) */}
                 <div className="md:col-span-1 lg:col-span-6 min-w-0">
                     <IdealDayCard pilot={idealDayPilot} />
                 </div>
@@ -290,12 +294,22 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                     <MealTimingCard insights={mealTimingInsights} />
                 </div>
 
-                {/* 3. INPUT & FEEDBACK (Primary Interaction) */}
-                <div className="md:col-span-2 lg:col-span-7 min-w-0">
+                {/* ROW 4: PRIMARY ACTION (100% Width) */}
+                <div className="md:col-span-2 lg:col-span-12 min-w-0">
                     <FoodCameraInput />
                 </div>
 
-                <div className="md:col-span-2 lg:col-span-5 flex flex-col gap-6">
+                {/* ROW 5: PERFORMANCE & TRACKING (50/50 Split) */}
+                <div className="md:col-span-2 lg:col-span-6 min-w-0">
+                    <TrainingWidget
+                        gymCount={workoutAnalysis.gymCount}
+                        tennisCount={workoutAnalysis.tennisCount}
+                        totalDuration={workoutAnalysis.totalDuration}
+                        analysis={workoutAnalysis.analysis}
+                    />
+                </div>
+
+                <div className="md:col-span-2 lg:col-span-6 flex flex-col gap-6">
                     <MacroCards
                         totals={dashboardTotals}
                         targets={dashboardTargets}
@@ -307,16 +321,6 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                         waterTarget={WATER_GOAL_GLASSES}
                         onAddWater={() => addWaterGlass(dashboardDate)}
                         onRemoveWater={() => removeWaterGlass(dashboardDate)}
-                    />
-                </div>
-
-                {/* 4. PERFORMANCE & LOGS */}
-                <div className="md:col-span-2 lg:col-span-12 min-w-0">
-                    <TrainingWidget
-                        gymCount={workoutAnalysis.gymCount}
-                        tennisCount={workoutAnalysis.tennisCount}
-                        totalDuration={workoutAnalysis.totalDuration}
-                        analysis={workoutAnalysis.analysis}
                     />
                 </div>
 
