@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
 import { useCorrelationAnalytics } from '../../hooks/useCorrelationAnalytics';
+import { useIdealDayPilot } from '../../hooks/useIdealDayPilot';
 import { useMealTimingAnalytics } from '../../hooks/useMealTimingAnalytics';
 import { usePatternRecognition } from '../../hooks/usePatternRecognition';
 import { usePlateauDetector } from '../../hooks/usePlateauDetector';
@@ -20,6 +21,7 @@ import {
 import { ActivityCards } from '../Dashboard/ActivityCards';
 import CoachInsight from '../Dashboard/CoachInsight';
 import { CorrelationSection } from '../Dashboard/CorrelationSection';
+import { IdealDayCard } from '../Dashboard/IdealDayCard';
 import { MacroCards } from '../Dashboard/MacroCards';
 
 import { MealTimingCard } from '../Dashboard/MealTimingCard';
@@ -95,6 +97,8 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
     const {
         foodLog,
         workoutLog,
+        stepsLog,
+        waterLog,
         customTargets,
         weightProjection,
         isSafetyNetActive,
@@ -102,6 +106,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         getStatusMessage,
         mealTemplates,
         weeklyPlan,
+        performanceForecast,
     } = useTracker() as any;
 
     // Pattern Recognition Engine
@@ -126,6 +131,9 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         foodLog,
         workoutLog,
         ouraLog,
+        weightHistory,
+        stepsLog,
+        waterLog,
     );
 
     // Plateau Detection Engine
@@ -148,6 +156,15 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         ouraLog,
         workoutLog,
         dashboardDate,
+    );
+
+    // Ideal Day Pilot Engine
+    const idealDayPilot = useIdealDayPilot(
+        ouraLog,
+        mealTimingInsights,
+        performanceForecast,
+        profile,
+        workoutLog,
     );
 
     // Weekly Report Modal State
@@ -286,6 +303,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
 
                 {/* Right Column - Analytics & Weight (33%) */}
                 <div className="lg:w-4/12 space-y-4 lg:space-y-6">
+                    <IdealDayCard pilot={idealDayPilot} />
                     <PlateauAlertCard plateauData={plateauData} />
 
                     <WeeklyPlanningCard

@@ -11,6 +11,9 @@ interface MealTimingInsights {
         avgMealBedtimeGap: number; // hours
         lateEatingDays: number; // meals after 21:00
         sleepScoreCorrelation: number; // -1 to 1
+        lateNightCalories: number;
+        deepSleepCorrelation: number;
+        remSleepCorrelation: number;
     };
 
     workoutNutrition: {
@@ -72,6 +75,9 @@ export const useMealTimingAnalytics = (
                     avgMealBedtimeGap: 0,
                     lateEatingDays: 0,
                     sleepScoreCorrelation: 0,
+                    lateNightCalories: 0,
+                    deepSleepCorrelation: 0,
+                    remSleepCorrelation: 0,
                 },
                 workoutNutrition: {
                     avgPreWorkoutCarbs: 0,
@@ -111,6 +117,24 @@ export const useMealTimingAnalytics = (
         // 2. SLEEP IMPACT ANALYSIS
         const mealSleepGaps: number[] = [];
         const sleepScores: number[] = [];
+        const deepSleepMins: number[] = [];
+        const remSleepMins: number[] = [];
+
+        const lateMeals = last30DaysFoods.filter((f) => {
+            if (!f.time) return false;
+            const hour = parseInt(f.time.split(':')[0]);
+            return hour >= 20; // 8 PM onwards is "late" for this analysis
+        });
+
+        const totalLateCalories = lateMeals.reduce(
+            (acc, f) => acc + (f.calories || 0),
+            0,
+        );
+        const lateNightCalories =
+            lateMeals.length > 0
+                ? totalLateCalories / Array.from(dailyWindows.keys()).length
+                : 0;
+
         const lateEatingDays = Array.from(dailyWindows.entries()).filter(
             ([date, window]) => {
                 const lastMealHour = parseInt(window.last.split(':')[0]);
@@ -126,6 +150,10 @@ export const useMealTimingAnalytics = (
                     // Valid gap (0-8 hours)
                     mealSleepGaps.push(gap);
                     sleepScores.push(ouraDay.sleepScore);
+                    if (ouraDay.deepSleepMins !== null)
+                        deepSleepMins.push(ouraDay.deepSleepMins);
+                    if (ouraDay.remSleepMins !== null)
+                        remSleepMins.push(ouraDay.remSleepMins);
                 }
             }
         });
@@ -138,6 +166,22 @@ export const useMealTimingAnalytics = (
         const sleepScoreCorrelation =
             mealSleepGaps.length >= 3
                 ? calculateCorrelation(mealSleepGaps, sleepScores)
+                : 0;
+
+        const deepSleepCorrelation =
+            deepSleepMins.length >= 3
+                ? calculateCorrelation(
+                      mealSleepGaps.slice(0, deepSleepMins.length),
+                      deepSleepMins,
+                  )
+                : 0;
+
+        const remSleepCorrelation =
+            remSleepMins.length >= 3
+                ? calculateCorrelation(
+                      mealSleepGaps.slice(0, remSleepMins.length),
+                      remSleepMins,
+                  )
                 : 0;
 
         // 3. WORKOUT NUTRITION ANALYSIS
@@ -213,6 +257,9 @@ export const useMealTimingAnalytics = (
                 avgMealBedtimeGap,
                 lateEatingDays,
                 sleepScoreCorrelation,
+                lateNightCalories,
+                deepSleepCorrelation,
+                remSleepCorrelation,
             },
             workoutNutrition: {
                 avgPreWorkoutCarbs,

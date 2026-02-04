@@ -12,6 +12,9 @@ interface MealTimingInsights {
         avgMealBedtimeGap: number;
         lateEatingDays: number;
         sleepScoreCorrelation: number;
+        lateNightCalories: number;
+        deepSleepCorrelation: number;
+        remSleepCorrelation: number;
     };
 
     workoutNutrition: {
@@ -159,6 +162,24 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
                                 {t('dashboard.mealTiming.sleepImpact.good')}
                             </p>
                         )}
+                    {insights.sleepImpact.lateNightCalories > 0 && (
+                        <div className="flex justify-between items-center text-[10px] text-slate-500 mt-2">
+                            <span>
+                                {t('dashboard.mealTiming.sleepImpact.lateCalories')}
+                            </span>
+                            <span className="font-bold">
+                                {insights.sleepImpact.lateNightCalories.toFixed(0)}{' '}
+                                kcal
+                            </span>
+                        </div>
+                    )}
+                    {Math.abs(insights.sleepImpact.sleepScoreCorrelation) > 0.2 && (
+                        <p className="text-[10px] text-indigo-600 mt-1 italic">
+                            {insights.sleepImpact.sleepScoreCorrelation > 0
+                                ? '✨ Más gap = Mejor sueño detectado'
+                                : '⚠️ Menos gap parece estar afectando tu sueño'}
+                        </p>
+                    )}
                 </div>
             </div>
 

@@ -677,7 +677,8 @@
                 "gap": "Gap Comida → Cama",
                 "warning": "⚠️ Comés muy cerca de dormir. Intentá 2.5-3h antes de acostarte.",
                 "bad": "🔴 {{count}} días con comidas después de 21:00",
-                "good": "✅ Timing óptimo para calidad de sueño"
+                "good": "✅ Timing óptimo para calidad de sueño",
+                "lateCalories": "Calorías Nocturnas (Prom.)"
             },
             "workoutNutrition": {
                 "title": "Ingesta en Entrenos",
@@ -706,6 +707,32 @@
                 "recovery": "Recuperación"
             }
         },
+        "idealDay": {
+            "title": "Piloto de Día Ideal",
+            "beta": "BIO-ALGORITMO BETA",
+            "empty": "Necesitamos 5 días de datos de Oura para calcular tu rutina ideal.",
+            "optimalSleep": "Ventana de Sueño",
+            "metabolicWindow": "Ventana Metabólica",
+            "disclaimer": "Sugerencias basadas en tus mejores días históricos de recuperación y digestión.",
+            "sleep": {
+                "title": "Rutina de Sueño",
+                "copy": "Tu cuerpo recupera mejor cuando te acostás cerca de las {{time}}."
+            },
+            "nutrition": {
+                "title": "Cierre de Ventana",
+                "copy": "Para optimizar tu sueño profundo, intentá terminar de comer a las {{time}}."
+            },
+            "training": {
+                "title": "Intensidad Sugerida",
+                "peak": "🔥 ¡Día de Pico! Aprovechá para buscar un récord personal (PR).",
+                "recovery": "🧘‍♂️ Recuperación Prioritaria. Enfocate en movilidad o caminata liviana.",
+                "steady": "💪 Estado Estable. Entreno moderado recomendado."
+            },
+            "habit": {
+                "hydrationTitle": "Hidratación Inicial",
+                "hydrationCopy": "Tomá 500ml de agua ni bien te despiertes para reactivar tu metabolismo."
+            }
+        },
         "correlation": {
             "labsTitle": "Luken Labs",
             "whatIs": "¿Qué es Luken Labs?",
@@ -727,6 +754,18 @@
                 "yDeepSleep": "Sueño Profundo (min)",
                 "xReadiness": "Índice de Preparación (Oura)",
                 "yCalories": "Calorías Consumidas",
+                "metabolic": "Deriva Metabólica",
+                "metabolicSubtitle": "Promedio Calorías (7d) vs Cambio Peso (7d)",
+                "activitySleep": "Sinergia Actividad-Sueño",
+                "activitySleepSubtitle": "Pasos Diarios vs Calidad de Sueño (Próxima Noche)",
+                "hydrationCardio": "Resiliencia Cardiovascular",
+                "hydrationCardioSubtitle": "Ingesta de Agua vs HRV",
+                "xAvgCalories": "Calorías Promedio (kcal)",
+                "yWeightDelta": "Delta de Peso (kg)",
+                "xSteps": "Pasos",
+                "ySleepScore": "Sleep Score",
+                "xWater": "Agua (ml)",
+                "yHRV": "HRV (ms)",
                 "interpretations": {
                     "fuelVsPerf": {
                         "positive": "🔥 ¡Viene funcionando! Más carbos ayer se traducen en entrenos más largos hoy.",
@@ -742,6 +781,21 @@
                         "positive": "🧠 Conexión detectada: cuando mejor dormís, mejor controlás tu dieta.",
                         "negative": "🍕 Tu adherencia calórica parece no depender directamente del sueño.",
                         "neutral": "🧪 Buscando si el descanso de Oura protege tu fuerza de voluntad."
+                    },
+                    "metabolic": {
+                        "positive": "📈 Detectamos que a mayor consumo calórico, tu peso tiende a subir. El motor está bien calibrado.",
+                        "negative": "📉 Raro: tu peso baja cuando comes más. Podría haber errores de trackeo o un 'whoosh effect'.",
+                        "neutral": "🧪 Analizando cómo tus calorías semanales impactan en el cambio de peso real."
+                    },
+                    "activitySleep": {
+                        "positive": "🏃‍♂️ ¡Más pasos, mejor sueño! Mantenerte activo está optimizando tu arquitectura de descanso.",
+                        "negative": "🥱 Demasiada actividad parece estar agotándote y bajando la calidad de tu sueño.",
+                        "neutral": "🧪 Buscando tu nivel de actividad ideal para el descanso más profundo."
+                    },
+                    "hydrationCardio": {
+                        "positive": "💧 Hidratación confirmada: el agua está ayudando a subir tu HRV y bajar el estrés.",
+                        "negative": "🥛 Tu HRV no parece reaccionar directamente al agua. Revisa tus fuentes de estrés.",
+                        "neutral": "🧪 Analizando el impacto del agua en tu recuperación cardiovascular."
                     }
                 }
             },

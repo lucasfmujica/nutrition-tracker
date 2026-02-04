@@ -26,7 +26,13 @@ interface ScatterCardProps {
     xLabel: string;
     yLabel: string;
     color: string;
-    chartId: 'fuelVsPerf' | 'recoveryCost' | 'willpower';
+    chartId:
+        | 'fuelVsPerf'
+        | 'recoveryCost'
+        | 'willpower'
+        | 'metabolic'
+        | 'activitySleep'
+        | 'hydrationCardio';
 }
 
 const ScatterCard: React.FC<ScatterCardProps> = ({
@@ -122,9 +128,13 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                 `dashboard.correlation.charts.interpretations.${chartId}.neutral`,
             );
 
-        const isPositive = chartId === 'willpower' ? rValue < -0.3 : rValue > 0.3;
-        // Note: For willpower (Readiness vs Calories), a negative correlation means higher readiness = lower calories (better adherence), so positive insight.
-        // For others, positive correlation means more X = more Y.
+        const isPositive =
+            chartId === 'willpower' || chartId === 'metabolic'
+                ? rValue < -0.3
+                : rValue > 0.3;
+        // Note: For willpower (Readiness vs Calories) and metabolic (Calories vs Weight Delta),
+        // a negative correlation is often the "desired" direction for weight loss, so we handle these specifically if needed.
+        // For now, let's just stick to the translation keys.
 
         if (isPositive)
             return t(
@@ -302,6 +312,9 @@ export interface CorrelationAnalytics {
     fuelData: CorrelationDataPoint[];
     recoveryData: CorrelationDataPoint[];
     disciplineData: CorrelationDataPoint[];
+    metabolicData: CorrelationDataPoint[];
+    activitySleepData: CorrelationDataPoint[];
+    hydrationCardioData: CorrelationDataPoint[];
 }
 
 interface CorrelationSectionProps {
@@ -312,7 +325,14 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
     analytics,
 }) => {
     const { t } = useTranslation();
-    const { fuelData, recoveryData, disciplineData } = analytics;
+    const {
+        fuelData,
+        recoveryData,
+        disciplineData,
+        metabolicData,
+        activitySleepData,
+        hydrationCardioData,
+    } = analytics;
     const [showLabsInfo, setShowLabsInfo] = useState(false);
 
     // Only render if we have enough data points to show a trend
@@ -406,6 +426,48 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                         yLabel={t('dashboard.correlation.charts.yCalories')}
                         color="#10B981" // Green for Health
                         chartId="willpower"
+                    />
+                )}
+
+                {metabolicData && metabolicData.length > 2 && (
+                    <ScatterCard
+                        title={t('dashboard.correlation.charts.metabolic')}
+                        subtitle={t(
+                            'dashboard.correlation.charts.metabolicSubtitle',
+                        )}
+                        data={metabolicData}
+                        xLabel={t('dashboard.correlation.charts.xAvgCalories')}
+                        yLabel={t('dashboard.correlation.charts.yWeightDelta')}
+                        color="#F59E0B" // Amber for Metabolism
+                        chartId="metabolic"
+                    />
+                )}
+
+                {activitySleepData && activitySleepData.length > 2 && (
+                    <ScatterCard
+                        title={t('dashboard.correlation.charts.activitySleep')}
+                        subtitle={t(
+                            'dashboard.correlation.charts.activitySleepSubtitle',
+                        )}
+                        data={activitySleepData}
+                        xLabel={t('dashboard.correlation.charts.xSteps')}
+                        yLabel={t('dashboard.correlation.charts.ySleepScore')}
+                        color="#06B6D4" // Cyan for Energy/Sleep
+                        chartId="activitySleep"
+                    />
+                )}
+
+                {hydrationCardioData && hydrationCardioData.length > 2 && (
+                    <ScatterCard
+                        title={t('dashboard.correlation.charts.hydrationCardio')}
+                        subtitle={t(
+                            'dashboard.correlation.charts.hydrationCardioSubtitle',
+                        )}
+                        data={hydrationCardioData}
+                        xLabel={t('dashboard.correlation.charts.xWater')}
+                        yLabel={t('dashboard.correlation.charts.yHRV')}
+                        color="#3B82F6" // Blue for Water
+                        chartId="hydrationCardio"
                     />
                 )}
             </div>

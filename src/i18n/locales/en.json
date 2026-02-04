@@ -671,7 +671,8 @@
                 "gap": "Meal → Bed Gap",
                 "warning": "⚠️ Eating too close to bedtime. Try 2.5-3h before sleep.",
                 "bad": "🔴 {{count}} days with meals after 9:00 PM",
-                "good": "✅ Optimal timing for sleep quality"
+                "good": "✅ Optimal timing for sleep quality",
+                "lateCalories": "Late Night Calories (Avg)"
             },
             "workoutNutrition": {
                 "title": "Workout Intake",
@@ -700,6 +701,32 @@
                 "recovery": "Recovery"
             }
         },
+        "idealDay": {
+            "title": "Ideal Day Pilot",
+            "beta": "BIO-ALGORITHM BETA",
+            "empty": "We need 5 days of Oura data to calculate your ideal routine.",
+            "optimalSleep": "Sleep Window",
+            "metabolicWindow": "Metabolic Window",
+            "disclaimer": "Suggestions based on your best historical recovery and digestion days.",
+            "sleep": {
+                "title": "Sleep Routine",
+                "copy": "Your body recovers best when you go to bed around {{time}}."
+            },
+            "nutrition": {
+                "title": "Window Closing",
+                "copy": "To optimize your deep sleep, try to finish eating by {{time}}."
+            },
+            "training": {
+                "title": "Suggested Intensity",
+                "peak": "🔥 Peak Day! Great time to go for a Personal Record (PR).",
+                "recovery": "🧘‍♂️ Recovery Priority. Focus on mobility or a light walk.",
+                "steady": "💪 Steady State. Moderate training recommended."
+            },
+            "habit": {
+                "hydrationTitle": "Early Hydration",
+                "hydrationCopy": "Drink 500ml of water as soon as you wake up to kickstart your metabolism."
+            }
+        },
         "correlation": {
             "labsTitle": "Luken Labs",
             "whatIs": "What is Luken Labs?",
@@ -721,6 +748,18 @@
                 "yDeepSleep": "Deep Sleep (min)",
                 "xReadiness": "Readiness Score (Oura)",
                 "yCalories": "Consumed Calories",
+                "metabolic": "Metabolic Drift",
+                "metabolicSubtitle": "Avg Calories (7d) vs Weight Delta (7d)",
+                "activitySleep": "Activity-Sleep Synergy",
+                "activitySleepSubtitle": "Daily Steps vs Sleep Quality (Next Night)",
+                "hydrationCardio": "Cardiovascular Readiness",
+                "hydrationCardioSubtitle": "Water Intake vs HRV",
+                "xAvgCalories": "Avg Calories (kcal)",
+                "yWeightDelta": "Weight Delta (kg)",
+                "xSteps": "Steps",
+                "ySleepScore": "Sleep Score",
+                "xWater": "Water (ml)",
+                "yHRV": "HRV (ms)",
                 "interpretations": {
                     "fuelVsPerf": {
                         "positive": "🔥 It's working! More carbs yesterday lead to longer workouts today.",
@@ -736,6 +775,21 @@
                         "positive": "🧠 Connection found: better sleep leads to better diet control.",
                         "negative": "🍕 Your calorie adherence doesn't seem tied to your sleep.",
                         "neutral": "🧪 Seeking if Oura's rest protects your willpower."
+                    },
+                    "metabolic": {
+                        "positive": "📈 We've detected that with higher calorie intake, your weight tends to rise. The engine is well calibrated.",
+                        "negative": "📉 Unusual: your weight drops when you eat more. There might be tracking errors or a 'whoosh effect'.",
+                        "neutral": "🧪 Analyzing how your weekly calories impact real weight change."
+                    },
+                    "activitySleep": {
+                        "positive": "🏃‍♂️ More steps, better sleep! Staying active is optimizing your rest architecture.",
+                        "negative": "🥱 Too much activity seems to be exhausting you and lowering your sleep quality.",
+                        "neutral": "🧪 Seeking your ideal activity level for the deepest rest."
+                    },
+                    "hydrationCardio": {
+                        "positive": "💧 Hydration confirmed: water is helping raise your HRV and lower stress.",
+                        "negative": "🥛 Your HRV doesn't seem to react directly to water. Review your stress sources.",
+                        "neutral": "🧪 Analyzing the impact of water on your cardiovascular recovery."
                     }
                 }
             },
