@@ -36,6 +36,7 @@ import { Database } from '../types/supabase';
 // As those hooks are migrated, this interface will become more precise.
 export type TrackerContextType = ReturnType<typeof useTrackerSync> &
     Omit<ReturnType<typeof useNutrition>, 'getWaterForDate'> &
+    ReturnType<typeof useWeeklyPlan> &
     ReturnType<typeof useBiometrics> &
     ReturnType<typeof useWorkouts> &
     ReturnType<typeof useTrackerUIState> &

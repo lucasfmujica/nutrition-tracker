@@ -364,13 +364,13 @@ const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
     setSelectedWorkoutDate,
 }) => {
     const { t } = useTranslation();
-    // TODO: Implement plan feature in TrackerContext
-    // Temporarily using local state until context is ready
-    const [plan] = useState<any>({});
+    const { weeklyPlan, updateDayPlan, isLoading } = useTracker();
+    const plan = weeklyPlan; // Alias to match existing code or just use weeklyPlan directly
+
     const [isEditing, setIsEditing] = useState(false);
-    const updateDayPlan = async (dayIndex: number, workout: any) => {
-        console.log('updateDayPlan not implemented yet', dayIndex, workout);
-    };
+
+    // updateDayPlan is now imported from useTracker
+
     const [editingDay, setEditingDay] = useState<number | null>(null);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -402,10 +402,14 @@ const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
         if (newType === 'rest') {
             await updateDayPlan(dayIndex, null);
         } else {
+            // Valid types for PlannedWorkout
+            const validTypes = ['gym', 'sport', 'cardio', 'other'] as const;
+            if (!validTypes.includes(newType as any)) return; // Should not happen
+
             await updateDayPlan(dayIndex, {
-                type: newType,
-                name: nameMap[newType],
-                intensity: intensityMap[newType],
+                type: newType as 'gym' | 'sport' | 'cardio' | 'other',
+                name: nameMap[newType] || '', // Ensure name is a string, fallback to empty
+                intensity: intensityMap[newType] as any, // Cast to Intensity
             });
         }
 
