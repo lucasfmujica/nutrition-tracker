@@ -827,7 +827,8 @@
             "trend": "Trend",
             "goal": "Goal",
             "today": "Today",
-            "average": "7d avg"
+            "average": "7d avg",
+            "average30d": "30d avg"
         },
         "projection": {
             "title": "Projection",

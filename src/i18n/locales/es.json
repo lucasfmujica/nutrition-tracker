@@ -834,7 +834,8 @@
             "trend": "Tendencia",
             "goal": "Objetivo",
             "today": "Hoy",
-            "average": "Media 7d"
+            "average": "Media 7d",
+            "average30d": "Media 30d"
         },
         "projection": {
             "title": "Proyección",

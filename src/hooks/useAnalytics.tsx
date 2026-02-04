@@ -47,10 +47,16 @@ export const useAnalytics = ({
             const window = sorted.slice(windowStart, idx + 1);
             const avg = window.reduce((sum, e) => sum + e.weight, 0) / window.length;
 
+            const windowStart30 = Math.max(0, idx - 29);
+            const window30 = sorted.slice(windowStart30, idx + 1);
+            const avg30 =
+                window30.reduce((sum, e) => sum + e.weight, 0) / window30.length;
+
             return {
                 date: entry.date,
                 weight: entry.weight,
                 avg7d: Math.round(avg * 10) / 10,
+                avg30d: Math.round(avg30 * 10) / 10,
                 dayLabel: new Date(entry.date + 'T12:00:00').toLocaleDateString(
                     'es-AR',
                     { day: 'numeric', month: 'short' },

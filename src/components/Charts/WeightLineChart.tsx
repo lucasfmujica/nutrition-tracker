@@ -22,6 +22,7 @@ interface WeightDataPoint {
     dayLabel: string;
     weight: number;
     avg7d: number;
+    avg30d: number;
 }
 
 interface WeightLineChartProps {
@@ -90,6 +91,12 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                         <span className="w-2 h-2 rounded-full bg-amber-400"></span>
                         <span className="text-gray-600 font-medium">
                             {t('charts.weight.average')}
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-pink-500"></span>
+                        <span className="text-gray-600 font-medium">
+                            {t('charts.weight.average30d')}
                         </span>
                     </div>
                     <div className="flex items-center gap-1.5">
@@ -178,6 +185,18 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                             dot={false}
                             activeDot={false}
                             opacity={0.8}
+                        />
+
+                        <Line
+                            type="monotone"
+                            dataKey="avg30d"
+                            name={t('charts.weight.average30d')}
+                            stroke="#ec4899"
+                            strokeWidth={2}
+                            dot={false}
+                            activeDot={false}
+                            opacity={0.8}
+                            strokeDasharray="4 4"
                         />
                     </AreaChart>
                 </ResponsiveContainer>
