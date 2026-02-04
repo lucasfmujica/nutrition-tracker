@@ -145,7 +145,7 @@
         "perWeek": "Por semana",
         "toGo": "Para llegar",
         "estimatedDate": "Fecha estimada",
-        "trendDisclaimer": "Basado en tu tendencia real de los últimos 14 días"
+        "trendDisclaimer": "Basado en tu tendencia real de los últimos 30 días"
     },
     "proteinPacing": {
         "title": "Protein Pacing",
@@ -169,7 +169,10 @@
         "kcal": "kcal",
         "grams": "g",
         "weeks": "sem",
-        "days": "días"
+        "days": "días",
+        "workouts": "entrenos",
+        "workouts_one": "entreno",
+        "workouts_other": "entrenos"
     },
     "config": {
         "title": "Configuración",
@@ -661,14 +664,14 @@
                 "title": "Impacto en Sueño",
                 "gap": "Gap Comida → Cama",
                 "warning": "⚠️ Comés muy cerca de dormir. Intentá 2.5-3h antes de acostarte.",
-                "bad": "🔴 {count} días con comidas después de 21:00",
+                "bad": "🔴 {{count}} días con comidas después de 21:00",
                 "good": "✅ Timing óptimo para calidad de sueño"
             },
             "workoutNutrition": {
                 "title": "Nutrición de Entreno",
                 "avgCarbs": "PROMEDIO CARBS",
                 "avgProtein": "PROMEDIO PROTEIN",
-                "daysWithData": "Promedio en días de entreno ({count} días)"
+                "daysWithData": "Promedio en días de entreno ({{count}} días)"
             },
             "consistency": {
                 "title": "Consistencia de Horarios",
@@ -682,7 +685,7 @@
             "subtitle": "Distribución de calorías",
             "edit": "Editar",
             "status": {
-                "onTrack": "✓ En camino a {target} kg",
+                "onTrack": "✓ En camino a {{target}} kg",
                 "adjust": "⚠️ Ajusta intensidad para mantener déficit"
             },
             "intensity": {
@@ -766,7 +769,6 @@
     },
     "common": {
         "date": "Fecha",
-        "today": "Hoy",
         "locale": "es",
         "install": "Instalar",
         "howToUse": "Cómo usar",

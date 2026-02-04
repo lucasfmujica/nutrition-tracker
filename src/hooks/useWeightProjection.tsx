@@ -62,11 +62,11 @@ export const useWeightProjection = (
         }
 
         const today = getArgentinaDateString();
-        const fourteenDaysAgo = addDaysToDate(today, -14);
+        const thirtyDaysAgo = addDaysToDate(today, -30);
 
-        // Filter entries within last 14 days
+        // Filter entries within last 30 days
         const recentEntries = weightHistory.filter(
-            (entry) => entry.date >= fourteenDaysAgo && entry.date <= today,
+            (entry) => entry.date >= thirtyDaysAgo && entry.date <= today,
         );
 
         if (recentEntries.length < 2) {
