@@ -118,7 +118,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                 </div>
 
                 {/* Content */}
-                {!parsedResult ? (
+                {!parsedWorkout ? (
                     <div className="space-y-6">
                         {/* File Upload Area */}
                         <div
