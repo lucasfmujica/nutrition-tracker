@@ -8,6 +8,22 @@ interface WorkoutScannerProps {
     onCancel: () => void;
 }
 
+interface ParsedWorkout {
+    date: string;
+    type: string;
+    name: string;
+    duration: number;
+    calories: number;
+    volume: number;
+    notes: string;
+    exercises: Array<{
+        name: string;
+        sets: string;
+        reps: string;
+        weight: string;
+    }>;
+}
+
 export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
     onSave,
     onCancel,
@@ -15,7 +31,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
     const { t, i18n } = useTranslation();
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
-    const [parsedResult, setParsedResult] = useState<string | null>(null);
+    const [parsedWorkout, setParsedWorkout] = useState<ParsedWorkout | null>(null);
     const [jsonError, setJsonError] = useState<string | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -39,7 +55,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
 
         try {
             const result = await analyzeWorkoutImages(selectedFiles, i18n.language);
-            setParsedResult(JSON.stringify(result, null, 2));
+            setParsedWorkout(result as ParsedWorkout);
         } catch (error) {
             console.error('Analysis failed:', error);
             setJsonError(t('workouts.scanner.error'));
@@ -49,20 +65,36 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
     };
 
     const handleSave = () => {
-        try {
-            if (!parsedResult) return;
-            const parsed = JSON.parse(parsedResult);
+        if (!parsedWorkout) return;
 
-            // Ensure ID exists for optimistic UI and database consistency
-            const workoutToSave = {
-                ...parsed,
-                id: parsed.id || `w-ai-${Date.now()}`,
-            };
+        // Ensure ID exists for optimistic UI and database consistency
+        const workoutToSave = {
+            ...parsedWorkout,
+            id: `w-ai-${Date.now()}`,
+        };
 
-            onSave(workoutToSave);
-        } catch (e) {
-            setJsonError(t('workouts.scanner.invalidJson'));
-        }
+        onSave(workoutToSave);
+    };
+
+    // Update workout field
+    const updateField = (field: keyof ParsedWorkout, value: any) => {
+        if (!parsedWorkout) return;
+        setParsedWorkout({ ...parsedWorkout, [field]: value });
+    };
+
+    // Update exercise
+    const updateExercise = (index: number, field: string, value: string) => {
+        if (!parsedWorkout) return;
+        const updated = [...parsedWorkout.exercises];
+        updated[index] = { ...updated[index], [field]: value };
+        setParsedWorkout({ ...parsedWorkout, exercises: updated });
+    };
+
+    // Delete exercise
+    const deleteExercise = (index: number) => {
+        if (!parsedWorkout) return;
+        const updated = parsedWorkout.exercises.filter((_, i) => i !== index);
+        setParsedWorkout({ ...parsedWorkout, exercises: updated });
     };
 
     return (
@@ -158,11 +190,11 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                         </button>
                     </div>
                 ) : (
-                    <div className="flex flex-col flex-1 min-h-0">
-                        {/* JSON Review */}
-                        <div className="bg-amber-50 rounded-xl p-4 mb-4 flex items-start gap-3">
-                            <div className="text-amber-600 mt-0.5">⚠️</div>
-                            <div className="text-sm text-amber-800">
+                    <div className="flex flex-col flex-1 min-h-0 overflow-y-auto">
+                        {/* Review Banner */}
+                        <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 mb-4 flex items-start gap-3">
+                            <div className="text-amber-600 dark:text-amber-400 mt-0.5">⚠️</div>
+                            <div className="text-sm text-amber-800 dark:text-amber-200">
                                 <p className="font-bold mb-1">
                                     {t('workouts.scanner.review')}
                                 </p>
@@ -171,22 +203,121 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                         </div>
 
                         {jsonError && (
-                            <div className="bg-red-50 text-red-600 text-sm p-3 rounded-xl mb-4 font-medium">
+                            <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm p-3 rounded-xl mb-4 font-medium">
                                 {jsonError}
                             </div>
                         )}
 
-                        <textarea
-                            value={parsedResult}
-                            onChange={(e) => setParsedResult(e.target.value)}
-                            className="w-full flex-1 bg-slate-900 text-green-400 font-mono text-xs p-4 rounded-xl resize-none outline-none focus:ring-2 focus:ring-blue-500/50 min-h-[300px]"
-                            spellCheck={false}
-                        />
+                        {/* Structured Workout Editor */}
+                        <div className="space-y-4 mb-6">
+                            {/* Workout Header */}
+                            <div className="bg-background dark:bg-surface-lighter rounded-xl p-4 space-y-3">
+                                <div>
+                                    <label className="text-xs font-bold text-text-tertiary uppercase tracking-wider block mb-1">
+                                        {t('workouts.scanner.workoutName')}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={parsedWorkout?.name || ''}
+                                        onChange={(e) => updateField('name', e.target.value)}
+                                        className="w-full px-3 py-2 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                    />
+                                </div>
 
-                        <div className="flex gap-3 mt-6">
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label className="text-xs font-bold text-text-tertiary uppercase tracking-wider block mb-1">
+                                            {t('workouts.scanner.duration')}
+                                        </label>
+                                        <input
+                                            type="number"
+                                            value={parsedWorkout?.duration || 0}
+                                            onChange={(e) => updateField('duration', parseInt(e.target.value) || 0)}
+                                            className="w-full px-3 py-2 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs font-bold text-text-tertiary uppercase tracking-wider block mb-1">
+                                            {t('workouts.scanner.calories')}
+                                        </label>
+                                        <input
+                                            type="number"
+                                            value={parsedWorkout?.calories || 0}
+                                            onChange={(e) => updateField('calories', parseInt(e.target.value) || 0)}
+                                            className="w-full px-3 py-2 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="text-xs font-bold text-text-tertiary uppercase tracking-wider block mb-1">
+                                        {t('workouts.scanner.volume')}
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={parsedWorkout?.volume || 0}
+                                        onChange={(e) => updateField('volume', parseInt(e.target.value) || 0)}
+                                        className="w-full px-3 py-2 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Exercises */}
+                            <div>
+                                <h4 className="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-2">
+                                    {t('workouts.scanner.exercises')} ({parsedWorkout?.exercises.length || 0})
+                                </h4>
+                                <div className="space-y-2">
+                                    {parsedWorkout?.exercises.map((exercise, idx) => (
+                                        <div key={idx} className="bg-background dark:bg-surface-lighter rounded-xl p-3 relative">
+                                            <button
+                                                onClick={() => deleteExercise(idx)}
+                                                className="absolute top-2 right-2 w-6 h-6 bg-red-50 dark:bg-red-900/30 text-red-500 dark:text-red-400 rounded-full flex items-center justify-center text-xs hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors">
+                                                <X size={12} />
+                                            </button>
+                                            <div className="space-y-2 pr-8">
+                                                <input
+                                                    type="text"
+                                                    value={exercise.name}
+                                                    onChange={(e) => updateExercise(idx, 'name', e.target.value)}
+                                                    placeholder={t('workouts.scanner.exerciseName')}
+                                                    className="w-full px-2 py-1.5 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-sm font-medium focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                                />
+                                                <div className="grid grid-cols-3 gap-2">
+                                                    <input
+                                                        type="text"
+                                                        value={exercise.sets}
+                                                        onChange={(e) => updateExercise(idx, 'sets', e.target.value)}
+                                                        placeholder="Sets"
+                                                        className="px-2 py-1.5 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-xs text-center focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        value={exercise.reps}
+                                                        onChange={(e) => updateExercise(idx, 'reps', e.target.value)}
+                                                        placeholder="Reps"
+                                                        className="px-2 py-1.5 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-xs text-center focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        value={exercise.weight}
+                                                        onChange={(e) => updateExercise(idx, 'weight', e.target.value)}
+                                                        placeholder="Weight"
+                                                        className="px-2 py-1.5 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-xs text-center focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-3 mt-auto pt-4">
                             <button
-                                onClick={() => setParsedResult(null)}
-                                className="flex-1 bg-surface-lighter hover:bg-surface-lighter text-text-secondary font-bold py-3.5 rounded-xl transition-colors">
+                                onClick={() => setParsedWorkout(null)}
+                                className="flex-1 bg-surface-lighter hover:bg-surface text-text-secondary font-bold py-3.5 rounded-xl transition-colors">
                                 {t('workouts.scanner.back')}
                             </button>
                             <button

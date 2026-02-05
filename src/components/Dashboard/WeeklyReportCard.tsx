@@ -95,18 +95,16 @@ export const WeeklyReportCard = React.forwardRef<
         return (
             <div
                 ref={ref}
-                className="relative overflow-hidden flex flex-col"
+                className="relative overflow-hidden flex flex-col bg-gradient-to-b from-surface to-background dark:from-surface-lighter dark:to-surface shadow-2xl"
                 style={{
                     width: '24rem',
                     minHeight: '36rem',
                     fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-                    background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)',
                     borderRadius: '2rem',
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
                 }}>
                 {/* Decorative Background */}
                 <div
-                    className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-[0.03]"
+                    className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-[0.03] dark:opacity-[0.05]"
                     style={{
                         background:
                             'radial-gradient(circle, #3B82F6 0%, transparent 70%)',
@@ -114,7 +112,7 @@ export const WeeklyReportCard = React.forwardRef<
                     }}
                 />
                 <div
-                    className="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-[0.03]"
+                    className="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-[0.03] dark:opacity-[0.05]"
                     style={{
                         background:
                             'radial-gradient(circle, #8B5CF6 0%, transparent 70%)',
@@ -144,7 +142,7 @@ export const WeeklyReportCard = React.forwardRef<
 
                     {/* 1. Hero Section: Weight */}
                     <div className="mb-8 text-center relative py-6">
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 rounded-3xl -z-10" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-blue-900/10 dark:to-indigo-900/10 rounded-3xl -z-10" />
 
                         <div className="inline-flex items-center gap-2 mb-2">
                             <Scale className="w-4 h-4 text-text-tertiary" />
@@ -206,10 +204,10 @@ export const WeeklyReportCard = React.forwardRef<
                     {/* 2. Key Metrics Grid */}
                     <div className="grid grid-cols-2 gap-4 mb-8">
                         {/* Average Deficit */}
-                        <div className="p-4 bg-surface rounded-2xl border border-border shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)] flex flex-col items-center">
-                            <div className="mb-2 p-2 bg-rose-50 rounded-xl">
+                        <div className="p-4 bg-background dark:bg-surface rounded-2xl border border-border shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)] dark:shadow-none flex flex-col items-center">
+                            <div className="mb-2 p-2 bg-rose-50 dark:bg-rose-900/30 rounded-xl">
                                 <Flame
-                                    className="w-5 h-5 text-rose-500"
+                                    className="w-5 h-5 text-rose-500 dark:text-rose-400"
                                     strokeWidth={2}
                                 />
                             </div>
@@ -225,10 +223,10 @@ export const WeeklyReportCard = React.forwardRef<
                         </div>
 
                         {/* Consistency Streak */}
-                        <div className="p-4 bg-surface rounded-2xl border border-border shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)] flex flex-col items-center">
-                            <div className="mb-2 p-2 bg-emerald-50 rounded-xl">
+                        <div className="p-4 bg-background dark:bg-surface rounded-2xl border border-border shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)] dark:shadow-none flex flex-col items-center">
+                            <div className="mb-2 p-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl">
                                 <CalendarDays
-                                    className="w-5 h-5 text-emerald-500"
+                                    className="w-5 h-5 text-emerald-500 dark:text-emerald-400"
                                     strokeWidth={2}
                                 />
                             </div>
@@ -256,11 +254,11 @@ export const WeeklyReportCard = React.forwardRef<
                             </h3>
                         </div>
 
-                        <div className="bg-surface rounded-2xl border border-border p-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)]">
+                        <div className="bg-background dark:bg-surface rounded-2xl border border-border p-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)] dark:shadow-none">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-blue-50 rounded-lg">
-                                        <Dumbbell className="w-4 h-4 text-blue-600" />
+                                    <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+                                        <Dumbbell className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                                     </div>
                                     <span className="text-sm font-semibold text-text-secondary">
                                         {t('dashboard.weeklyReport.strength')}
@@ -278,8 +276,8 @@ export const WeeklyReportCard = React.forwardRef<
 
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-orange-50 rounded-lg">
-                                        <Activity className="w-4 h-4 text-orange-600" />
+                                    <div className="p-2 bg-orange-50 dark:bg-orange-900/30 rounded-lg">
+                                        <Activity className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                                     </div>
                                     <span className="text-sm font-semibold text-text-secondary">
                                         {t('dashboard.weeklyReport.tennis')}
@@ -296,10 +294,10 @@ export const WeeklyReportCard = React.forwardRef<
                     </div>
 
                     {/* 4. LukenFit Insights */}
-                    <div className="mt-auto bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-5 text-white relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-20 h-20 bg-surface/10 rounded-full blur-2xl -mr-10 -mt-10" />
+                    <div className="mt-auto bg-gradient-to-r from-slate-900 to-slate-800 dark:from-slate-800 dark:to-slate-900 rounded-2xl p-5 text-white relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-20 h-20 bg-white/5 dark:bg-white/10 rounded-full blur-2xl -mr-10 -mt-10" />
 
-                        <p className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest mb-2">
+                        <p className="text-[10px] font-bold text-gray-300 dark:text-gray-400 uppercase tracking-widest mb-2">
                             {t('dashboard.weeklyReport.insightsTitle')}
                         </p>
                         <p className="text-sm font-medium leading-relaxed opacity-90">

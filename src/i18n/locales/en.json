@@ -1324,11 +1324,17 @@
             "analyze": "Analyze Workout",
             "analyzing": "Analyzing with Gemini AI...",
             "review": "Review Results",
-            "reviewPrompt": "Verify data is correct before saving. You can edit the JSON directly if needed.",
+            "reviewPrompt": "Verify data is correct. You can edit before saving.",
             "error": "Error analyzing images. Please try again.",
             "invalidJson": "Invalid JSON. Please correct the format.",
             "back": "Back",
-            "save": "Confirm and Save"
+            "save": "Confirm and Save",
+            "workoutName": "Workout Name",
+            "duration": "Duration (min)",
+            "calories": "Calories",
+            "volume": "Total Volume (kg)",
+            "exercises": "Exercises",
+            "exerciseName": "Exercise name"
         }
     },
 

@@ -358,7 +358,21 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                     <CorrelationSection analytics={correlationAnalytics} />
                 </div>
 
-                {/* 6. HISTORY & TRENDS */}
+                {/* 6. WEEKLY REPORT CTA */}
+                <div className="md:col-span-2 lg:col-span-12">
+                    <button
+                        onClick={handleOpenWeeklyReport}
+                        className="w-full py-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 text-white rounded-[2.5rem] font-bold shadow-2xl hover:shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-4 group border border-slate-700/50 dark:border-slate-600/50">
+                        <div className="w-10 h-10 rounded-2xl bg-surface/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <FileImage className="w-5 h-5 text-primary" />
+                        </div>
+                        <span className="text-xl tracking-tight uppercase font-satoshi">
+                            {t('dashboard.generateWeeklyReport')}
+                        </span>
+                    </button>
+                </div>
+
+                {/* 7. HISTORY & TRENDS */}
                 <div className="md:col-span-2 lg:col-span-8 min-w-0">
                     <WeightChartCard
                         data={weightHistory}
@@ -373,20 +387,6 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
 
                 <div className="md:col-span-1 lg:col-span-4 min-w-0">
                     <WeightProjectionCard projection={weightProjection} />
-                </div>
-
-                {/* 7. BOTTOM ACTION */}
-                <div className="md:col-span-2 lg:col-span-12">
-                    <button
-                        onClick={handleOpenWeeklyReport}
-                        className="w-full py-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white rounded-[2.5rem] font-bold shadow-2xl hover:shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-4 group border border-slate-700/50">
-                        <div className="w-10 h-10 rounded-2xl bg-surface/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <FileImage className="w-5 h-5 text-primary" />
-                        </div>
-                        <span className="text-xl tracking-tight uppercase font-satoshi">
-                            {t('dashboard.generateWeeklyReport')}
-                        </span>
-                    </button>
                 </div>
             </div>
 

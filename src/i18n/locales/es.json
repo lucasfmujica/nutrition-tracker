@@ -1333,11 +1333,17 @@
             "analyze": "Analizar Entrenamiento",
             "analyzing": "Analizando con Gemini IA...",
             "review": "Revisar Resultados",
-            "reviewPrompt": "Verifica que los datos sean correctos antes de guardar. Puedes editar el JSON directamente si es necesario.",
+            "reviewPrompt": "Verifica que los datos sean correctos. Puedes editarlos antes de guardar.",
             "error": "Error al analizar las imágenes. Intenta nuevamente.",
             "invalidJson": "El JSON no es válido. Por favor corrige el formato.",
             "back": "Volver",
-            "save": "Confirmar y Guardar"
+            "save": "Confirmar y Guardar",
+            "workoutName": "Nombre del Entrenamiento",
+            "duration": "Duración (min)",
+            "calories": "Calorías",
+            "volume": "Volumen Total (kg)",
+            "exercises": "Ejercicios",
+            "exerciseName": "Nombre del ejercicio"
         },
         "schedule": {
             "title": "Horarios de Sueño",
