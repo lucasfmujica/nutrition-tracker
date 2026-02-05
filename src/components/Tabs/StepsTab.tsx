@@ -59,7 +59,7 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                         value={newSteps}
                         onChange={(e) => setNewSteps(e.target.value)}
                         placeholder={t('steps.stepsPlaceholder')}
-                        className="flex-1 bg-background border border-border rounded-xl px-4 py-3 text-lg font-black focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all placeholder-gray-300"
+                        className="flex-1 bg-background border border-border rounded-xl px-4 py-3 text-lg font-black focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all placeholder-text-tertiary"
                     />
                     <button
                         onClick={addStepsEntry}

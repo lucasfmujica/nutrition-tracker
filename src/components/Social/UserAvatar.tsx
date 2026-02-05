@@ -19,7 +19,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
     if (src && src.length <= 4 && !src.startsWith('http')) {
         return (
             <div
-                className={`${className} rounded-full bg-surface-lighter flex items-center justify-center text-2xl border-2 border-white shadow-sm ring-1 ring-slate-50`}>
+                className={`${className} rounded-full bg-surface-lighter flex items-center justify-center text-2xl border-2 border-white shadow-sm ring-1 ring-border`}>
                 {src}
             </div>
         );

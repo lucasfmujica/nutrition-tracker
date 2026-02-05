@@ -169,7 +169,7 @@ export const AuthUI: React.FC<AuthUIProps> = ({
     const containerClasses =
         'min-h-screen bg-background flex items-center justify-center p-4';
     const cardClasses =
-        'bg-surface rounded-3xl p-8 max-w-md w-full border border-border shadow-xl shadow-gray-200/50';
+        'bg-surface rounded-3xl p-8 max-w-md w-full border border-border shadow-card';
 
     if (!isSupabaseConfigured) {
         return (
@@ -190,7 +190,7 @@ export const AuthUI: React.FC<AuthUIProps> = ({
 
                     <button
                         onClick={handleContinueOffline}
-                        className="w-full py-3.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all shadow-lg shadow-gray-200">
+                        className="w-full py-3.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all shadow-lg">
                         {t('auth.offline.button')}
                     </button>
                 </div>

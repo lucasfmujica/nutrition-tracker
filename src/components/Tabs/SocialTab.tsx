@@ -86,7 +86,7 @@ export const SocialTab: React.FC<SocialTabProps> = ({
                     <button
                         onClick={onRefresh}
                         disabled={socialLoading}
-                        className="w-10 h-10 rounded-xl bg-background hover:bg-surface-lighter flex items-center justify-center text-text-tertiary transition-all active:scale-95 disabled:opacity-50 ring-1 ring-slate-100">
+                        className="w-10 h-10 rounded-xl bg-background hover:bg-surface-lighter flex items-center justify-center text-text-tertiary transition-all active:scale-95 disabled:opacity-50 ring-1 ring-border">
                         <RefreshCw
                             size={18}
                             className={socialLoading ? 'animate-spin' : ''}

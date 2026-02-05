@@ -149,7 +149,7 @@ export const AddFriendModal: React.FC<AddFriendModalProps> = ({
                                 }}
                                 placeholder={t('social.addFriend.placeholder')}
                                 maxLength={8}
-                                className="flex-1 bg-surface-lighter border-2 border-transparent focus:border-primary rounded-xl px-4 py-3 text-center font-mono font-bold text-lg uppercase tracking-wider placeholder-slate-300 outline-none transition-all"
+                                className="flex-1 bg-surface-lighter border-2 border-transparent focus:border-primary rounded-xl px-4 py-3 text-center font-mono font-bold text-lg uppercase tracking-wider placeholder-text-tertiary outline-none transition-all"
                             />
                         </div>
 
