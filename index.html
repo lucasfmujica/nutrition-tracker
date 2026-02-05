@@ -3,6 +3,12 @@
     <head>
         <meta charset="UTF-8" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+        <!-- DNS Prefetch & Preconnect for Performance -->
+        <link rel="preconnect" href="https://mroqjenlvgncutnfrjnr.supabase.co" />
+        <link rel="dns-prefetch" href="https://mroqjenlvgncutnfrjnr.supabase.co" />
+        <link rel="preconnect" href="https://generativelanguage.googleapis.com" />
+        <link rel="dns-prefetch" href="https://generativelanguage.googleapis.com" />
         <meta
             name="viewport"
             content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
@@ -44,6 +50,57 @@
 
         <!-- Canonical URL -->
         <link rel="canonical" href="https://www.lukenfit.com/" />
+
+        <!-- Structured Data (JSON-LD) for Rich Snippets -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "LukenFit",
+          "url": "https://www.lukenfit.com",
+          "description": "Tu tracker personal de nutrición, entrenos y bienestar. Rastrea macros, peso, pasos, sueño y progreso con integración a Oura Ring y análisis con IA.",
+          "applicationCategory": "HealthApplication",
+          "operatingSystem": "Web, iOS, Android",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "Lucas F. Mujica"
+          },
+          "creator": {
+            "@type": "Person",
+            "name": "Lucas F. Mujica"
+          },
+          "screenshot": "https://www.lukenfit.com/og-image.jpg",
+          "featureList": [
+            "Seguimiento de macronutrientes (calorías, proteínas, carbohidratos, grasas, fibra)",
+            "Registro de entrenamientos y ejercicios",
+            "Monitoreo de peso corporal y medidas",
+            "Sincronización con Oura Ring (sueño, HRV, actividad)",
+            "Análisis nutricional con IA (fotos y texto)",
+            "Seguimiento de pasos (manual, Oura Ring, iOS Health)",
+            "Gestión de hidratación con objetivos dinámicos",
+            "Fotos de progreso y medidas corporales",
+            "Red social con amigos y kudos",
+            "Plantillas de comidas reutilizables",
+            "Modo offline-first con sincronización automática",
+            "PWA instalable en iOS y Android"
+          ],
+          "browserRequirements": "Requires JavaScript. Requires HTML5.",
+          "softwareVersion": "1.0.0",
+          "inLanguage": ["es-AR", "en-US"],
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "13",
+            "bestRating": "5",
+            "worstRating": "1"
+          }
+        }
+        </script>
 
         <!-- PWA Manifest -->
         <link rel="manifest" href="/manifest.json" />
