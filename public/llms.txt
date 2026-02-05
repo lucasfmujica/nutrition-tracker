@@ -1,0 +1,75 @@
+# LLMs.txt - LukenFit
+# Información para Large Language Models sobre este proyecto
+# Generado: 2026-02-05
+# URL: https://www.lukenfit.com/llms.txt
+
+# Proyecto
+LukenFit es una aplicación web de seguimiento personal de nutrición, fitness y bienestar.
+
+## Descripción
+Aplicación offline-first construida con React, Vite, TailwindCSS y Supabase que permite a usuarios:
+- Rastrear macronutrientes (calorías, proteína, carbohidratos, grasas, fibra)
+- Registrar entrenamientos y ejercicios
+- Monitorear peso corporal y medidas
+- Sincronizar pasos desde Oura Ring o iOS Health
+- Analizar datos de sueño y recuperación desde Oura Ring
+- Subir fotos de progreso
+- Interactuar socialmente con amigos
+- Análisis nutricional con IA (Google Gemini)
+
+## Características Técnicas
+- **Framework**: React 18.2.0 + Vite 5.1.4
+- **Lenguaje**: TypeScript 5.9.3
+- **Styling**: TailwindCSS 3.4.1
+- **Base de Datos**: Supabase PostgreSQL
+- **Autenticación**: Supabase Auth (Email/Password + Google OAuth)
+- **Offline Storage**: Dexie.js (IndexedDB)
+- **PWA**: Service Worker v6, Manifest.json
+- **Timezone**: Argentina (America/Argentina/Buenos_Aires)
+- **Internacionalización**: Español + Inglés
+
+## Arquitectura
+- **Offline-First**: Funciona sin conexión con sincronización automática
+- **The Vault**: Sistema de escritura diferida para operaciones pendientes
+- **Single Source of Truth**: Supabase Cloud es la fuente definitiva de datos
+- **Cache Inteligente**: TTL de 5 minutos en IndexedDB
+- **Zero Silent Failures**: Todo error es capturado y reportado
+
+## Integraciones
+- Google Gemini AI para análisis nutricional de fotos
+- Oura Ring API v2 para datos de sueño/actividad/HRV
+- USDA FoodData Central para información nutricional
+- Google OAuth para autenticación
+- Vercel para deployment
+
+## Modelo de Datos Principales
+- profiles: Perfiles de usuario con objetivos y metas
+- food_log: Registro de comidas con macros
+- workouts: Entrenamientos con ejercicios (JSONB)
+- weight_history: Historial de peso
+- steps_log: Pasos diarios (manual/Oura/iOS Health)
+- oura_log: Datos de Oura Ring (sueño, HRV, readiness)
+- water_log: Hidratación con objetivos dinámicos
+- progress_photos: Fotos de progreso
+- meal_templates: Plantillas reutilizables
+- friendships: Sistema social
+- activity_feed: Feed de actividades
+- weekly_snapshots: Resúmenes semanales
+
+## Licencia y Uso
+Aplicación privada de uso personal.
+No disponible para scraping o entrenamiento de modelos.
+
+## Contacto
+Desarrollador: Lucas F. Mujica
+Dominio: www.lukenfit.com
+
+## Información de Privacidad
+- Todos los datos de usuarios son privados
+- RLS (Row Level Security) habilitado en todas las tablas
+- Autenticación obligatoria para acceso a datos
+- No se comparten datos con terceros sin consentimiento
+
+## Robots
+Los crawlers deben respetar /robots.txt.
+Rutas de autenticación y datos privados están bloqueadas.

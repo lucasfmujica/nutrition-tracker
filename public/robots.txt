@@ -1,0 +1,47 @@
+# robots.txt para LukenFit
+# Generado: 2026-02-05
+
+User-agent: *
+Allow: /
+
+# Bloquear rutas de autenticación
+Disallow: /auth/
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+
+# Bloquear rutas de datos privados de usuarios
+Disallow: /dashboard
+Disallow: /comidas
+Disallow: /entrenos
+Disallow: /peso
+Disallow: /pasos
+Disallow: /oura
+Disallow: /progreso
+Disallow: /social
+Disallow: /config
+
+# Archivos de sistema
+Disallow: /sw.js
+Disallow: /manifest.json
+Disallow: /*.json$
+
+# Sitemap (crear después)
+# Sitemap: https://www.lukenfit.com/sitemap.xml
+
+# Crawl-delay para evitar saturación
+Crawl-delay: 1
+
+# Googlebot específico (más agresivo)
+User-agent: Googlebot
+Allow: /
+Disallow: /auth/
+Disallow: /dashboard
+Crawl-delay: 0
+
+# Bingbot
+User-agent: Bingbot
+Allow: /
+Disallow: /auth/
+Disallow: /dashboard
+Crawl-delay: 1
