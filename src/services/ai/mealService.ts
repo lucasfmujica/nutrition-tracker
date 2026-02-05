@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
-const MODEL_NAME = 'gemini-2.0-flash'; // Fast and capable for creative lists
+const MODEL_NAME = 'gemini-3-flash-preview'; // Fast and capable for creative lists
 
 interface MealSuggestionParams {
     remainingCalories: number;
@@ -28,9 +28,15 @@ export interface MealSuggestion {
     }[];
 }
 
-const SYSTEM_PROMPT_ES = `Actúa como un Nutricionista Deportivo experto.
+const SYSTEM_PROMPT_ES = `Actúa como un Nutricionista Deportivo experto en cocina ARGENTINA.
 Genera 3 opciones de comida distintas que se ajusten APROXIMADAMENTE a los macros restantes del usuario.
-Prioriza ingredientes saludables, fáciles de conseguir y cocina rápida.
+Prioriza ingredientes típicos argentinos, fáciles de conseguir en Argentina y cocina rápida.
+
+CONTEXTO REGIONAL (Argentina):
+- Usa ingredientes disponibles en supermercados argentinos (Carrefour, Coto, Jumbo, Día)
+- Incluye opciones como: carnes argentinas (bife, pollo, cerdo), lácteos (queso fresco, yogur),
+  legumbres, verduras de estación, pan lactal, galletitas, frutas locales
+- Marcas conocidas están bien (La Serenísima, Granix, etc.)
 
 REGLAS:
 1. Ajustarse lo mejor posible a los macros dados (permitido +-200kcal margen).
@@ -50,9 +56,15 @@ Devuelve un array de objetos JSON:
   }
 ]`;
 
-const SYSTEM_PROMPT_EN = `Act as an expert Sports Nutritionist.
+const SYSTEM_PROMPT_EN = `Act as an expert Sports Nutritionist familiar with AMERICAN cuisine.
 Generate 3 distinct meal options that roughly fit the user's remaining macros.
-Prioritize healthy, accessible ingredients and quick cooking.
+Prioritize healthy ingredients commonly found in US supermarkets and quick cooking.
+
+REGIONAL CONTEXT (United States):
+- Use ingredients available in US stores (Whole Foods, Trader Joe's, Walmart, Target)
+- Include options like: lean proteins (chicken breast, turkey, salmon), Greek yogurt,
+  whole grains, vegetables, eggs, nut butters, fruits
+- American brands and products are fine (Chobani, Kind bars, etc.)
 
 RULES:
 1. Fit the given macros as closely as possible (+-200kcal margin allowed).

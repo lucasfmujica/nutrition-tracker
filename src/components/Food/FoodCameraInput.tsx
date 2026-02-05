@@ -184,7 +184,7 @@ export const FoodCameraInput: React.FC = () => {
                         type="text"
                         value={editableMeal}
                         onChange={(e) => setEditableMeal(e.target.value)}
-                        className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full px-4 py-3 bg-background text-text-primary border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         placeholder={t('food.camera.namePlaceholder')}
                     />
                 </div>
@@ -197,7 +197,7 @@ export const FoodCameraInput: React.FC = () => {
                     <select
                         value={selectedMealType}
                         onChange={(e) => setSelectedMealType(e.target.value)}
-                        className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        className="w-full px-4 py-3 bg-background text-text-primary border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                         <option value="breakfast">{t('mealTypes.breakfast')}</option>
                         <option value="lunch">{t('mealTypes.lunch')}</option>
                         <option value="snack">{t('mealTypes.snack')}</option>
@@ -221,7 +221,7 @@ export const FoodCameraInput: React.FC = () => {
                                         newItems[index].amount = e.target.value;
                                         setEditableItems(newItems);
                                     }}
-                                    className="w-24 px-3 py-2 border border-border rounded-lg text-sm"
+                                    className="w-24 px-3 py-2 bg-background text-text-primary border border-border rounded-lg text-sm"
                                     placeholder={t(
                                         'food.camera.ingredientsPlaceholderAmount',
                                     )}
@@ -234,7 +234,7 @@ export const FoodCameraInput: React.FC = () => {
                                         newItems[index].name = e.target.value;
                                         setEditableItems(newItems);
                                     }}
-                                    className="flex-1 px-3 py-2 border border-border rounded-lg text-sm"
+                                    className="flex-1 px-3 py-2 bg-background text-text-primary border border-border rounded-lg text-sm"
                                     placeholder={t(
                                         'food.camera.ingredientsPlaceholderName',
                                     )}
@@ -263,7 +263,7 @@ export const FoodCameraInput: React.FC = () => {
                                         calories: parseFloat(e.target.value) || 0,
                                     })
                                 }
-                                className="w-full px-3 py-2 border border-border rounded-lg text-sm"
+                                className="w-full px-3 py-2 bg-background text-text-primary border border-border rounded-lg text-sm"
                             />
                         </div>
                         <div>
@@ -279,7 +279,7 @@ export const FoodCameraInput: React.FC = () => {
                                         protein: parseFloat(e.target.value) || 0,
                                     })
                                 }
-                                className="w-full px-3 py-2 border border-border rounded-lg text-sm"
+                                className="w-full px-3 py-2 bg-background text-text-primary border border-border rounded-lg text-sm"
                             />
                         </div>
                         <div>
@@ -295,7 +295,7 @@ export const FoodCameraInput: React.FC = () => {
                                         carbs: parseFloat(e.target.value) || 0,
                                     })
                                 }
-                                className="w-full px-3 py-2 border border-border rounded-lg text-sm"
+                                className="w-full px-3 py-2 bg-background text-text-primary border border-border rounded-lg text-sm"
                             />
                         </div>
                         <div>
@@ -311,7 +311,7 @@ export const FoodCameraInput: React.FC = () => {
                                         fat: parseFloat(e.target.value) || 0,
                                     })
                                 }
-                                className="w-full px-3 py-2 border border-border rounded-lg text-sm"
+                                className="w-full px-3 py-2 bg-background text-text-primary border border-border rounded-lg text-sm"
                             />
                         </div>
                         <div className="col-span-2">
@@ -327,7 +327,7 @@ export const FoodCameraInput: React.FC = () => {
                                         fiber: parseFloat(e.target.value) || 0,
                                     })
                                 }
-                                className="w-full px-3 py-2 border border-border rounded-lg text-sm"
+                                className="w-full px-3 py-2 bg-background text-text-primary border border-border rounded-lg text-sm"
                             />
                         </div>
                     </div>
@@ -372,8 +372,8 @@ export const FoodCameraInput: React.FC = () => {
             />
 
             {error && (
-                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl">
-                    <p className="text-sm text-red-700">{error}</p>
+                <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl">
+                    <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
                 </div>
             )}
 

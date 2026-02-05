@@ -481,7 +481,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                         customTargets,
                                     )
                                 }
-                                className="w-full bg-surface/80 border border-purple-200 dark:border-purple-800 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all">
+                                className="w-full bg-background border border-purple-200 dark:border-purple-700 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all">
                                 <option value="male">
                                     {t('config.options.gender.male')}
                                 </option>
@@ -520,7 +520,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                         customTargets,
                                     )
                                 }
-                                className="w-full bg-surface/80 border border-purple-200 dark:border-purple-800 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all"
+                                className="w-full bg-background border border-purple-200 dark:border-purple-700 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all"
                             />
                         </div>
 
@@ -542,7 +542,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                         customTargets,
                                     )
                                 }
-                                className="w-full bg-surface/80 border border-purple-200 dark:border-purple-800 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all">
+                                className="w-full bg-background border border-purple-200 dark:border-purple-700 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all">
                                 <option value="cut">
                                     {t('config.options.goal.cut')}
                                 </option>
@@ -575,7 +575,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                         customTargets,
                                     )
                                 }
-                                className="w-full bg-surface/80 border border-purple-200 dark:border-purple-800 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all">
+                                className="w-full bg-background border border-purple-200 dark:border-purple-700 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all">
                                 <option value="sedentary">
                                     {t('config.options.activityLevel.sedentary')}
                                 </option>
