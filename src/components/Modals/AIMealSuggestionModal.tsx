@@ -88,7 +88,7 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-surface rounded-3xl p-6 w-full max-w-md border border-purple-200 shadow-2xl relative overflow-hidden">
+            <div className="bg-surface rounded-3xl p-6 w-full max-w-md border border-purple-200 dark:border-purple-800 shadow-2xl relative overflow-hidden">
                 {/* Background Decor */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-bl-full -mr-8 -mt-8 pointer-events-none" />
 
@@ -151,13 +151,13 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                                     </p>
 
                                     <div className="flex gap-2 mb-4">
-                                        <div className="px-2 py-1 bg-green-50 rounded-lg text-[10px] font-bold text-green-700">
+                                        <div className="px-2 py-1 bg-green-50 dark:bg-green-900/30 rounded-lg text-[10px] font-bold text-green-700 dark:text-green-400">
                                             {suggestion.macros.protein}g Prot
                                         </div>
-                                        <div className="px-2 py-1 bg-amber-50 rounded-lg text-[10px] font-bold text-amber-700">
+                                        <div className="px-2 py-1 bg-amber-50 dark:bg-amber-900/30 rounded-lg text-[10px] font-bold text-amber-700 dark:text-amber-400">
                                             {suggestion.macros.carbs}g Carb
                                         </div>
-                                        <div className="px-2 py-1 bg-orange-50 rounded-lg text-[10px] font-bold text-orange-700">
+                                        <div className="px-2 py-1 bg-orange-50 dark:bg-orange-900/30 rounded-lg text-[10px] font-bold text-orange-700 dark:text-orange-400">
                                             {suggestion.macros.fat}g Fat
                                         </div>
                                     </div>

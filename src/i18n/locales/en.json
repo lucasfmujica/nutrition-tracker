@@ -1138,7 +1138,7 @@
         "sleep": "Sleep",
         "readiness": "Readiness",
         "logActivityPrompt": "Log your activity for today.",
-        "importGravl": "Import Gravl",
+        "importGravl": "Import Workout",
         "effort": {
             "title": "Effort Radar",
             "intensity": "Intensity",
@@ -1193,7 +1193,7 @@
             "add": "Add"
         },
         "scanner": {
-            "title": "Import from Gravl",
+            "title": "Import Workout",
             "subtitle": "Upload workout screenshots",
             "uploadPrompt": "Tap to upload images",
             "uploadSubPrompt": "Supports multiple screenshots",

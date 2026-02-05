@@ -157,7 +157,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
     return (
         <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
             {/* Week Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-gradient-to-r from-blue-50 to-indigo-50">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950">
                 <button
                     onClick={goToPreviousWeek}
                     className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface/70 text-text-secondary transition-colors">
@@ -212,9 +212,9 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                     data-today={day.isToday}
                                     className={`py-2 px-2 text-center cursor-pointer transition-colors ${
                                         day.isSelected
-                                            ? 'bg-blue-100'
+                                            ? 'bg-blue-100 dark:bg-blue-900/50'
                                             : day.isToday
-                                              ? 'bg-blue-50'
+                                              ? 'bg-blue-50 dark:bg-blue-950'
                                               : day.isFuture
                                                 ? 'bg-surface-lighter cursor-not-allowed'
                                                 : 'hover:bg-surface-lighter'
@@ -283,7 +283,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                             }
                                             className={`py-1.5 px-1.5 align-top transition-colors ${
                                                 day.isSelected
-                                                    ? 'bg-blue-50/50'
+                                                    ? 'bg-blue-50/50 dark:bg-blue-950/50'
                                                     : day.isFuture
                                                       ? 'bg-background cursor-not-allowed'
                                                       : 'hover:bg-background cursor-pointer'
@@ -333,7 +333,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                                             mealType.id,
                                                         );
                                                     }}
-                                                    className="w-full flex items-center justify-center py-2 text-text-tertiary hover:text-blue-500 hover:bg-blue-50 rounded transition-colors group">
+                                                    className="w-full flex items-center justify-center py-2 text-text-tertiary hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 rounded transition-colors group">
                                                     <Plus
                                                         size={14}
                                                         className="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -376,7 +376,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                     <td
                                         key={`total-${day.date}`}
                                         className={`py-2 px-2 text-center ${
-                                            day.isSelected ? 'bg-blue-100/50' : ''
+                                            day.isSelected ? 'bg-blue-100/50 dark:bg-blue-900/30' : ''
                                         }`}>
                                         {!day.isFuture && day.totalCalories > 0 ? (
                                             <div>

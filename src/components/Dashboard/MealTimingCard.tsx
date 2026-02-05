@@ -81,10 +81,10 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
     };
 
     return (
-        <div className="bg-surface rounded-[2.5rem] p-8 shadow-xl border border-border group hover:border-indigo-100 transition-all duration-300">
+        <div className="bg-surface rounded-[2.5rem] p-8 shadow-xl border border-border group hover:border-indigo-200 dark:hover:border-indigo-800 transition-all duration-300">
             <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-indigo-50 rounded-xl group-hover:scale-110 transition-transform">
-                    <Clock className="text-indigo-600" size={20} />
+                <div className="p-2 bg-indigo-50 dark:bg-indigo-900/50 rounded-xl group-hover:scale-110 transition-transform">
+                    <Clock className="text-indigo-600 dark:text-indigo-400" size={20} />
                 </div>
                 <h3 className="text-text-primary font-bold text-xl tracking-tight">
                     {t('dashboard.mealTiming.title')}
@@ -93,19 +93,19 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
 
             {/* Eating Window */}
             <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="p-3 bg-blue-50 rounded-xl">
-                    <div className="text-xs text-blue-600 font-bold mb-1">
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
+                    <div className="text-xs text-blue-600 dark:text-blue-400 font-bold mb-1">
                         {t('dashboard.mealTiming.firstMeal')}
                     </div>
-                    <div className="text-2xl font-bold text-blue-900">
+                    <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">
                         {insights.avgFirstMealTime}
                     </div>
                 </div>
-                <div className="p-3 bg-purple-50 rounded-xl">
-                    <div className="text-xs text-purple-600 font-bold mb-1">
+                <div className="p-3 bg-purple-50 dark:bg-purple-900/30 rounded-xl">
+                    <div className="text-xs text-purple-600 dark:text-purple-400 font-bold mb-1">
                         {t('dashboard.mealTiming.lastMeal')}
                     </div>
-                    <div className="text-2xl font-bold text-purple-900">
+                    <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">
                         {insights.avgLastMealTime}
                     </div>
                 </div>
@@ -147,12 +147,12 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
                         </span>
                     </div>
                     {insights.sleepImpact.avgMealBedtimeGap < 2 && (
-                        <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded">
+                        <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 p-2 rounded">
                             {t('dashboard.mealTiming.sleepImpact.warning')}
                         </p>
                     )}
                     {insights.sleepImpact.lateEatingDays > 7 && (
-                        <p className="text-xs text-red-600 bg-red-50 p-2 rounded">
+                        <p className="text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 p-2 rounded">
                             {t('dashboard.mealTiming.sleepImpact.bad', {
                                 count: insights.sleepImpact.lateEatingDays,
                             })}
@@ -160,7 +160,7 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
                     )}
                     {insights.sleepImpact.avgMealBedtimeGap >= 2.5 &&
                         insights.sleepImpact.lateEatingDays <= 5 && (
-                            <p className="text-xs text-green-600 bg-green-50 p-2 rounded">
+                            <p className="text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 p-2 rounded">
                                 {t('dashboard.mealTiming.sleepImpact.good')}
                             </p>
                         )}
@@ -195,24 +195,24 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
                         </h4>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
-                        <div className="p-2 bg-orange-50 rounded">
-                            <div className="text-[10px] text-orange-600 font-bold">
+                        <div className="p-2 bg-orange-50 dark:bg-orange-900/30 rounded">
+                            <div className="text-[10px] text-orange-600 dark:text-orange-400 font-bold">
                                 {t('dashboard.mealTiming.workoutNutrition.avgCarbs')}
                             </div>
-                            <div className="text-lg font-bold text-orange-900">
+                            <div className="text-lg font-bold text-orange-700 dark:text-orange-300">
                                 {insights.workoutNutrition.avgPreWorkoutCarbs.toFixed(
                                     0,
                                 )}
                                 g
                             </div>
                         </div>
-                        <div className="p-2 bg-green-50 rounded">
-                            <div className="text-[10px] text-green-600 font-bold">
+                        <div className="p-2 bg-green-50 dark:bg-green-900/30 rounded">
+                            <div className="text-[10px] text-green-600 dark:text-green-400 font-bold">
                                 {t(
                                     'dashboard.mealTiming.workoutNutrition.avgProtein',
                                 )}
                             </div>
-                            <div className="text-lg font-bold text-green-900">
+                            <div className="text-lg font-bold text-green-700 dark:text-green-300">
                                 {insights.workoutNutrition.avgPostWorkoutProtein.toFixed(
                                     0,
                                 )}

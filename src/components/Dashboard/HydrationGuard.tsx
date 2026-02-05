@@ -141,9 +141,9 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
     const coachTip = getCoachTip();
 
     return (
-        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-5 rounded-2xl border border-blue-100 shadow-sm relative overflow-hidden">
+        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 p-5 rounded-2xl border border-blue-100 dark:border-blue-800 shadow-sm relative overflow-hidden">
             {/* Background Decoration */}
-            <div className="absolute right-0 top-0 w-32 h-32 bg-blue-100 rounded-full blur-3xl opacity-20 -mr-10 -mt-10" />
+            <div className="absolute right-0 top-0 w-32 h-32 bg-blue-100 dark:bg-blue-900 rounded-full blur-3xl opacity-20 -mr-10 -mt-10" />
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 relative z-10">
                 <div className="flex items-center gap-2">
@@ -176,7 +176,7 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
 
                         {/* Controls */}
                         {(onAddWater || onRemoveWater) && (
-                            <div className="flex items-center gap-1 bg-surface rounded-lg p-1 shadow-sm border border-blue-100">
+                            <div className="flex items-center gap-1 bg-surface rounded-lg p-1 shadow-sm border border-blue-100 dark:border-blue-800">
                                 {onRemoveWater && (
                                     <button
                                         onClick={onRemoveWater}
@@ -241,7 +241,7 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
             </div>
 
             <div
-                className={`p-3 rounded-xl ${needsElectrolytes ? 'bg-orange-100 border border-orange-200' : 'bg-surface border border-border'}`}>
+                className={`p-3 rounded-xl ${needsElectrolytes ? 'bg-orange-100 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800' : 'bg-surface border border-border'}`}>
                 <p className="text-sm text-text-secondary leading-relaxed">{coachTip}</p>
             </div>
         </div>

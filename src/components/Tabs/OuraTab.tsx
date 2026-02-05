@@ -201,7 +201,7 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
             {hasToken && (
                 <>
                     {sleepSchedule && (
-                        <div className="bg-surface rounded-2xl p-5 border border-purple-100 shadow-sm flex flex-col md:flex-row gap-4 md:items-center justify-between">
+                        <div className="bg-surface rounded-2xl p-5 border border-purple-100 dark:border-purple-800 shadow-sm flex flex-col md:flex-row gap-4 md:items-center justify-between">
                             <div>
                                 <h3 className="text-text-primary font-bold flex items-center gap-2">
                                     <span className="text-xl">💤</span>{' '}
@@ -216,7 +216,7 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
                                     <p className="text-[10px] uppercase font-bold text-text-tertiary tracking-wider mb-1">
                                         {t('oura.schedule.bedtime')}
                                     </p>
-                                    <p className="text-2xl font-black text-indigo-900">
+                                    <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">
                                         {sleepSchedule.avgBedtime}
                                     </p>
                                 </div>
@@ -225,7 +225,7 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
                                     <p className="text-[10px] uppercase font-bold text-text-tertiary tracking-wider mb-1">
                                         {t('oura.schedule.wakeTime')}
                                     </p>
-                                    <p className="text-2xl font-black text-indigo-900">
+                                    <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">
                                         {sleepSchedule.avgWakeTime}
                                     </p>
                                 </div>

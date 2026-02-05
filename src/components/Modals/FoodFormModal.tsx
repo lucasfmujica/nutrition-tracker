@@ -216,7 +216,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                     }}
                                     onFocus={() => setShowResults(true)}
                                     placeholder={t('modals.foods.placeholder')}
-                                    className="w-full pl-9 pr-10 py-2.5 bg-blue-50 border border-blue-200 rounded-xl text-text-primary text-sm placeholder:text-text-tertiary focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                    className="w-full pl-9 pr-10 py-2.5 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-xl text-text-primary text-sm placeholder:text-text-tertiary focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                                 />
                                 {isSearching && (
                                     <Loader2
@@ -276,7 +276,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
 
                             {/* Selected Search Food Preview */}
                             {selectedSearchFood && previewMacros && (
-                                <div className="mt-2 p-3 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
+                                <div className="mt-2 p-3 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 rounded-xl border border-blue-100 dark:border-blue-800">
                                     <div className="flex items-center justify-between mb-2">
                                         <span className="text-xs font-bold text-blue-600 uppercase">
                                             {t('modals.foods.found')}
@@ -305,7 +305,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                                     ),
                                                 )
                                             }
-                                            className="w-20 px-2 py-1.5 bg-surface border border-blue-200 rounded-lg text-sm text-center font-bold"
+                                            className="w-20 px-2 py-1.5 bg-surface border border-blue-200 dark:border-blue-800 rounded-lg text-sm text-center font-bold text-text-primary"
                                         />
                                         <select
                                             value={searchUnit}
@@ -316,7 +316,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                                         | 'serving',
                                                 )
                                             }
-                                            className="flex-1 px-2 py-1.5 bg-surface border border-blue-200 rounded-lg text-sm">
+                                            className="flex-1 px-2 py-1.5 bg-surface border border-blue-200 dark:border-blue-800 rounded-lg text-sm text-text-primary">
                                             <option value="g">
                                                 {t('modals.foods.grams')}
                                             </option>
@@ -565,7 +565,7 @@ const SourceBadge: React.FC<{ source: FoodSearchResult['source'] }> = ({
     return (
         <span
             className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${
-                isOFF ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                isOFF ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400' : 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400'
             }`}>
             {isOFF ? <Globe size={8} /> : <Database size={8} />}
             {isOFF ? 'OFF' : 'USDA'}

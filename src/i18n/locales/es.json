@@ -1146,7 +1146,7 @@
         "sleep": "Sueño",
         "readiness": "Readiness",
         "logActivityPrompt": "Registra tu actividad para hoy.",
-        "importGravl": "Importar Gravl",
+        "importGravl": "Importar Entrenamiento",
         "effort": {
             "title": "Radar de Esfuerzo",
             "intensity": "Intensidad",
@@ -1204,7 +1204,7 @@
             "add": "Agregar"
         },
         "scanner": {
-            "title": "Importar desde Gravl",
+            "title": "Importar Entrenamiento",
             "subtitle": "Sube capturas de tu entrenamiento",
             "uploadPrompt": "Toca para subir imágenes",
             "uploadSubPrompt": "Soporta múltiples capturas",
