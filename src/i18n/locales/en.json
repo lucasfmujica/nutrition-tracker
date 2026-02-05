@@ -1024,7 +1024,17 @@
             "hard": "Hard"
         },
         "rejectedCount": "{{count}} rejected meals",
-        "clearRejected": "Clear"
+        "clearRejected": "Clear",
+        "mealBudget": "Budget for {{meal}}",
+        "recipe": {
+            "loading": "Generating recipe...",
+            "instructions": "Instructions",
+            "ingredients": "Ingredients",
+            "tips": "Tips",
+            "back": "Back",
+            "forThisMeal": "For this meal",
+            "step": "Step {{number}}"
+        }
     },
     "modals": {
         "barcode": {
@@ -1337,7 +1347,8 @@
             "ingredientsLabel": "Detected Ingredients",
             "ingredientsPlaceholderAmount": "160g",
             "ingredientsPlaceholderName": "Chorizo Steak",
-            "macrosLabel": "Macronutrients"
+            "macrosLabel": "Macronutrients",
+            "adjustPortion": "Adjust Portion"
         },
         "validation": {
             "fileTooLarge": "Image too large ({{size}}MB). Maximum: 10MB",

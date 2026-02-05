@@ -85,7 +85,7 @@ const MiniCalendar: React.FC<{ streakDates: string[] }> = ({ streakDates }) => {
                             ? day.isToday
                                 ? 'bg-gradient-to-br from-orange-500 to-red-500 shadow-lg scale-110'
                                 : 'bg-gradient-to-br from-orange-400 to-orange-600'
-                            : 'bg-background-secondary opacity-30'
+                            : 'bg-surface opacity-30'
                     }`}
                     title={day.date}
                 />
@@ -111,12 +111,12 @@ export const StreaksVisualizer: React.FC<StreaksVisualizerProps> = ({ streakData
 
     // Milestone achievements
     const getMilestone = (streak: number) => {
-        if (streak >= 90) return { emoji: '🏆', label: t('analytics.streaks.milestone90') };
-        if (streak >= 60) return { emoji: '💪', label: t('analytics.streaks.milestone60') };
-        if (streak >= 30) return { emoji: '🔥', label: t('analytics.streaks.milestone30') };
-        if (streak >= 14) return { emoji: '⭐', label: t('analytics.streaks.milestone14') };
-        if (streak >= 7) return { emoji: '🎯', label: t('analytics.streaks.milestone7') };
-        return { emoji: '🌱', label: t('analytics.streaks.milestoneStart') };
+        if (streak >= 90) return { emoji: '🏆', label: t('progress.analytics.streaks.milestone90') };
+        if (streak >= 60) return { emoji: '💪', label: t('progress.analytics.streaks.milestone60') };
+        if (streak >= 30) return { emoji: '🔥', label: t('progress.analytics.streaks.milestone30') };
+        if (streak >= 14) return { emoji: '⭐', label: t('progress.analytics.streaks.milestone14') };
+        if (streak >= 7) return { emoji: '🎯', label: t('progress.analytics.streaks.milestone7') };
+        return { emoji: '🌱', label: t('progress.analytics.streaks.milestoneStart') };
     };
 
     const milestone = getMilestone(currentStreak);
@@ -129,10 +129,10 @@ export const StreaksVisualizer: React.FC<StreaksVisualizerProps> = ({ streakData
             <div className="mb-4">
                 <h3 className="text-lg font-black text-text-primary mb-1 flex items-center gap-2">
                     <Flame className="w-5 h-5 text-orange-500" />
-                    {t('analytics.streaks.title')}
+                    {t('progress.analytics.streaks.title')}
                 </h3>
                 <p className="text-sm text-text-tertiary">
-                    {t('analytics.streaks.subtitle')}
+                    {t('progress.analytics.streaks.subtitle')}
                 </p>
             </div>
 
@@ -145,7 +145,7 @@ export const StreaksVisualizer: React.FC<StreaksVisualizerProps> = ({ streakData
                         <Flame className="w-8 h-8 text-white mb-1" />
                         <p className="text-4xl font-black text-white">{currentStreak}</p>
                         <p className="text-xs font-bold text-white/90 uppercase tracking-wider">
-                            {t('analytics.streaks.days')}
+                            {t('progress.analytics.streaks.days')}
                         </p>
                     </div>
 
@@ -166,7 +166,7 @@ export const StreaksVisualizer: React.FC<StreaksVisualizerProps> = ({ streakData
                     <Trophy className="w-5 h-5 text-yellow-500 mx-auto mb-2" />
                     <p className="text-2xl font-black text-text-primary">{longestStreak}</p>
                     <p className="text-xs text-text-tertiary font-semibold mt-1">
-                        {t('analytics.streaks.longestStreak')}
+                        {t('progress.analytics.streaks.longestStreak')}
                     </p>
                 </div>
 
@@ -175,7 +175,7 @@ export const StreaksVisualizer: React.FC<StreaksVisualizerProps> = ({ streakData
                     <Calendar className="w-5 h-5 text-blue-500 mx-auto mb-2" />
                     <p className="text-2xl font-black text-text-primary">{streakDates.length}</p>
                     <p className="text-xs text-text-tertiary font-semibold mt-1">
-                        {t('analytics.streaks.daysInStreak')}
+                        {t('progress.analytics.streaks.daysInStreak')}
                     </p>
                 </div>
             </div>
@@ -183,11 +183,11 @@ export const StreaksVisualizer: React.FC<StreaksVisualizerProps> = ({ streakData
             {/* Mini Calendar */}
             <div>
                 <p className="text-xs font-black text-text-tertiary uppercase tracking-wider mb-3">
-                    {t('analytics.streaks.last30Days')}
+                    {t('progress.analytics.streaks.last30Days')}
                 </p>
                 <MiniCalendar streakDates={streakDates} />
                 <p className="text-xs text-text-tertiary text-center mt-3">
-                    {t('analytics.streaks.calendarLegend')}
+                    {t('progress.analytics.streaks.calendarLegend')}
                 </p>
             </div>
 
@@ -196,12 +196,12 @@ export const StreaksVisualizer: React.FC<StreaksVisualizerProps> = ({ streakData
                 <div className="mt-4 pt-4 border-t border-border">
                     <p className="text-sm text-text-secondary text-center italic">
                         {currentStreak === 1
-                            ? t('analytics.streaks.motivation1')
+                            ? t('progress.analytics.streaks.motivation1')
                             : currentStreak < 7
-                            ? t('analytics.streaks.motivationEarly')
+                            ? t('progress.analytics.streaks.motivationEarly')
                             : currentStreak < 30
-                            ? t('analytics.streaks.motivationMid')
-                            : t('analytics.streaks.motivationHigh')}
+                            ? t('progress.analytics.streaks.motivationMid')
+                            : t('progress.analytics.streaks.motivationHigh')}
                     </p>
                 </div>
             )}
@@ -210,7 +210,7 @@ export const StreaksVisualizer: React.FC<StreaksVisualizerProps> = ({ streakData
             {currentStreak === 0 && (
                 <div className="mt-4 pt-4 border-t border-border">
                     <p className="text-sm text-text-secondary text-center">
-                        {t('analytics.streaks.noStreak')}
+                        {t('progress.analytics.streaks.noStreak')}
                     </p>
                 </div>
             )}

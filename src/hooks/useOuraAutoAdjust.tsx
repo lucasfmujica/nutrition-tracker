@@ -52,9 +52,21 @@ export const useOuraAutoAdjust = (
             };
         }
 
-        const readiness = todayOura.readiness_score || 0;
-        const bodyTemp = todayOura.body_temp || null;
-        const steps = todayOura.steps || 0;
+        const readiness = todayOura.readiness_score ?? null;
+        const bodyTemp = todayOura.body_temp ?? null;
+        const steps = todayOura.steps ?? 0;
+
+        // If readiness is null/undefined, return neutral values
+        if (readiness === null) {
+            return {
+                ouraCalorieBoost: 0,
+                ouraAlert: null,
+                hydrationMultiplier: 1.0,
+                readinessScore: null,
+                bodyTemp,
+                stepsFromOura: steps,
+            };
+        }
 
         // 1. Calculate calorie boost based on readiness
         let ouraCalorieBoost = 0;

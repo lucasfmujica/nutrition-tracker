@@ -31,6 +31,11 @@ export interface MealSuggestion {
     difficulty?: 'easy' | 'medium' | 'hard';
 }
 
+export interface RecipeDetail {
+    steps: string[];
+    tips?: string;
+}
+
 // =====================================================
 // SYSTEM PROMPTS - SPANISH (ARGENTINA)
 // =====================================================
@@ -146,10 +151,11 @@ IMPORTANTE: Las recetas DEBEN usar principalmente estos ingredientes.`);
 
     // Rules and output schema
     parts.push(`\nREGLAS:
-1. Ajustarse lo mejor posible a los macros dados (permitido +-150kcal margen).
-2. Si los macros son muy bajos (<200kcal), sugiere snacks pequeños.
-3. Incluir prepTime (minutos) y difficulty en cada sugerencia.
-4. Formato JSON estricto.
+1. IMPORTANTE: Los macros dados son específicamente para ESTA comida, NO para todo el día. No los excedas.
+2. Ajustarse lo mejor posible a los macros dados (permitido +-150kcal margen).
+3. Si los macros son muy bajos (<200kcal), sugiere snacks pequeños.
+4. Incluir prepTime (minutos) y difficulty en cada sugerencia.
+5. Formato JSON estricto.
 
 SCHEMA DE SALIDA:
 Devuelve un array de objetos JSON:
@@ -283,10 +289,11 @@ IMPORTANT: Recipes MUST primarily use these ingredients.`);
 
     // Rules and output schema
     parts.push(`\nRULES:
-1. Fit the given macros as closely as possible (+-150kcal margin allowed).
-2. If macros are very low (<200kcal), suggest small snacks.
-3. Include prepTime (minutes) and difficulty in each suggestion.
-4. Strict JSON format.
+1. IMPORTANT: The macros given are specifically for THIS meal, NOT the entire day. Do not exceed them.
+2. Fit the given macros as closely as possible (+-150kcal margin allowed).
+3. If macros are very low (<200kcal), suggest small snacks.
+4. Include prepTime (minutes) and difficulty in each suggestion.
+5. Strict JSON format.
 
 OUTPUT SCHEMA:
 Return an array of JSON objects:
@@ -396,4 +403,62 @@ export const suggestMealsFromIngredients = async (
         ...context,
         availableIngredients: ingredients,
     });
+};
+
+// =====================================================
+// RECIPE INSTRUCTIONS GENERATION
+// =====================================================
+
+export const generateRecipeInstructions = async (
+    suggestion: MealSuggestion,
+    language: string
+): Promise<RecipeDetail> => {
+    try {
+        const isEnglish = language.startsWith('en');
+
+        const ingredientsList = suggestion.ingredients
+            .map((i) => `${i.name} (${i.amount})`)
+            .join(', ');
+
+        const systemInstruction = isEnglish
+            ? `You are a cooking instructor. Given a meal and its ingredients, generate clear step-by-step cooking instructions.
+Return a JSON object with:
+- "steps": array of 4-8 instruction strings (numbered steps, concise and clear)
+- "tips": optional single string with a useful cooking tip
+
+RULES:
+1. Steps must be practical and actionable.
+2. Keep each step to 1-2 sentences.
+3. Strict JSON format only.`
+            : `Sos un instructor de cocina argentino. Dado un plato y sus ingredientes, generá instrucciones paso a paso claras.
+Devolvé un objeto JSON con:
+- "steps": array de 4-8 strings con instrucciones (pasos numerados, concisos y claros)
+- "tips": string opcional con un tip útil de cocina
+
+REGLAS:
+1. Los pasos deben ser prácticos y accionables.
+2. Máximo 1-2 oraciones por paso.
+3. Formato JSON estricto.`;
+
+        const userPrompt = isEnglish
+            ? `Meal: ${suggestion.name}\nDescription: ${suggestion.description}\nIngredients: ${ingredientsList}`
+            : `Plato: ${suggestion.name}\nDescripción: ${suggestion.description}\nIngredientes: ${ingredientsList}`;
+
+        const model = genAI.getGenerativeModel({
+            model: MODEL_NAME,
+            systemInstruction,
+            generationConfig: {
+                responseMimeType: 'application/json',
+            },
+        });
+
+        const result = await model.generateContent(userPrompt);
+        const response = await result.response;
+        const text = response.text();
+
+        return JSON.parse(text);
+    } catch (error) {
+        console.error('[mealService] Error generating recipe instructions:', error);
+        throw new Error('Failed to generate recipe instructions.');
+    }
 };

@@ -1,5 +1,6 @@
 import {
     Activity,
+    CalendarDays,
     Camera,
     Dumbbell,
     Home,
@@ -56,6 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         },
         { id: 'pasos', icon: Activity, label: t('navigation.steps') },
         { id: 'oura', icon: Link, label: 'Oura' },
+        { id: 'meal-prep', icon: CalendarDays, label: t('mealPrep.title') },
         {
             id: 'config',
             icon: User,

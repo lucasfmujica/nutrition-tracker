@@ -10,6 +10,7 @@ import {
     Image as ImageIcon,
     Loader2,
     Save,
+    SlidersHorizontal,
     X,
 } from 'lucide-react';
 import React, { useRef, useState } from 'react';
@@ -93,14 +94,17 @@ export const FoodCameraInput: React.FC = () => {
                 })),
             );
 
+            // Set editable macros immediately so edit view shows AI values
+            setEditableMacros(macros);
+
             // Use file timestamp if available, otherwise default to current time via auto-meal logic
             const fileDate = file.lastModified
                 ? new Date(file.lastModified)
                 : undefined;
             setSelectedMealType(getAutoMealType(fileDate));
 
-            // Show portion adjustment UI first
-            setShowPortionAdjust(true);
+            // Go directly to edit view (not portion adjustment)
+            setShowPortionAdjust(false);
         }
 
         // Reset file input
@@ -377,6 +381,14 @@ export const FoodCameraInput: React.FC = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* Adjust Portion Button */}
+                <button
+                    onClick={() => setShowPortionAdjust(true)}
+                    className="w-full py-3 bg-background border-2 border-border text-text-secondary rounded-xl font-semibold hover:bg-surface-lighter transition-colors flex items-center justify-center gap-2">
+                    <SlidersHorizontal className="w-5 h-5" />
+                    {t('food.camera.adjustPortion')}
+                </button>
 
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-2">

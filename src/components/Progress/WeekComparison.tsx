@@ -109,10 +109,10 @@ export const WeekComparison: React.FC<WeekComparisonProps> = ({ comparison }) =>
         return (
             <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border">
                 <h3 className="text-lg font-black text-text-primary mb-2">
-                    {t('analytics.weekComparison.title')}
+                    {t('progress.analytics.weekComparison.title')}
                 </h3>
                 <p className="text-sm text-text-tertiary">
-                    {t('analytics.weekComparison.noData')}
+                    {t('progress.analytics.weekComparison.noData')}
                 </p>
             </div>
         );
@@ -123,17 +123,17 @@ export const WeekComparison: React.FC<WeekComparisonProps> = ({ comparison }) =>
             {/* Header */}
             <div className="mb-4">
                 <h3 className="text-lg font-black text-text-primary mb-1">
-                    {t('analytics.weekComparison.title')}
+                    {t('progress.analytics.weekComparison.title')}
                 </h3>
                 <p className="text-sm text-text-tertiary">
-                    {t('analytics.weekComparison.subtitle')}
+                    {t('progress.analytics.weekComparison.subtitle')}
                 </p>
             </div>
 
             {/* Metrics Grid */}
             <div className="space-y-1">
                 <MetricRow
-                    label={t('analytics.weekComparison.calories')}
+                    label={t('progress.analytics.weekComparison.calories')}
                     current={current.calories}
                     previous={previous.calories}
                     delta={delta.calories}
@@ -143,7 +143,7 @@ export const WeekComparison: React.FC<WeekComparisonProps> = ({ comparison }) =>
                 />
 
                 <MetricRow
-                    label={t('analytics.weekComparison.protein')}
+                    label={t('progress.analytics.weekComparison.protein')}
                     current={current.protein}
                     previous={previous.protein}
                     delta={delta.protein}
@@ -153,7 +153,7 @@ export const WeekComparison: React.FC<WeekComparisonProps> = ({ comparison }) =>
                 />
 
                 <MetricRow
-                    label={t('analytics.weekComparison.carbs')}
+                    label={t('progress.analytics.weekComparison.carbs')}
                     current={current.carbs}
                     previous={previous.carbs}
                     delta={delta.carbs}
@@ -163,7 +163,7 @@ export const WeekComparison: React.FC<WeekComparisonProps> = ({ comparison }) =>
                 />
 
                 <MetricRow
-                    label={t('analytics.weekComparison.fat')}
+                    label={t('progress.analytics.weekComparison.fat')}
                     current={current.fat}
                     previous={previous.fat}
                     delta={delta.fat}
@@ -173,12 +173,12 @@ export const WeekComparison: React.FC<WeekComparisonProps> = ({ comparison }) =>
                 />
 
                 <MetricRow
-                    label={t('analytics.weekComparison.steps')}
+                    label={t('progress.analytics.weekComparison.steps')}
                     current={current.steps}
                     previous={previous.steps}
                     delta={delta.steps}
                     change={change.steps}
-                    unit={t('analytics.weekComparison.stepsUnit')}
+                    unit={t('progress.analytics.weekComparison.stepsUnit')}
                     higherIsBetter={true} // Higher steps is better
                 />
             </div>
@@ -187,7 +187,7 @@ export const WeekComparison: React.FC<WeekComparisonProps> = ({ comparison }) =>
             <div className="mt-4 pt-4 border-t border-border">
                 <div className="flex items-center justify-between">
                     <p className="text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                        {t('analytics.weekComparison.adherenceScore')}
+                        {t('progress.analytics.weekComparison.adherenceScore')}
                     </p>
                     <div className="flex items-center gap-2">
                         <span className="text-sm text-text-secondary">

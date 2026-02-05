@@ -54,6 +54,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         selectedFoodDate,
         selectedWorkoutDate,
         setShowFoodScanModal,
+        setShowSuggestionModal,
     } = useTracker() as any;
     const { t } = useTranslation();
 
@@ -130,6 +131,14 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             onClick: () => setShowImportWorkoutModal(true),
             color: 'text-carbs',
             bg: 'bg-carbs/10',
+        },
+        {
+            icon: <BookOpen size={20} />,
+            label: 'AI CHEF',
+            sublabel: 'SUGERENCIAS',
+            onClick: () => setShowSuggestionModal(true),
+            color: 'text-orange-400',
+            bg: 'bg-orange-400/10',
         },
     ];
 

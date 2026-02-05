@@ -1030,7 +1030,17 @@
             "hard": "Difícil"
         },
         "rejectedCount": "{{count}} comidas rechazadas",
-        "clearRejected": "Limpiar"
+        "clearRejected": "Limpiar",
+        "mealBudget": "Presupuesto para {{meal}}",
+        "recipe": {
+            "loading": "Generando receta...",
+            "instructions": "Instrucciones",
+            "ingredients": "Ingredientes",
+            "tips": "Tips",
+            "back": "Volver",
+            "forThisMeal": "Para esta comida",
+            "step": "Paso {{number}}"
+        }
     },
     "modals": {
         "barcode": {
@@ -1353,7 +1363,8 @@
             "ingredientsLabel": "Ingredientes Detectados",
             "ingredientsPlaceholderAmount": "160g",
             "ingredientsPlaceholderName": "Bife de Chorizo",
-            "macrosLabel": "Macronutrientes"
+            "macrosLabel": "Macronutrientes",
+            "adjustPortion": "Ajustar Porción"
         },
         "validation": {
             "fileTooLarge": "Imagen muy grande ({{size}}MB). Máximo: 10MB",

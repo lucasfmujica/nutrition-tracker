@@ -128,7 +128,7 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 border border-purple-100">
+            <div className="bg-gradient-to-br from-purple-50 dark:from-purple-900/30 to-blue-50 dark:to-blue-900/30 rounded-2xl p-6 border border-purple-100 dark:border-purple-800">
                 <div className="flex items-start gap-3">
                     <div className="p-2 bg-surface rounded-lg shadow-sm">
                         <TrendingUp size={24} className="text-purple-600" />
@@ -148,14 +148,14 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
             <div>
                 <div className="flex items-center justify-between mb-3">
                     <h3 className="font-bold text-text-primary">
-                        {t('analytics.weekComparison.title')}
+                        {t('progress.analytics.weekComparison.title')}
                     </h3>
                     <button
                         onClick={handleExportWeekComparison}
                         disabled={isExporting}
                         className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-text-secondary hover:text-accent bg-background hover:bg-surface-lighter rounded-lg transition-colors disabled:opacity-50">
                         <Download className="w-4 h-4" />
-                        {isExporting ? t('analytics.export.exporting') : t('analytics.export.button')}
+                        {isExporting ? t('progress.analytics.export.exporting') : t('progress.analytics.export.button')}
                     </button>
                 </div>
                 <div ref={weekComparisonRef}>
@@ -167,14 +167,14 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
             <div>
                 <div className="flex items-center justify-between mb-3">
                     <h3 className="font-bold text-text-primary">
-                        {t('analytics.streaks.title')}
+                        {t('progress.analytics.streaks.title')}
                     </h3>
                     <button
                         onClick={handleExportStreaks}
                         disabled={isExporting}
                         className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-text-secondary hover:text-accent bg-background hover:bg-surface-lighter rounded-lg transition-colors disabled:opacity-50">
                         <Download className="w-4 h-4" />
-                        {isExporting ? t('analytics.export.exporting') : t('analytics.export.button')}
+                        {isExporting ? t('progress.analytics.export.exporting') : t('progress.analytics.export.button')}
                     </button>
                 </div>
                 <div ref={streaksRef}>
@@ -185,10 +185,10 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
             {/* Best Day Section */}
             <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border">
                 <h3 className="text-lg font-black text-text-primary mb-1">
-                    {t('analytics.bestDay.title')}
+                    {t('progress.analytics.bestDay.title')}
                 </h3>
                 <p className="text-sm text-text-tertiary mb-4">
-                    {t('analytics.bestDay.subtitle')}
+                    {t('progress.analytics.bestDay.subtitle')}
                 </p>
 
                 {bestDay.averageScore > 0 ? (
@@ -199,13 +199,13 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
                                     {bestDay.dayName}
                                 </p>
                                 <p className="text-sm text-text-tertiary font-semibold">
-                                    {t('analytics.bestDay.score')}: {bestDay.averageScore}
+                                    {t('progress.analytics.bestDay.score')}: {bestDay.averageScore}
                                 </p>
                             </div>
                         </div>
 
                         <p className="text-sm text-text-secondary text-center italic mt-4">
-                            {t('analytics.bestDay.insight', { day: bestDay.dayName })}
+                            {t('progress.analytics.bestDay.insight', { day: bestDay.dayName })}
                         </p>
 
                         <div className="mt-6 grid grid-cols-7 gap-2">
@@ -229,7 +229,7 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
                     </>
                 ) : (
                     <p className="text-sm text-text-tertiary text-center py-6">
-                        {t('analytics.bestDay.noData')}
+                        {t('progress.analytics.bestDay.noData')}
                     </p>
                 )}
             </div>
