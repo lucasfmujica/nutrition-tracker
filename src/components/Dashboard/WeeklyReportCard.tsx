@@ -310,7 +310,7 @@ export const WeeklyReportCard = React.forwardRef<
 
                 {/* Footer Branding */}
                 <div className="bg-surface py-3 border-t border-border flex items-center justify-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-slate-900" />
+                    <div className="w-2 h-2 rounded-full bg-text-primary" />
                     <span className="text-[10px] font-bold text-text-primary tracking-[0.2em]">
                         {t('dashboard.weeklyReport.footer')}
                     </span>

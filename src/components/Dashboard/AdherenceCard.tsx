@@ -24,7 +24,7 @@ export const AdherenceCard: React.FC<AdherenceCardProps> = ({ data, label }) => 
     };
 
     return (
-        <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
+        <div className="bg-surface rounded-lg p-3 border border-border">
             <div className="flex justify-between items-center mb-2">
                 <h4 className="text-xs font-bold text-text-tertiary">{label}</h4>
                 <span className={`text-lg font-bold ${getScoreColor(data.score)}`}>

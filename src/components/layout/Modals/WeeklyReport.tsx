@@ -355,12 +355,12 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                                                           ? 'bg-red-500'
                                                           : day.calories > 0
                                                             ? 'bg-blue-500'
-                                                            : 'bg-gray-300'
+                                                            : 'bg-muted'
                                                 }`}
                                                 style={{ height: `${height}%` }}
                                             />
                                             <div
-                                                className="absolute w-full border-t border-dashed border-gray-400"
+                                                className="absolute w-full border-t border-dashed border-muted"
                                                 style={{
                                                     bottom: `${getBarHeight(targets.calories, targets.calories * 1.3)}%`,
                                                 }}
@@ -404,12 +404,12 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                                                         ? 'bg-cyan-500'
                                                         : day.protein > 0
                                                           ? 'bg-cyan-300'
-                                                          : 'bg-gray-300'
+                                                          : 'bg-muted'
                                                 }`}
                                                 style={{ height: `${height}%` }}
                                             />
                                             <div
-                                                className="absolute w-full border-t border-dashed border-gray-400"
+                                                className="absolute w-full border-t border-dashed border-muted"
                                                 style={{
                                                     bottom: `${getBarHeight(targets.protein, targets.protein * 1.3)}%`,
                                                 }}

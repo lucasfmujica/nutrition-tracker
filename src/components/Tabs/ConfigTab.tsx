@@ -844,7 +844,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     customTargets,
                                 )
                             }
-                            className="w-12 h-6 appearance-none bg-gray-300 rounded-full relative cursor-pointer transition-colors checked:bg-purple-600 before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-surface before:top-0.5 before:left-0.5 before:transition-transform checked:before:translate-x-6"
+                            className="w-12 h-6 appearance-none bg-muted rounded-full relative cursor-pointer transition-colors checked:bg-purple-600 before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-surface before:top-0.5 before:left-0.5 before:transition-transform checked:before:translate-x-6"
                         />
                     </label>
 

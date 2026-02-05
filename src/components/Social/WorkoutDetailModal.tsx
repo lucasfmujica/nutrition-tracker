@@ -57,7 +57,7 @@ export const WorkoutDetailModal: React.FC<WorkoutDetailModalProps> = ({
                 </div>
 
                 {/* Stats Row */}
-                <div className="flex divide-x divide-slate-100 border-b border-border bg-surface">
+                <div className="flex divide-x divide-border border-b border-border bg-surface">
                     <div className="flex-1 p-4 flex flex-col items-center justify-center text-center">
                         <div className="text-text-tertiary mb-1">
                             <Clock size={16} />

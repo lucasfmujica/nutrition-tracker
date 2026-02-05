@@ -173,7 +173,7 @@ export const AddFriendModal: React.FC<AddFriendModalProps> = ({
                             disabled={loading || friendCode.length < 8}
                             className={`w-full mt-4 py-3 rounded-xl font-bold text-white transition-all ${
                                 loading || friendCode.length < 8
-                                    ? 'bg-slate-300 cursor-not-allowed'
+                                    ? 'bg-muted cursor-not-allowed'
                                     : 'bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 active:scale-[0.98]'
                             }`}>
                             {loading ? (

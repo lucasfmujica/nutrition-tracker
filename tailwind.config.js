@@ -33,6 +33,10 @@ export default {
         },
         // Border color for dark mode support
         border: 'var(--color-border)',
+        // Progress bar track background
+        'progress-track': 'var(--color-progress-track)',
+        // Muted/disabled elements
+        muted: 'var(--color-muted)',
       },
       fontFamily: {
         satoshi: ['Satoshi', 'sans-serif'],

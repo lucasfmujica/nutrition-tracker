@@ -340,7 +340,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                                     />
                                                 </button>
                                             ) : (
-                                                <div className="py-2 text-center text-slate-200">
+                                                <div className="py-2 text-center text-text-tertiary">
                                                     —
                                                 </div>
                                             )}

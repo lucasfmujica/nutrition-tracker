@@ -14,8 +14,8 @@ export const UndoToast: React.FC<UndoToastProps> = ({
     if (!undoAction) return null;
 
     return (
-        <div className="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-gray-800 border border-gray-600 rounded-full px-4 py-2 flex items-center gap-3 z-50 shadow-lg">
-            <span className="text-sm text-text-tertiary">Eliminado</span>
+        <div className="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-surface border border-border rounded-full px-4 py-2 flex items-center gap-3 z-50 shadow-xl">
+            <span className="text-sm text-text-secondary">Eliminado</span>
             <button
                 onClick={() => {
                     if (undoAction.restore) undoAction.restore();

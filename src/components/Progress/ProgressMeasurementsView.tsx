@@ -317,7 +317,7 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
                             {t('progress.measurements.history')}
                         </h3>
                     </div>
-                    <div className="divide-y divide-slate-100">
+                    <div className="divide-y divide-border">
                         {measurements.slice(1).map((m) => (
                             <div
                                 key={m.id}

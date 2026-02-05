@@ -32,7 +32,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
                     {unit}
                 </span>
             </div>
-            <div className="w-full bg-gray-700/50 rounded-full h-2 lg:h-2.5 overflow-hidden">
+            <div className="w-full bg-progress-track rounded-full h-2 lg:h-2.5 overflow-hidden">
                 <div
                     className={`h-full rounded-full transition-all duration-700 ease-out ${isOver ? 'bg-red-500' : color}`}
                     style={{

@@ -58,7 +58,7 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
             {/* Pull indicator */}
             {(pullDistance > 0 || isRefreshing) && (
                 <div
-                    className="pull-indicator absolute top-0 left-0 right-0 flex items-center justify-center bg-gray-800/80 z-10"
+                    className="pull-indicator absolute top-0 left-0 right-0 flex items-center justify-center bg-surface/90 shadow-md z-10"
                     style={{ height: isRefreshing ? 50 : pullDistance }}>
                     {isRefreshing ? (
                         <svg

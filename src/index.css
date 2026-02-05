@@ -25,6 +25,8 @@
     --color-text-secondary: #475569;
     --color-text-tertiary: #94a3b8;
     --color-border: #e2e8f0;
+    --color-progress-track: #e2e8f0; /* Slate 200 - progress bar background */
+    --color-muted: #cbd5e1; /* Slate 300 - for disabled/muted elements */
 
     /* Glassmorphism & Textures */
     --glass-bg: rgba(255, 255, 255, 0.7);
@@ -71,6 +73,8 @@
     --color-text-tertiary: #64748b; /* Slate 500 */
 
     --color-border: #334155; /* Slate 700 */
+    --color-progress-track: #334155; /* Slate 700 - progress bar background */
+    --color-muted: #475569; /* Slate 600 - for disabled/muted elements */
 
     /* Dark Mode Glass */
     --glass-bg: rgba(30, 41, 59, 0.7);

@@ -76,7 +76,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = React.memo(
                                 {(periodizationState === 'moderate' ||
                                     !periodizationState) && (
                                     <div className="flex items-center gap-1 bg-surface-lighter px-2 py-0.5 rounded-full">
-                                        <div className="w-2 h-2 rounded-full bg-slate-400"></div>
+                                        <div className="w-2 h-2 rounded-full bg-text-tertiary"></div>
                                         <span className="text-[10px] font-bold text-text-tertiary tracking-wide">
                                             {t('dashboard.summary.standard')}
                                         </span>
