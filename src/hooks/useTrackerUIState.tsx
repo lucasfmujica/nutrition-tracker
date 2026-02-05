@@ -1,5 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getArgentinaDateString } from '../utils/dateUtils';
+
+// Declare gtag for TypeScript
+declare global {
+    interface Window {
+        gtag?: (
+            command: string,
+            eventName: string,
+            params?: Record<string, any>
+        ) => void;
+    }
+}
 
 /**
  * useTrackerUIState - Manages all UI-related state for the tracker
@@ -11,6 +22,17 @@ import { getArgentinaDateString } from '../utils/dateUtils';
  */
 export const useTrackerUIState = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
+
+    // Google Analytics: Track tab changes
+    useEffect(() => {
+        if (typeof window.gtag !== 'undefined') {
+            window.gtag('event', 'page_view', {
+                page_title: `${activeTab} - LukenFit`,
+                page_path: `/${activeTab}`,
+                page_location: window.location.href
+            });
+        }
+    }, [activeTab]);
     const [dashboardDate, setDashboardDate] = useState(getArgentinaDateString());
     const [selectedFoodDate, setSelectedFoodDate] = useState(
         getArgentinaDateString(),

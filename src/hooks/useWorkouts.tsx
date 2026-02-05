@@ -59,6 +59,15 @@ export const useWorkouts = (supabase: SupabaseClient, useCloud: boolean) => {
                     entry.name,
                 );
 
+                // Google Analytics: Track workout logged
+                if (typeof window !== 'undefined' && typeof (window as any).gtag !== 'undefined') {
+                    (window as any).gtag('event', 'workout_logged', {
+                        event_category: 'fitness',
+                        event_label: entry.type || 'other',
+                        value: entry.duration || 0
+                    });
+                }
+
                 // Post activity to social feed (fire and forget)
                 if (supabase.user?.id) {
                     triggerWorkoutActivity(supabase.user.id, entry).catch(() => {});

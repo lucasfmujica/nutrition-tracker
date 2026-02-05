@@ -51,6 +51,17 @@
         <!-- Canonical URL -->
         <link rel="canonical" href="https://www.lukenfit.com/" />
 
+        <!-- Google Analytics 4 -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-F2MN3TP7XC"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-F2MN3TP7XC', {
+            'send_page_view': false  // Controlar manualmente en SPA
+          });
+        </script>
+
         <!-- Structured Data (JSON-LD) for Rich Snippets -->
         <script type="application/ld+json">
         {

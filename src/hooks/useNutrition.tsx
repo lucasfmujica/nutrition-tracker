@@ -208,6 +208,16 @@ export const useNutrition = (
                         entryToSave.date,
                         entryToSave.name,
                     );
+
+                    // Google Analytics: Track food logged
+                    if (typeof window !== 'undefined' && typeof (window as any).gtag !== 'undefined') {
+                        (window as any).gtag('event', 'food_logged', {
+                            event_category: 'nutrition',
+                            event_label: entryToSave.source || 'manual',
+                            value: entryToSave.calories || 0
+                        });
+                    }
+
                     return result.data;
                 } catch (err: any) {
                     console.error('[Nutrition] saveFoodEntry FAILED:', {
