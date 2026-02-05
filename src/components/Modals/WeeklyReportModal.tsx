@@ -1,6 +1,6 @@
 import html2canvas from 'html2canvas';
 import { Download, Loader2, X } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { WeeklyReportCard } from '../Dashboard/WeeklyReportCard';
 
@@ -28,6 +28,21 @@ export const WeeklyReportModal: React.FC<WeeklyReportModalProps> = ({
     const { t } = useTranslation();
     const cardRef = useRef<HTMLDivElement>(null);
     const [isDownloading, setIsDownloading] = useState(false);
+
+    // Scroll to top when modal opens
+    useEffect(() => {
+        if (isOpen) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Also prevent body scroll while modal is open
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
@@ -58,15 +73,15 @@ export const WeeklyReportModal: React.FC<WeeklyReportModalProps> = ({
     };
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto p-4">
             {/* Backdrop */}
             <div
                 className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
                 onClick={onClose}
             />
 
-            {/* Modal Container - No scroll, centered */}
-            <div className="relative z-10 animate-fade-in-up">
+            {/* Modal Container - Scrollable, centered */}
+            <div className="relative z-10 animate-fade-in-up my-auto">
                 {/* Close Button */}
                 <button
                     onClick={onClose}
