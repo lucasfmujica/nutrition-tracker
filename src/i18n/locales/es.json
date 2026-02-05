@@ -222,6 +222,16 @@
         "planFirstMeal": "Planifica tu primera comida para comenzar",
         "addMeal": "Agregar Comida",
         "completedMeals": "Comidas Completadas",
+        "addMeal": {
+            "title": "Agregar Comida",
+            "useAIChef": "Usar AI Chef para Sugerencias",
+            "orManual": "o agregar manualmente",
+            "mealName": "Nombre de la Comida",
+            "mealNamePlaceholder": "Ej: Ensalada de Pollo",
+            "calories": "Calorías",
+            "notes": "Notas",
+            "notesPlaceholder": "Receta, ingredientes, etc."
+        },
         "categories": {
             "proteins": "Proteínas",
             "carbs": "Carbohidratos",
@@ -960,6 +970,8 @@
         "delete": "Eliminar",
         "edit": "Editar",
         "add": "Agregar",
+        "adding": "Agregando...",
+        "optional": "opcional",
         "new": "Nuevo",
         "search": "Buscar",
         "filter": "Filtrar",

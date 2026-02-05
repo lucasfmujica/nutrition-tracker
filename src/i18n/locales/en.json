@@ -215,7 +215,16 @@
         "repeatWeekSuccess": "Week copied successfully",
         "noMealsPlanned": "No meals planned",
         "planFirstMeal": "Plan your first meal to get started",
-        "addMeal": "Add Meal",
+        "addMeal": {
+            "title": "Add Meal",
+            "useAIChef": "Use AI Chef for Suggestions",
+            "orManual": "or add manually",
+            "mealName": "Meal Name",
+            "mealNamePlaceholder": "E.g.: Chicken Salad",
+            "calories": "Calories",
+            "notes": "Notes",
+            "notesPlaceholder": "Recipe, ingredients, etc."
+        },
         "completedMeals": "Completed Meals",
         "categories": {
             "proteins": "Proteins",
@@ -954,6 +963,8 @@
         "delete": "Delete",
         "edit": "Edit",
         "add": "Add",
+        "adding": "Adding...",
+        "optional": "optional",
         "new": "New",
         "search": "Search",
         "filter": "Filter",

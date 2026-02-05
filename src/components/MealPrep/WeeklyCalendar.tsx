@@ -13,6 +13,7 @@ import {
     Check,
 } from 'lucide-react';
 import { useMealPrepPlan, PlannedMealItem } from '../../hooks/useMealPrepPlan';
+import { AddMealModal } from './AddMealModal';
 
 interface WeeklyCalendarProps {
     userId: string;
@@ -43,6 +44,7 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ userId }) => {
         isLoading,
         error,
         currentWeekStart,
+        addMealToPlan,
         removeMealFromPlan,
         toggleCompleted,
         repeatCurrentWeek,
@@ -53,6 +55,11 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ userId }) => {
 
     const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set());
     const [isRepeating, setIsRepeating] = useState(false);
+    const [addMealModal, setAddMealModal] = useState<{
+        isOpen: boolean;
+        date: string;
+        mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+    }>({ isOpen: false, date: '', mealType: 'breakfast' });
 
     // Generate 7 days (Mon-Sun) from currentWeekStart
     const weekDays = Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
@@ -87,6 +94,14 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ userId }) => {
     };
 
     const isToday = (date: Date) => isSameDay(date, new Date());
+
+    const handleOpenAddMeal = (date: string, mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack') => {
+        setAddMealModal({ isOpen: true, date, mealType });
+    };
+
+    const handleAddMeal = async (plannedItems: PlannedMealItem[], notes?: string) => {
+        await addMealToPlan(addMealModal.date, addMealModal.mealType, plannedItems, notes);
+    };
 
     if (isLoading) {
         return (
@@ -226,6 +241,7 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ userId }) => {
 
                                                     {/* Add Button */}
                                                     <button
+                                                        onClick={() => handleOpenAddMeal(dateStr, mealType)}
                                                         className="p-1.5 rounded-lg bg-accent/10 hover:bg-accent/20 transition-colors"
                                                         aria-label={`Add ${mealType}`}
                                                     >
@@ -312,6 +328,15 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ userId }) => {
                     );
                 })}
             </div>
+
+            {/* Add Meal Modal */}
+            <AddMealModal
+                isOpen={addMealModal.isOpen}
+                onClose={() => setAddMealModal({ ...addMealModal, isOpen: false })}
+                onAdd={handleAddMeal}
+                date={addMealModal.date}
+                mealType={addMealModal.mealType}
+            />
         </div>
     );
 };
