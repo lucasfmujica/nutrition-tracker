@@ -112,21 +112,21 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
     const displayCurrentWeight = (currentWeight * weightMultiplier).toFixed(1);
 
     return (
-        <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100 mb-6 group transition-all duration-300">
+        <div className="bg-surface p-8 rounded-[2.5rem] shadow-xl border border-border mb-6 group transition-all duration-300">
             <div className="flex justify-between items-start mb-8 gap-4 w-full">
                 <div className="min-w-0 flex-1">
-                    <h3 className="text-gray-900 font-bold text-lg truncate w-full">
+                    <h3 className="text-text-primary font-bold text-lg truncate w-full">
                         {t('dashboard.weightChart.title')}
                     </h3>
-                    <p className="text-xs text-gray-400 font-medium truncate w-full">
+                    <p className="text-xs text-text-tertiary font-medium truncate w-full">
                         {finalChartData.length}{' '}
                         {t('dashboard.weightChart.recentRecords')}
                     </p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                    <span className="block text-2xl font-bold text-gray-900 whitespace-nowrap">
+                    <span className="block text-2xl font-bold text-text-primary whitespace-nowrap">
                         {displayCurrentWeight}{' '}
-                        <span className="text-sm font-normal text-gray-400">
+                        <span className="text-sm font-normal text-text-tertiary">
                             {unitLabel}
                         </span>
                     </span>
@@ -204,7 +204,7 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                     </ResponsiveContainer>
                 </div>
             ) : (
-                <div className="h-48 w-full flex items-center justify-center text-gray-400 text-sm bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                <div className="h-48 w-full flex items-center justify-center text-text-tertiary text-sm bg-background rounded-xl border border-dashed border-border">
                     <p>{t('dashboard.weightChart.noData')}</p>
                 </div>
             )}

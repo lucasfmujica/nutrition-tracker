@@ -51,22 +51,22 @@ export const PhotoSelectionModal: React.FC<PhotoSelectionModalProps> = ({
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={onClose}>
             <div
-                className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
+                className="bg-surface rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
                 onClick={(e) => e.stopPropagation()}>
                 {/* Header */}
-                <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-slate-900">
+                <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-text-primary">
                         {modalTitle}
                     </h3>
                     <button
                         onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200">
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-surface-lighter text-text-tertiary hover:bg-surface-lighter">
                         <X size={18} />
                     </button>
                 </div>
 
                 {/* Angle Filter */}
-                <div className="px-6 py-3 border-b border-slate-100 bg-slate-50">
+                <div className="px-6 py-3 border-b border-border bg-background">
                     <div className="flex gap-2 overflow-x-auto pb-1">
                         <FilterButton
                             label={t('progress.photoSelection.all')}
@@ -100,7 +100,7 @@ export const PhotoSelectionModal: React.FC<PhotoSelectionModalProps> = ({
                 <div className="flex-1 overflow-y-auto p-6">
                     {filteredPhotos.length === 0 ? (
                         <div className="text-center py-12">
-                            <p className="text-slate-400">
+                            <p className="text-text-tertiary">
                                 {t('progress.photos.noPhotos')}
                             </p>
                         </div>
@@ -146,14 +146,14 @@ export const PhotoSelectionModal: React.FC<PhotoSelectionModalProps> = ({
 
                                         {/* Angle Badge */}
                                         {photo.angle && (
-                                            <div className="absolute top-1 right-1 bg-white/90 rounded px-1.5 py-0.5 text-[8px] font-bold text-slate-600">
+                                            <div className="absolute top-1 right-1 bg-surface/90 rounded px-1.5 py-0.5 text-[8px] font-bold text-text-secondary">
                                                 {getAngleBadge(photo.angle)}
                                             </div>
                                         )}
 
                                         {/* Weight Badge */}
                                         {photo.weight && (
-                                            <div className="absolute top-1 left-1 bg-white/90 rounded px-1.5 py-0.5 text-[8px] font-bold text-slate-600">
+                                            <div className="absolute top-1 left-1 bg-surface/90 rounded px-1.5 py-0.5 text-[8px] font-bold text-text-secondary">
                                                 {photo.weight}kg
                                             </div>
                                         )}
@@ -179,7 +179,7 @@ const FilterButton: React.FC<{
         className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
             isActive
                 ? 'bg-purple-100 text-purple-700 border-2 border-purple-500'
-                : 'bg-white text-slate-600 border-2 border-slate-200 hover:border-slate-300'
+                : 'bg-surface text-text-secondary border-2 border-border hover:border-border'
         }`}>
         {label}
     </button>

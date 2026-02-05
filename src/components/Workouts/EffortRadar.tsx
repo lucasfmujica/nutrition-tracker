@@ -75,11 +75,11 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
     const isOuraStale = metrics?.ouraDate && metrics.ouraDate !== targetDate;
 
     return (
-        <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+        <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm">
             <div className="flex justify-between items-center mb-4">
-                <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                <h3 className="font-bold text-text-primary flex items-center gap-2">
                     <svg
-                        className="w-5 h-5 text-gray-400"
+                        className="w-5 h-5 text-text-tertiary"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -93,7 +93,7 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
                     {t('workouts.effort.title')}
                     <button
                         onClick={() => setShowMetrics(!showMetrics)}
-                        className="ml-1 text-gray-400 hover:text-gray-600 transition-colors"
+                        className="ml-1 text-text-tertiary hover:text-text-secondary transition-colors"
                         title={t('workouts.effort.viewMetrics')}>
                         <svg
                             className="w-4 h-4"
@@ -110,7 +110,7 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
                     </button>
                 </h3>
                 <span
-                    className={`text-xs font-bold px-2 py-1 rounded-full bg-gray-50 uppercase tracking-wider ${statusColor}`}>
+                    className={`text-xs font-bold px-2 py-1 rounded-full bg-background uppercase tracking-wider ${statusColor}`}>
                     {t(`workouts.effort.status.${status}`, { defaultValue: status })}
                 </span>
             </div>
@@ -193,7 +193,7 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
                 </div>
             )}
 
-            <div className="relative h-4 bg-gray-100 rounded-full mb-4 w-full overflow-hidden">
+            <div className="relative h-4 bg-surface-lighter rounded-full mb-4 w-full overflow-hidden">
                 <div className="absolute inset-0 flex opacity-20">
                     <div className="w-1/3 bg-blue-500" />
                     <div className="w-1/3 bg-green-500" />
@@ -206,15 +206,15 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
                 />
             </div>
 
-            <div className="flex justify-between text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-4">
+            <div className="flex justify-between text-[10px] text-text-tertiary font-bold uppercase tracking-wider mb-4">
                 <span>{t('workouts.effort.capacity.high')}</span>
                 <span>{t('workouts.effort.capacity.normal')}</span>
                 <span>{t('workouts.effort.capacity.recovery')}</span>
             </div>
 
-            <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 flex gap-3 items-start">
+            <div className="bg-background rounded-xl p-3 border border-border flex gap-3 items-start">
                 <span className="text-xl">💡</span>
-                <p className="text-sm text-gray-600 leading-snug">{insight}</p>
+                <p className="text-sm text-text-secondary leading-snug">{insight}</p>
             </div>
         </div>
     );

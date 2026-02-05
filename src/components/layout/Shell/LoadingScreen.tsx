@@ -81,18 +81,18 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ message = null }) 
                             />
                         </svg>
                     </div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tighter">
+                    <h1 className="text-4xl font-black text-text-primary tracking-tighter">
                         LUKEN<span className="text-blue-600">FIT</span>
                     </h1>
                 </div>
 
                 {/* Loading Bar */}
-                <div className="w-64 mx-auto mb-6 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div className="w-64 mx-auto mb-6 h-1.5 bg-surface-lighter rounded-full overflow-hidden">
                     <div className="h-full bg-gradient-to-r from-blue-600 to-cyan-500 splash-loading-bar rounded-full" />
                 </div>
 
                 {/* Dynamic Message */}
-                <div className="text-gray-500 text-sm font-medium animate-fade-in uppercase tracking-wide">
+                <div className="text-text-tertiary text-sm font-medium animate-fade-in uppercase tracking-wide">
                     {displayMessage}
                 </div>
             </div>

@@ -50,14 +50,14 @@ export const ProgressTimelineView: React.FC<ProgressTimelineViewProps> = ({
     // Empty state
     if (photos.length === 0) {
         return (
-            <div className="bg-white rounded-2xl p-8 text-center border border-slate-100">
+            <div className="bg-surface rounded-2xl p-8 text-center border border-border">
                 <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <ImageIcon size={28} className="text-purple-400" />
                 </div>
-                <h3 className="font-bold text-slate-900 mb-1">
+                <h3 className="font-bold text-text-primary mb-1">
                     {t('progress.photos.noPhotos')}
                 </h3>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-text-tertiary">
                     {t('progress.timeline.noPhotosDesc')}
                 </p>
             </div>

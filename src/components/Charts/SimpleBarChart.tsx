@@ -32,12 +32,12 @@ export const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         Math.max(...data.map((d) => (d[dataKey] as number) || 0), target) * 1.1 ||
         target * 1.1;
     return (
-        <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
+        <div className="bg-surface rounded-2xl p-4 border border-border shadow-sm">
             <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                <span className="text-xs font-bold text-text-primary uppercase tracking-wider">
                     {label}
                 </span>
-                <span className="text-xs font-bold text-slate-400">
+                <span className="text-xs font-bold text-text-tertiary">
                     {t('dashboard.summary.target')}: {target}
                 </span>
             </div>
@@ -49,7 +49,7 @@ export const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                             key={i}
                             className="flex flex-col items-center flex-1 min-w-0">
                             <div
-                                className="w-full bg-slate-50 rounded-t-lg relative group"
+                                className="w-full bg-background rounded-t-lg relative group"
                                 style={{ height: '56px' }}>
                                 <div
                                     className={`absolute bottom-0 w-full rounded-t-lg transition-all duration-500 ${color} ${value > target ? 'opacity-80' : ''}`}
@@ -61,16 +61,16 @@ export const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                                     </div>
                                 </div>
                                 <div
-                                    className="absolute w-full border-t border-dashed border-slate-200"
+                                    className="absolute w-full border-t border-dashed border-border"
                                     style={{ bottom: `${(target / maxVal) * 100}%` }}
                                 />
                                 {d.completed && (
-                                    <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 text-[10px] bg-white rounded-full shadow-sm w-4 h-4 flex items-center justify-center">
+                                    <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 text-[10px] bg-surface rounded-full shadow-sm w-4 h-4 flex items-center justify-center">
                                         ✓
                                     </div>
                                 )}
                             </div>
-                            <span className="text-[10px] font-bold text-slate-400 mt-1.5 uppercase">
+                            <span className="text-[10px] font-bold text-text-tertiary mt-1.5 uppercase">
                                 {d.day}
                             </span>
                         </div>

@@ -155,19 +155,19 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
     }, [weekData, dateLocale]);
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
             {/* Week Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-gradient-to-r from-blue-50 to-indigo-50">
                 <button
                     onClick={goToPreviousWeek}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/70 text-slate-600 transition-colors">
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface/70 text-text-secondary transition-colors">
                     <ChevronLeft size={20} />
                 </button>
 
                 <div className="text-center flex items-center gap-2">
                     <Calendar size={16} className="text-blue-500" />
                     <div>
-                        <p className="text-sm font-bold text-slate-900 capitalize">
+                        <p className="text-sm font-bold text-text-primary capitalize">
                             {weekRange}
                         </p>
                         {selectedDate !== today && (
@@ -180,7 +180,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                     </div>
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="ml-2 text-xs text-slate-500 hover:text-slate-700 px-2 py-1 rounded bg-white/50">
+                        className="ml-2 text-xs text-text-tertiary hover:text-text-secondary px-2 py-1 rounded bg-surface/50">
                         {isExpanded
                             ? t('diary.weeklyPlan.collapse')
                             : t('diary.weeklyPlan.expand')}
@@ -189,7 +189,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
 
                 <button
                     onClick={goToNextWeek}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/70 text-slate-600 transition-colors">
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface/70 text-text-secondary transition-colors">
                     <ChevronRight size={20} />
                 </button>
             </div>
@@ -199,8 +199,8 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                 <table className="w-full min-w-[700px]">
                     {/* Day Headers */}
                     <thead>
-                        <tr className="bg-slate-50">
-                            <th className="py-2 px-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-24">
+                        <tr className="bg-background">
+                            <th className="py-2 px-3 text-left text-xs font-bold text-text-tertiary uppercase tracking-wider w-24">
                                 {t('diary.weeklyPlan.meal')}
                             </th>
                             {weekData.map((day) => (
@@ -216,18 +216,18 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                             : day.isToday
                                               ? 'bg-blue-50'
                                               : day.isFuture
-                                                ? 'bg-slate-100 cursor-not-allowed'
-                                                : 'hover:bg-slate-100'
+                                                ? 'bg-surface-lighter cursor-not-allowed'
+                                                : 'hover:bg-surface-lighter'
                                     }`}>
                                     <div
-                                        className={`text-xs font-bold ${day.isToday ? 'text-blue-600' : 'text-slate-500'}`}>
+                                        className={`text-xs font-bold ${day.isToday ? 'text-blue-600' : 'text-text-tertiary'}`}>
                                         {day.dayNameFull}
                                     </div>
                                     <div
                                         className={`text-lg font-bold ${
                                             day.isSelected
                                                 ? 'text-blue-600'
-                                                : 'text-slate-900'
+                                                : 'text-text-primary'
                                         }`}>
                                         {day.dayNum}
                                     </div>
@@ -239,7 +239,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                                     ? 'text-red-500'
                                                     : day.totalCalories > 0
                                                       ? 'text-emerald-600'
-                                                      : 'text-slate-400'
+                                                      : 'text-text-tertiary'
                                             }`}>
                                             {day.totalCalories > 0
                                                 ? `${day.totalCalories} kcal`
@@ -256,13 +256,13 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                         {MEAL_TYPES.map((mealType) => (
                             <tr
                                 key={mealType.id}
-                                className="border-t border-slate-100">
-                                <td className="py-2 px-3 bg-slate-50">
+                                className="border-t border-border">
+                                <td className="py-2 px-3 bg-background">
                                     <div className="flex items-center gap-1.5">
                                         <span className="text-sm">
                                             {mealType.emoji}
                                         </span>
-                                        <span className="text-xs font-bold text-slate-700">
+                                        <span className="text-xs font-bold text-text-secondary">
                                             {t(mealType.labelKey!)}
                                         </span>
                                     </div>
@@ -285,8 +285,8 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                                 day.isSelected
                                                     ? 'bg-blue-50/50'
                                                     : day.isFuture
-                                                      ? 'bg-slate-50 cursor-not-allowed'
-                                                      : 'hover:bg-slate-50 cursor-pointer'
+                                                      ? 'bg-background cursor-not-allowed'
+                                                      : 'hover:bg-background cursor-pointer'
                                             }`}>
                                             {mealFoods.length > 0 ? (
                                                 <div className="space-y-0.5">
@@ -297,7 +297,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                                             .map((food, idx) => (
                                                                 <div
                                                                     key={food.id}
-                                                                    className="text-[10px] text-slate-700 truncate px-1 py-0.5 bg-white rounded border border-slate-100"
+                                                                    className="text-[10px] text-text-secondary truncate px-1 py-0.5 bg-surface rounded border border-border"
                                                                     title={`${food.name} - ${food.calories} kcal`}>
                                                                     {food.name
                                                                         .length > 15
@@ -310,13 +310,13 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                                             ))
                                                     ) : (
                                                         // Compact view - just show calorie count
-                                                        <div className="text-xs font-medium text-slate-600 text-center py-1">
+                                                        <div className="text-xs font-medium text-text-secondary text-center py-1">
                                                             {mealCalories} kcal
                                                         </div>
                                                     )}
                                                     {isExpanded &&
                                                         mealFoods.length > 3 && (
-                                                            <div className="text-[9px] text-slate-400 text-center">
+                                                            <div className="text-[9px] text-text-tertiary text-center">
                                                                 +
                                                                 {mealFoods.length -
                                                                     3}{' '}
@@ -333,7 +333,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                                             mealType.id,
                                                         );
                                                     }}
-                                                    className="w-full flex items-center justify-center py-2 text-slate-300 hover:text-blue-500 hover:bg-blue-50 rounded transition-colors group">
+                                                    className="w-full flex items-center justify-center py-2 text-text-tertiary hover:text-blue-500 hover:bg-blue-50 rounded transition-colors group">
                                                     <Plus
                                                         size={14}
                                                         className="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -353,11 +353,11 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
 
                     {/* Summary Row */}
                     <tfoot>
-                        <tr className="border-t-2 border-slate-200 bg-slate-50">
+                        <tr className="border-t-2 border-border bg-background">
                             <td className="py-2 px-3">
                                 <div className="flex items-center gap-1.5">
-                                    <Utensils size={14} className="text-slate-500" />
-                                    <span className="text-xs font-bold text-slate-700">
+                                    <Utensils size={14} className="text-text-tertiary" />
+                                    <span className="text-xs font-bold text-text-secondary">
                                         {t('diary.weeklyPlan.total')}
                                     </span>
                                 </div>
@@ -396,13 +396,13 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                                             ? 'text-red-500'
                                                             : isUnder
                                                               ? 'text-amber-500'
-                                                              : 'text-slate-400'
+                                                              : 'text-text-tertiary'
                                                     }`}>
                                                     {percentOfTarget}%
                                                 </div>
                                             </div>
                                         ) : (
-                                            <span className="text-slate-300">—</span>
+                                            <span className="text-text-tertiary">—</span>
                                         )}
                                     </td>
                                 );

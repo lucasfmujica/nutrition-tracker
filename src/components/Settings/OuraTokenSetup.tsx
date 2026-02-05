@@ -64,17 +64,17 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
     };
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div className="bg-surface rounded-2xl border border-border overflow-hidden">
             {/* Header */}
-            <div className="p-4 border-b border-slate-100">
+            <div className="p-4 border-b border-border">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <span className="text-2xl">💍</span>
                         <div>
-                            <h3 className="font-semibold text-slate-900">
+                            <h3 className="font-semibold text-text-primary">
                                 {t('oura.title')}
                             </h3>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-text-tertiary">
                                 {t('oura.subtitle')}
                             </p>
                         </div>
@@ -84,10 +84,10 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
                     <button
                         onClick={handleToggle}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                            hasOuraRing ? 'bg-accent' : 'bg-slate-200'
+                            hasOuraRing ? 'bg-accent' : 'bg-surface-lighter'
                         }`}>
                         <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm ${
+                            className={`inline-block h-4 w-4 transform rounded-full bg-surface transition-transform shadow-sm ${
                                 hasOuraRing ? 'translate-x-6' : 'translate-x-1'
                             }`}
                         />
@@ -124,12 +124,12 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
                     )}
 
                     {/* Instructions */}
-                    <div className="text-sm text-slate-600 space-y-3">
-                        <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                            <p className="font-bold text-slate-800 mb-1">
+                    <div className="text-sm text-text-secondary space-y-3">
+                        <div className="p-3 bg-background rounded-xl border border-border">
+                            <p className="font-bold text-text-primary mb-1">
                                 {t('oura.setup.howTo')}
                             </p>
-                            <ol className="list-decimal list-inside space-y-1.5 text-xs text-slate-600">
+                            <ol className="list-decimal list-inside space-y-1.5 text-xs text-text-secondary">
                                 <li>
                                     {t('oura.setup.step1')}{' '}
                                     <a
@@ -150,7 +150,7 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
 
                     {/* Token Input */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label className="text-sm font-medium text-text-secondary">
                             {hasToken ? t('oura.setup.save') : t('oura.setup.token')}
                         </label>
                         <div className="relative">
@@ -159,12 +159,12 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
                                 value={token}
                                 onChange={(e) => setToken(e.target.value)}
                                 placeholder={t('oura.setup.tokenPlaceholder')}
-                                className="w-full px-4 py-3 pr-20 border border-slate-200 rounded-xl text-sm font-mono focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                className="w-full px-4 py-3 pr-20 border border-border rounded-xl text-sm font-mono focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowToken(!showToken)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600">
+                                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-text-tertiary hover:text-text-secondary">
                                 {showToken ? (
                                     <EyeOff className="w-4 h-4" />
                                 ) : (
@@ -180,7 +180,7 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
                         disabled={!token.trim() || isSaving}
                         className={`w-full py-3 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 ${
                             !token.trim() || isSaving
-                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                ? 'bg-surface-lighter text-text-tertiary cursor-not-allowed'
                                 : 'bg-primary text-white hover:bg-primary/90 active:scale-[0.98]'
                         }`}>
                         {isSaving ? (
@@ -204,7 +204,7 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
                     </button>
 
                     {/* Privacy Note */}
-                    <p className="text-xs text-slate-400 text-center">
+                    <p className="text-xs text-text-tertiary text-center">
                         {t('oura.setup.privacy')}
                     </p>
                 </div>

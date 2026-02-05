@@ -33,14 +33,14 @@ export const StepsTab: React.FC<StepsTabProps> = ({
     return (
         <div className="w-full space-y-6">
             <div className="mb-2 px-1">
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-text-primary">
                     {t('steps.title')}
                 </h1>
-                <p className="text-sm text-gray-500">{t('steps.subtitle')}</p>
+                <p className="text-sm text-text-tertiary">{t('steps.subtitle')}</p>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
+                <h2 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
                         👟
                     </span>
@@ -59,7 +59,7 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                         value={newSteps}
                         onChange={(e) => setNewSteps(e.target.value)}
                         placeholder={t('steps.stepsPlaceholder')}
-                        className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-lg font-black focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all placeholder-gray-300"
+                        className="flex-1 bg-background border border-border rounded-xl px-4 py-3 text-lg font-black focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all placeholder-gray-300"
                     />
                     <button
                         onClick={addStepsEntry}
@@ -78,8 +78,8 @@ export const StepsTab: React.FC<StepsTabProps> = ({
             />
 
             {stepsLog.length > 0 && (
-                <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-                    <h2 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
+                    <h2 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
                         <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
                             📊
                         </span>
@@ -89,9 +89,9 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                         {stepsLog.slice(0, 14).map((entry, idx) => (
                             <div
                                 key={idx}
-                                className="flex justify-between items-center py-2 border-b border-slate-50 last:border-0 text-sm">
+                                className="flex justify-between items-center py-2 border-b border-border last:border-0 text-sm">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-slate-500 font-medium">
+                                    <span className="text-text-tertiary font-medium">
                                         {entry.date}
                                     </span>
                                     {entry.source === 'oura' && (
@@ -106,9 +106,9 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                                     )}
                                 </div>
                                 <span
-                                    className={`font-black text-base ${entry.steps >= stepGoal ? 'text-cyan-600' : 'text-slate-400'}`}>
+                                    className={`font-black text-base ${entry.steps >= stepGoal ? 'text-cyan-600' : 'text-text-tertiary'}`}>
                                     {entry.steps.toLocaleString()}
-                                    <span className="text-[10px] font-bold ml-1 text-slate-300 uppercase">
+                                    <span className="text-[10px] font-bold ml-1 text-text-tertiary uppercase">
                                         {t('steps.unit')}
                                     </span>
                                 </span>

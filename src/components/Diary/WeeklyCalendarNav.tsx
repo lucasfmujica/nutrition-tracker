@@ -124,17 +124,17 @@ export const WeeklyCalendarNav: React.FC<WeeklyCalendarNavProps> = ({
     }, [weekData, dateLocale]);
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
             {/* Week Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-background">
                 <button
                     onClick={goToPreviousWeek}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 transition-colors">
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-lighter text-text-secondary transition-colors">
                     <ChevronLeft size={20} />
                 </button>
 
                 <div className="text-center">
-                    <p className="text-sm font-bold text-slate-900 capitalize">
+                    <p className="text-sm font-bold text-text-primary capitalize">
                         {weekRange}
                     </p>
                     {selectedDate !== today && (
@@ -148,7 +148,7 @@ export const WeeklyCalendarNav: React.FC<WeeklyCalendarNavProps> = ({
 
                 <button
                     onClick={goToNextWeek}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 transition-colors">
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-lighter text-text-secondary transition-colors">
                     <ChevronRight size={20} />
                 </button>
             </div>
@@ -202,8 +202,8 @@ const DayCell: React.FC<DayCellProps> = ({ day, onSelect }) => {
 
     // Determine status color
     const getStatusColor = () => {
-        if (isFuture) return 'bg-slate-100';
-        if (!hasFood) return 'bg-slate-50';
+        if (isFuture) return 'bg-surface-lighter';
+        if (!hasFood) return 'bg-background';
         if (isOnTrack) return 'bg-emerald-50';
         if (calories > targetCalories * 1.1) return 'bg-red-50';
         return 'bg-amber-50';
@@ -223,17 +223,17 @@ const DayCell: React.FC<DayCellProps> = ({ day, onSelect }) => {
                 relative flex flex-col items-center py-2 px-1 rounded-xl border-2 transition-all
                 ${getStatusColor()}
                 ${getBorderColor()}
-                ${isFuture ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-100 active:scale-95'}
+                ${isFuture ? 'opacity-50 cursor-not-allowed' : 'hover:bg-surface-lighter active:scale-95'}
             `}>
             {/* Day name */}
             <span
-                className={`text-[10px] font-bold uppercase ${isToday ? 'text-blue-600' : 'text-slate-400'}`}>
+                className={`text-[10px] font-bold uppercase ${isToday ? 'text-blue-600' : 'text-text-tertiary'}`}>
                 {dayName}
             </span>
 
             {/* Day number */}
             <span
-                className={`text-lg font-bold ${isSelected ? 'text-blue-600' : 'text-slate-900'}`}>
+                className={`text-lg font-bold ${isSelected ? 'text-blue-600' : 'text-text-primary'}`}>
                 {dayNum}
             </span>
 
@@ -245,12 +245,12 @@ const DayCell: React.FC<DayCellProps> = ({ day, onSelect }) => {
                             <CheckCircle2 size={14} className="text-emerald-500" />
                         ) : (
                             <div className="flex items-center gap-0.5">
-                                <Utensils size={10} className="text-slate-400" />
+                                <Utensils size={10} className="text-text-tertiary" />
                                 <span
                                     className={`text-[9px] font-bold ${
                                         calories > targetCalories
                                             ? 'text-red-500'
-                                            : 'text-slate-500'
+                                            : 'text-text-tertiary'
                                     }`}>
                                     {calories > 0
                                         ? Math.round(calories / 100) * 100
@@ -259,14 +259,14 @@ const DayCell: React.FC<DayCellProps> = ({ day, onSelect }) => {
                             </div>
                         )
                     ) : (
-                        <span className="text-[10px] text-slate-300">—</span>
+                        <span className="text-[10px] text-text-tertiary">—</span>
                     )}
                 </div>
             )}
 
             {/* Progress bar */}
             {hasFood && !isFuture && (
-                <div className="absolute bottom-0 left-1 right-1 h-1 bg-slate-200 rounded-full overflow-hidden">
+                <div className="absolute bottom-0 left-1 right-1 h-1 bg-surface-lighter rounded-full overflow-hidden">
                     <div
                         className={`h-full transition-all ${
                             isOnTrack

@@ -176,18 +176,18 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
             className="fixed inset-0 bg-slate-900/40 flex items-start justify-center z-50 p-4 pt-12 pb-20 overflow-y-auto backdrop-blur-sm"
             onClick={handleBackdropClick}>
             <div
-                className="bg-white rounded-3xl p-4 lg:p-8 w-full max-w-sm lg:max-w-md border border-gray-100 shadow-2xl"
+                className="bg-surface rounded-3xl p-4 lg:p-8 w-full max-w-sm lg:max-w-md border border-border shadow-2xl"
                 onClick={(e) => e.stopPropagation()}>
                 {/* Header with close button */}
                 <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl lg:text-2xl font-bold text-slate-900">
+                    <h3 className="text-xl lg:text-2xl font-bold text-text-primary">
                         {isEditing
                             ? `✏️ ${t('modals.foodForm.titleEdit')}`
                             : `🍽️ ${t('modals.foodForm.titleAdd')}`}
                     </h3>
                     <button
                         onClick={onClose}
-                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
+                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-background hover:bg-surface-lighter text-text-tertiary hover:text-text-secondary transition-colors">
                         ×
                     </button>
                 </div>
@@ -202,7 +202,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                             <div className="relative">
                                 <Search
                                     size={16}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary"
                                 />
                                 <input
                                     ref={searchInputRef}
@@ -216,7 +216,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                     }}
                                     onFocus={() => setShowResults(true)}
                                     placeholder={t('modals.foods.placeholder')}
-                                    className="w-full pl-9 pr-10 py-2.5 bg-blue-50 border border-blue-200 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                    className="w-full pl-9 pr-10 py-2.5 bg-blue-50 border border-blue-200 rounded-xl text-text-primary text-sm placeholder:text-text-tertiary focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                                 />
                                 {isSearching && (
                                     <Loader2
@@ -231,7 +231,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                             setSearchResults([]);
                                             setSelectedSearchFood(null);
                                         }}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary">
                                         <X size={16} />
                                     </button>
                                 )}
@@ -241,21 +241,21 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                             {showResults &&
                                 searchResults.length > 0 &&
                                 !selectedSearchFood && (
-                                    <div className="absolute z-20 w-full mt-1 bg-white rounded-xl shadow-lg border border-slate-200 max-h-64 overflow-y-auto">
+                                    <div className="absolute z-20 w-full mt-1 bg-surface rounded-xl shadow-lg border border-border max-h-64 overflow-y-auto">
                                         {searchResults.map((result) => (
                                             <button
                                                 key={result.id}
                                                 onClick={() =>
                                                     handleSelectSearchResult(result)
                                                 }
-                                                className="w-full text-left px-3 py-2.5 hover:bg-slate-50 border-b border-slate-100 last:border-0 transition-colors">
+                                                className="w-full text-left px-3 py-2.5 hover:bg-background border-b border-border last:border-0 transition-colors">
                                                 <div className="flex items-center justify-between gap-2">
                                                     <div className="min-w-0 flex-1">
-                                                        <p className="text-sm font-medium text-slate-900 truncate">
+                                                        <p className="text-sm font-medium text-text-primary truncate">
                                                             {result.name}
                                                         </p>
                                                         {result.brand && (
-                                                            <p className="text-xs text-slate-500 truncate">
+                                                            <p className="text-xs text-text-tertiary truncate">
                                                                 {result.brand}
                                                             </p>
                                                         )}
@@ -286,7 +286,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                                 setSelectedSearchFood(null);
                                                 setSearchQuery('');
                                             }}
-                                            className="text-slate-400 hover:text-slate-600">
+                                            className="text-text-tertiary hover:text-text-secondary">
                                             <X size={14} />
                                         </button>
                                     </div>
@@ -305,7 +305,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                                     ),
                                                 )
                                             }
-                                            className="w-20 px-2 py-1.5 bg-white border border-blue-200 rounded-lg text-sm text-center font-bold"
+                                            className="w-20 px-2 py-1.5 bg-surface border border-blue-200 rounded-lg text-sm text-center font-bold"
                                         />
                                         <select
                                             value={searchUnit}
@@ -316,7 +316,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                                         | 'serving',
                                                 )
                                             }
-                                            className="flex-1 px-2 py-1.5 bg-white border border-blue-200 rounded-lg text-sm">
+                                            className="flex-1 px-2 py-1.5 bg-surface border border-blue-200 rounded-lg text-sm">
                                             <option value="g">
                                                 {t('modals.foods.grams')}
                                             </option>
@@ -333,13 +333,13 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                         <span className="font-bold text-orange-600">
                                             {previewMacros.calories} kcal
                                         </span>
-                                        <span className="text-slate-600">
+                                        <span className="text-text-secondary">
                                             P: {previewMacros.protein}g
                                         </span>
-                                        <span className="text-slate-600">
+                                        <span className="text-text-secondary">
                                             C: {previewMacros.carbs}g
                                         </span>
-                                        <span className="text-slate-600">
+                                        <span className="text-text-secondary">
                                             G: {previewMacros.fat}g
                                         </span>
                                     </div>
@@ -355,11 +355,11 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
 
                             {/* Divider */}
                             <div className="flex items-center gap-3 mt-3 mb-1">
-                                <div className="flex-1 h-px bg-slate-200" />
-                                <span className="text-xs text-slate-400 uppercase font-bold">
+                                <div className="flex-1 h-px bg-surface-lighter" />
+                                <span className="text-xs text-text-tertiary uppercase font-bold">
                                     {t('modals.foods.manualEntry')}
                                 </span>
-                                <div className="flex-1 h-px bg-slate-200" />
+                                <div className="flex-1 h-px bg-surface-lighter" />
                             </div>
                         </div>
                     )}
@@ -367,7 +367,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                     {/* Row 1: Meal type + Time */}
                     <div className="grid grid-cols-1 sm:grid-cols-[1.5fr_1fr] gap-3">
                         <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
+                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                                 {t('modals.foodForm.meal')}
                             </label>
                             <select
@@ -378,7 +378,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                         meal: e.target.value as any,
                                     })
                                 }
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer">
+                                className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer">
                                 <option value="breakfast">
                                     {t('mealTypes.breakfast')}
                                 </option>
@@ -397,7 +397,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                             </select>
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
+                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                                 {t('modals.foodForm.time')}
                             </label>
                             <input
@@ -406,14 +406,14 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                 onChange={(e) =>
                                     onFoodChange({ ...food, time: e.target.value })
                                 }
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                             />
                         </div>
                     </div>
 
                     {/* Row 2: Name */}
                     <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
+                        <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                             {t('modals.foodForm.name')} *
                         </label>
                         <input
@@ -423,13 +423,13 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                 onFoodChange({ ...food, name: e.target.value })
                             }
                             placeholder={t('modals.foodForm.namePlaceholder')}
-                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                            className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                         />
                     </div>
 
                     {/* Row 3: Description */}
                     <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
+                        <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                             {t('modals.foodForm.description')}
                         </label>
                         <input
@@ -442,14 +442,14 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                 })
                             }
                             placeholder={t('modals.foodForm.descriptionPlaceholder')}
-                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-slate-900 text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                            className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                         />
                     </div>
 
                     {/* Row 4: Macros - 3+2 grid */}
                     <div className="grid grid-cols-3 gap-3">
                         <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
+                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
                                 Cal *
                             </label>
                             <input
@@ -462,11 +462,11 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                     })
                                 }
                                 placeholder="500"
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                className="w-full bg-background border border-border rounded-2xl px-2 py-3 text-text-primary text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
+                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
                                 Prot
                             </label>
                             <input
@@ -479,11 +479,11 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                     })
                                 }
                                 placeholder="40"
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                className="w-full bg-background border border-border rounded-2xl px-2 py-3 text-text-primary text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
+                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
                                 Carbs
                             </label>
                             <input
@@ -496,14 +496,14 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                     })
                                 }
                                 placeholder="50"
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                className="w-full bg-background border border-border rounded-2xl px-2 py-3 text-text-primary text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                             />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
+                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
                                 Fat
                             </label>
                             <input
@@ -516,11 +516,11 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                     })
                                 }
                                 placeholder="15"
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                className="w-full bg-background border border-border rounded-2xl px-2 py-3 text-text-primary text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
+                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
                                 {t('modals.foodForm.fiber')}
                             </label>
                             <input
@@ -533,7 +533,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                     })
                                 }
                                 placeholder="5"
-                                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-2 py-3 text-slate-900 text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                className="w-full bg-background border border-border rounded-2xl px-2 py-3 text-text-primary text-sm lg:text-base text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                             />
                         </div>
                     </div>
@@ -543,7 +543,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                 <div className="flex gap-4 mt-8">
                     <button
                         onClick={onClose}
-                        className="flex-1 bg-slate-100 hover:bg-slate-200 py-4 rounded-2xl text-slate-600 text-sm lg:text-base font-bold transition-all active:scale-95">
+                        className="flex-1 bg-surface-lighter hover:bg-surface-lighter py-4 rounded-2xl text-text-secondary text-sm lg:text-base font-bold transition-all active:scale-95">
                         {t('modals.foodForm.cancel')}
                     </button>
                     <button

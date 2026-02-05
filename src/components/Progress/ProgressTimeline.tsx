@@ -65,7 +65,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
     };
 
     return (
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+        <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm">
             {/* Header */}
             <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
@@ -84,7 +84,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                             className={`px-4 py-2 rounded-lg font-bold text-sm whitespace-nowrap transition-all ${
                                 activeMonth === month
                                     ? 'bg-blue-500 text-white shadow-md'
-                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                    : 'bg-surface-lighter text-text-secondary hover:bg-surface-lighter'
                             }`}>
                             {format(parseISO(`${month}-01`), 'MMM yyyy', {
                                 locale: dateLocale,
@@ -103,7 +103,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                         key={month}
                         id={`month-${month}`}
                         className="snap-start flex-shrink-0">
-                        <p className="text-xs text-slate-400 font-bold mb-2">
+                        <p className="text-xs text-text-tertiary font-bold mb-2">
                             {format(parseISO(`${month}-01`), 'MMMM yyyy', {
                                 locale: dateLocale,
                             })}
@@ -135,7 +135,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                                         </div>
                                         {/* Angle Badge */}
                                         {photo.angle && (
-                                            <div className="absolute top-1 right-1 bg-white/90 rounded px-1.5 py-0.5 text-[8px] font-bold text-slate-600">
+                                            <div className="absolute top-1 right-1 bg-surface/90 rounded px-1.5 py-0.5 text-[8px] font-bold text-text-secondary">
                                                 {getAngleBadge(photo.angle)}
                                             </div>
                                         )}
@@ -152,7 +152,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                 <div className="mt-5 bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-4 border border-blue-100">
                     <div className="flex items-start justify-between mb-3">
                         <div>
-                            <p className="text-sm text-slate-500 font-medium">
+                            <p className="text-sm text-text-tertiary font-medium">
                                 {format(
                                     parseISO(selectedPhoto.date),
                                     i18n.language === 'es'
@@ -163,13 +163,13 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                                     },
                                 )}
                             </p>
-                            <h4 className="text-lg font-bold text-slate-900">
+                            <h4 className="text-lg font-bold text-text-primary">
                                 {t('progress.timeline.context')}
                             </h4>
                         </div>
                         <button
                             onClick={() => setSelectedPhoto(null)}
-                            className="text-slate-400 hover:text-slate-600">
+                            className="text-text-tertiary hover:text-text-secondary">
                             <X size={20} />
                         </button>
                     </div>
@@ -177,12 +177,12 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                     <div className="grid grid-cols-2 gap-3">
                         {/* Weight */}
                         {selectedPhoto.weight && (
-                            <div className="bg-white rounded-lg p-3 border border-slate-100">
-                                <p className="text-xs text-slate-500 font-medium flex items-center gap-1">
+                            <div className="bg-surface rounded-lg p-3 border border-border">
+                                <p className="text-xs text-text-tertiary font-medium flex items-center gap-1">
                                     <Scale size={12} />
                                     {t('progress.photos.weight')}
                                 </p>
-                                <p className="text-xl font-bold text-slate-900">
+                                <p className="text-xl font-bold text-text-primary">
                                     {selectedPhoto.weight} kg
                                 </p>
                             </div>
@@ -190,12 +190,12 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
 
                         {/* Waist Measurement */}
                         {photoContext?.measurement?.waist && (
-                            <div className="bg-white rounded-lg p-3 border border-slate-100">
-                                <p className="text-xs text-slate-500 font-medium flex items-center gap-1">
+                            <div className="bg-surface rounded-lg p-3 border border-border">
+                                <p className="text-xs text-text-tertiary font-medium flex items-center gap-1">
                                     <Ruler size={12} />
                                     {t('progress.measurements.waist')}
                                 </p>
-                                <p className="text-xl font-bold text-slate-900">
+                                <p className="text-xl font-bold text-text-primary">
                                     {photoContext.measurement.waist} cm
                                 </p>
                             </div>
@@ -203,12 +203,12 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
 
                         {/* Body Fat % */}
                         {photoContext?.measurement?.bodyFatPercent && (
-                            <div className="bg-white rounded-lg p-3 border border-slate-100">
-                                <p className="text-xs text-slate-500 font-medium flex items-center gap-1">
+                            <div className="bg-surface rounded-lg p-3 border border-border">
+                                <p className="text-xs text-text-tertiary font-medium flex items-center gap-1">
                                     <Activity size={12} />
                                     {t('progress.measurements.bodyFat')}
                                 </p>
-                                <p className="text-xl font-bold text-slate-900">
+                                <p className="text-xl font-bold text-text-primary">
                                     {photoContext.measurement.bodyFatPercent}%
                                 </p>
                             </div>
@@ -216,12 +216,12 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
 
                         {/* Chest Measurement */}
                         {photoContext?.measurement?.chest && (
-                            <div className="bg-white rounded-lg p-3 border border-slate-100">
-                                <p className="text-xs text-slate-500 font-medium flex items-center gap-1">
+                            <div className="bg-surface rounded-lg p-3 border border-border">
+                                <p className="text-xs text-text-tertiary font-medium flex items-center gap-1">
                                     <Ruler size={12} />
                                     {t('progress.measurements.chest')}
                                 </p>
-                                <p className="text-xl font-bold text-slate-900">
+                                <p className="text-xl font-bold text-text-primary">
                                     {photoContext.measurement.chest} cm
                                 </p>
                             </div>
@@ -230,11 +230,11 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
 
                     {/* Notes */}
                     {selectedPhoto.notes && (
-                        <div className="mt-3 bg-white rounded-lg p-3 border border-slate-100">
-                            <p className="text-xs text-slate-500 font-medium mb-1">
+                        <div className="mt-3 bg-surface rounded-lg p-3 border border-border">
+                            <p className="text-xs text-text-tertiary font-medium mb-1">
                                 {t('progress.photos.notes')}
                             </p>
-                            <p className="text-sm text-slate-700">
+                            <p className="text-sm text-text-secondary">
                                 {selectedPhoto.notes}
                             </p>
                         </div>

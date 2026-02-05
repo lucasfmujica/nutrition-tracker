@@ -43,7 +43,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
             ? 'text-orange-500 bg-orange-50'
             : trend === 'decreasing'
               ? 'text-green-500 bg-green-50'
-              : 'text-slate-500 bg-slate-50';
+              : 'text-text-tertiary bg-background';
 
     const trendLabel =
         trend === 'increasing'
@@ -53,12 +53,12 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
               : 'Estable';
 
     return (
-        <div className="bg-white rounded-2xl p-6 border border-slate-100">
+        <div className="bg-surface rounded-2xl p-6 border border-border">
             {/* Header */}
             <div className="flex items-start justify-between mb-4">
                 <div>
-                    <h3 className="font-bold text-slate-900 mb-1">{title}</h3>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                    <h3 className="font-bold text-text-primary mb-1">{title}</h3>
+                    <div className="flex items-center gap-1.5 text-xs text-text-tertiary">
                         <Calendar size={12} />
                         <span>Predicción a {weeks} semanas</span>
                     </div>
@@ -70,8 +70,8 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
 
             {/* Current Value */}
             <div className="mb-4">
-                <p className="text-xs text-slate-500 mb-1">Valor actual</p>
-                <p className="text-2xl font-bold text-slate-900">
+                <p className="text-xs text-text-tertiary mb-1">Valor actual</p>
+                <p className="text-2xl font-bold text-text-primary">
                     {currentValue.toFixed(1)} {unit}
                 </p>
             </div>
@@ -89,12 +89,12 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
                                 ? 'text-orange-600'
                                 : change < 0
                                   ? 'text-green-600'
-                                  : 'text-slate-600'
+                                  : 'text-text-secondary'
                         }`}>
                         {change > 0 ? '+' : ''}
                         {change.toFixed(1)} {unit}
                     </span>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-text-tertiary">
                         ({parseFloat(changePercent) > 0 ? '+' : ''}
                         {changePercent}%)
                     </span>
@@ -103,13 +103,13 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
 
             {/* Confidence Interval */}
             <div className="space-y-2">
-                <p className="text-xs text-slate-500 font-bold">
+                <p className="text-xs text-text-tertiary font-bold">
                     Rango de confianza (95%)
                 </p>
                 <div className="flex items-center justify-between text-sm">
                     <div>
-                        <p className="text-xs text-slate-400">Mínimo</p>
-                        <p className="font-bold text-slate-700">
+                        <p className="text-xs text-text-tertiary">Mínimo</p>
+                        <p className="font-bold text-text-secondary">
                             {confidenceInterval.lower.toFixed(1)} {unit}
                         </p>
                     </div>
@@ -117,8 +117,8 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
                         <div className="h-2 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-200 rounded-full" />
                     </div>
                     <div className="text-right">
-                        <p className="text-xs text-slate-400">Máximo</p>
-                        <p className="font-bold text-slate-700">
+                        <p className="text-xs text-text-tertiary">Máximo</p>
+                        <p className="font-bold text-text-secondary">
                             {confidenceInterval.upper.toFixed(1)} {unit}
                         </p>
                     </div>
@@ -126,7 +126,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
             </div>
 
             {/* Trend Badge */}
-            <div className="mt-4 pt-4 border-t border-slate-100">
+            <div className="mt-4 pt-4 border-t border-border">
                 <div className="flex items-center justify-center gap-2">
                     <div
                         className={`px-3 py-1.5 rounded-full text-xs font-bold ${trendColor}`}>

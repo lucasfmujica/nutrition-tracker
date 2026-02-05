@@ -66,13 +66,13 @@ export const GoalInsightsCard: React.FC = () => {
     // Edge case: Insufficient data
     if (!estimatedGoalDate && !currentTrend) {
         return (
-            <div className="bg-white p-6 shadow-sm rounded-2xl border border-gray-100">
+            <div className="bg-surface p-6 shadow-sm rounded-2xl border border-border">
                 <div className="text-center py-8">
                     <span className="text-5xl mb-4 block">📊</span>
-                    <h3 className="text-lg font-semibold text-gray-600">
+                    <h3 className="text-lg font-semibold text-text-secondary">
                         {t('dashboard.insights.calculating')}
                     </h3>
-                    <p className="text-sm text-gray-500 mt-2">
+                    <p className="text-sm text-text-tertiary mt-2">
                         {t('dashboard.insights.needData')}
                     </p>
                 </div>
@@ -86,7 +86,7 @@ export const GoalInsightsCard: React.FC = () => {
             return {
                 icon: '—',
                 text: t('dashboard.insights.noDataTrend'),
-                color: 'text-gray-400 bg-gray-100 border-gray-200',
+                color: 'text-text-tertiary bg-surface-lighter border-border',
             };
         }
 
@@ -106,7 +106,7 @@ export const GoalInsightsCard: React.FC = () => {
             return {
                 icon: '→',
                 text: t('dashboard.insights.maintain'),
-                color: 'text-gray-600 bg-gray-50 border-gray-200',
+                color: 'text-text-secondary bg-background border-border',
             };
         }
     };
@@ -126,22 +126,22 @@ export const GoalInsightsCard: React.FC = () => {
     const adherenceColor = getAdherenceColor();
 
     return (
-        <div className="bg-white p-6 shadow-sm rounded-2xl border border-gray-100 relative overflow-hidden">
+        <div className="bg-surface p-6 shadow-sm rounded-2xl border border-border relative overflow-hidden">
             {/* Background decoration */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 opacity-40 pointer-events-none"></div>
 
             <div className="relative z-10">
                 {/* Header */}
-                <h2 className="text-gray-500 text-xs font-semibold mb-4 uppercase tracking-wider">
+                <h2 className="text-text-tertiary text-xs font-semibold mb-4 uppercase tracking-wider">
                     {t('dashboard.insights.goalTarget', { weight: TARGET_WEIGHT })}
                 </h2>
 
                 {/* Hero: Estimated Goal Date */}
                 <div className="mb-6">
-                    <div className="text-3xl font-bold text-gray-900 mb-1">
+                    <div className="text-3xl font-bold text-text-primary mb-1">
                         {formattedGoalDate || t('dashboard.insights.calculating')}
                     </div>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-text-tertiary">
                         {t('dashboard.projection.estimatedDate')}
                     </p>
                 </div>
@@ -149,18 +149,18 @@ export const GoalInsightsCard: React.FC = () => {
                 {/* Progress Bar */}
                 <div className="mb-6">
                     <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs font-semibold text-gray-600">
+                        <span className="text-xs font-semibold text-text-secondary">
                             {STARTING_WEIGHT}kg
                         </span>
                         <span className="text-xs font-medium text-blue-600">
                             {progressPercentage.toFixed(0)}%
                         </span>
-                        <span className="text-xs font-semibold text-gray-600">
+                        <span className="text-xs font-semibold text-text-secondary">
                             {TARGET_WEIGHT}kg
                         </span>
                     </div>
 
-                    <div className="h-3 w-full bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-3 w-full bg-surface-lighter rounded-full overflow-hidden">
                         <div
                             className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-700 ease-out"
                             style={{ width: `${progressPercentage}%` }}

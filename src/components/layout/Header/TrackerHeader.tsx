@@ -23,7 +23,7 @@ export const TrackerHeader: React.FC = () => {
     const { t, i18n } = useTranslation();
 
     return (
-        <header className="bg-white/90 backdrop-blur-md border-b border-slate-100 px-4 lg:px-8 py-4 lg:py-5 sticky top-0 z-30 shadow-sm">
+        <header className="bg-surface/90 backdrop-blur-md border-b border-border px-4 lg:px-8 py-4 lg:py-5 sticky top-0 z-30 shadow-sm">
             <div className="w-full flex items-center justify-between gap-4">
                 <div className="min-w-0 flex-1 flex items-center gap-4">
                     <div className="relative lg:hidden">
@@ -70,13 +70,13 @@ export const TrackerHeader: React.FC = () => {
                         )}
                     </div>
                     <div className="min-w-0">
-                        <h1 className="hidden sm:block lg:hidden text-2xl font-black text-slate-900 tracking-tighter">
+                        <h1 className="hidden sm:block lg:hidden text-2xl font-black text-text-primary tracking-tighter">
                             LUKEN<span className="text-blue-600">FIT</span>
                         </h1>
 
                         {/* Desktop Info Block */}
                         <div className="hidden lg:flex flex-col items-start gap-2">
-                            <div className="text-sm font-bold text-slate-800 capitalize bg-slate-50 px-3 py-1 rounded-lg border border-slate-100 flex items-center gap-2">
+                            <div className="text-sm font-bold text-text-primary capitalize bg-background px-3 py-1 rounded-lg border border-border flex items-center gap-2">
                                 {new Date().getHours() >= 6 &&
                                 new Date().getHours() < 20 ? (
                                     <Sun size={14} className="text-amber-500" />
@@ -94,16 +94,16 @@ export const TrackerHeader: React.FC = () => {
                                     },
                                 )}
                             </div>
-                            <div className="flex items-center gap-2 text-xs font-medium text-slate-400 pl-1">
+                            <div className="flex items-center gap-2 text-xs font-medium text-text-tertiary pl-1">
                                 <span>
                                     {t('navigation.weight')}:{' '}
-                                    <span className="text-slate-700 font-bold">
+                                    <span className="text-text-secondary font-bold">
                                         {getMostRecentWeight(weightHistory)
                                             ?.weight || profile.currentWeight}
                                         kg
                                     </span>
                                 </span>
-                                <span className="text-slate-300">•</span>
+                                <span className="text-text-tertiary">•</span>
                                 <span>
                                     {t('charts.weight.goal')}:{' '}
                                     <span className="text-blue-600 font-bold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
@@ -114,13 +114,13 @@ export const TrackerHeader: React.FC = () => {
                         </div>
 
                         {/* Mobile/Tablet Simple Status */}
-                        <p className="hidden sm:flex lg:hidden text-xs font-bold text-slate-400 items-center gap-1.5 whitespace-nowrap">
-                            <span className="bg-slate-100 px-2 py-0.5 rounded-full">
+                        <p className="hidden sm:flex lg:hidden text-xs font-bold text-text-tertiary items-center gap-1.5 whitespace-nowrap">
+                            <span className="bg-surface-lighter px-2 py-0.5 rounded-full">
                                 {getMostRecentWeight(weightHistory)?.weight ||
                                     profile.currentWeight}
                                 kg
                             </span>
-                            <span className="text-slate-300">→</span>
+                            <span className="text-text-tertiary">→</span>
                             <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
                                 {profile.targetWeight}kg
                             </span>
@@ -152,7 +152,7 @@ export const TrackerHeader: React.FC = () => {
                                     setIsLocalSyncing(false);
                                 }}
                                 disabled={isLocalSyncing}
-                                className={`w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-2xl bg-white hover:bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 transition-all shadow-sm active:scale-90 ${isLocalSyncing ? 'cursor-not-allowed opacity-80' : ''}`}
+                                className={`w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-2xl bg-surface hover:bg-background border border-border text-text-tertiary hover:text-blue-600 transition-all shadow-sm active:scale-90 ${isLocalSyncing ? 'cursor-not-allowed opacity-80' : ''}`}
                                 title={t('dashboard.summary.syncStatus') || 'Sync'}>
                                 <svg
                                     className={`w-5 h-5 ${isLocalSyncing ? 'animate-spin text-blue-600' : ''}`}
@@ -174,7 +174,7 @@ export const TrackerHeader: React.FC = () => {
                                     e.stopPropagation();
                                     setActiveTab('config');
                                 }}
-                                className="lg:hidden w-10 h-10 flex items-center justify-center rounded-2xl bg-white hover:bg-slate-50 border border-slate-100 text-slate-400 hover:text-blue-600 transition-all shadow-sm active:scale-90"
+                                className="lg:hidden w-10 h-10 flex items-center justify-center rounded-2xl bg-surface hover:bg-background border border-border text-text-tertiary hover:text-blue-600 transition-all shadow-sm active:scale-90"
                                 title={t('navigation.config')}>
                                 {profile?.avatar && profile.avatar.length > 4 ? (
                                     <img
@@ -195,7 +195,7 @@ export const TrackerHeader: React.FC = () => {
                                     e.stopPropagation();
                                     handleLogout();
                                 }}
-                                className="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-2xl bg-white hover:bg-red-50 border border-slate-100 text-slate-400 hover:text-red-600 transition-all shadow-sm active:scale-90"
+                                className="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-2xl bg-surface hover:bg-red-50 border border-border text-text-tertiary hover:text-red-600 transition-all shadow-sm active:scale-90"
                                 title={t('common.close')}>
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"

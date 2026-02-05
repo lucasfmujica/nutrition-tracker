@@ -44,7 +44,7 @@ export const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
                         className={`flex-1 py-3 rounded-xl font-bold transition-all ${
                             canProceed
                                 ? 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white'
-                                : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                                : 'bg-gray-700 text-text-tertiary cursor-not-allowed'
                         }`}>
                         {t('onboarding.navigation.next')} →
                     </button>
@@ -63,7 +63,7 @@ export const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
             {/* Skip option */}
             <button
                 onClick={handleSkip}
-                className="w-full mt-4 py-2 text-gray-500 hover:text-gray-400 text-sm transition-colors">
+                className="w-full mt-4 py-2 text-text-tertiary hover:text-text-tertiary text-sm transition-colors">
                 {t('onboarding.navigation.skip')} →
             </button>
         </>

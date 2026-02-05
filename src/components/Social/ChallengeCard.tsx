@@ -25,9 +25,9 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
     return (
         <div
             onClick={() => onViewDetails(challenge.id)}
-            className="min-w-[280px] w-[280px] bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex-shrink-0 cursor-pointer hover:shadow-md transition-all group">
+            className="min-w-[280px] w-[280px] bg-surface rounded-2xl shadow-sm border border-border overflow-hidden flex-shrink-0 cursor-pointer hover:shadow-md transition-all group">
             {/* Image Header */}
-            <div className="h-28 bg-slate-100 relative overflow-hidden">
+            <div className="h-28 bg-surface-lighter relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
                 {bgImage ? (
                     <img
@@ -42,7 +42,7 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
                 )}
 
                 <div className="absolute bottom-3 left-3 z-20">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-md text-white text-[10px] font-bold border border-white/20 mb-1">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface/20 backdrop-blur-md text-white text-[10px] font-bold border border-white/20 mb-1">
                         <Target size={10} />
                         {target} {unit}
                     </span>
@@ -54,7 +54,7 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
 
             {/* Content */}
             <div className="p-4 space-y-4">
-                <div className="flex items-center justify-between text-xs text-slate-500">
+                <div className="flex items-center justify-between text-xs text-text-tertiary">
                     <div className="flex items-center gap-1">
                         <Users size={14} />
                         <span>
@@ -81,7 +81,7 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
                         </div>
                     ))}
                     {participants.length > 4 && (
-                        <div className="w-7 h-7 rounded-full bg-slate-100 ring-2 ring-white flex items-center justify-center text-[10px] text-slate-500 font-bold">
+                        <div className="w-7 h-7 rounded-full bg-surface-lighter ring-2 ring-white flex items-center justify-center text-[10px] text-text-tertiary font-bold">
                             +{participants.length - 4}
                         </div>
                     )}

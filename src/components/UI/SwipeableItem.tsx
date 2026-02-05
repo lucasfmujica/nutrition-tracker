@@ -124,7 +124,7 @@ export const SwipeableItem: React.FC<SwipeableItemProps> = ({
             {/* Main content */}
             <div
                 ref={itemRef}
-                className={`swipe-item relative bg-white ${isSwiping ? 'swiping' : ''}`}
+                className={`swipe-item relative bg-surface ${isSwiping ? 'swiping' : ''}`}
                 style={{ transform: `translateX(${translateX}px)` }}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}

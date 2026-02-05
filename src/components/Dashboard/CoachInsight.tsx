@@ -44,7 +44,7 @@ const CoachInsight: React.FC<CoachInsightProps> = ({ insight }) => {
                         <h4 className="text-sm font-semibold text-indigo-300 tracking-wide uppercase text-[11px]">
                             {t('dashboard.coach.insight')}
                         </h4>
-                        <p className="text-gray-200 font-medium leading-relaxed text-sm">
+                        <p className="text-text-tertiary font-medium leading-relaxed text-sm">
                             {insight.message}
                         </p>
                         {insight.description && (

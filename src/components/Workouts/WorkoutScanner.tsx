@@ -67,20 +67,20 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
 
     return (
         <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-            <div className="bg-white rounded-3xl p-6 w-full max-w-lg border border-gray-100 shadow-2xl max-h-[90vh] overflow-y-auto flex flex-col">
+            <div className="bg-surface rounded-3xl p-6 w-full max-w-lg border border-border shadow-2xl max-h-[90vh] overflow-y-auto flex flex-col">
                 {/* Header */}
                 <div className="flex justify-between items-start mb-6">
                     <div>
-                        <h2 className="text-xl font-bold text-gray-900">
+                        <h2 className="text-xl font-bold text-text-primary">
                             {t('workouts.scanner.title')}
                         </h2>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-text-tertiary">
                             {t('workouts.scanner.subtitle')}
                         </p>
                     </div>
                     <button
                         onClick={onCancel}
-                        className="p-2 rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                        className="p-2 rounded-xl hover:bg-surface-lighter text-text-tertiary hover:text-text-secondary transition-colors">
                         <X size={20} />
                     </button>
                 </div>
@@ -91,7 +91,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                         {/* File Upload Area */}
                         <div
                             onClick={() => fileInputRef.current?.click()}
-                            className="border-2 border-dashed border-gray-200 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:border-blue-300 hover:bg-blue-50/30 transition-all group">
+                            className="border-2 border-dashed border-border rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:border-blue-300 hover:bg-blue-50/30 transition-all group">
                             <input
                                 type="file"
                                 multiple
@@ -103,10 +103,10 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                             <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <Upload size={24} />
                             </div>
-                            <p className="font-bold text-gray-900">
+                            <p className="font-bold text-text-primary">
                                 {t('workouts.scanner.uploadPrompt')}
                             </p>
-                            <p className="text-xs text-gray-400 mt-1">
+                            <p className="text-xs text-text-tertiary mt-1">
                                 {t('workouts.scanner.uploadSubPrompt')}
                             </p>
                         </div>
@@ -114,7 +114,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                         {/* Selected Files Preview */}
                         {selectedFiles.length > 0 && (
                             <div>
-                                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                                <h4 className="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-2">
                                     {t('workouts.scanner.selected')} (
                                     {selectedFiles.length})
                                 </h4>
@@ -122,7 +122,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                                     {selectedFiles.map((file, i) => (
                                         <div
                                             key={i}
-                                            className="relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border border-gray-100">
+                                            className="relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border border-border">
                                             <img
                                                 src={URL.createObjectURL(file)}
                                                 alt="preview"
@@ -186,7 +186,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                         <div className="flex gap-3 mt-6">
                             <button
                                 onClick={() => setParsedResult(null)}
-                                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-3.5 rounded-xl transition-colors">
+                                className="flex-1 bg-surface-lighter hover:bg-surface-lighter text-text-secondary font-bold py-3.5 rounded-xl transition-colors">
                                 {t('workouts.scanner.back')}
                             </button>
                             <button

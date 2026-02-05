@@ -34,7 +34,7 @@ export const FriendRequestCard: React.FC<FriendRequestCardProps> = ({
     };
 
     return (
-        <div className="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-100">
+        <div className="flex items-center gap-3 p-3 bg-surface rounded-xl border border-border">
             {/* Avatar */}
             <UserAvatar
                 src={request.fromAvatar}
@@ -44,10 +44,10 @@ export const FriendRequestCard: React.FC<FriendRequestCardProps> = ({
 
             {/* Info */}
             <div className="flex-1 min-w-0">
-                <p className="font-bold text-slate-900 truncate">
+                <p className="font-bold text-text-primary truncate">
                     {request.fromName}
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-text-tertiary">
                     {t('social.requests.sent', {
                         time: formatDate(request.createdAt),
                     })}
@@ -58,7 +58,7 @@ export const FriendRequestCard: React.FC<FriendRequestCardProps> = ({
             <div className="flex items-center gap-2">
                 <button
                     onClick={() => onReject(request.id)}
-                    className="w-9 h-9 rounded-full bg-slate-100 hover:bg-red-50 text-slate-400 hover:text-red-500 flex items-center justify-center transition-all active:scale-95">
+                    className="w-9 h-9 rounded-full bg-surface-lighter hover:bg-red-50 text-text-tertiary hover:text-red-500 flex items-center justify-center transition-all active:scale-95">
                     <X size={18} />
                 </button>
                 <button

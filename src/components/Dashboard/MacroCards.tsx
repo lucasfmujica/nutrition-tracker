@@ -17,22 +17,22 @@ const MacroCard: React.FC<MacroCardProps> = React.memo(
         const remaining = Math.max(0, target - current);
 
         return (
-            <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm flex-1 flex flex-col justify-between relative overflow-hidden group hover:border-primary/20 transition-colors">
+            <div className="bg-surface p-4 rounded-3xl border border-border shadow-sm flex-1 flex flex-col justify-between relative overflow-hidden group hover:border-primary/20 transition-colors">
                 <div className="relative z-10">
-                    <span className="text-xs text-gray-500 font-medium mb-1 block">
+                    <span className="text-xs text-text-tertiary font-medium mb-1 block">
                         {label}
                     </span>
                     <div className="flex items-end gap-1 mb-1">
-                        <span className="text-lg font-bold text-gray-900">
+                        <span className="text-lg font-bold text-text-primary">
                             {remaining.toFixed(0)}
                         </span>
-                        <span className="text-[10px] text-gray-400 mb-1">
+                        <span className="text-[10px] text-text-tertiary mb-1">
                             {unit} {t('dashboard.macros.left')}
                         </span>
                     </div>
 
                     {/* Progress Bar */}
-                    <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden mt-1">
+                    <div className="h-1.5 w-full bg-surface-lighter rounded-full overflow-hidden mt-1">
                         <div
                             className="h-full rounded-full transition-all duration-500 ease-out"
                             style={{
@@ -42,7 +42,7 @@ const MacroCard: React.FC<MacroCardProps> = React.memo(
                         />
                     </div>
 
-                    <div className="mt-1.5 text-[10px] text-gray-400 text-right">
+                    <div className="mt-1.5 text-[10px] text-text-tertiary text-right">
                         {current.toFixed(0)} / {target.toFixed(0)}
                         {unit}
                     </div>

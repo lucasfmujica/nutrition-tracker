@@ -36,7 +36,7 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
     ];
 
     return (
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden">
+        <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm relative overflow-hidden">
             {/* Premium decorative gradient */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-50 pointer-events-none"></div>
 
@@ -46,17 +46,17 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
                     <Trophy size={20} className="text-amber-500" />
                 </div>
                 <div>
-                    <h2 className="font-bold text-slate-900 text-lg">
+                    <h2 className="font-bold text-text-primary text-lg">
                         {t('social.leaderboard.title')}
                     </h2>
-                    <p className="text-xs text-slate-500 font-medium">
+                    <p className="text-xs text-text-tertiary font-medium">
                         {t('social.leaderboard.subtitle')}
                     </p>
                 </div>
             </div>
 
             {/* Metric Tabs */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-5 bg-slate-50 rounded-xl p-1.5 border border-slate-100">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-5 bg-background rounded-xl p-1.5 border border-border">
                 {metrics.map(({ id, label, icon: Icon }) => {
                     const isActive = metric === id;
                     return (
@@ -65,20 +65,20 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
                             onClick={() => onMetricChange(id)}
                             className={`flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2.5 px-2 rounded-lg transition-all duration-300 ${
                                 isActive
-                                    ? 'bg-white text-primary shadow-sm ring-1 ring-black/5'
-                                    : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100/50'
+                                    ? 'bg-surface text-primary shadow-sm ring-1 ring-black/5'
+                                    : 'text-text-tertiary hover:text-text-secondary hover:bg-surface-lighter/50'
                             }`}>
                             <Icon
                                 size={18}
                                 className={`transition-colors ${
                                     isActive
                                         ? 'text-primary fill-primary/10'
-                                        : 'text-slate-400'
+                                        : 'text-text-tertiary'
                                 }`}
                             />
                             <span
                                 className={`text-[10px] sm:text-sm font-bold transition-colors leading-none ${
-                                    isActive ? 'text-primary' : 'text-slate-500'
+                                    isActive ? 'text-primary' : 'text-text-tertiary'
                                 }`}>
                                 {label}
                             </span>
@@ -93,13 +93,13 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
                     {[1, 2, 3].map((i) => (
                         <div
                             key={i}
-                            className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 animate-pulse border border-slate-100/50">
-                            <div className="w-8 h-8 rounded-full bg-slate-200" />
+                            className="flex items-center gap-3 p-3 rounded-xl bg-background animate-pulse border border-border/50">
+                            <div className="w-8 h-8 rounded-full bg-surface-lighter" />
                             <div className="flex-1 space-y-2">
-                                <div className="h-4 bg-slate-200 rounded w-24" />
-                                <div className="h-3 bg-slate-200 rounded w-16" />
+                                <div className="h-4 bg-surface-lighter rounded w-24" />
+                                <div className="h-3 bg-surface-lighter rounded w-16" />
                             </div>
-                            <div className="h-6 w-12 bg-slate-200 rounded-lg" />
+                            <div className="h-6 w-12 bg-surface-lighter rounded-lg" />
                         </div>
                     ))}
                 </div>

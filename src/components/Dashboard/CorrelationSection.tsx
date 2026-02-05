@@ -116,7 +116,7 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
             };
         return {
             label: t('dashboard.correlation.strength.noise'),
-            color: 'text-slate-400',
+            color: 'text-text-tertiary',
         };
     };
 
@@ -146,29 +146,29 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
     const interpretation = getInterpretation();
 
     return (
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl p-6 border border-slate-100 shadow-sm min-w-[340px] flex-1 group transition-all hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1">
+        <div className="bg-surface/80 backdrop-blur-md rounded-3xl p-6 border border-border shadow-sm min-w-[340px] flex-1 group transition-all hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1">
             <div className="mb-6 flex justify-between items-start">
                 <div>
                     <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-black text-slate-800 tracking-tight">
+                        <h3 className="font-black text-text-primary tracking-tight">
                             {title}
                         </h3>
                         {strength && (
                             <span
-                                className={`text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-slate-50 ${strength.color} border border-slate-100`}>
+                                className={`text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-background ${strength.color} border border-border`}>
                                 {strength.label}
                             </span>
                         )}
                     </div>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest opacity-70">
+                    <p className="text-[10px] text-text-tertiary font-bold uppercase tracking-widest opacity-70">
                         {subtitle}
                     </p>
                 </div>
                 {rValue !== null && (
                     <div className="text-right">
-                        <div className="text-xs font-black text-slate-400">
+                        <div className="text-xs font-black text-text-tertiary">
                             r ={' '}
-                            <span className="text-slate-900">
+                            <span className="text-text-primary">
                                 {rValue.toFixed(2)}
                             </span>
                         </div>
@@ -223,17 +223,17 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                                     if (active && payload && payload.length) {
                                         return (
                                             <div className="bg-slate-900/95 backdrop-blur-md border border-slate-800 p-3 rounded-2xl shadow-2xl text-[10px] text-white animate-in fade-in zoom-in duration-200">
-                                                <p className="font-black text-slate-400 mb-2 border-b border-slate-800 pb-2 flex justify-between items-center gap-4">
+                                                <p className="font-black text-text-tertiary mb-2 border-b border-slate-800 pb-2 flex justify-between items-center gap-4">
                                                     <span>
                                                         {payload[0].payload.date}
                                                     </span>
-                                                    <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-500">
+                                                    <span className="px-1.5 py-0.5 rounded bg-slate-800 text-text-tertiary">
                                                         Log
                                                     </span>
                                                 </p>
                                                 <div className="space-y-2">
                                                     <div className="flex justify-between gap-6">
-                                                        <span className="text-slate-400 font-medium">
+                                                        <span className="text-text-tertiary font-medium">
                                                             {xLabel}
                                                         </span>
                                                         <span className="font-black text-white">
@@ -241,7 +241,7 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                                                         </span>
                                                     </div>
                                                     <div className="flex justify-between gap-6">
-                                                        <span className="text-slate-400 font-medium">
+                                                        <span className="text-text-tertiary font-medium">
                                                             {yLabel}
                                                         </span>
                                                         <span className="font-black text-white">
@@ -288,8 +288,8 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                         </ScatterChart>
                     </ResponsiveContainer>
                 ) : (
-                    <div className="flex flex-col items-center justify-center text-slate-300 h-full gap-2">
-                        <div className="w-8 h-8 rounded-full border-2 border-slate-100 flex items-center justify-center opacity-50">
+                    <div className="flex flex-col items-center justify-center text-text-tertiary h-full gap-2">
+                        <div className="w-8 h-8 rounded-full border-2 border-border flex items-center justify-center opacity-50">
                             <span className="text-xs">?</span>
                         </div>
                         <p className="text-[10px] font-bold uppercase tracking-widest">
@@ -299,8 +299,8 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                 )}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-slate-50">
-                <p className="text-[11px] leading-relaxed text-slate-600 font-medium italic">
+            <div className="mt-4 pt-4 border-t border-border">
+                <p className="text-[11px] leading-relaxed text-text-secondary font-medium italic">
                     {interpretation}
                 </p>
             </div>
@@ -346,7 +346,7 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                     <div className="p-1.5 bg-blue-50 rounded-lg">
                         <Microscope size={18} className="text-blue-600" />
                     </div>
-                    <h2 className="text-lg font-black text-slate-900 tracking-tight">
+                    <h2 className="text-lg font-black text-text-primary tracking-tight">
                         {t('dashboard.correlation.labsTitle')}
                         <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-700 uppercase tracking-wider">
                             {t('common.beta', { defaultValue: 'Beta' })}
@@ -355,7 +355,7 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                 </div>
                 <button
                     onClick={() => setShowLabsInfo(!showLabsInfo)}
-                    className="p-2 text-slate-400 hover:text-blue-600 transition-colors rounded-xl hover:bg-blue-50">
+                    className="p-2 text-text-tertiary hover:text-blue-600 transition-colors rounded-xl hover:bg-blue-50">
                     <Info size={20} />
                 </button>
             </div>
@@ -373,15 +373,15 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                     </p>
                     <ul className="text-[10px] space-y-2 relative z-10">
                         <li className="flex items-start gap-2">
-                            <span className="w-1.5 h-1.5 bg-white rounded-full mt-1 shrink-0"></span>
+                            <span className="w-1.5 h-1.5 bg-surface rounded-full mt-1 shrink-0"></span>
                             <span>{t('dashboard.correlation.points.fuel')}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                            <span className="w-1.5 h-1.5 bg-white rounded-full mt-1 shrink-0"></span>
+                            <span className="w-1.5 h-1.5 bg-surface rounded-full mt-1 shrink-0"></span>
                             <span>{t('dashboard.correlation.points.recovery')}</span>
                         </li>
                         <li className="flex items-start gap-2">
-                            <span className="w-1.5 h-1.5 bg-white rounded-full mt-1 shrink-0"></span>
+                            <span className="w-1.5 h-1.5 bg-surface rounded-full mt-1 shrink-0"></span>
                             <span>
                                 {t('dashboard.correlation.points.discipline')}
                             </span>
@@ -472,7 +472,7 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                 )}
             </div>
             {fuelData.length <= 10 && (
-                <div className="flex items-center gap-2 text-[10px] bg-slate-50 text-slate-500 p-3 rounded-xl border border-slate-100 italic">
+                <div className="flex items-center gap-2 text-[10px] bg-background text-text-tertiary p-3 rounded-xl border border-border italic">
                     <Info size={12} />
                     {t('dashboard.correlation.footer')}
                 </div>

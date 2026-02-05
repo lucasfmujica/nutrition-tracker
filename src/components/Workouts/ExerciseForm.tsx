@@ -66,7 +66,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
         <div className="space-y-3">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider">
+                <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider">
                     {t('workouts.exercise.title')}{' '}
                     {exercises.length > 0 && `(${exercises.length})`}
                 </label>
@@ -95,14 +95,14 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
 
             {/* Exercise List */}
             {exercises.length === 0 ? (
-                <div className="bg-slate-50 rounded-2xl p-6 text-center border border-slate-100">
-                    <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+                <div className="bg-background rounded-2xl p-6 text-center border border-border">
+                    <div className="w-12 h-12 bg-surface-lighter rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
                         🏋️
                     </div>
-                    <p className="text-slate-400 text-sm font-medium">
+                    <p className="text-text-tertiary text-sm font-medium">
                         {t('workouts.exercise.noExercises')}
                     </p>
-                    <p className="text-slate-400 text-xs mt-1">
+                    <p className="text-text-tertiary text-xs mt-1">
                         {t('workouts.exercise.startPrompt')}
                     </p>
                 </div>
@@ -111,9 +111,9 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                     {exercises.map((exercise, index) => (
                         <div
                             key={index}
-                            className="bg-gradient-to-br from-slate-50 to-slate-50/50 rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                            className="bg-gradient-to-br from-slate-50 to-slate-50/50 rounded-2xl p-4 border border-border shadow-sm hover:shadow-md transition-shadow">
                             <div className="flex items-center justify-between mb-3">
-                                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                <span className="text-xs font-bold text-text-tertiary uppercase tracking-wider">
                                     {t('workouts.exercise.itemTitle')} {index + 1}
                                 </span>
                                 <button
@@ -139,13 +139,13 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                     }
                                     disabled={disabled}
                                     placeholder="Ej: Press Banca, Sentadillas"
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 text-sm font-medium placeholder:text-slate-400 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full bg-surface border border-border rounded-xl px-3 py-2.5 text-text-primary text-sm font-medium placeholder:text-text-tertiary focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 />
                             </div>
 
                             <div className="grid grid-cols-3 gap-2">
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 text-center">
+                                    <label className="block text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1 text-center">
                                         {t('workouts.exercise.sets')}
                                     </label>
                                     <input
@@ -161,12 +161,12 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                         disabled={disabled}
                                         placeholder="4"
                                         min="1"
-                                        className="w-full bg-white border border-slate-200 rounded-xl px-2 py-2 text-slate-900 text-sm font-bold text-center focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-full bg-surface border border-border rounded-xl px-2 py-2 text-text-primary text-sm font-bold text-center focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 text-center">
+                                    <label className="block text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1 text-center">
                                         {t('workouts.exercise.reps')}
                                     </label>
                                     <input
@@ -182,12 +182,12 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                         disabled={disabled}
                                         placeholder="8"
                                         min="1"
-                                        className="w-full bg-white border border-slate-200 rounded-xl px-2 py-2 text-slate-900 text-sm font-bold text-center focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-full bg-surface border border-border rounded-xl px-2 py-2 text-text-primary text-sm font-bold text-center focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 text-center">
+                                    <label className="block text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1 text-center">
                                         {t('workouts.exercise.weight')}
                                     </label>
                                     <input
@@ -204,7 +204,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                         placeholder="80"
                                         min="0"
                                         step="0.5"
-                                        className="w-full bg-white border border-slate-200 rounded-xl px-2 py-2 text-slate-900 text-sm font-bold text-center focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-full bg-surface border border-border rounded-xl px-2 py-2 text-text-primary text-sm font-bold text-center focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                     />
                                 </div>
                             </div>
@@ -213,9 +213,9 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                 exercise.sets &&
                                 exercise.reps &&
                                 exercise.weight && (
-                                    <div className="mt-3 pt-3 border-t border-slate-200">
-                                        <p className="text-xs text-slate-500 text-center font-medium">
-                                            <span className="font-bold text-slate-700">
+                                    <div className="mt-3 pt-3 border-t border-border">
+                                        <p className="text-xs text-text-tertiary text-center font-medium">
+                                            <span className="font-bold text-text-secondary">
                                                 {exercise.name}
                                             </span>
                                             {' · '}
@@ -235,7 +235,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
             )}
 
             {exercises.length > 0 && (
-                <p className="text-xs text-slate-400 text-center">
+                <p className="text-xs text-text-tertiary text-center">
                     {t('workouts.exercise.duplicateTip')}
                 </p>
             )}

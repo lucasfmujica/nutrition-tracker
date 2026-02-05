@@ -112,10 +112,10 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                 className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 border-2 border-purple-200">
                 {/* Header */}
                 <div className="text-center mb-4">
-                    <h2 className="text-2xl font-bold text-slate-900 mb-1">
+                    <h2 className="text-2xl font-bold text-text-primary mb-1">
                         {t('progress.story.title')}
                     </h2>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-text-secondary">
                         {format(parseISO(beforePhoto.date), 'd MMM yyyy', {
                             locale: dateLocale,
                         })}{' '}
@@ -130,7 +130,7 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                 <div className="grid grid-cols-2 gap-4 mb-4">
                     {/* Before */}
                     <div className="relative">
-                        <div className="aspect-[3/4] rounded-xl overflow-hidden bg-slate-200">
+                        <div className="aspect-[3/4] rounded-xl overflow-hidden bg-surface-lighter">
                             <img
                                 src={beforePhoto.photoUrl}
                                 alt={t('progress.comparison.before')}
@@ -141,7 +141,7 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                             {t('progress.comparison.before')}
                         </div>
                         {beforePhoto.weight && (
-                            <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-slate-900">
+                            <div className="absolute bottom-2 left-2 bg-surface/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-text-primary">
                                 {beforePhoto.weight.toFixed(1)} kg
                             </div>
                         )}
@@ -149,7 +149,7 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
 
                     {/* After */}
                     <div className="relative">
-                        <div className="aspect-[3/4] rounded-xl overflow-hidden bg-slate-200">
+                        <div className="aspect-[3/4] rounded-xl overflow-hidden bg-surface-lighter">
                             <img
                                 src={afterPhoto.photoUrl}
                                 alt={t('progress.comparison.after')}
@@ -160,7 +160,7 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                             {t('progress.comparison.after')}
                         </div>
                         {afterPhoto.weight && (
-                            <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-slate-900">
+                            <div className="absolute bottom-2 left-2 bg-surface/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-text-primary">
                                 {afterPhoto.weight.toFixed(1)} kg
                             </div>
                         )}
@@ -171,45 +171,45 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                 <div className="grid grid-cols-3 gap-3 mb-4">
                     {/* Weight Change */}
                     {stats.hasWeightData && (
-                        <div className="bg-white rounded-xl p-3 text-center">
+                        <div className="bg-surface rounded-xl p-3 text-center">
                             <TrendingDown
                                 size={20}
                                 className="text-green-600 mx-auto mb-1"
                             />
-                            <p className="text-lg font-bold text-slate-900">
+                            <p className="text-lg font-bold text-text-primary">
                                 {Math.abs(stats.weightChange).toFixed(1)} kg
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-text-tertiary">
                                 {t('progress.share.lost')}
                             </p>
                         </div>
                     )}
 
                     {/* Duration */}
-                    <div className="bg-white rounded-xl p-3 text-center">
+                    <div className="bg-surface rounded-xl p-3 text-center">
                         <Calendar
                             size={20}
                             className="text-purple-600 mx-auto mb-1"
                         />
-                        <p className="text-lg font-bold text-slate-900">
+                        <p className="text-lg font-bold text-text-primary">
                             {Math.floor(stats.daysDuration / 7)}
                         </p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-text-tertiary">
                             {t('progress.share.weeks')}
                         </p>
                     </div>
 
                     {/* Waist Change */}
                     {measurements?.waistChange && (
-                        <div className="bg-white rounded-xl p-3 text-center">
+                        <div className="bg-surface rounded-xl p-3 text-center">
                             <Ruler
                                 size={20}
                                 className="text-blue-600 mx-auto mb-1"
                             />
-                            <p className="text-lg font-bold text-slate-900">
+                            <p className="text-lg font-bold text-text-primary">
                                 {Math.abs(measurements.waistChange).toFixed(1)} cm
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-text-tertiary">
                                 {t('progress.share.waist')}
                             </p>
                         </div>
@@ -217,15 +217,15 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                 </div>
 
                 {/* Caption */}
-                <div className="bg-white rounded-xl p-4">
-                    <p className="text-sm text-slate-900 leading-relaxed">
+                <div className="bg-surface rounded-xl p-4">
+                    <p className="text-sm text-text-primary leading-relaxed">
                         {caption}
                     </p>
                 </div>
 
                 {/* Branding */}
                 <div className="text-center mt-4">
-                    <p className="text-xs text-slate-400 font-mono">
+                    <p className="text-xs text-text-tertiary font-mono">
                         {t('progress.share.createdWith')}
                     </p>
                 </div>
@@ -236,7 +236,7 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                 <button
                     onClick={handleExport}
                     disabled={isExporting}
-                    className="flex-1 flex items-center justify-center gap-2 bg-white border-2 border-purple-200 text-purple-600 py-3 rounded-xl font-bold hover:bg-purple-50 transition-colors disabled:opacity-50">
+                    className="flex-1 flex items-center justify-center gap-2 bg-surface border-2 border-purple-200 text-purple-600 py-3 rounded-xl font-bold hover:bg-purple-50 transition-colors disabled:opacity-50">
                     <Download size={18} />
                     {isExporting
                         ? t('progress.share.exporting')

@@ -98,7 +98,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
             {/* Backdrop with extreme blur */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-white/60 z-40 backdrop-blur-xl transition-all duration-500"
+                    className="fixed inset-0 bg-surface/60 z-40 backdrop-blur-xl transition-all duration-500"
                     onClick={() => setIsOpen(false)}
                 />
             )}
@@ -115,7 +115,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-slate-200" />
-                            <span className="font-satoshi text-slate-400 tracking-[0.2em] text-[10px] font-black">
+                            <span className="font-satoshi text-text-tertiary tracking-[0.2em] text-[10px] font-black">
                                 {t('layout.fab.add').toUpperCase()}
                             </span>
                             <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-slate-200" />
@@ -132,20 +132,20 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
                                         action.onClick();
                                         setIsOpen(false);
                                     }}
-                                    className="group flex items-center gap-4 p-4 rounded-[2rem] bg-slate-50/50 hover:bg-slate-100/50 border border-slate-100 hover:border-slate-200 transition-all active:scale-95">
+                                    className="group flex items-center gap-4 p-4 rounded-[2rem] bg-background/50 hover:bg-surface-lighter/50 border border-border hover:border-border transition-all active:scale-95">
                                     <div
                                         className={`${action.bg} ${action.color} w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300`}>
                                         {action.icon}
                                     </div>
                                     <div className="text-left flex-1">
-                                        <div className="text-lg font-satoshi text-slate-900 tracking-tight leading-none mb-1">
+                                        <div className="text-lg font-satoshi text-text-primary tracking-tight leading-none mb-1">
                                             {action.label}
                                         </div>
-                                        <div className="text-[9px] text-slate-400 font-black uppercase tracking-[0.15em]">
+                                        <div className="text-[9px] text-text-tertiary font-black uppercase tracking-[0.15em]">
                                             {action.sublabel}
                                         </div>
                                     </div>
-                                    <div className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center group-hover:border-primary/30 group-hover:text-primary transition-colors">
+                                    <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center group-hover:border-primary/30 group-hover:text-primary transition-colors">
                                         <Plus
                                             size={14}
                                             className="group-hover:rotate-90 transition-transform duration-300"

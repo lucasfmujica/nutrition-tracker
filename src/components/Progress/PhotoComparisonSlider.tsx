@@ -97,7 +97,7 @@ export const PhotoComparisonSlider: React.FC<PhotoComparisonSliderProps> = ({
     }, [isDragging]);
 
     return (
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+        <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-lg flex items-center gap-2">
@@ -107,7 +107,7 @@ export const PhotoComparisonSlider: React.FC<PhotoComparisonSliderProps> = ({
                 {onShare && (
                     <button
                         onClick={onShare}
-                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl flex items-center gap-2 transition-colors">
+                        className="px-4 py-2 bg-surface-lighter hover:bg-surface-lighter text-text-secondary font-medium rounded-xl flex items-center gap-2 transition-colors">
                         <Share2 size={16} />
                         {t('progress.comparison.share')}
                     </button>
@@ -140,10 +140,10 @@ export const PhotoComparisonSlider: React.FC<PhotoComparisonSliderProps> = ({
 
                 {/* Slider Handle */}
                 <div
-                    className="absolute top-0 bottom-0 w-1 bg-white shadow-lg pointer-events-none"
+                    className="absolute top-0 bottom-0 w-1 bg-surface shadow-lg pointer-events-none"
                     style={{ left: `${sliderPosition}%` }}>
-                    <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-10 h-10 bg-white rounded-full shadow-xl flex items-center justify-center">
-                        <MoveHorizontal size={20} className="text-slate-600" />
+                    <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-10 h-10 bg-surface rounded-full shadow-xl flex items-center justify-center">
+                        <MoveHorizontal size={20} className="text-text-secondary" />
                     </div>
                 </div>
 
@@ -207,12 +207,12 @@ export const PhotoComparisonSlider: React.FC<PhotoComparisonSliderProps> = ({
             <div className="flex gap-2 mt-4">
                 <button
                     onClick={() => onPhotoChange('before')}
-                    className="flex-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl transition-colors">
+                    className="flex-1 px-4 py-2.5 bg-surface-lighter hover:bg-surface-lighter text-text-secondary font-medium rounded-xl transition-colors">
                     {t('progress.comparison.changeBefore')}
                 </button>
                 <button
                     onClick={() => onPhotoChange('after')}
-                    className="flex-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl transition-colors">
+                    className="flex-1 px-4 py-2.5 bg-surface-lighter hover:bg-surface-lighter text-text-secondary font-medium rounded-xl transition-colors">
                     {t('progress.comparison.changeAfter')}
                 </button>
             </div>

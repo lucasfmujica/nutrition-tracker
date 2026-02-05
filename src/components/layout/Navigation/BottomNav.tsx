@@ -174,8 +174,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                 setActiveTab('config');
                 setIsMoreMenuOpen(false);
             },
-            color: 'text-slate-400',
-            bg: 'bg-slate-400/10',
+            color: 'text-text-tertiary',
+            bg: 'bg-text-tertiary/10',
         },
     ];
 
@@ -245,16 +245,16 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                                             action.onClick();
                                             setIsMenuOpen(false);
                                         }}
-                                        className="group flex items-center gap-4 p-4 rounded-2xl bg-slate-50/50 hover:bg-slate-100/50 border border-slate-100 hover:border-slate-200 transition-all active:scale-95">
+                                        className="group flex items-center gap-4 p-4 rounded-2xl bg-background/50 hover:bg-surface-lighter/50 border border-border hover:border-border transition-all active:scale-95">
                                         <div
                                             className={`${action.bg} ${action.color} w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
                                             {action.icon}
                                         </div>
                                         <div className="text-left flex-1">
-                                            <div className="text-sm font-satoshi text-slate-900 font-black tracking-tight">
+                                            <div className="text-sm font-satoshi text-text-primary font-black tracking-tight">
                                                 {action.label}
                                             </div>
-                                            <div className="text-[9px] text-slate-400 font-black uppercase tracking-widest">
+                                            <div className="text-[9px] text-text-tertiary font-black uppercase tracking-widest">
                                                 {action.sublabel}
                                             </div>
                                         </div>
@@ -283,16 +283,16 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                                     <button
                                         key={i}
                                         onClick={option.onClick}
-                                        className="group flex items-center gap-4 p-4 rounded-2xl bg-slate-50/50 hover:bg-slate-100/50 border border-slate-100 hover:border-slate-200 transition-all active:scale-95">
+                                        className="group flex items-center gap-4 p-4 rounded-2xl bg-background/50 hover:bg-surface-lighter/50 border border-border hover:border-border transition-all active:scale-95">
                                         <div
                                             className={`${option.bg} ${option.color} w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
                                             {option.icon}
                                         </div>
                                         <div className="text-left flex-1">
-                                            <div className="text-sm font-satoshi text-slate-900 font-black tracking-tight">
+                                            <div className="text-sm font-satoshi text-text-primary font-black tracking-tight">
                                                 {option.label}
                                             </div>
-                                            <div className="text-[9px] text-slate-400 font-black uppercase tracking-widest">
+                                            <div className="text-[9px] text-text-tertiary font-black uppercase tracking-widest">
                                                 {option.sublabel}
                                             </div>
                                         </div>
@@ -332,7 +332,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                                     />
 
                                     {/* Glass reflection on button */}
-                                    <div className="absolute top-1 left-2 right-2 h-1/2 bg-white/10 rounded-t-full filter blur-[1px] pointer-events-none" />
+                                    <div className="absolute top-1 left-2 right-2 h-1/2 bg-surface/10 rounded-t-full filter blur-[1px] pointer-events-none" />
                                 </button>
                             );
                         }
@@ -353,7 +353,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                                     className={`flex flex-col items-center justify-center transition-all duration-300 relative group min-w-[40px] h-full ${
                                         isMoreActive
                                             ? 'text-primary'
-                                            : 'text-slate-400 hover:text-slate-600'
+                                            : 'text-text-tertiary hover:text-text-secondary'
                                     }`}>
                                     <div className="relative z-10 flex flex-col items-center">
                                         <div className="relative">
@@ -382,7 +382,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
 
                                     {/* Hover background effect */}
                                     {!isMoreActive && (
-                                        <span className="absolute inset-x-0 inset-y-2 bg-slate-100/0 group-hover:bg-slate-100/50 rounded-xl transition-colors duration-300 -z-0" />
+                                        <span className="absolute inset-x-0 inset-y-2 bg-surface-lighter/0 group-hover:bg-surface-lighter/50 rounded-xl transition-colors duration-300 -z-0" />
                                     )}
                                 </button>
                             );
@@ -396,7 +396,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                                 className={`flex flex-col items-center justify-center transition-all duration-300 relative group min-w-[40px] h-full ${
                                     isActive
                                         ? 'text-primary'
-                                        : 'text-slate-400 hover:text-slate-600'
+                                        : 'text-text-tertiary hover:text-text-secondary'
                                 }`}>
                                 <div className="relative z-10 flex flex-col items-center">
                                     <div className="relative">
@@ -435,7 +435,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
 
                                 {/* Hover background effect */}
                                 {!isActive && (
-                                    <span className="absolute inset-x-0 inset-y-2 bg-slate-100/0 group-hover:bg-slate-100/50 rounded-xl transition-colors duration-300 -z-0" />
+                                    <span className="absolute inset-x-0 inset-y-2 bg-surface-lighter/0 group-hover:bg-surface-lighter/50 rounded-xl transition-colors duration-300 -z-0" />
                                 )}
                             </button>
                         );

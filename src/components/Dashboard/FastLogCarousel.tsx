@@ -66,7 +66,7 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
                 <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
                     <Zap className="w-4 h-4 fill-current" />
                 </div>
-                <h2 className="text-lg font-bold text-gray-900">
+                <h2 className="text-lg font-bold text-text-primary">
                     {t('dashboard.fastLog.title')}
                 </h2>
             </div>
@@ -94,7 +94,7 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
                             <div
                                 className={`
                 w-6 h-6 rounded-full flex items-center justify-center backdrop-blur-md
-                ${successId === combo.id ? 'bg-white/30 text-white' : 'bg-white/20 text-indigo-100'}
+                ${successId === combo.id ? 'bg-surface/30 text-white' : 'bg-surface/20 text-indigo-100'}
               `}>
                                 {successId === combo.id ? (
                                     <Check size={14} strokeWidth={3} />
@@ -112,7 +112,7 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
                                     : combo.name || t('dashboard.fastLog.myCombo')}
                             </h3>
                             <div className="flex items-center gap-2 mt-1">
-                                <span className="bg-white/20 px-1.5 py-0.5 rounded text-[10px] text-white font-bold backdrop-blur-sm">
+                                <span className="bg-surface/20 px-1.5 py-0.5 rounded text-[10px] text-white font-bold backdrop-blur-sm">
                                     {combo.totalCalories}{' '}
                                     {t('units.kcal', { defaultValue: 'kcal' })}
                                 </span>
@@ -139,14 +139,14 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
               ${
                   successId === food.name
                       ? 'bg-emerald-50 border-emerald-200 scale-95 ring-2 ring-emerald-100'
-                      : 'bg-white border-gray-100 shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-95 hover:border-indigo-100'
+                      : 'bg-surface border-border shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-95 hover:border-indigo-100'
               }
             `}>
                         <div className="flex justify-between items-start">
                             <div
                                 className={`
                 w-6 h-6 rounded-full flex items-center justify-center transition-colors
-                ${successId === food.name ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-50 text-gray-400 group-hover:bg-indigo-50 group-hover:text-indigo-500'}
+                ${successId === food.name ? 'bg-emerald-100 text-emerald-600' : 'bg-background text-text-tertiary group-hover:bg-indigo-50 group-hover:text-indigo-500'}
               `}>
                                 {successId === food.name ? (
                                     <Check size={14} strokeWidth={3} />
@@ -158,18 +158,18 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
 
                         <div className="text-left min-w-0">
                             <h3
-                                className={`font-bold text-sm leading-tight truncate mb-0.5 ${successId === food.name ? 'text-emerald-800' : 'text-gray-900'}`}>
+                                className={`font-bold text-sm leading-tight truncate mb-0.5 ${successId === food.name ? 'text-emerald-800' : 'text-text-primary'}`}>
                                 {food.name}
                             </h3>
                             <span
-                                className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${successId === food.name ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'}`}>
+                                className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${successId === food.name ? 'bg-emerald-100 text-emerald-700' : 'bg-surface-lighter text-text-secondary'}`}>
                                 {food.calories}{' '}
                                 {t('units.kcal', { defaultValue: 'kcal' })}
                             </span>
                         </div>
 
                         {loggingId === food.name && (
-                            <div className="absolute inset-0 bg-white/60 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10">
+                            <div className="absolute inset-0 bg-surface/60 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10">
                                 <div className="w-5 h-5 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
                             </div>
                         )}

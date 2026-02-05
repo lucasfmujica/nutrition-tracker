@@ -158,7 +158,7 @@ export const usePerformanceForecast = (
             icon = 'cloud-rain';
             forecastCode = 'recovery';
             gradient = 'from-slate-100 to-gray-200';
-            textColor = 'text-slate-700';
+            textColor = 'text-text-secondary';
         }
         // REST PRIORITY: High recent volume with declining metrics
         else if (isHighVolume && (readinessTrendPct < 0 || todayReadiness < 70)) {

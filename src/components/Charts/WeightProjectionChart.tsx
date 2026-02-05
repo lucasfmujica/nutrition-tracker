@@ -55,8 +55,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload || payload.length === 0) return null;
 
     return (
-        <div className="bg-white px-3 py-2 rounded-xl shadow-lg border border-gray-100 text-xs">
-            <p className="text-gray-500 font-medium mb-1">{label}</p>
+        <div className="bg-surface px-3 py-2 rounded-xl shadow-lg border border-border text-xs">
+            <p className="text-text-tertiary font-medium mb-1">{label}</p>
             {payload.map(
                 (entry: any, index: number) =>
                     entry.value !== undefined &&
@@ -66,7 +66,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                                 className="w-2 h-2 rounded-full"
                                 style={{ backgroundColor: entry.stroke }}
                             />
-                            <span className="font-semibold text-gray-700">
+                            <span className="font-semibold text-text-secondary">
                                 {typeof entry.value === 'number'
                                     ? entry.value.toFixed(1)
                                     : entry.value}{' '}
@@ -152,7 +152,7 @@ export const WeightProjectionChart: React.FC<WeightProjectionChartProps> = ({
 
     if (chartData.length === 0) {
         return (
-            <div className="flex items-center justify-center h-[150px] text-gray-400 text-sm">
+            <div className="flex items-center justify-center h-[150px] text-text-tertiary text-sm">
                 {t('charts.projection.register')}
             </div>
         );

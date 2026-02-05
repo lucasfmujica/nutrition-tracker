@@ -18,10 +18,10 @@ export const DaySummary: React.FC<DaySummaryProps> = ({
     const calsLeft = Math.round(targets.calories - totals.calories);
 
     return (
-        <div className="bg-white border border-gray-100 rounded-2xl p-4 mt-2 relative max-w-4xl mx-auto shadow-sm">
+        <div className="bg-surface border border-border rounded-2xl p-4 mt-2 relative max-w-4xl mx-auto shadow-sm">
             <div className="flex justify-between items-end mb-2">
                 <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium text-gray-500">
+                    <span className="text-xs font-medium text-text-tertiary">
                         {t('diary.summary.title')}
                     </span>
                     {onSuggestMeal && calsLeft > 100 && (
@@ -62,11 +62,11 @@ export const DaySummary: React.FC<DaySummaryProps> = ({
                 ].map((macro) => (
                     <div
                         key={macro.label}
-                        className="flex-1 bg-gray-50 rounded-lg p-2">
-                        <div className="text-xs text-gray-500 mb-1">
+                        className="flex-1 bg-background rounded-lg p-2">
+                        <div className="text-xs text-text-tertiary mb-1">
                             {macro.label}
                         </div>
-                        <div className="relative h-1 w-full bg-gray-200 rounded-full overflow-hidden mb-1">
+                        <div className="relative h-1 w-full bg-surface-lighter rounded-full overflow-hidden mb-1">
                             <div
                                 className={`h-full ${macro.color}`}
                                 role="progressbar"
@@ -79,9 +79,9 @@ export const DaySummary: React.FC<DaySummaryProps> = ({
                                 }}
                             />
                         </div>
-                        <div className="text-xs font-bold text-gray-900">
+                        <div className="text-xs font-bold text-text-primary">
                             {Math.round(macro.current || 0)}{' '}
-                            <span className="text-[10px] text-gray-400 font-normal">
+                            <span className="text-[10px] text-text-tertiary font-normal">
                                 / {Math.round(macro.target || 0)}
                             </span>
                         </div>

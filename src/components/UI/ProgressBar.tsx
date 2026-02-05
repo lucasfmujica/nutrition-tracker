@@ -23,11 +23,11 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     return (
         <div className="mb-2 lg:mb-3">
             <div className="flex justify-between mb-1 lg:mb-1.5">
-                <span className="text-xs lg:text-sm font-medium text-gray-300">
+                <span className="text-xs lg:text-sm font-medium text-text-tertiary">
                     {label}
                 </span>
                 <span
-                    className={`text-xs lg:text-sm font-bold ${isOver ? 'text-red-400' : 'text-gray-200'}`}>
+                    className={`text-xs lg:text-sm font-bold ${isOver ? 'text-red-400' : 'text-text-tertiary'}`}>
                     {current}/{target}
                     {unit}
                 </span>

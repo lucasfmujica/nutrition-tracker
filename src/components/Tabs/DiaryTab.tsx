@@ -189,10 +189,10 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
                 <div className="flex items-center gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">
+                        <h1 className="text-2xl font-bold text-text-primary">
                             {t('diary.title')}
                         </h1>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-text-tertiary">
                             {t('diary.subtitle')}
                         </p>
                     </div>
@@ -224,7 +224,7 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                         </button>
                         <button
                             onClick={() => handleAddFood('lunch')}
-                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300 transition-colors"
+                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-lighter text-text-secondary hover:bg-surface-lighter active:bg-surface-lighter transition-colors"
                             title={t('diary.quickActions.manual')}>
                             <Plus size={20} />
                         </button>
@@ -259,14 +259,14 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
             <FoodCameraInput />
 
             {!hasFoods ? (
-                <div className="bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm">
+                <div className="bg-surface rounded-2xl p-8 text-center border border-border shadow-sm">
                     <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <span className="text-2xl">🍽️</span>
                     </div>
-                    <h3 className="text-gray-900 font-bold text-lg mb-1">
+                    <h3 className="text-text-primary font-bold text-lg mb-1">
                         {t('diary.noFoods.title')}
                     </h3>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-text-tertiary text-sm">
                         {t('diary.noFoods.subtitle')}
                     </p>
                     <button
@@ -349,7 +349,7 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
             />
 
             {hasFoods && (
-                <p className="text-xs text-gray-500 text-center">
+                <p className="text-xs text-text-tertiary text-center">
                     {t('diary.swipeHint')}
                 </p>
             )}

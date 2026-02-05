@@ -25,6 +25,14 @@ export default {
           lighter: 'var(--color-surface-lighter)',
         },
         background: 'var(--color-background)',
+        // Text colors for dark mode support
+        text: {
+          primary: 'var(--color-text-primary)',
+          secondary: 'var(--color-text-secondary)',
+          tertiary: 'var(--color-text-tertiary)',
+        },
+        // Border color for dark mode support
+        border: 'var(--color-border)',
       },
       fontFamily: {
         satoshi: ['Satoshi', 'sans-serif'],

@@ -26,7 +26,7 @@ export const OnboardingHeader: React.FC<OnboardingHeaderProps> = ({
                 <h1 className="text-2xl font-bold text-white mb-2">
                     {t('onboarding.welcome')}
                 </h1>
-                <p className="text-gray-400">
+                <p className="text-text-tertiary">
                     {t('onboarding.header.subtitle', { steps: totalSteps })}
                 </p>
             </div>

@@ -21,7 +21,7 @@ export const Layout: React.FC<LayoutProps> = ({
     pendingRequestCount = 0,
 }) => {
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-900 font-sans flex text-base lg:text-sm">
+        <div className="min-h-screen bg-background text-text-primary font-sans flex text-base lg:text-sm">
             {/* Desktop Sidebar */}
             <Sidebar
                 activeTab={activeTab}

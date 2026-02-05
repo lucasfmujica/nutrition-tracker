@@ -63,15 +63,15 @@ export const OuraWeeklyChart: React.FC<OuraWeeklyChartProps> = ({ ouraLog }) => 
     if (!hasData) return null;
 
     return (
-        <div className="bg-white rounded-2xl p-4 md:p-6 border border-gray-100 shadow-sm space-y-4">
+        <div className="bg-surface rounded-2xl p-4 md:p-6 border border-border shadow-sm space-y-4">
             <div>
-                <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                <h2 className="text-sm font-bold text-text-primary flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
                         📈
                     </span>
                     {t('oura.weeklyChart.title')}
                 </h2>
-                <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-1 ml-10">
+                <p className="text-[10px] text-text-tertiary font-medium uppercase tracking-wider mt-1 ml-10">
                     {t('oura.weeklyChart.subtitle')}
                 </p>
             </div>

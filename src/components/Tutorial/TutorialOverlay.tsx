@@ -166,7 +166,7 @@ export const TutorialOverlay: React.FC = () => {
             {/* Tooltip */}
             <div
                 style={getTooltipStyle()}
-                className="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+                className="bg-surface rounded-2xl shadow-2xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-300">
                 {/* Image placeholder if exists */}
                 {currentStepData.image && (
                     <div className="h-32 bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
@@ -183,16 +183,16 @@ export const TutorialOverlay: React.FC = () => {
 
                 {/* Content */}
                 <div className="p-5">
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">
+                    <h3 className="text-lg font-bold text-text-primary mb-2">
                         {currentStepData.title}
                     </h3>
-                    <p className="text-sm text-slate-600 whitespace-pre-line leading-relaxed">
+                    <p className="text-sm text-text-secondary whitespace-pre-line leading-relaxed">
                         {currentStepData.description}
                     </p>
                 </div>
 
                 {/* Footer */}
-                <div className="px-5 pb-5 pt-2 flex items-center justify-between border-t border-slate-100">
+                <div className="px-5 pb-5 pt-2 flex items-center justify-between border-t border-border">
                     {/* Progress */}
                     <div className="flex items-center gap-1.5">
                         {totalSteps <= 8 ? (
@@ -204,12 +204,12 @@ export const TutorialOverlay: React.FC = () => {
                                             ? 'bg-primary w-3'
                                             : i < currentStep
                                               ? 'bg-primary/40'
-                                              : 'bg-slate-200'
+                                              : 'bg-surface-lighter'
                                     }`}
                                 />
                             ))
                         ) : (
-                            <span className="text-[11px] font-medium text-slate-400 tabular-nums">
+                            <span className="text-[11px] font-medium text-text-tertiary tabular-nums">
                                 <span className="text-primary font-bold">
                                     {currentStep + 1}
                                 </span>
@@ -224,8 +224,8 @@ export const TutorialOverlay: React.FC = () => {
                         {!isFirstStep && (
                             <button
                                 onClick={prevStep}
-                                className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                                <ChevronLeft className="w-5 h-5 text-slate-500" />
+                                className="p-2 hover:bg-surface-lighter rounded-lg transition-colors">
+                                <ChevronLeft className="w-5 h-5 text-text-tertiary" />
                             </button>
                         )}
 
@@ -241,9 +241,9 @@ export const TutorialOverlay: React.FC = () => {
                 {/* Skip button - enlarged tap target for mobile */}
                 <button
                     onClick={skipTutorial}
-                    className="absolute top-1 right-1 p-3 flex items-center justify-center hover:bg-slate-100/50 rounded-xl transition-colors group"
+                    className="absolute top-1 right-1 p-3 flex items-center justify-center hover:bg-surface-lighter/50 rounded-xl transition-colors group"
                     aria-label="Cerrar tutorial">
-                    <X className="w-4 h-4 text-slate-400 group-hover:text-slate-600" />
+                    <X className="w-4 h-4 text-text-tertiary group-hover:text-text-secondary" />
                 </button>
             </div>
         </div>

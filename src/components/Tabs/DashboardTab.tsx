@@ -215,12 +215,12 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
             {/* Dashboard Header - Unified Lab Style */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-1 mb-8">
                 <div className="space-y-1">
-                    <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight uppercase font-satoshi">
+                    <h1 className="text-3xl sm:text-4xl font-black text-text-primary tracking-tight uppercase font-satoshi">
                         {t('dashboard.title')}
                     </h1>
                     <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">
+                        <p className="text-xs font-bold text-text-tertiary uppercase tracking-[0.2em]">
                             {t('dashboard.subtitle')}
                         </p>
                     </div>
@@ -351,7 +351,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                     <button
                         onClick={handleOpenWeeklyReport}
                         className="w-full py-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white rounded-[2.5rem] font-bold shadow-2xl hover:shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-4 group border border-slate-700/50">
-                        <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <div className="w-10 h-10 rounded-2xl bg-surface/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <FileImage className="w-5 h-5 text-primary" />
                         </div>
                         <span className="text-xl tracking-tight uppercase font-satoshi">

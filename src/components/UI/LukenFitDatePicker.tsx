@@ -120,11 +120,11 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
     return (
         <div className="relative font-sans inline-block w-full">
             {/* Main Controller */}
-            <div className="flex items-center justify-between bg-white rounded-2xl p-1.5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 w-full relative z-10">
+            <div className="flex items-center justify-between bg-surface rounded-2xl p-1.5 border border-border shadow-sm hover:shadow-md transition-shadow duration-200 w-full relative z-10">
                 {/* Previous Day */}
                 <button
                     onClick={handlePrevDay}
-                    className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all active:scale-95 flex-shrink-0"
+                    className="w-10 h-10 flex items-center justify-center rounded-xl text-text-tertiary hover:text-blue-600 hover:bg-blue-50 transition-all active:scale-95 flex-shrink-0"
                     aria-label={t('common.prev')}>
                     <ChevronLeft className="w-5 h-5" />
                 </button>
@@ -137,7 +137,7 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                         className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
                             isToday
                                 ? 'text-blue-600'
-                                : 'text-gray-400 group-hover:text-blue-500'
+                                : 'text-text-tertiary group-hover:text-blue-500'
                         }`}>
                         {isToday
                             ? t('common.today')
@@ -145,7 +145,7 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                               ? t('common.yesterday')
                               : displayLabel}
                     </span>
-                    <div className="flex items-center justify-center gap-1.5 text-gray-900 font-bold text-lg leading-none mt-0.5 group-hover:text-blue-600 transition-colors w-full">
+                    <div className="flex items-center justify-center gap-1.5 text-text-primary font-bold text-lg leading-none mt-0.5 group-hover:text-blue-600 transition-colors w-full">
                         <CalendarIcon className="w-4 h-4 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                         <span className="truncate">{mainText}</span>
                     </div>
@@ -157,8 +157,8 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                     disabled={isNextDisabled}
                     className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all active:scale-95 flex-shrink-0 ${
                         isNextDisabled
-                            ? 'text-gray-200 cursor-not-allowed'
-                            : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'
+                            ? 'text-text-tertiary cursor-not-allowed'
+                            : 'text-text-tertiary hover:text-blue-600 hover:bg-blue-50'
                     }`}
                     aria-label={t('common.next')}>
                     <ChevronRight className="w-5 h-5" />
@@ -176,12 +176,12 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
 
                     {/* Popover */}
                     <div
-                        className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-[60] bg-white rounded-3xl p-5 w-[300px] shadow-2xl border border-gray-100 ring-1 ring-black/5 animate-in slide-in-from-top-2 duration-200 origin-top"
+                        className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-[60] bg-surface rounded-3xl p-5 w-[300px] shadow-2xl border border-border ring-1 ring-black/5 animate-in slide-in-from-top-2 duration-200 origin-top"
                         onClick={(e) => e.stopPropagation()}>
                         {/* Header */}
                         <div className="flex justify-between items-center mb-6">
                             <div className="flex flex-col items-start">
-                                <h3 className="text-lg font-bold text-gray-900 capitalize tracking-tight">
+                                <h3 className="text-lg font-bold text-text-primary capitalize tracking-tight">
                                     {viewMonthYear}
                                 </h3>
                                 <button
@@ -190,26 +190,26 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                                     {t('diary.calendar.goToToday')}
                                 </button>
                             </div>
-                            <div className="flex items-center gap-1 bg-gray-50 p-1 rounded-full border border-gray-100">
+                            <div className="flex items-center gap-1 bg-background p-1 rounded-full border border-border">
                                 <button
                                     onClick={() => changeMonth(-1)}
-                                    className="p-1.5 hover:bg-white hover:shadow-sm rounded-full text-gray-500 transition-all">
+                                    className="p-1.5 hover:bg-surface hover:shadow-sm rounded-full text-text-tertiary transition-all">
                                     <ChevronLeft className="w-5 h-5" />
                                 </button>
                                 <button
                                     onClick={() => changeMonth(1)}
-                                    className="p-1.5 hover:bg-white hover:shadow-sm rounded-full text-gray-500 transition-all">
+                                    className="p-1.5 hover:bg-surface hover:shadow-sm rounded-full text-text-tertiary transition-all">
                                     <ChevronRight className="w-5 h-5" />
                                 </button>
                             </div>
                         </div>
 
                         {/* Week Days */}
-                        <div className="grid grid-cols-7 mb-3 border-b border-gray-50 pb-2">
+                        <div className="grid grid-cols-7 mb-3 border-b border-border pb-2">
                             {weekDays.map((day) => (
                                 <div
                                     key={day}
-                                    className="text-center text-[10px] font-black text-gray-400 uppercase tracking-wider">
+                                    className="text-center text-[10px] font-black text-text-tertiary uppercase tracking-wider">
                                     {day}
                                 </div>
                             ))}
@@ -242,8 +242,8 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                           isSelected
                               ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105'
                               : isFuture
-                                ? 'text-gray-200 cursor-not-allowed font-normal'
-                                : 'text-gray-700 hover:bg-gray-50 active:bg-gray-100'
+                                ? 'text-text-tertiary cursor-not-allowed font-normal'
+                                : 'text-text-secondary hover:bg-background active:bg-surface-lighter'
                       }
                       ${isCurrentToday && !isSelected ? 'text-blue-600 font-bold ring-1 ring-blue-100 bg-blue-50/50' : ''}
                     `}>
@@ -256,7 +256,7 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                         {/* Close Button Mobile Friendly (Optional but helpful) */}
                         <button
                             onClick={() => setIsCalendarOpen(false)}
-                            className="mt-4 w-full py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold rounded-xl text-xs transition-colors">
+                            className="mt-4 w-full py-2.5 bg-background hover:bg-surface-lighter text-text-secondary font-bold rounded-xl text-xs transition-colors">
                             {t('common.close')}
                         </button>
                     </div>

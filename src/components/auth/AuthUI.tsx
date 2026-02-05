@@ -160,16 +160,16 @@ export const AuthUI: React.FC<AuthUIProps> = ({
                     opacity="0.9"
                 />
             </svg>
-            <h1 className="text-2xl font-black text-gray-900 tracking-tighter">
+            <h1 className="text-2xl font-black text-text-primary tracking-tighter">
                 LUKEN<span className="text-blue-600">FIT</span>
             </h1>
         </div>
     );
 
     const containerClasses =
-        'min-h-screen bg-gray-50 flex items-center justify-center p-4';
+        'min-h-screen bg-background flex items-center justify-center p-4';
     const cardClasses =
-        'bg-white rounded-3xl p-8 max-w-md w-full border border-gray-100 shadow-xl shadow-gray-200/50';
+        'bg-surface rounded-3xl p-8 max-w-md w-full border border-border shadow-xl shadow-gray-200/50';
 
     if (!isSupabaseConfigured) {
         return (
@@ -177,7 +177,7 @@ export const AuthUI: React.FC<AuthUIProps> = ({
                 <div className={cardClasses}>
                     <div className="text-center mb-6">
                         <LukenFitLogo />
-                        <p className="text-gray-500 mt-2">
+                        <p className="text-text-tertiary mt-2">
                             {t('auth.offline.title')}
                         </p>
                     </div>

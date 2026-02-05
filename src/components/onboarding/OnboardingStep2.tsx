@@ -29,14 +29,14 @@ export const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
                 <h2 className="text-xl font-bold text-white">
                     {t('onboarding.step2.title')}
                 </h2>
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-sm text-text-tertiary mt-1">
                     {t('onboarding.step2.autoCalculate')}
                 </p>
             </div>
 
             <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/20 rounded-xl p-4">
                 <div className="flex justify-between items-center mb-3">
-                    <span className="text-sm text-gray-400">
+                    <span className="text-sm text-text-tertiary">
                         {t('onboarding.step2.title')}
                     </span>
                     <button
@@ -75,14 +75,14 @@ export const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
                                 onChange={(e) => updateField(field, e.target.value)}
                                 className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-2 py-2 text-white text-center text-lg font-bold"
                             />
-                            <span className="text-xs text-gray-500">{label}</span>
+                            <span className="text-xs text-text-tertiary">{label}</span>
                         </div>
                     ))}
                 </div>
             </div>
 
             <div className="bg-gray-700/30 rounded-xl p-4 border border-gray-600/50">
-                <p className="text-xs text-gray-400 leading-relaxed">
+                <p className="text-xs text-text-tertiary leading-relaxed">
                     {t('onboarding.step2.tip')}
                 </p>
             </div>

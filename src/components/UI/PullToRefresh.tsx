@@ -81,7 +81,7 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
                         </svg>
                     ) : (
                         <span
-                            className={`text-sm ${pullDistance >= PULL_THRESHOLD ? 'text-blue-400' : 'text-gray-400'}`}>
+                            className={`text-sm ${pullDistance >= PULL_THRESHOLD ? 'text-blue-400' : 'text-text-tertiary'}`}>
                             {pullDistance >= PULL_THRESHOLD
                                 ? '↑ Soltar para actualizar'
                                 : '↓ Arrastra para actualizar'}

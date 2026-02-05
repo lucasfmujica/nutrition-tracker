@@ -21,15 +21,15 @@ export const ChallengesSection: React.FC<ChallengesSectionProps> = ({
         <div className="space-y-3">
             <div className="flex items-center justify-between px-1">
                 <div>
-                    <h2 className="text-lg font-bold text-slate-900 leading-tight">
+                    <h2 className="text-lg font-bold text-text-primary leading-tight">
                         {t('social.challenges.title')}
                     </h2>
-                    <p className="text-xs text-slate-500 font-medium">
+                    <p className="text-xs text-text-tertiary font-medium">
                         {t('social.challenges.subtitle')}
                     </p>
                 </div>
                 {/* Optional: Add Challenge Button */}
-                {/* <button className="p-2 bg-slate-100 rounded-lg text-slate-600 hover:bg-slate-200 transition-colors">
+                {/* <button className="p-2 bg-surface-lighter rounded-lg text-text-secondary hover:bg-surface-lighter transition-colors">
                     <Plus size={18} />
                 </button> */}
             </div>

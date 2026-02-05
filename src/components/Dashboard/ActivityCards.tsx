@@ -19,7 +19,7 @@ const ActivityCard: React.FC<ActivityCardProps> = React.memo(
         const percentage = Math.min((value / target) * 100, 100);
 
         return (
-            <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden flex-1 group hover:border-primary/20 transition-colors">
+            <div className="bg-surface p-5 rounded-3xl shadow-sm border border-border relative overflow-hidden flex-1 group hover:border-primary/20 transition-colors">
                 <div className="flex items-start justify-between mb-2">
                     <div className={`p-2 rounded-full ${color}`}>
                         <Icon size={20} className="text-white" />
@@ -28,7 +28,7 @@ const ActivityCard: React.FC<ActivityCardProps> = React.memo(
                         {onDecrease && (
                             <button
                                 onClick={onDecrease}
-                                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-500 hover:bg-gray-100 transition-colors">
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-background text-text-tertiary hover:bg-surface-lighter transition-colors">
                                 <Minus size={16} />
                             </button>
                         )}
@@ -43,23 +43,23 @@ const ActivityCard: React.FC<ActivityCardProps> = React.memo(
                 </div>
 
                 <div>
-                    <span className="text-2xl font-bold text-gray-900 block">
+                    <span className="text-2xl font-bold text-text-primary block">
                         {value}
                     </span>
-                    <span className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                    <span className="text-xs text-text-tertiary font-medium uppercase tracking-wide">
                         {unit}
                     </span>
                 </div>
 
                 <div className="mt-3">
-                    <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-1.5 w-full bg-surface-lighter rounded-full overflow-hidden">
                         <div
                             className={`h-full rounded-full transition-all duration-500 ${color}`}
                             style={{ width: `${percentage}%` }}
                         />
                     </div>
                     {subtext && (
-                        <p className="text-[10px] text-gray-400 mt-1.5 text-right">
+                        <p className="text-[10px] text-text-tertiary mt-1.5 text-right">
                             {subtext}
                         </p>
                     )}

@@ -47,16 +47,16 @@ export const ShareModal: React.FC<ShareModalProps> = ({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-surface rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                 {/* Header */}
-                <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
-                    <h2 className="text-xl font-bold text-slate-900">
+                <div className="sticky top-0 bg-surface border-b border-border px-6 py-4 flex items-center justify-between">
+                    <h2 className="text-xl font-bold text-text-primary">
                         {t('progress.share.title')}
                     </h2>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                        <X size={20} className="text-slate-600" />
+                        className="p-2 hover:bg-surface-lighter rounded-lg transition-colors">
+                        <X size={20} className="text-text-secondary" />
                     </button>
                 </div>
 
@@ -64,7 +64,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                 <div className="p-6 space-y-6">
                     {/* Caption Generator */}
                     <div>
-                        <h3 className="font-bold text-slate-900 mb-3">
+                        <h3 className="font-bold text-text-primary mb-3">
                             {t('progress.share.createCaption')}
                         </h3>
                         <CaptionGenerator
@@ -79,7 +79,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                     {/* Preview */}
                     {caption && (
                         <div>
-                            <h3 className="font-bold text-slate-900 mb-3">
+                            <h3 className="font-bold text-text-primary mb-3">
                                 {t('progress.share.preview')}
                             </h3>
                             <TransformationStoryCard

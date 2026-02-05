@@ -29,14 +29,14 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
 
     if (!data) {
         return (
-            <div className="bg-white rounded-2xl p-8 text-center border border-gray-100 shadow-sm">
-                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+            <div className="bg-surface rounded-2xl p-8 text-center border border-border shadow-sm">
+                <div className="w-16 h-16 bg-background rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
                     📭
                 </div>
-                <h3 className="text-gray-900 font-bold text-lg mb-1">
+                <h3 className="text-text-primary font-bold text-lg mb-1">
                     {t('oura.setup.noData')}
                 </h3>
-                <p className="text-gray-500 text-sm">{t('oura.setup.syncPrompt')}</p>
+                <p className="text-text-tertiary text-sm">{t('oura.setup.syncPrompt')}</p>
             </div>
         );
     }
@@ -54,7 +54,7 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
     } = data;
 
     const getScoreColor = (score?: number) => {
-        if (!score) return 'text-gray-400';
+        if (!score) return 'text-text-tertiary';
         if (score >= 85) return 'text-green-500';
         if (score >= 70) return 'text-amber-500';
         return 'text-red-500';
@@ -77,7 +77,7 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                 <div className="relative z-10">
                     <div className="flex justify-between items-start mb-6">
                         <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center backdrop-blur-sm">
+                            <div className="w-8 h-8 rounded-lg bg-surface/10 flex items-center justify-center backdrop-blur-sm">
                                 <Zap className="w-5 h-5 text-yellow-300" />
                             </div>
                             <span className="font-bold text-sm tracking-wide text-indigo-100">
@@ -99,7 +99,7 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-white/5 rounded-xl p-3 backdrop-blur-sm border border-white/10">
+                        <div className="bg-surface/5 rounded-xl p-3 backdrop-blur-sm border border-white/10">
                             <div className="flex items-center gap-2 mb-1">
                                 <Heart className="w-3.5 h-3.5 text-rose-400" />
                                 <span className="text-xs text-indigo-200">HRV</span>
@@ -109,7 +109,7 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                                 ms
                             </span>
                         </div>
-                        <div className="bg-white/5 rounded-xl p-3 backdrop-blur-sm border border-white/10">
+                        <div className="bg-surface/5 rounded-xl p-3 backdrop-blur-sm border border-white/10">
                             <div className="flex items-center gap-2 mb-1">
                                 <Activity className="w-3.5 h-3.5 text-rose-400" />
                                 <span className="text-xs text-indigo-200">
@@ -128,7 +128,7 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-blue-200 transition-colors">
+                <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm relative overflow-hidden group hover:border-blue-200 transition-colors">
                     <div className="absolute top-0 right-0 w-1.5 h-full bg-blue-500 opacity-80" />
 
                     <div className="flex justify-between items-center mb-4">
@@ -136,7 +136,7 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                             <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
                                 <Moon className="w-4 h-4" />
                             </div>
-                            <span className="font-bold text-sm text-gray-700">
+                            <span className="font-bold text-sm text-text-secondary">
                                 {t('oura.metrics.sleep').toUpperCase()}
                             </span>
                         </div>
@@ -147,37 +147,37 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                     </div>
 
                     <div className="flex items-baseline gap-1 mb-4">
-                        <span className="text-3xl font-bold text-gray-900">
+                        <span className="text-3xl font-bold text-text-primary">
                             {sleepHours || '--'}
                         </span>
-                        <span className="text-sm text-gray-500 font-medium">
+                        <span className="text-sm text-text-tertiary font-medium">
                             {t('oura.metrics.hours')}
                         </span>
                     </div>
 
                     <div className="space-y-2">
                         <div className="flex justify-between items-center text-xs">
-                            <span className="text-gray-500 font-medium flex items-center gap-1.5">
+                            <span className="text-text-tertiary font-medium flex items-center gap-1.5">
                                 <div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>{' '}
                                 {t('oura.metrics.deep')}
                             </span>
-                            <span className="font-bold text-gray-900">
+                            <span className="font-bold text-text-primary">
                                 {formatMins(deepSleepMins)}
                             </span>
                         </div>
                         <div className="flex justify-between items-center text-xs">
-                            <span className="text-gray-500 font-medium flex items-center gap-1.5">
+                            <span className="text-text-tertiary font-medium flex items-center gap-1.5">
                                 <div className="w-1.5 h-1.5 rounded-full bg-sky-400"></div>{' '}
                                 {t('oura.metrics.rem')}
                             </span>
-                            <span className="font-bold text-gray-900">
+                            <span className="font-bold text-text-primary">
                                 {formatMins(remSleepMins)}
                             </span>
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm relative overflow-hidden group hover:border-orange-200 transition-colors">
+                <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm relative overflow-hidden group hover:border-orange-200 transition-colors">
                     <div className="absolute top-0 right-0 w-1.5 h-full bg-orange-500 opacity-80" />
 
                     <div className="flex justify-between items-center mb-4">
@@ -185,7 +185,7 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                             <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
                                 <Flame className="w-4 h-4" />
                             </div>
-                            <span className="font-bold text-sm text-gray-700">
+                            <span className="font-bold text-sm text-text-secondary">
                                 {t('oura.metrics.activity').toUpperCase()}
                             </span>
                         </div>
@@ -198,16 +198,16 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <Footprints className="w-4 h-4 text-gray-400" />
-                                <span className="text-sm text-gray-500">
+                                <Footprints className="w-4 h-4 text-text-tertiary" />
+                                <span className="text-sm text-text-tertiary">
                                     {t('oura.metrics.steps')}
                                 </span>
                             </div>
-                            <span className="text-lg font-bold text-gray-900">
+                            <span className="text-lg font-bold text-text-primary">
                                 {steps ? steps.toLocaleString() : '--'}
                             </span>
                         </div>
-                        <div className="w-full bg-gray-100 rounded-full h-1.5 mt-2">
+                        <div className="w-full bg-surface-lighter rounded-full h-1.5 mt-2">
                             <div
                                 className="bg-orange-500 h-1.5 rounded-full"
                                 style={{
@@ -215,7 +215,7 @@ export const OuraBentoGrid: React.FC<OuraBentoGridProps> = ({
                                 }}
                             />
                         </div>
-                        <p className="text-[10px] text-gray-400 text-right">
+                        <p className="text-[10px] text-text-tertiary text-right">
                             {t('oura.metrics.target')}: {stepGoal.toLocaleString()}
                         </p>
                     </div>

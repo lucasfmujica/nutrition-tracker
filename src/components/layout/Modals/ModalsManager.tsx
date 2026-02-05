@@ -229,20 +229,20 @@ export const ModalsManager: React.FC = () => {
 
             {showTemplatesModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start justify-center z-50 p-2 pt-8 overflow-y-auto">
-                    <div className="bg-white rounded-2xl p-5 w-full max-w-sm border border-purple-200 shadow-2xl">
+                    <div className="bg-surface rounded-2xl p-5 w-full max-w-sm border border-purple-200 shadow-2xl">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg lg:text-xl font-bold text-purple-600">
                                 ⭐ Favoritos
                             </h3>
                             <button
                                 onClick={() => setShowTemplatesModal(false)}
-                                className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 text-xl lg:text-2xl transition-colors">
+                                className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-xl bg-surface-lighter hover:bg-surface-lighter text-text-secondary hover:text-text-primary text-xl lg:text-2xl transition-colors">
                                 ×
                             </button>
                         </div>
 
                         {mealTemplates.length === 0 ? (
-                            <p className="text-gray-500 text-sm text-center py-4">
+                            <p className="text-text-tertiary text-sm text-center py-4">
                                 No hay plantillas guardadas. Agregá comidas y
                                 guardalas como favoritos.
                             </p>
@@ -263,11 +263,11 @@ export const ModalsManager: React.FC = () => {
                                                         {template.meal}
                                                     </span>
                                                 </div>
-                                                <h4 className="font-medium text-sm text-gray-900">
+                                                <h4 className="font-medium text-sm text-text-primary">
                                                     {template.name}
                                                 </h4>
                                                 {template.description && (
-                                                    <p className="text-xs text-gray-600 truncate">
+                                                    <p className="text-xs text-text-secondary truncate">
                                                         {template.description}
                                                     </p>
                                                 )}
@@ -290,7 +290,7 @@ export const ModalsManager: React.FC = () => {
                                                 onClick={() =>
                                                     deleteTemplate(template.id)
                                                 }
-                                                className="text-gray-400 hover:text-red-500 active:text-red-600 p-1 transition-colors">
+                                                className="text-text-tertiary hover:text-red-500 active:text-red-600 p-1 transition-colors">
                                                 ×
                                             </button>
                                         </div>
@@ -299,7 +299,7 @@ export const ModalsManager: React.FC = () => {
                             </div>
                         )}
 
-                        <p className="text-xs text-gray-500 mt-3 text-center">
+                        <p className="text-xs text-text-tertiary mt-3 text-center">
                             Toca una comida para agregarla · Desliza a las comidas
                             para guardar nuevas
                         </p>
@@ -309,7 +309,7 @@ export const ModalsManager: React.FC = () => {
 
             {showSaveTemplateModal && templateToSave && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl p-5 w-full max-w-xs border border-purple-200 shadow-2xl">
+                    <div className="bg-surface rounded-2xl p-5 w-full max-w-xs border border-purple-200 shadow-2xl">
                         <h3 className="text-base font-bold text-purple-600 mb-3">
                             {templateToSave.items && templateToSave.items.length > 0
                                 ? '⭐ Guardar Combo'
@@ -317,7 +317,7 @@ export const ModalsManager: React.FC = () => {
                         </h3>
                         <div className="space-y-3">
                             <div>
-                                <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                                <label className="block text-xs font-medium text-text-secondary mb-1.5">
                                     Nombre
                                 </label>
                                 <input
@@ -335,12 +335,12 @@ export const ModalsManager: React.FC = () => {
                                             name: e.target.value,
                                         })
                                     }
-                                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
+                                    className="w-full bg-background border border-border rounded-xl px-3 py-2.5 text-sm text-text-primary focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                                    <label className="block text-xs font-medium text-text-secondary mb-1.5">
                                         Tipo
                                     </label>
                                     <select
@@ -351,7 +351,7 @@ export const ModalsManager: React.FC = () => {
                                                 meal: e.target.value,
                                             })
                                         }
-                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all">
+                                        className="w-full bg-background border border-border rounded-xl px-3 py-2.5 text-sm text-text-primary focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all">
                                         <option value="breakfast">Desayuno</option>
                                         <option value="lunch">Almuerzo</option>
                                         <option value="snack">Merienda</option>
@@ -360,7 +360,7 @@ export const ModalsManager: React.FC = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                                    <label className="block text-xs font-medium text-text-secondary mb-1.5">
                                         Calorías
                                     </label>
                                     <input
@@ -379,11 +379,11 @@ export const ModalsManager: React.FC = () => {
                                                     parseInt(e.target.value) || 0,
                                             })
                                         }
-                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all disabled:opacity-60 disabled:bg-gray-100"
+                                        className="w-full bg-background border border-border rounded-xl px-3 py-2.5 text-sm text-text-primary focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all disabled:opacity-60 disabled:bg-surface-lighter"
                                     />
                                 </div>
                             </div>
-                            <div className="text-xs text-gray-600 font-medium bg-gray-50 px-3 py-2 rounded-lg flex justify-between items-center">
+                            <div className="text-xs text-text-secondary font-medium bg-background px-3 py-2 rounded-lg flex justify-between items-center">
                                 <span>
                                     P: {templateToSave.protein}g · C:{' '}
                                     {templateToSave.carbs}g · F: {templateToSave.fat}
@@ -403,7 +403,7 @@ export const ModalsManager: React.FC = () => {
                                     setShowSaveTemplateModal(false);
                                     setTemplateToSave(null);
                                 }}
-                                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-medium transition-colors">
+                                className="flex-1 bg-surface-lighter hover:bg-surface-lighter text-text-secondary py-2.5 rounded-xl text-sm font-medium transition-colors">
                                 Cancelar
                             </button>
                             <button

@@ -82,7 +82,7 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
     const displayTarget = (targetWeight * weightMultiplier).toFixed(1);
 
     return (
-        <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-xl h-full group transition-all duration-300 hover:border-indigo-100">
+        <div className="bg-surface rounded-[2.5rem] border border-border p-8 shadow-xl h-full group transition-all duration-300 hover:border-indigo-100">
             {/* Header */}
             <div className="flex items-center justify-between mb-4 gap-2">
                 <div className="flex items-center gap-2 min-w-0">
@@ -90,10 +90,10 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
                         <Calendar className="w-4 h-4 text-indigo-600" />
                     </div>
                     <div className="min-w-0">
-                        <h3 className="text-sm font-bold text-gray-900 truncate">
+                        <h3 className="text-sm font-bold text-text-primary truncate">
                             {t('dashboard.weeklyPlan.title')}
                         </h3>
-                        <p className="text-[10px] text-gray-500 hidden sm:block">
+                        <p className="text-[10px] text-text-tertiary hidden sm:block">
                             {t('dashboard.weeklyPlan.subtitle')}
                         </p>
                     </div>
@@ -132,7 +132,7 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
                                     day.isToday
                                         ? `${styles.bg} ring-1 sm:ring-2 ring-offset-1 ${styles.border.replace('border', 'ring')}`
                                         : day.isPast
-                                          ? 'bg-gray-50'
+                                          ? 'bg-background'
                                           : styles.bg
                                 }`}>
                                 {/* Day Label */}
@@ -141,7 +141,7 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
                                         day.isToday
                                             ? styles.text
                                             : day.isPast
-                                              ? 'text-gray-400'
+                                              ? 'text-text-tertiary'
                                               : styles.text
                                     }`}>
                                     {day.dayOfWeek}
@@ -151,13 +151,13 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
                                 <div
                                     className={`my-1 p-1 sm:p-1.5 rounded-full ${
                                         day.isPast && !day.isToday
-                                            ? 'bg-gray-100'
-                                            : 'bg-white/70'
+                                            ? 'bg-surface-lighter'
+                                            : 'bg-surface/70'
                                     }`}>
                                     <IconComponent
                                         className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${
                                             day.isPast && !day.isToday
-                                                ? 'text-gray-400'
+                                                ? 'text-text-tertiary'
                                                 : styles.text
                                         }`}
                                     />
@@ -167,7 +167,7 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
                                 <span
                                     className={`text-[8px] sm:text-[9px] font-semibold leading-none ${
                                         day.isPast && !day.isToday
-                                            ? 'text-gray-400'
+                                            ? 'text-text-tertiary'
                                             : styles.text
                                     }`}>
                                     {day.calories}
@@ -179,24 +179,24 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
             </div>
 
             {/* Legend - Stacked on mobile, inline on larger screens */}
-            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-3 pt-3 border-t border-gray-50">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-3 pt-3 border-t border-border">
                 <div className="flex items-center gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-orange-400" />
-                    <span className="text-[10px] text-gray-500">
+                    <span className="text-[10px] text-text-tertiary">
                         {t('dashboard.weeklyPlan.intensity.high')} (
                         {dayDistribution.high})
                     </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-blue-400" />
-                    <span className="text-[10px] text-gray-500">
+                    <span className="text-[10px] text-text-tertiary">
                         {t('dashboard.weeklyPlan.intensity.moderate')} (
                         {dayDistribution.moderate})
                     </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
-                    <span className="text-[10px] text-gray-500">
+                    <span className="text-[10px] text-text-tertiary">
                         {t('dashboard.weeklyPlan.intensity.recovery')} (
                         {dayDistribution.recovery})
                     </span>

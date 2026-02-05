@@ -42,18 +42,18 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
     };
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div className="bg-surface rounded-2xl border border-border overflow-hidden">
             {/* Header */}
-            <div className="p-4 border-b border-slate-100">
+            <div className="p-4 border-b border-border">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                         <Smartphone className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                        <h3 className="font-semibold text-slate-900">
+                        <h3 className="font-semibold text-text-primary">
                             {t('settings.iosShortcut.title')}
                         </h3>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-text-tertiary">
                             {t('settings.iosShortcut.subtitle') ||
                                 'Registra peso y pasos desde tu iPhone'}
                         </p>
@@ -64,21 +64,21 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
             {/* Content */}
             <div className="p-4 space-y-4">
                 {/* User ID Display */}
-                <div className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                    <span className="text-xs text-slate-500">
+                <div className="flex items-center gap-2 p-3 bg-background border border-border rounded-xl">
+                    <span className="text-xs text-text-tertiary">
                         {t('settings.iosShortcut.userId') || 'Tu ID de usuario:'}
                     </span>
-                    <code className="text-xs font-mono text-slate-700 flex-1">
+                    <code className="text-xs font-mono text-text-secondary flex-1">
                         {shortUserId}...
                     </code>
                     <button
                         onClick={copyUserId}
-                        className="p-1.5 hover:bg-slate-200 rounded-lg transition-colors"
+                        className="p-1.5 hover:bg-surface-lighter rounded-lg transition-colors"
                         title="Copiar ID completo">
                         {copiedId ? (
                             <Check className="w-4 h-4 text-green-600" />
                         ) : (
-                            <Copy className="w-4 h-4 text-slate-400" />
+                            <Copy className="w-4 h-4 text-text-tertiary" />
                         )}
                     </button>
                 </div>
@@ -87,7 +87,7 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                 <div className="grid grid-cols-2 gap-4">
                     {/* Weight Shortcut */}
                     <div className="text-center space-y-2">
-                        <div className="bg-white p-3 rounded-xl border border-slate-200 inline-block">
+                        <div className="bg-surface p-3 rounded-xl border border-border inline-block">
                             <QRCodeSVG
                                 value={weightShortcutUrl}
                                 size={100}
@@ -96,10 +96,10 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                             />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-slate-800">
+                            <p className="text-sm font-medium text-text-primary">
                                 ⚖️ Peso
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-text-tertiary">
                                 Apple Health → App
                             </p>
                         </div>
@@ -113,7 +113,7 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
 
                     {/* Steps Shortcut */}
                     <div className="text-center space-y-2">
-                        <div className="bg-white p-3 rounded-xl border border-slate-200 inline-block">
+                        <div className="bg-surface p-3 rounded-xl border border-border inline-block">
                             <QRCodeSVG
                                 value={stepsShortcutUrl}
                                 size={100}
@@ -122,10 +122,10 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                             />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-slate-800">
+                            <p className="text-sm font-medium text-text-primary">
                                 👟 Pasos
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-text-tertiary">
                                 Apple Health → App
                             </p>
                         </div>
@@ -150,22 +150,22 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                 {/* Expandable Instructions */}
                 <button
                     onClick={() => setShowInstructions(!showInstructions)}
-                    className="w-full flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors">
-                    <span className="text-sm text-slate-600">
+                    className="w-full flex items-center justify-between p-3 bg-background hover:bg-surface-lighter rounded-xl transition-colors">
+                    <span className="text-sm text-text-secondary">
                         {t('settings.iosShortcut.detailedInstructions') ||
                             'Instrucciones detalladas'}
                     </span>
                     {showInstructions ? (
-                        <ChevronUp className="w-4 h-4 text-slate-400" />
+                        <ChevronUp className="w-4 h-4 text-text-tertiary" />
                     ) : (
-                        <ChevronDown className="w-4 h-4 text-slate-400" />
+                        <ChevronDown className="w-4 h-4 text-text-tertiary" />
                     )}
                 </button>
 
                 {showInstructions && (
-                    <div className="space-y-3 p-4 bg-slate-50 rounded-xl text-sm text-slate-600">
+                    <div className="space-y-3 p-4 bg-background rounded-xl text-sm text-text-secondary">
                         <div>
-                            <p className="font-semibold text-slate-800 mb-1">
+                            <p className="font-semibold text-text-primary mb-1">
                                 Paso 1: Escanear QR
                             </p>
                             <p>
@@ -174,7 +174,7 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                             </p>
                         </div>
                         <div>
-                            <p className="font-semibold text-slate-800 mb-1">
+                            <p className="font-semibold text-text-primary mb-1">
                                 Paso 2: Agregar Shortcut
                             </p>
                             <p>
@@ -183,7 +183,7 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                             </p>
                         </div>
                         <div>
-                            <p className="font-semibold text-slate-800 mb-1">
+                            <p className="font-semibold text-text-primary mb-1">
                                 Paso 3: Dar permisos
                             </p>
                             <p>
@@ -192,7 +192,7 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                             </p>
                         </div>
                         <div>
-                            <p className="font-semibold text-slate-800 mb-1">
+                            <p className="font-semibold text-text-primary mb-1">
                                 Paso 4: Ejecutar
                             </p>
                             <p>

@@ -218,7 +218,7 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                         </button>
                         <button
                             onClick={onClose}
-                            className="w-10 h-10 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white text-2xl transition-all">
+                            className="w-10 h-10 flex items-center justify-center rounded-lg bg-surface/10 hover:bg-surface/20 text-white text-2xl transition-all">
                             ×
                         </button>
                     </div>
@@ -227,7 +227,7 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                 <div className="flex justify-center gap-2 mb-4">
                     <button
                         onClick={() => setSelectedWeek((s) => s - 1)}
-                        className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm transition-all">
+                        className="px-3 py-1.5 bg-surface/10 hover:bg-surface/20 text-white rounded-lg text-sm transition-all">
                         ← {t('common.prev')}
                     </button>
                     <span className="px-4 py-1.5 bg-blue-500 text-white rounded-lg text-sm font-medium shadow-lg">
@@ -236,24 +236,24 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                     <button
                         onClick={() => setSelectedWeek((s) => Math.min(s + 1, 0))}
                         disabled={selectedWeek >= 0}
-                        className="px-3 py-1.5 bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed text-white rounded-lg text-sm transition-all">
+                        className="px-3 py-1.5 bg-surface/10 hover:bg-surface/20 disabled:opacity-30 disabled:cursor-not-allowed text-white rounded-lg text-sm transition-all">
                         {t('common.next')} →
                     </button>
                 </div>
 
                 <div
                     ref={reportRef}
-                    className="bg-white rounded-2xl p-5 border border-gray-200 shadow-2xl space-y-5">
+                    className="bg-surface rounded-2xl p-5 border border-border shadow-2xl space-y-5">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
                                 <span className="text-2xl">💪</span>
                             </div>
                             <div>
-                                <h3 className="text-lg font-bold text-gray-900">
+                                <h3 className="text-lg font-bold text-text-primary">
                                     LukenFit
                                 </h3>
-                                <p className="text-sm text-gray-500">
+                                <p className="text-sm text-text-tertiary">
                                     {currentWeek.monday} → {currentWeek.sunday}
                                 </p>
                             </div>
@@ -262,7 +262,7 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                             <div className="text-2xl font-bold text-blue-500">
                                 {thisWeekStats.summary.calOkDays}/7
                             </div>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-text-tertiary">
                                 {t('dashboard.weeklyReport.daysOnTrack')}
                             </p>
                         </div>
@@ -273,7 +273,7 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                             <div className="text-2xl font-bold text-blue-600">
                                 {thisWeekStats.summary.avgCalories}
                             </div>
-                            <div className="text-xs text-gray-600">kcal/día</div>
+                            <div className="text-xs text-text-secondary">kcal/día</div>
                             <div
                                 className={`text-xs mt-1 font-medium ${parseFloat(calChange) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                                 {parseFloat(calChange) > 0
@@ -288,7 +288,7 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                             <div className="text-2xl font-bold text-cyan-600">
                                 {thisWeekStats.summary.avgProtein}g
                             </div>
-                            <div className="text-xs text-gray-600">proteína/día</div>
+                            <div className="text-xs text-text-secondary">proteína/día</div>
                             <div
                                 className={`text-xs mt-1 font-medium ${parseFloat(protChange) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                                 {parseFloat(protChange) > 0
@@ -303,10 +303,10 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                             <div className="text-2xl font-bold text-amber-600">
                                 {thisWeekStats.summary.totalWorkouts}
                             </div>
-                            <div className="text-xs text-gray-600">
+                            <div className="text-xs text-text-secondary">
                                 {t('navigation.workouts').toLowerCase()}
                             </div>
-                            <div className="text-xs mt-1 text-gray-500 font-medium">
+                            <div className="text-xs mt-1 text-text-tertiary font-medium">
                                 {thisWeekStats.summary.totalWorkoutMins} min
                             </div>
                         </div>
@@ -314,19 +314,19 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                             <div className="text-2xl font-bold text-purple-600">
                                 {Math.round(thisWeekStats.summary.avgSteps / 1000)}k
                             </div>
-                            <div className="text-xs text-gray-600">pasos/día</div>
-                            <div className="text-xs mt-1 text-gray-500 font-medium">
+                            <div className="text-xs text-text-secondary">pasos/día</div>
+                            <div className="text-xs mt-1 text-text-tertiary font-medium">
                                 prom.
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                    <div className="bg-background rounded-xl p-4 border border-border">
                         <div className="flex justify-between items-center mb-3">
-                            <h4 className="text-sm font-semibold text-gray-900">
+                            <h4 className="text-sm font-semibold text-text-primary">
                                 {t('dashboard.adherence.calOk')}
                             </h4>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-text-tertiary">
                                 {t('dashboard.summary.target')}: {targets.calories}
                             </span>
                         </div>
@@ -366,7 +366,7 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                                                 }}
                                             />
                                         </div>
-                                        <span className="text-xs text-gray-600 font-medium">
+                                        <span className="text-xs text-text-secondary font-medium">
                                             {dayNames[i]}
                                         </span>
                                     </div>
@@ -375,12 +375,12 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                         </div>
                     </div>
 
-                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                    <div className="bg-background rounded-xl p-4 border border-border">
                         <div className="flex justify-between items-center mb-3">
-                            <h4 className="text-sm font-semibold text-gray-900">
+                            <h4 className="text-sm font-semibold text-text-primary">
                                 {t('dashboard.macros.protein')}
                             </h4>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-text-tertiary">
                                 {t('dashboard.summary.target')}: {targets.protein}g
                             </span>
                         </div>
@@ -415,7 +415,7 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                                                 }}
                                             />
                                         </div>
-                                        <span className="text-xs text-gray-600 font-medium">
+                                        <span className="text-xs text-text-secondary font-medium">
                                             {dayNames[i]}
                                         </span>
                                     </div>
@@ -428,7 +428,7 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                         <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="text-lg">✅</span>
-                                <span className="text-sm font-medium text-gray-900">
+                                <span className="text-sm font-medium text-text-primary">
                                     Adherencia Calorías
                                 </span>
                             </div>
@@ -436,9 +436,9 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                                 <span className="text-3xl font-bold text-green-600">
                                     {thisWeekStats.summary.calOkDays}
                                 </span>
-                                <span className="text-gray-600">/7 días</span>
+                                <span className="text-text-secondary">/7 días</span>
                             </div>
-                            <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div className="mt-2 h-2 bg-surface-lighter rounded-full overflow-hidden">
                                 <div
                                     className="h-full bg-green-500 rounded-full transition-all"
                                     style={{
@@ -450,7 +450,7 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                         <div className="bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-200 rounded-xl p-4">
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="text-lg">💪</span>
-                                <span className="text-sm font-medium text-gray-900">
+                                <span className="text-sm font-medium text-text-primary">
                                     Adherencia Proteína
                                 </span>
                             </div>
@@ -458,9 +458,9 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                                 <span className="text-3xl font-bold text-cyan-600">
                                     {thisWeekStats.summary.protOkDays}
                                 </span>
-                                <span className="text-gray-600">/7 días</span>
+                                <span className="text-text-secondary">/7 días</span>
                             </div>
-                            <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div className="mt-2 h-2 bg-surface-lighter rounded-full overflow-hidden">
                                 <div
                                     className="h-full bg-cyan-500 rounded-full transition-all"
                                     style={{
@@ -480,7 +480,7 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                                         Mejor día de la semana
                                     </span>
                                 </div>
-                                <p className="text-gray-900 text-sm">
+                                <p className="text-text-primary text-sm">
                                     <span className="font-bold">
                                         {new Date(
                                             thisWeekStats.summary.bestDay.date +
@@ -504,8 +504,8 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                             </div>
                         )}
 
-                    <div className="text-center pt-2 border-t border-gray-200">
-                        <p className="text-xs text-gray-500">
+                    <div className="text-center pt-2 border-t border-border">
+                        <p className="text-xs text-text-tertiary">
                             {t('dashboard.weeklyReport.footer')} •{' '}
                             {new Date().toLocaleDateString(
                                 i18n.language === 'es' ? 'es-AR' : 'en-US',

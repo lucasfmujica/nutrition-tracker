@@ -84,14 +84,14 @@ export const ProgressComparisonView: React.FC<ProgressComparisonViewProps> = ({
     // Empty state - need at least 1 photo
     if (photos.length === 0) {
         return (
-            <div className="bg-white rounded-2xl p-8 text-center border border-slate-100">
+            <div className="bg-surface rounded-2xl p-8 text-center border border-border">
                 <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <ImageIcon size={28} className="text-purple-400" />
                 </div>
-                <h3 className="font-bold text-slate-900 mb-1">
+                <h3 className="font-bold text-text-primary mb-1">
                     Sin fotos para comparar
                 </h3>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-text-tertiary">
                     Subí al menos 2 fotos de progreso para usar la comparación.
                 </p>
             </div>
@@ -101,17 +101,17 @@ export const ProgressComparisonView: React.FC<ProgressComparisonViewProps> = ({
     // Need at least 2 photos
     if (photos.length < 2) {
         return (
-            <div className="bg-white rounded-2xl p-8 text-center border border-slate-100">
+            <div className="bg-surface rounded-2xl p-8 text-center border border-border">
                 <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <ImageIcon size={28} className="text-purple-400" />
                 </div>
-                <h3 className="font-bold text-slate-900 mb-1">
+                <h3 className="font-bold text-text-primary mb-1">
                     Necesitás más fotos
                 </h3>
-                <p className="text-sm text-slate-500 mb-4">
+                <p className="text-sm text-text-tertiary mb-4">
                     Subí al menos una foto más para comparar tu progreso.
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-text-tertiary">
                     Tenés {photos.length} foto. Necesitás al menos 2.
                 </p>
             </div>
@@ -129,8 +129,8 @@ export const ProgressComparisonView: React.FC<ProgressComparisonViewProps> = ({
                     onShare={handleShare}
                 />
             ) : (
-                <div className="bg-white rounded-2xl p-8 text-center border border-slate-100">
-                    <p className="text-slate-500">Seleccioná fotos para comparar</p>
+                <div className="bg-surface rounded-2xl p-8 text-center border border-border">
+                    <p className="text-text-tertiary">Seleccioná fotos para comparar</p>
                 </div>
             )}
 

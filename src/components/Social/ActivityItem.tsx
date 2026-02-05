@@ -70,8 +70,8 @@ export const ActivityItemComponent: React.FC<ActivityItemProps> = ({
             default:
                 return {
                     icon: Flame,
-                    bg: 'bg-slate-50',
-                    iconColor: 'text-slate-500',
+                    bg: 'bg-background',
+                    iconColor: 'text-text-tertiary',
                     verb: t('social.activity.default'),
                 };
         }
@@ -128,9 +128,9 @@ export const ActivityItemComponent: React.FC<ActivityItemProps> = ({
     return (
         <div
             onClick={() => isClickable && onClick(activity)}
-            className={`flex items-start gap-3 py-3 border-b border-slate-50 last:border-0 transition-colors ${
+            className={`flex items-start gap-3 py-3 border-b border-border last:border-0 transition-colors ${
                 isClickable
-                    ? 'cursor-pointer hover:bg-slate-50/50 active:bg-slate-50'
+                    ? 'cursor-pointer hover:bg-background/50 active:bg-background'
                     : ''
             }`}>
             {/* Activity Icon */}
@@ -141,20 +141,20 @@ export const ActivityItemComponent: React.FC<ActivityItemProps> = ({
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-                <p className="text-sm text-slate-700">
-                    <span className="font-bold text-slate-900">
+                <p className="text-sm text-text-secondary">
+                    <span className="font-bold text-text-primary">
                         {activity.userName}
                     </span>{' '}
                     {config.verb}
                     {detailText && (
-                        <span className="font-semibold text-slate-600">
+                        <span className="font-semibold text-text-secondary">
                             {' '}
                             - {detailText}
                         </span>
                     )}
                 </p>
                 <div className="flex items-center gap-3 mt-1">
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-text-tertiary">
                         {formatRelativeTime(activity.createdAt)}
                     </p>
                     {/* Reaction Button */}
@@ -167,7 +167,7 @@ export const ActivityItemComponent: React.FC<ActivityItemProps> = ({
                             className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold transition-all active:scale-95 ${
                                 hasReacted
                                     ? 'bg-orange-50 text-orange-600 hover:bg-orange-100'
-                                    : 'bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-orange-500'
+                                    : 'bg-background text-text-tertiary hover:bg-surface-lighter hover:text-orange-500'
                             }`}>
                             <Flame
                                 size={14}

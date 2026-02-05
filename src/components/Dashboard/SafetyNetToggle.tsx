@@ -26,7 +26,7 @@ export const SafetyNetToggle: React.FC<SafetyNetToggleProps> = ({
         ${
             isActive
                 ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-200/50'
-                : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300 shadow-sm'
+                : 'bg-surface text-text-secondary border border-border hover:border-blue-300 shadow-sm'
         }
       `}
             title={
@@ -38,7 +38,7 @@ export const SafetyNetToggle: React.FC<SafetyNetToggleProps> = ({
             <Shield
                 className={`
           w-5 h-5 transition-all duration-300 flex-shrink-0
-          ${isActive ? 'text-white' : 'text-gray-400'}
+          ${isActive ? 'text-white' : 'text-text-tertiary'}
         `}
                 fill={isActive ? 'currentColor' : 'none'}
             />
@@ -46,11 +46,11 @@ export const SafetyNetToggle: React.FC<SafetyNetToggleProps> = ({
             {/* Label (Always visible now) */}
             <div className="flex flex-col items-start text-left">
                 <span
-                    className={`text-sm font-semibold ${isActive ? 'text-white' : 'text-gray-900'}`}>
+                    className={`text-sm font-semibold ${isActive ? 'text-white' : 'text-text-primary'}`}>
                     {t('dashboard.safetyNet.title')}
                 </span>
                 <span
-                    className={`text-[10px] uppercase tracking-wide font-medium ${isActive ? 'text-blue-100' : 'text-gray-400'}`}>
+                    className={`text-[10px] uppercase tracking-wide font-medium ${isActive ? 'text-blue-100' : 'text-text-tertiary'}`}>
                     {isActive
                         ? t('dashboard.safetyNet.on')
                         : t('dashboard.safetyNet.off')}

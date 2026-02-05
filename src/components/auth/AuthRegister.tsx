@@ -40,7 +40,7 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
         <>
             <div className="text-center mb-8">
                 <LukenFitLogo />
-                <p className="text-gray-500 text-sm mt-2">
+                <p className="text-text-tertiary text-sm mt-2">
                     {t('auth.register.subtitle')}
                 </p>
             </div>
@@ -58,42 +58,42 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
 
             <form onSubmit={onSubmit} className="space-y-4">
                 <div>
-                    <label className="block text-gray-700 text-xs font-bold mb-2 uppercase tracking-wide">
+                    <label className="block text-text-secondary text-xs font-bold mb-2 uppercase tracking-wide">
                         {t('auth.register.email')}
                     </label>
                     <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
+                        className="w-full px-4 py-3.5 bg-background border border-border rounded-xl text-text-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
                         placeholder="tu@email.com"
                         required
                     />
                 </div>
 
                 <div>
-                    <label className="block text-gray-700 text-xs font-bold mb-2 uppercase tracking-wide">
+                    <label className="block text-text-secondary text-xs font-bold mb-2 uppercase tracking-wide">
                         {t('auth.register.password')}
                     </label>
                     <input
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
+                        className="w-full px-4 py-3.5 bg-background border border-border rounded-xl text-text-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
                         placeholder="••••••••"
                         required
                     />
                 </div>
 
                 <div>
-                    <label className="block text-gray-700 text-xs font-bold mb-2 uppercase tracking-wide">
+                    <label className="block text-text-secondary text-xs font-bold mb-2 uppercase tracking-wide">
                         {t('auth.register.confirmPassword')}
                     </label>
                     <input
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
+                        className="w-full px-4 py-3.5 bg-background border border-border rounded-xl text-text-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
                         placeholder="••••••••"
                         required
                     />
@@ -134,10 +134,10 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
             {/* Google Sign-In */}
             <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-200"></div>
+                    <div className="w-full border-t border-border"></div>
                 </div>
                 <div className="relative flex justify-center text-xs uppercase tracking-widest">
-                    <span className="px-4 bg-white text-gray-400 font-bold">
+                    <span className="px-4 bg-surface text-text-tertiary font-bold">
                         {t('common.or')}
                     </span>
                 </div>
@@ -146,7 +146,7 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
             <button
                 onClick={handleGoogleSignIn}
                 disabled={loading}
-                className="w-full py-3.5 bg-white text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all border-2 border-gray-200 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3">
+                className="w-full py-3.5 bg-surface text-text-secondary font-bold rounded-xl hover:bg-background transition-all border-2 border-border hover:border-border disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3">
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
                         fill="#4285F4"
@@ -169,7 +169,7 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
             </button>
 
             <div className="mt-8 space-y-4 text-center">
-                <div className="text-gray-600 text-sm bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <div className="text-text-secondary text-sm bg-background p-3 rounded-xl border border-border">
                     {t('auth.register.hasAccount')}{' '}
                     <button
                         onClick={() => {
@@ -183,10 +183,10 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
 
             <div className="relative my-8">
                 <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-100"></div>
+                    <div className="w-full border-t border-border"></div>
                 </div>
                 <div className="relative flex justify-center text-xs uppercase tracking-widest">
-                    <span className="px-4 bg-white text-gray-400 font-bold">
+                    <span className="px-4 bg-surface text-text-tertiary font-bold">
                         {t('auth.register.continueGuest')}
                     </span>
                 </div>
@@ -194,7 +194,7 @@ export const AuthRegister: React.FC<AuthRegisterProps> = ({
 
             <button
                 onClick={handleContinueOffline}
-                className="w-full py-3.5 bg-white text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all border-2 border-dashed border-gray-200 hover:border-gray-300">
+                className="w-full py-3.5 bg-surface text-text-secondary font-bold rounded-xl hover:bg-background transition-all border-2 border-dashed border-border hover:border-border">
                 {t('auth.register.guestButton')}
             </button>
         </>

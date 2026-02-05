@@ -76,16 +76,16 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
         <div className="space-y-3 pb-24 lg:pb-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">
+                    <h1 className="text-2xl font-bold text-text-primary">
                         {t('workouts.title')}
                     </h1>
-                    <p className="text-sm text-gray-500">{t('workouts.subtitle')}</p>
+                    <p className="text-sm text-text-tertiary">{t('workouts.subtitle')}</p>
                 </div>
                 <div className="flex flex-col-reverse md:flex-row gap-3 w-full md:w-auto">
                     <button
                         onClick={() => setShowImportWorkoutModal(true)}
                         className="group relative flex items-center justify-center gap-2 px-5 py-3 md:py-2 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl text-sm font-bold shadow-lg shadow-slate-900/20 active:scale-95 transition-all w-full md:w-auto overflow-hidden">
-                        <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                        <div className="absolute inset-0 bg-surface/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                         <Camera size={18} className="text-amber-400" />
                         <span>{t('workouts.importGravl')}</span>
                     </button>
@@ -108,18 +108,18 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex flex-col justify-center items-center">
+                    <div className="bg-surface rounded-2xl p-4 border border-border shadow-sm flex flex-col justify-center items-center">
                         <div className="flex items-center gap-2 mb-1">
                             <Trophy className="w-5 h-5 text-amber-500" />
-                            <h3 className="text-gray-900 font-bold">
+                            <h3 className="text-text-primary font-bold">
                                 {t('workouts.total')}
                             </h3>
                         </div>
-                        <div className="text-3xl font-black text-gray-900 leading-none mb-1">
+                        <div className="text-3xl font-black text-text-primary leading-none mb-1">
                             {(workoutAnalysis as any).gymCount +
                                 (workoutAnalysis as any).tennisCount}
                         </div>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                        <p className="text-[10px] text-text-tertiary font-bold uppercase tracking-wider">
                             {t('workouts.workoutsLabel')}
                         </p>
                     </div>
@@ -141,32 +141,32 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+                    <div className="p-3 bg-surface rounded-xl border border-border shadow-sm flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
                                 <Dumbbell className="w-4 h-4" />
                             </div>
                             <div className="text-left">
-                                <div className="text-lg font-bold text-gray-900 leading-none">
+                                <div className="text-lg font-bold text-text-primary leading-none">
                                     {(workoutAnalysis as any).gymCount}
                                 </div>
-                                <div className="text-[10px] text-gray-400 font-bold uppercase">
+                                <div className="text-[10px] text-text-tertiary font-bold uppercase">
                                     {t('workouts.gym')}
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+                    <div className="p-3 bg-surface rounded-xl border border-border shadow-sm flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-600">
                                 <Target className="w-4 h-4" />
                             </div>
                             <div className="text-left">
-                                <div className="text-lg font-bold text-gray-900 leading-none">
+                                <div className="text-lg font-bold text-text-primary leading-none">
                                     {(workoutAnalysis as any).tennisCount}
                                 </div>
-                                <div className="text-[10px] text-gray-400 font-bold uppercase">
+                                <div className="text-[10px] text-text-tertiary font-bold uppercase">
                                     {t('workouts.tennis')}
                                 </div>
                             </div>
@@ -177,16 +177,16 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
 
             {dailyOura && (
                 <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-white rounded-xl p-3 border border-gray-100 shadow-sm flex items-center justify-between">
+                    <div className="bg-surface rounded-xl p-3 border border-border shadow-sm flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
                                 <Moon className="w-4 h-4" />
                             </div>
                             <div>
-                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                                <p className="text-[10px] text-text-tertiary font-bold uppercase tracking-wider">
                                     {t('workouts.sleep')}
                                 </p>
-                                <p className="text-xl font-bold text-gray-900">
+                                <p className="text-xl font-bold text-text-primary">
                                     {dailyOura.sleepScore}
                                 </p>
                             </div>
@@ -196,16 +196,16 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                         />
                     </div>
 
-                    <div className="bg-white rounded-xl p-3 border border-gray-100 shadow-sm flex items-center justify-between">
+                    <div className="bg-surface rounded-xl p-3 border border-border shadow-sm flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                                 <Zap className="w-4 h-4" />
                             </div>
                             <div>
-                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                                <p className="text-[10px] text-text-tertiary font-bold uppercase tracking-wider">
                                     {t('workouts.readiness')}
                                 </p>
-                                <p className="text-xl font-bold text-gray-900">
+                                <p className="text-xl font-bold text-text-primary">
                                     {dailyOura.readinessScore}
                                 </p>
                             </div>
@@ -218,20 +218,20 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
             )}
 
             {workoutsForSelectedDate.length > 0 && (
-                <p className="text-xs text-gray-400 text-center uppercase tracking-widest font-bold">
+                <p className="text-xs text-text-tertiary text-center uppercase tracking-widest font-bold">
                     ← {t('common.swipeToDelete', 'Desliza para eliminar')}
                 </p>
             )}
 
             {workoutsForSelectedDate.length === 0 ? (
-                <div className="bg-white rounded-2xl p-12 text-center border border-gray-100 shadow-sm">
+                <div className="bg-surface rounded-2xl p-12 text-center border border-border shadow-sm">
                     <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
                         💪
                     </div>
-                    <h3 className="text-gray-900 font-bold text-lg mb-1">
+                    <h3 className="text-text-primary font-bold text-lg mb-1">
                         {t('workouts.noWorkouts')}
                     </h3>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-text-tertiary text-sm">
                         {t('workouts.logActivityPrompt')}
                     </p>
                 </div>
@@ -248,7 +248,7 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                                         workout.name,
                                     )
                                 }>
-                                <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm relative overflow-hidden">
+                                <div className="bg-surface rounded-2xl p-4 border border-border shadow-sm relative overflow-hidden">
                                     <div
                                         className={`absolute top-0 left-0 bottom-0 w-1.5 ${workout.type === 'gym' ? 'bg-amber-500' : 'bg-green-500'}`}
                                     />
@@ -261,7 +261,7 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                                                     {workout.type}
                                                 </span>
                                             </div>
-                                            <h3 className="font-bold text-gray-900 text-lg leading-tight truncate">
+                                            <h3 className="font-bold text-text-primary text-lg leading-tight truncate">
                                                 {workout.name}
                                             </h3>
                                         </div>
@@ -277,7 +277,7 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-3 pl-2">
+                                    <div className="flex flex-wrap gap-4 text-sm text-text-tertiary mb-3 pl-2">
                                         {workout.duration && (
                                             <span className="flex items-center gap-1.5 font-medium">
                                                 <span className="text-blue-500">
@@ -306,15 +306,15 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
 
                                     {workout.exercises &&
                                         workout.exercises.length > 0 && (
-                                            <div className="space-y-2 border-t border-gray-50 pt-3 pl-2">
+                                            <div className="space-y-2 border-t border-border pt-3 pl-2">
                                                 {workout.exercises.map((ex, idx) => (
                                                     <div
                                                         key={idx}
                                                         className="text-sm flex justify-between items-center group">
-                                                        <span className="text-gray-700 font-medium truncate flex-1">
+                                                        <span className="text-text-secondary font-medium truncate flex-1">
                                                             {ex.name}
                                                         </span>
-                                                        <span className="text-gray-400 font-mono text-xs tabular-nums ml-4 bg-gray-50 px-2 py-0.5 rounded-lg border border-gray-100">
+                                                        <span className="text-text-tertiary font-mono text-xs tabular-nums ml-4 bg-background px-2 py-0.5 rounded-lg border border-border">
                                                             {ex.sets}x{ex.reps} ·{' '}
                                                             {ex.weight}kg
                                                         </span>
@@ -324,7 +324,7 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                                         )}
 
                                     {workout.notes && (
-                                        <div className="mt-3 pl-2 pt-2 border-t border-gray-50">
+                                        <div className="mt-3 pl-2 pt-2 border-t border-border">
                                             <p className="text-sm text-blue-600 bg-blue-50/50 p-2 rounded-xl italic">
                                                 "{workout.notes}"
                                             </p>
@@ -418,9 +418,9 @@ const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
     };
 
     return (
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+        <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                <h3 className="text-xs font-bold text-text-tertiary uppercase tracking-widest">
                     {t('workouts.weeklyPlan')}
                 </h3>
                 <button
@@ -429,7 +429,7 @@ const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
                     className={`group relative flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-xl transition-all duration-200 ${
                         isEditing
                             ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg shadow-green-200/50 hover:shadow-xl hover:shadow-green-200/70 active:scale-95'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:scale-95'
+                            : 'bg-surface-lighter text-text-secondary hover:bg-surface-lighter active:scale-95'
                     } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <span className="text-base">{isEditing ? '✓' : '✏️'}</span>
                     <span>
@@ -465,7 +465,7 @@ const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
                                     onChange={(e) => {
                                         handleTypeChange(i, e.target.value);
                                     }}
-                                    className="w-full p-2 rounded-xl border-2 border-blue-400 bg-white text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-lg transition-all cursor-pointer appearance-none text-center"
+                                    className="w-full p-2 rounded-xl border-2 border-blue-400 bg-surface text-xs font-bold text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-lg transition-all cursor-pointer appearance-none text-center"
                                     autoFocus
                                     style={{
                                         backgroundImage:
@@ -501,7 +501,7 @@ const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
                                       ? 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100'
                                       : isCardio
                                         ? 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100'
-                                        : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100'
+                                        : 'bg-background border-border text-text-tertiary hover:bg-surface-lighter'
                             }`}>
                             <div className="font-bold text-xs">{day}</div>
                             <div className="text-[10px] font-bold mt-1 tracking-tighter">
@@ -514,7 +514,7 @@ const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
                                         : 'OFF'}
                             </div>
                             {isEditing && (
-                                <div className="mt-1 text-[8px] text-gray-400 font-normal">
+                                <div className="mt-1 text-[8px] text-text-tertiary font-normal">
                                     tap
                                 </div>
                             )}
@@ -532,8 +532,8 @@ const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
             )}
 
             {isSaving && (
-                <div className="mt-3 flex items-center justify-center gap-2 text-xs text-gray-500">
-                    <div className="w-3 h-3 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+                <div className="mt-3 flex items-center justify-center gap-2 text-xs text-text-tertiary">
+                    <div className="w-3 h-3 border-2 border-border border-t-blue-500 rounded-full animate-spin"></div>
                     {t('common.saving', 'Guardando...')}
                 </div>
             )}

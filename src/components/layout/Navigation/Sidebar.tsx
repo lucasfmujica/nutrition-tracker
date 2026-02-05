@@ -65,7 +65,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     ];
 
     return (
-        <aside className="w-64 bg-white border-r border-gray-100 hidden lg:flex flex-col h-screen sticky top-0">
+        <aside className="w-64 bg-surface border-r border-border hidden lg:flex flex-col h-screen sticky top-0">
             <div className="p-6 flex items-center gap-3">
                 <div className="relative">
                     <svg viewBox="0 0 32 32" className="w-10 h-10 flex-shrink-0">
@@ -102,7 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         />
                     </svg>
                 </div>
-                <h1 className="text-2xl font-black text-slate-900 tracking-tighter">
+                <h1 className="text-2xl font-black text-text-primary tracking-tighter">
                     LUKEN<span className="text-blue-600">FIT</span>
                 </h1>
             </div>
@@ -121,7 +121,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative ${
                                 isActive
                                     ? 'bg-gradient-to-r from-blue-600/10 to-cyan-500/10 text-blue-700 shadow-sm font-bold'
-                                    : 'text-gray-500 hover:bg-gray-50 hover:text-blue-600 hover:translate-x-1'
+                                    : 'text-text-tertiary hover:bg-background hover:text-blue-600 hover:translate-x-1'
                             }`}>
                             <div className="relative">
                                 <Icon
@@ -129,7 +129,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     className={`transition-colors ${
                                         isActive
                                             ? 'text-blue-600'
-                                            : 'text-gray-400 group-hover:text-gray-600'
+                                            : 'text-text-tertiary group-hover:text-text-secondary'
                                     }`}
                                 />
                                 {showBadge && (
@@ -148,10 +148,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 })}
             </nav>
 
-            <div className="p-6 border-t border-gray-50">
+            <div className="p-6 border-t border-border">
                 <div
                     onClick={() => setActiveTab('config')}
-                    className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors active:scale-95">
+                    className="flex items-center gap-3 p-3 bg-background rounded-xl cursor-pointer hover:bg-surface-lighter transition-colors active:scale-95">
                     {profile?.avatar && profile.avatar.length > 4 ? (
                         <img
                             src={profile.avatar}
@@ -166,10 +166,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         </div>
                     )}
                     <div className="overflow-hidden">
-                        <p className="text-sm font-bold text-gray-900 truncate">
+                        <p className="text-sm font-bold text-text-primary truncate">
                             {profile?.name || t('common.user')}
                         </p>
-                        <p className="text-xs text-gray-500 truncate">
+                        <p className="text-xs text-text-tertiary truncate">
                             LukenFit Member
                         </p>
                     </div>

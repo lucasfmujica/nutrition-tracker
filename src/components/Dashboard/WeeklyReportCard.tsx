@@ -127,14 +127,14 @@ export const WeeklyReportCard = React.forwardRef<
                     {/* Header */}
                     <div className="flex justify-between items-center mb-10">
                         <div>
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-1">
+                            <p className="text-[10px] font-bold text-text-tertiary uppercase tracking-[0.2em] mb-1">
                                 {t('dashboard.weeklyReport.title')}
                             </p>
-                            <h1 className="text-xl font-black text-gray-900">
+                            <h1 className="text-xl font-black text-text-primary">
                                 {weekRange || t('dashboard.weeklyReport.thisWeek')}
                             </h1>
                         </div>
-                        <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-background border border-border flex items-center justify-center">
                             <Trophy
                                 className="w-5 h-5 text-yellow-500"
                                 strokeWidth={1.5}
@@ -147,33 +147,33 @@ export const WeeklyReportCard = React.forwardRef<
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 rounded-3xl -z-10" />
 
                         <div className="inline-flex items-center gap-2 mb-2">
-                            <Scale className="w-4 h-4 text-slate-400" />
-                            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                            <Scale className="w-4 h-4 text-text-tertiary" />
+                            <span className="text-xs font-semibold text-text-tertiary uppercase tracking-wide">
                                 {t('dashboard.weeklyReport.bodyWeight')}
                             </span>
                         </div>
 
                         <div className="flex items-baseline justify-center gap-1 mb-2">
-                            <span className="text-6xl font-black text-slate-900 tracking-tighter">
+                            <span className="text-6xl font-black text-text-primary tracking-tighter">
                                 {currentWeight ? currentWeight.toFixed(1) : '--'}
                             </span>
-                            <span className="text-xl font-medium text-slate-400">
+                            <span className="text-xl font-medium text-text-tertiary">
                                 kg
                             </span>
                         </div>
 
                         {/* Cumulative Progress Pill */}
                         {totalLost !== null && totalLost > 0 && (
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white rounded-full shadow-sm border border-slate-100">
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-surface rounded-full shadow-sm border border-border">
                                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                                <div className="text-[11px] font-medium text-slate-600">
+                                <div className="text-[11px] font-medium text-text-secondary">
                                     {t('dashboard.weeklyReport.totalLost')}:{' '}
-                                    <span className="font-bold text-slate-900">
+                                    <span className="font-bold text-text-primary">
                                         {totalLost}{' '}
                                         {t('units.kg', { defaultValue: 'kg' })}
                                     </span>
                                     {percentToGoal && (
-                                        <span className="text-slate-400 mx-1">
+                                        <span className="text-text-tertiary mx-1">
                                             /
                                         </span>
                                     )}
@@ -187,13 +187,13 @@ export const WeeklyReportCard = React.forwardRef<
                         {/* Fallback if no total loss/gain data yet */}
                         {(totalLost === null || totalLost <= 0) &&
                             weightDelta !== null && (
-                                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white rounded-full shadow-sm border border-slate-100">
+                                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-surface rounded-full shadow-sm border border-border">
                                     <span
                                         className={`w-2 h-2 rounded-full ${weightDelta <= 0 ? 'bg-emerald-500' : 'bg-amber-500'}`}
                                     />
-                                    <p className="text-[11px] font-medium text-slate-600">
+                                    <p className="text-[11px] font-medium text-text-secondary">
                                         {t('dashboard.weeklyReport.variation')}:{' '}
-                                        <span className="font-bold text-slate-900">
+                                        <span className="font-bold text-text-primary">
                                             {weightDelta > 0 ? '+' : ''}
                                             {weightDelta}{' '}
                                             {t('units.kg', { defaultValue: 'kg' })}
@@ -206,42 +206,42 @@ export const WeeklyReportCard = React.forwardRef<
                     {/* 2. Key Metrics Grid */}
                     <div className="grid grid-cols-2 gap-4 mb-8">
                         {/* Average Deficit */}
-                        <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)] flex flex-col items-center">
+                        <div className="p-4 bg-surface rounded-2xl border border-border shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)] flex flex-col items-center">
                             <div className="mb-2 p-2 bg-rose-50 rounded-xl">
                                 <Flame
                                     className="w-5 h-5 text-rose-500"
                                     strokeWidth={2}
                                 />
                             </div>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                            <p className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">
                                 {t('dashboard.weeklyReport.avgDeficit')}
                             </p>
-                            <p className="text-2xl font-bold text-slate-900">
+                            <p className="text-2xl font-bold text-text-primary">
                                 {avgDeficit > 0 ? avgDeficit : '-'}
                             </p>
-                            <p className="text-[10px] text-slate-400 font-medium">
+                            <p className="text-[10px] text-text-tertiary font-medium">
                                 kcal/dia
                             </p>
                         </div>
 
                         {/* Consistency Streak */}
-                        <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)] flex flex-col items-center">
+                        <div className="p-4 bg-surface rounded-2xl border border-border shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)] flex flex-col items-center">
                             <div className="mb-2 p-2 bg-emerald-50 rounded-xl">
                                 <CalendarDays
                                     className="w-5 h-5 text-emerald-500"
                                     strokeWidth={2}
                                 />
                             </div>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                            <p className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-1">
                                 {t('dashboard.weeklyReport.consistency')}
                             </p>
-                            <p className="text-2xl font-bold text-slate-900">
+                            <p className="text-2xl font-bold text-text-primary">
                                 {consistencyStreak}
-                                <span className="text-lg text-slate-300">
+                                <span className="text-lg text-text-tertiary">
                                     /{daysTracked || 7}
                                 </span>
                             </p>
-                            <p className="text-[10px] text-slate-400 font-medium">
+                            <p className="text-[10px] text-text-tertiary font-medium">
                                 {t('dashboard.weeklyReport.daysOnTrack')}
                             </p>
                         </div>
@@ -250,44 +250,44 @@ export const WeeklyReportCard = React.forwardRef<
                     {/* 3. Activity Breakdown */}
                     <div className="mb-8">
                         <div className="flex items-center gap-2 mb-3 px-1">
-                            <Activity className="w-4 h-4 text-slate-400" />
-                            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                            <Activity className="w-4 h-4 text-text-tertiary" />
+                            <h3 className="text-xs font-bold text-text-primary uppercase tracking-wider">
                                 {t('dashboard.weeklyReport.totalActivity')}
                             </h3>
                         </div>
 
-                        <div className="bg-white rounded-2xl border border-slate-100 p-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)]">
+                        <div className="bg-surface rounded-2xl border border-border p-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)]">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-3">
                                     <div className="p-2 bg-blue-50 rounded-lg">
                                         <Dumbbell className="w-4 h-4 text-blue-600" />
                                     </div>
-                                    <span className="text-sm font-semibold text-slate-700">
+                                    <span className="text-sm font-semibold text-text-secondary">
                                         {t('dashboard.weeklyReport.strength')}
                                     </span>
                                 </div>
-                                <span className="text-sm font-bold text-slate-900">
+                                <span className="text-sm font-bold text-text-primary">
                                     {gymCount}{' '}
-                                    <span className="text-xs font-normal text-slate-400">
+                                    <span className="text-xs font-normal text-text-tertiary">
                                         {t('dashboard.weeklyReport.sessions')}
                                     </span>
                                 </span>
                             </div>
 
-                            <div className="w-full h-px bg-slate-50 mb-4" />
+                            <div className="w-full h-px bg-background mb-4" />
 
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="p-2 bg-orange-50 rounded-lg">
                                         <Activity className="w-4 h-4 text-orange-600" />
                                     </div>
-                                    <span className="text-sm font-semibold text-slate-700">
+                                    <span className="text-sm font-semibold text-text-secondary">
                                         {t('dashboard.weeklyReport.tennis')}
                                     </span>
                                 </div>
-                                <span className="text-sm font-bold text-slate-900">
+                                <span className="text-sm font-bold text-text-primary">
                                     {tennisCount}{' '}
-                                    <span className="text-xs font-normal text-slate-400">
+                                    <span className="text-xs font-normal text-text-tertiary">
                                         {t('dashboard.weeklyReport.matches')}
                                     </span>
                                 </span>
@@ -297,9 +297,9 @@ export const WeeklyReportCard = React.forwardRef<
 
                     {/* 4. LukenFit Insights */}
                     <div className="mt-auto bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-5 text-white relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10" />
+                        <div className="absolute top-0 right-0 w-20 h-20 bg-surface/10 rounded-full blur-2xl -mr-10 -mt-10" />
 
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+                        <p className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest mb-2">
                             {t('dashboard.weeklyReport.insightsTitle')}
                         </p>
                         <p className="text-sm font-medium leading-relaxed opacity-90">
@@ -309,9 +309,9 @@ export const WeeklyReportCard = React.forwardRef<
                 </div>
 
                 {/* Footer Branding */}
-                <div className="bg-white py-3 border-t border-slate-50 flex items-center justify-center gap-2">
+                <div className="bg-surface py-3 border-t border-border flex items-center justify-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-slate-900" />
-                    <span className="text-[10px] font-bold text-slate-900 tracking-[0.2em]">
+                    <span className="text-[10px] font-bold text-text-primary tracking-[0.2em]">
                         {t('dashboard.weeklyReport.footer')}
                     </span>
                 </div>

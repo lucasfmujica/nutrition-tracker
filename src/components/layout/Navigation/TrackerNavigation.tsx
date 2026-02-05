@@ -9,7 +9,7 @@ export const TrackerNavigation: React.FC = () => {
     if (!['pasos', 'oura'].includes(activeTab)) return null;
 
     return (
-        <nav className="bg-white border-b border-gray-200 px-4 shadow-sm">
+        <nav className="bg-surface border-b border-border px-4 shadow-sm">
             <div className="max-w-6xl mx-auto flex gap-1">
                 {['pasos', 'oura'].map((tab) => (
                     <button
@@ -18,7 +18,7 @@ export const TrackerNavigation: React.FC = () => {
                         className={`px-4 py-3 text-sm font-bold transition-all ${
                             activeTab === tab
                                 ? 'text-blue-600 border-b-2 border-blue-600'
-                                : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+                                : 'text-text-tertiary hover:text-text-primary hover:bg-background'
                         }`}>
                         {tab === 'oura'
                             ? `💍 ${t('tabs.oura')}`
@@ -27,7 +27,7 @@ export const TrackerNavigation: React.FC = () => {
                 ))}
                 <button
                     onClick={() => setActiveTab('dashboard')}
-                    className="ml-auto text-gray-500 text-xs px-2">
+                    className="ml-auto text-text-tertiary text-xs px-2">
                     ← {t('navigation.back')}
                 </button>
             </div>

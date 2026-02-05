@@ -60,16 +60,16 @@ export const ProteinTimeline: React.FC<ProteinTimelineProps> = ({
                 };
             default:
                 return {
-                    bg: 'bg-gray-200',
-                    border: 'border-gray-200',
-                    text: 'text-gray-400',
+                    bg: 'bg-surface-lighter',
+                    border: 'border-border',
+                    text: 'text-text-tertiary',
                     ring: '',
                 };
         }
     };
 
     return (
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
+        <div className="bg-surface rounded-2xl border border-border p-4 shadow-sm">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
@@ -77,10 +77,10 @@ export const ProteinTimeline: React.FC<ProteinTimelineProps> = ({
                         <Clock className="w-4 h-4 text-purple-600" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-bold text-gray-900">
+                        <h3 className="text-sm font-bold text-text-primary">
                             {t('proteinPacing.title')}
                         </h3>
-                        <p className="text-[10px] text-gray-500">
+                        <p className="text-[10px] text-text-tertiary">
                             {t('proteinPacing.subtitle')}
                         </p>
                     </div>
@@ -98,7 +98,7 @@ export const ProteinTimeline: React.FC<ProteinTimelineProps> = ({
             {/* Timeline */}
             <div className="relative">
                 {/* Connection Line */}
-                <div className="absolute top-5 left-6 right-6 h-0.5 bg-gray-100" />
+                <div className="absolute top-5 left-6 right-6 h-0.5 bg-surface-lighter" />
 
                 {/* Slots */}
                 <div className="relative flex justify-between">
@@ -111,7 +111,7 @@ export const ProteinTimeline: React.FC<ProteinTimelineProps> = ({
                                 className="flex flex-col items-center">
                                 {/* Circle Progress */}
                                 <div
-                                    className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full border-2 bg-white ${styles.border} ${styles.ring}`}>
+                                    className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full border-2 bg-surface ${styles.border} ${styles.ring}`}>
                                     <div
                                         className={`absolute inset-1 rounded-full ${styles.bg} transition-all duration-300`}
                                         style={{
@@ -125,7 +125,7 @@ export const ProteinTimeline: React.FC<ProteinTimelineProps> = ({
                                 </div>
 
                                 {/* Label */}
-                                <span className="mt-2 text-[10px] font-medium text-gray-500 text-center">
+                                <span className="mt-2 text-[10px] font-medium text-text-tertiary text-center">
                                     {t(slot.name)}
                                 </span>
 
@@ -140,22 +140,22 @@ export const ProteinTimeline: React.FC<ProteinTimelineProps> = ({
             </div>
 
             {/* Legend */}
-            <div className="flex items-center justify-center gap-4 mt-4 pt-3 border-t border-gray-50">
+            <div className="flex items-center justify-center gap-4 mt-4 pt-3 border-t border-border">
                 <div className="flex items-center gap-1">
                     <div className="w-2 h-2 rounded-full bg-green-500" />
-                    <span className="text-[9px] text-gray-500">
+                    <span className="text-[9px] text-text-tertiary">
                         {t('proteinPacing.complete')}
                     </span>
                 </div>
                 <div className="flex items-center gap-1">
                     <div className="w-2 h-2 rounded-full bg-blue-500" />
-                    <span className="text-[9px] text-gray-500">
+                    <span className="text-[9px] text-text-tertiary">
                         {t('proteinPacing.active')}
                     </span>
                 </div>
                 <div className="flex items-center gap-1">
                     <div className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-                    <span className="text-[9px] text-gray-500">
+                    <span className="text-[9px] text-text-tertiary">
                         {t('proteinPacing.missed')}
                     </span>
                 </div>

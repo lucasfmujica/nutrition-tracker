@@ -50,16 +50,16 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
 
     if (!insights.hasData) {
         return (
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-50">
+            <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border">
                 <div className="flex items-center gap-2 mb-4">
                     <Clock className="text-primary" size={20} />
-                    <h3 className="text-gray-900 font-bold text-lg">
+                    <h3 className="text-text-primary font-bold text-lg">
                         {t('dashboard.mealTiming.title')}
                     </h3>
                 </div>
                 <div className="text-center py-8">
-                    <Clock size={48} className="mx-auto mb-3 text-slate-300" />
-                    <p className="text-slate-500 text-sm">
+                    <Clock size={48} className="mx-auto mb-3 text-text-tertiary" />
+                    <p className="text-text-tertiary text-sm">
                         {t('dashboard.mealTiming.empty')}
                     </p>
                 </div>
@@ -81,12 +81,12 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
     };
 
     return (
-        <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-100 group hover:border-indigo-100 transition-all duration-300">
+        <div className="bg-surface rounded-[2.5rem] p-8 shadow-xl border border-border group hover:border-indigo-100 transition-all duration-300">
             <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 bg-indigo-50 rounded-xl group-hover:scale-110 transition-transform">
                     <Clock className="text-indigo-600" size={20} />
                 </div>
-                <h3 className="text-slate-900 font-bold text-xl tracking-tight">
+                <h3 className="text-text-primary font-bold text-xl tracking-tight">
                     {t('dashboard.mealTiming.title')}
                 </h3>
             </div>
@@ -111,17 +111,17 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
                 </div>
             </div>
 
-            <div className="p-3 bg-slate-50 rounded-xl mb-4">
+            <div className="p-3 bg-background rounded-xl mb-4">
                 <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-600 font-bold">
+                    <span className="text-xs text-text-secondary font-bold">
                         {t('dashboard.mealTiming.eatingWindow')}
                     </span>
-                    <span className="text-lg font-bold text-slate-900">
+                    <span className="text-lg font-bold text-text-primary">
                         {insights.avgEatingWindow.toFixed(1)}h
                     </span>
                 </div>
                 {insights.ifDaysCount > 0 && (
-                    <p className="text-xs text-slate-500 mt-2">
+                    <p className="text-xs text-text-tertiary mt-2">
                         🔹 {insights.ifDaysCount}{' '}
                         {t('dashboard.mealTiming.ifPattern')}
                     </p>
@@ -129,16 +129,16 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
             </div>
 
             {/* Sleep Impact */}
-            <div className="border-t border-slate-100 pt-4 mb-4">
+            <div className="border-t border-border pt-4 mb-4">
                 <div className="flex items-center gap-2 mb-2">
                     <Moon size={16} className="text-indigo-500" />
-                    <h4 className="text-sm font-bold text-slate-700">
+                    <h4 className="text-sm font-bold text-text-secondary">
                         {t('dashboard.mealTiming.sleepImpact.title')}
                     </h4>
                 </div>
                 <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                        <span className="text-xs text-slate-600">
+                        <span className="text-xs text-text-secondary">
                             {t('dashboard.mealTiming.sleepImpact.gap')}
                         </span>
                         <span
@@ -165,7 +165,7 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
                             </p>
                         )}
                     {insights.sleepImpact.lateNightCalories > 0 && (
-                        <div className="flex justify-between items-center text-[10px] text-slate-500 mt-2">
+                        <div className="flex justify-between items-center text-[10px] text-text-tertiary mt-2">
                             <span>
                                 {t('dashboard.mealTiming.sleepImpact.lateCalories')}
                             </span>
@@ -187,10 +187,10 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
 
             {/* Workout Nutrition */}
             {insights.workoutNutrition.workoutDaysWithData > 0 && (
-                <div className="border-t border-slate-100 pt-4 mb-4">
+                <div className="border-t border-border pt-4 mb-4">
                     <div className="flex items-center gap-2 mb-2">
                         <Zap size={16} className="text-orange-500" />
-                        <h4 className="text-sm font-bold text-slate-700">
+                        <h4 className="text-sm font-bold text-text-secondary">
                             {t('dashboard.mealTiming.workoutNutrition.title')}
                         </h4>
                     </div>
@@ -220,7 +220,7 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
                             </div>
                         </div>
                     </div>
-                    <p className="text-[10px] text-slate-400 mt-2">
+                    <p className="text-[10px] text-text-tertiary mt-2">
                         {t('dashboard.mealTiming.workoutNutrition.daysWithData', {
                             count: insights.workoutNutrition.workoutDaysWithData,
                         })}
@@ -229,10 +229,10 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
             )}
 
             {/* Consistency */}
-            <div className="border-t border-slate-100 pt-4">
+            <div className="border-t border-border pt-4">
                 <div className="flex items-center gap-2 mb-2">
                     <Utensils size={16} className="text-cyan-500" />
-                    <h4 className="text-sm font-bold text-slate-700">
+                    <h4 className="text-sm font-bold text-text-secondary">
                         {t('dashboard.mealTiming.consistency.title')}
                     </h4>
                 </div>
@@ -273,7 +273,7 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
                             <div
                                 key={meal.label}
                                 className="flex justify-between items-center text-xs">
-                                <span className="text-slate-600">{meal.label}</span>
+                                <span className="text-text-secondary">{meal.label}</span>
                                 <span className={`font-bold ${rating.color}`}>
                                     {translatedRating} (±{meal.variance.toFixed(0)}{' '}
                                     min)

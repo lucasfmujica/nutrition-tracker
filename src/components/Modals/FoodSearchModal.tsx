@@ -118,16 +118,16 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
             className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-12 sm:pt-20 overflow-y-auto"
             onClick={onClose}>
             <div
-                className="bg-white rounded-3xl w-full max-w-md shadow-2xl border border-gray-100 mb-24"
+                className="bg-surface rounded-3xl w-full max-w-md shadow-2xl border border-border mb-24"
                 onClick={(e) => e.stopPropagation()}>
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b border-gray-100">
-                    <h2 className="text-lg font-bold text-slate-900">
+                <div className="flex items-center justify-between p-4 border-b border-border">
+                    <h2 className="text-lg font-bold text-text-primary">
                         {t('modals.foods.searchTitle')}
                     </h2>
                     <button
                         onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors">
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-surface-lighter text-text-tertiary hover:bg-surface-lighter transition-colors">
                         <X size={18} />
                     </button>
                 </div>
@@ -137,7 +137,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                     <div className="relative">
                         <Search
                             size={18}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-text-tertiary"
                         />
                         <input
                             ref={inputRef}
@@ -145,12 +145,12 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             placeholder={t('modals.foods.placeholder')}
-                            className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                            className="w-full pl-11 pr-4 py-3 bg-background border border-border rounded-2xl text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                         />
                         {query && (
                             <button
                                 onClick={() => setQuery('')}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-slate-200 text-slate-500 hover:bg-slate-300">
+                                className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-surface-lighter text-text-tertiary hover:bg-surface-lighter">
                                 <X size={14} />
                             </button>
                         )}
@@ -166,7 +166,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                                 size={24}
                                 className="animate-spin text-blue-500"
                             />
-                            <span className="ml-2 text-slate-500">
+                            <span className="ml-2 text-text-tertiary">
                                 {t('modals.foods.searching')}
                             </span>
                         </div>
@@ -174,7 +174,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
 
                     {/* Error State */}
                     {error && !isLoading && (
-                        <div className="text-center py-6 text-slate-500 text-sm">
+                        <div className="text-center py-6 text-text-tertiary text-sm">
                             {error}
                         </div>
                     )}
@@ -198,7 +198,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                         hasSearched &&
                         results.length === 0 &&
                         !error && (
-                            <div className="text-center py-8 text-slate-400">
+                            <div className="text-center py-8 text-text-tertiary">
                                 <Database
                                     size={32}
                                     className="mx-auto mb-2 opacity-50"
@@ -227,7 +227,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                                         <img
                                             src={selectedFood.imageUrl}
                                             alt={selectedFood.name}
-                                            className="w-16 h-16 rounded-xl object-cover bg-white"
+                                            className="w-16 h-16 rounded-xl object-cover bg-surface"
                                             onError={(e) => {
                                                 (
                                                     e.target as HTMLImageElement
@@ -236,11 +236,11 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                                         />
                                     )}
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-bold text-slate-900 truncate">
+                                        <h3 className="font-bold text-text-primary truncate">
                                             {selectedFood.name}
                                         </h3>
                                         {selectedFood.brand && (
-                                            <p className="text-sm text-slate-500 truncate">
+                                            <p className="text-sm text-text-tertiary truncate">
                                                 {selectedFood.brand}
                                             </p>
                                         )}
@@ -252,7 +252,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                             {/* Amount Input */}
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
+                                    <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                                         {t('modals.foods.amount')}
                                     </label>
                                     <input
@@ -266,11 +266,11 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                                                 ),
                                             )
                                         }
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
+                                        className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
+                                    <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                                         {t('modals.foods.unit')}
                                     </label>
                                     <div className="relative">
@@ -283,7 +283,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                                                         | 'serving',
                                                 )
                                             }
-                                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer">
+                                            className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer">
                                             <option value="g">
                                                 {t('modals.foods.grams')}
                                             </option>
@@ -295,7 +295,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                                         </select>
                                         <ChevronDown
                                             size={16}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none"
                                         />
                                     </div>
                                 </div>
@@ -303,7 +303,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
 
                             {/* Meal Selection */}
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">
+                                <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                                     {t('modals.foods.meal')}
                                 </label>
                                 <div className="relative">
@@ -314,7 +314,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                                                 e.target.value as FoodEntry['meal'],
                                             )
                                         }
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer">
+                                        className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer">
                                         <option value="breakfast">
                                             {t('mealTypes.breakfast')}
                                         </option>
@@ -339,13 +339,13 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
                                     </select>
                                     <ChevronDown
                                         size={16}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none"
                                     />
                                 </div>
                             </div>
 
                             {/* Calculated Macros */}
-                            <div className="bg-slate-50 rounded-2xl p-4">
+                            <div className="bg-background rounded-2xl p-4">
                                 <div className="grid grid-cols-5 gap-2 text-center">
                                     <MacroValue
                                         label={t('modals.foods.macros.cal')}
@@ -381,7 +381,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
 
                 {/* Save Button */}
                 {selectedFood && (
-                    <div className="p-4 border-t border-gray-100">
+                    <div className="p-4 border-t border-border">
                         <button
                             onClick={handleSave}
                             disabled={isSaving || amount <= 0}
@@ -410,13 +410,13 @@ const FoodResultItem: React.FC<{
 }> = ({ food, onSelect }) => (
     <button
         onClick={onSelect}
-        className="w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl transition-colors group">
+        className="w-full text-left p-3 bg-background hover:bg-surface-lighter rounded-2xl transition-colors group">
         <div className="flex gap-3">
             {food.imageUrl && (
                 <img
                     src={food.imageUrl}
                     alt={food.name}
-                    className="w-12 h-12 rounded-xl object-cover bg-white flex-shrink-0"
+                    className="w-12 h-12 rounded-xl object-cover bg-surface flex-shrink-0"
                     onError={(e) => {
                         (e.target as HTMLImageElement).style.display = 'none';
                     }}
@@ -425,18 +425,18 @@ const FoodResultItem: React.FC<{
             <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                        <p className="font-medium text-slate-900 truncate group-hover:text-blue-600 transition-colors">
+                        <p className="font-medium text-text-primary truncate group-hover:text-blue-600 transition-colors">
                             {food.name}
                         </p>
                         {food.brand && (
-                            <p className="text-xs text-slate-500 truncate">
+                            <p className="text-xs text-text-tertiary truncate">
                                 {food.brand}
                             </p>
                         )}
                     </div>
                     <SourceBadge source={food.source} />
                 </div>
-                <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
+                <div className="flex items-center gap-3 mt-1 text-xs text-text-tertiary">
                     <span className="font-bold text-orange-600">
                         {food.calories} kcal
                     </span>
@@ -471,13 +471,13 @@ const MacroValue: React.FC<{
     highlight?: boolean;
 }> = ({ label, value, unit, highlight }) => (
     <div>
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+        <p className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider">
             {label}
         </p>
         <p
-            className={`text-lg font-bold ${highlight ? 'text-orange-600' : 'text-slate-900'}`}>
+            className={`text-lg font-bold ${highlight ? 'text-orange-600' : 'text-text-primary'}`}>
             {value}
-            <span className="text-xs font-normal text-slate-400">{unit}</span>
+            <span className="text-xs font-normal text-text-tertiary">{unit}</span>
         </p>
     </div>
 );

@@ -125,16 +125,16 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
         <div className="w-full space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
                 <div className="px-1 text-center md:text-left">
-                    <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2 justify-center md:justify-start">
+                    <h1 className="text-2xl font-bold text-text-primary flex items-center gap-2 justify-center md:justify-start">
                         {t('oura.title')}
                         <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-[10px] font-bold uppercase tracking-wider">
                             Sync V2
                         </span>
                     </h1>
-                    <p className="text-sm text-gray-500">{t('oura.subtitle')}</p>
+                    <p className="text-sm text-text-tertiary">{t('oura.subtitle')}</p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 bg-white p-1.5 rounded-xl border border-gray-100 shadow-sm mx-auto md:mx-0">
+                <div className="flex flex-wrap items-center gap-3 bg-surface p-1.5 rounded-xl border border-border shadow-sm mx-auto md:mx-0">
                     <div className="w-full md:w-[260px]">
                         <LukenFitDatePicker
                             selectedDate={selectedDate}
@@ -143,14 +143,14 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
                         />
                     </div>
 
-                    <div className="w-px h-8 bg-gray-100 mx-1 hidden sm:block" />
+                    <div className="w-px h-8 bg-surface-lighter mx-1 hidden sm:block" />
 
                     <div className="flex items-center gap-2 pr-2 ml-auto sm:ml-0">
                         <div className="text-right hidden sm:block">
-                            <p className="text-[10px] mobile-label text-gray-400 font-bold uppercase tracking-wider">
+                            <p className="text-[10px] mobile-label text-text-tertiary font-bold uppercase tracking-wider">
                                 {t('oura.setup.lastSync')}
                             </p>
-                            <p className="text-xs font-bold text-gray-700">
+                            <p className="text-xs font-bold text-text-secondary">
                                 {lastSyncTime || '--:--'}
                             </p>
                         </div>
@@ -161,8 +161,8 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
                                 isSyncing
                                     ? 'bg-purple-50 text-purple-500'
                                     : !hasToken
-                                      ? 'bg-gray-50 text-gray-300 cursor-not-allowed'
-                                      : 'bg-gray-50 text-gray-500 hover:bg-purple-50 hover:text-purple-600'
+                                      ? 'bg-background text-text-tertiary cursor-not-allowed'
+                                      : 'bg-background text-text-tertiary hover:bg-purple-50 hover:text-purple-600'
                             }`}
                             title={
                                 !hasToken
@@ -201,28 +201,28 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
             {hasToken && (
                 <>
                     {sleepSchedule && (
-                        <div className="bg-white rounded-2xl p-5 border border-purple-100 shadow-sm flex flex-col md:flex-row gap-4 md:items-center justify-between">
+                        <div className="bg-surface rounded-2xl p-5 border border-purple-100 shadow-sm flex flex-col md:flex-row gap-4 md:items-center justify-between">
                             <div>
-                                <h3 className="text-gray-900 font-bold flex items-center gap-2">
+                                <h3 className="text-text-primary font-bold flex items-center gap-2">
                                     <span className="text-xl">💤</span>{' '}
                                     {t('oura.schedule.title')}
                                 </h3>
-                                <p className="text-xs text-gray-400 mt-1">
+                                <p className="text-xs text-text-tertiary mt-1">
                                     {t('oura.schedule.basedOn')}
                                 </p>
                             </div>
                             <div className="flex gap-4 md:gap-8">
                                 <div className="text-center md:text-left">
-                                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">
+                                    <p className="text-[10px] uppercase font-bold text-text-tertiary tracking-wider mb-1">
                                         {t('oura.schedule.bedtime')}
                                     </p>
                                     <p className="text-2xl font-black text-indigo-900">
                                         {sleepSchedule.avgBedtime}
                                     </p>
                                 </div>
-                                <div className="w-px bg-gray-100 h-10 self-center hidden md:block"></div>
+                                <div className="w-px bg-surface-lighter h-10 self-center hidden md:block"></div>
                                 <div className="text-center md:text-left">
-                                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">
+                                    <p className="text-[10px] uppercase font-bold text-text-tertiary tracking-wider mb-1">
                                         {t('oura.schedule.wakeTime')}
                                     </p>
                                     <p className="text-2xl font-black text-indigo-900">

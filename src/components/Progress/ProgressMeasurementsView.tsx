@@ -92,21 +92,21 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
             {/* Form Modal */}
             {showForm && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-12 overflow-y-auto">
-                    <div className="bg-white rounded-3xl p-6 w-full max-w-sm mb-20">
+                    <div className="bg-surface rounded-3xl p-6 w-full max-w-sm mb-20">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-bold text-slate-900">
+                            <h3 className="text-lg font-bold text-text-primary">
                                 {t('progress.measurements.newMeasurement')}
                             </h3>
                             <button
                                 onClick={() => setShowForm(false)}
-                                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500">
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-surface-lighter text-text-tertiary">
                                 <X size={18} />
                             </button>
                         </div>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5">
+                                <label className="block text-xs font-bold text-text-tertiary uppercase mb-1.5">
                                     {t('progress.photos.date')}
                                 </label>
                                 <LukenFitDatePicker
@@ -182,7 +182,7 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
                             <button
                                 onClick={handleSave}
                                 disabled={isSaving}
-                                className="w-full py-4 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors">
+                                className="w-full py-4 bg-purple-600 hover:bg-purple-700 disabled:bg-surface-lighter text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors">
                                 {isSaving ? (
                                     <>
                                         <Loader2
@@ -217,14 +217,14 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
 
             {/* Empty State */}
             {!isLoading && measurements.length === 0 && (
-                <div className="bg-white rounded-2xl p-8 text-center border border-slate-100">
+                <div className="bg-surface rounded-2xl p-8 text-center border border-border">
                     <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Ruler size={28} className="text-purple-400" />
                     </div>
-                    <h3 className="font-bold text-slate-900 mb-1">
+                    <h3 className="font-bold text-text-primary mb-1">
                         {t('progress.measurements.noMeasurementsTitle')}
                     </h3>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-text-tertiary">
                         {t('progress.measurements.noMeasurementsDesc')}
                     </p>
                 </div>
@@ -232,13 +232,13 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
 
             {/* Latest Measurement Card */}
             {latestMeasurement && (
-                <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
+                <div className="bg-surface rounded-2xl p-4 border border-border shadow-sm">
                     <div className="flex items-center justify-between mb-3">
                         <div>
-                            <h3 className="font-bold text-slate-900">
+                            <h3 className="font-bold text-text-primary">
                                 {t('progress.measurements.latestMeasurement')}
                             </h3>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-text-tertiary">
                                 {format(
                                     parseISO(latestMeasurement.date),
                                     'd MMMM yyyy',
@@ -248,7 +248,7 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
                         </div>
                         <button
                             onClick={() => handleDelete(latestMeasurement.id)}
-                            className="text-slate-400 hover:text-red-500 p-2">
+                            className="text-text-tertiary hover:text-red-500 p-2">
                             <Trash2 size={16} />
                         </button>
                     </div>
@@ -311,9 +311,9 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
 
             {/* Measurement History */}
             {measurements.length > 1 && (
-                <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
-                    <div className="px-4 py-3 border-b border-slate-100 bg-slate-50">
-                        <h3 className="font-bold text-slate-900">
+                <div className="bg-surface rounded-2xl border border-border overflow-hidden">
+                    <div className="px-4 py-3 border-b border-border bg-background">
+                        <h3 className="font-bold text-text-primary">
                             {t('progress.measurements.history')}
                         </h3>
                     </div>
@@ -323,12 +323,12 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
                                 key={m.id}
                                 className="px-4 py-3 flex items-center justify-between">
                                 <div>
-                                    <p className="font-medium text-slate-900 text-sm">
+                                    <p className="font-medium text-text-primary text-sm">
                                         {format(parseISO(m.date), 'd MMM yyyy', {
                                             locale: dateLocale,
                                         })}
                                     </p>
-                                    <p className="text-xs text-slate-500">
+                                    <p className="text-xs text-text-tertiary">
                                         {m.waist &&
                                             `${t('progress.measurements.waist')}: ${m.waist}cm`}
                                         {m.waist && m.chest && ' · '}
@@ -338,7 +338,7 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
                                 </div>
                                 <button
                                     onClick={() => handleDelete(m.id)}
-                                    className="text-slate-400 hover:text-red-500 p-2">
+                                    className="text-text-tertiary hover:text-red-500 p-2">
                                     <Trash2 size={14} />
                                 </button>
                             </div>
@@ -365,12 +365,12 @@ const MeasurementRow: React.FC<{
     const change = getChange(value, fieldName);
 
     return (
-        <div className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
-            <span className="text-sm text-slate-600">{label}</span>
+        <div className="flex items-center justify-between py-2 border-b border-border last:border-0">
+            <span className="text-sm text-text-secondary">{label}</span>
             <div className="flex items-center gap-2">
                 {value !== undefined ? (
                     <>
-                        <span className="font-bold text-slate-900">
+                        <span className="font-bold text-text-primary">
                             {value} {unit}
                         </span>
                         {change && (
@@ -380,7 +380,7 @@ const MeasurementRow: React.FC<{
                                         ? 'text-emerald-600'
                                         : change.direction === 'up'
                                           ? 'text-red-500'
-                                          : 'text-slate-400'
+                                          : 'text-text-tertiary'
                                 }`}>
                                 {change.direction === 'down' && (
                                     <TrendingDown size={12} />
@@ -394,7 +394,7 @@ const MeasurementRow: React.FC<{
                         )}
                     </>
                 ) : (
-                    <span className="text-slate-300">—</span>
+                    <span className="text-text-tertiary">—</span>
                 )}
             </div>
         </div>
@@ -408,7 +408,7 @@ const MeasurementInput: React.FC<{
     unit?: string;
 }> = ({ label, value, onChange, unit = 'cm' }) => (
     <div>
-        <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">
+        <label className="block text-[10px] font-bold text-text-tertiary uppercase mb-1">
             {label}
         </label>
         <div className="relative">
@@ -420,9 +420,9 @@ const MeasurementInput: React.FC<{
                     onChange(e.target.value ? parseFloat(e.target.value) : undefined)
                 }
                 placeholder="—"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-center font-bold pr-8"
+                className="w-full bg-background border border-border rounded-xl px-3 py-2.5 text-sm text-center font-bold pr-8"
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-tertiary">
                 {unit}
             </span>
         </div>

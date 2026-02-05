@@ -31,7 +31,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = React.memo(
 
         return (
             <div
-                className="bg-white p-8 shadow-xl rounded-[2.5rem] border border-slate-100 relative overflow-hidden group transition-all duration-300 hover:border-blue-200"
+                className="bg-surface p-8 shadow-xl rounded-[2.5rem] border border-border relative overflow-hidden group transition-all duration-300 hover:border-blue-200"
                 data-tutorial="calorie-ring">
                 {/* Background decoration */}
                 <div
@@ -42,7 +42,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = React.memo(
                 <div className="relative z-10">
                     {/* Header with Shield badge if active */}
                     <div className="flex items-center gap-2 mb-1">
-                        <h2 className="text-gray-500 text-sm font-medium uppercase tracking-wide">
+                        <h2 className="text-text-tertiary text-sm font-medium uppercase tracking-wide">
                             {t('dashboard.summary.caloriesRemaining')}
                         </h2>
                         {safetyNetActive ? (
@@ -75,9 +75,9 @@ export const SummaryCard: React.FC<SummaryCardProps> = React.memo(
                                 )}
                                 {(periodizationState === 'moderate' ||
                                     !periodizationState) && (
-                                    <div className="flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-full">
+                                    <div className="flex items-center gap-1 bg-surface-lighter px-2 py-0.5 rounded-full">
                                         <div className="w-2 h-2 rounded-full bg-slate-400"></div>
-                                        <span className="text-[10px] font-bold text-slate-500 tracking-wide">
+                                        <span className="text-[10px] font-bold text-text-tertiary tracking-wide">
                                             {t('dashboard.summary.standard')}
                                         </span>
                                     </div>
@@ -98,45 +98,45 @@ export const SummaryCard: React.FC<SummaryCardProps> = React.memo(
                             className={`text-3xl sm:text-4xl font-bold tracking-tight ${statusColor}`}>
                             {caloriesRemaining}
                         </span>
-                        <span className="text-gray-400 text-sm mb-1.5 font-medium">
+                        <span className="text-text-tertiary text-sm mb-1.5 font-medium">
                             kcal
                         </span>
                     </div>
 
                     {/* Equation */}
-                    <div className="flex justify-between items-center text-sm text-gray-600 mb-4 px-1">
+                    <div className="flex justify-between items-center text-sm text-text-secondary mb-4 px-1">
                         <div className="flex flex-col">
-                            <span className="font-semibold text-gray-900">
+                            <span className="font-semibold text-text-primary">
                                 {targets.calories}
                             </span>
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-text-tertiary">
                                 {safetyNetActive
                                     ? t('dashboard.summary.maintenance')
                                     : t('dashboard.summary.target')}
                             </span>
                         </div>
-                        <span className="text-gray-300">-</span>
+                        <span className="text-text-tertiary">-</span>
                         <div className="flex flex-col text-right">
-                            <span className="font-semibold text-gray-900">
+                            <span className="font-semibold text-text-primary">
                                 {totals.calories}
                             </span>
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-text-tertiary">
                                 {t('dashboard.summary.consumed')}
                             </span>
                         </div>
-                        <span className="text-gray-300">=</span>
+                        <span className="text-text-tertiary">=</span>
                         <div className="flex flex-col text-right">
                             <span className={`font-bold ${statusColor}`}>
                                 {caloriesRemaining}
                             </span>
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-text-tertiary">
                                 {t('dashboard.summary.remaining')}
                             </span>
                         </div>
                     </div>
 
                     {/* Progress Bar */}
-                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-2 w-full bg-surface-lighter rounded-full overflow-hidden">
                         <div
                             className={`h-full rounded-full transition-all duration-500 ease-out ${
                                 safetyNetActive

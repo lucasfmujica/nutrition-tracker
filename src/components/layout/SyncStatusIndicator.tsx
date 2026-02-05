@@ -70,14 +70,14 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
     if (!visible) return null;
 
     return (
-        <div className="flex items-center gap-2 px-2 sm:px-3 py-1.5 rounded-full bg-white border border-gray-100 shadow-sm max-w-[140px] sm:max-w-none transition-all">
+        <div className="flex items-center gap-2 px-2 sm:px-3 py-1.5 rounded-full bg-surface border border-border shadow-sm max-w-[140px] sm:max-w-none transition-all">
             <div className={`${bgColor} rounded-full p-1 flex-shrink-0`}>
                 <Icon
                     className={`w-4 h-4 ${color} ${animate ? 'animate-spin' : ''}`}
                     strokeWidth={2}
                 />
             </div>
-            <span className="text-[10px] sm:text-xs font-medium text-gray-600 truncate">
+            <span className="text-[10px] sm:text-xs font-medium text-text-secondary truncate">
                 {label}
             </span>
         </div>

@@ -28,26 +28,26 @@ export const FoodItem: React.FC<FoodItemProps> = ({
     return (
         <SwipeableItem onDelete={onDelete} onDuplicate={onDuplicate}>
             <div
-                className={`p-3 bg-white border-b border-gray-50 flex justify-between items-center ${needsReview ? 'bg-amber-50/50' : ''}`}>
+                className={`p-3 bg-surface border-b border-border flex justify-between items-center ${needsReview ? 'bg-amber-50/50' : ''}`}>
                 <div className="flex-1 min-w-0 pr-3">
                     <div className="flex items-center gap-2 mb-0.5">
-                        <h4 className="text-gray-900 font-medium truncate">
+                        <h4 className="text-text-primary font-medium truncate">
                             {food.name}
                         </h4>
                         {needsReview && (
                             <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
                         )}
                     </div>
-                    <p className="text-xs text-gray-500 truncate">
+                    <p className="text-xs text-text-tertiary truncate">
                         {food.description || ''}
                     </p>
                 </div>
 
                 <div className="text-right flex-shrink-0">
-                    <span className="block text-gray-900 font-bold">
+                    <span className="block text-text-primary font-bold">
                         {food.calories}
                     </span>
-                    <div className="flex gap-1 justify-end text-[10px] text-gray-400 font-medium uppercase">
+                    <div className="flex gap-1 justify-end text-[10px] text-text-tertiary font-medium uppercase">
                         <span className="text-green-600">{food.protein}p</span>
                         <span className="text-amber-500">{food.carbs}c</span>
                         <span className="text-orange-500">{food.fat}f</span>
@@ -60,7 +60,7 @@ export const FoodItem: React.FC<FoodItemProps> = ({
                             e.stopPropagation();
                             onTemplate();
                         }}
-                        className={`ml-3 p-1.5 transition-colors ${isFavorite ? 'text-yellow-400 fill-current' : 'text-gray-300 hover:text-yellow-400'}`}
+                        className={`ml-3 p-1.5 transition-colors ${isFavorite ? 'text-yellow-400 fill-current' : 'text-text-tertiary hover:text-yellow-400'}`}
                         title={
                             isFavorite
                                 ? t('diary.foodItem.removeFavorite')
@@ -73,7 +73,7 @@ export const FoodItem: React.FC<FoodItemProps> = ({
                     </button>
                     <button
                         onClick={onEdit}
-                        className="ml-1 p-1.5 text-gray-400 hover:text-blue-500 transition-colors"
+                        className="ml-1 p-1.5 text-text-tertiary hover:text-blue-500 transition-colors"
                         title={t('diary.foodItem.edit')}>
                         <svg
                             className="w-4 h-4"
@@ -90,7 +90,7 @@ export const FoodItem: React.FC<FoodItemProps> = ({
                     </button>
                     <button
                         onClick={onDelete}
-                        className="ml-1 p-1.5 text-gray-400 hover:text-red-500 transition-colors"
+                        className="ml-1 p-1.5 text-text-tertiary hover:text-red-500 transition-colors"
                         title={t('diary.foodItem.delete')}>
                         <svg
                             className="w-4 h-4"

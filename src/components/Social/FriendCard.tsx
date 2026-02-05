@@ -30,10 +30,10 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
     };
 
     const getWeightDeltaColor = (delta: number | null | undefined): string => {
-        if (delta === null || delta === undefined) return 'text-slate-400';
+        if (delta === null || delta === undefined) return 'text-text-tertiary';
         if (delta < 0) return 'text-green-600';
         if (delta > 0) return 'text-red-500';
-        return 'text-slate-400';
+        return 'text-text-tertiary';
     };
 
     const formatAvgDeficit = (deficit: number | null | undefined): string => {
@@ -43,10 +43,10 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
     };
 
     const getDeficitColor = (deficit: number | null | undefined): string => {
-        if (deficit === null || deficit === undefined) return 'text-slate-400';
+        if (deficit === null || deficit === undefined) return 'text-text-tertiary';
         if (deficit > 0) return 'text-green-600'; // Déficit = comió menos (bueno)
         if (deficit < 0) return 'text-red-500'; // Superávit = comió más (malo)
-        return 'text-slate-400';
+        return 'text-text-tertiary';
     };
 
     const handleRemove = () => {
@@ -59,10 +59,10 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
     };
 
     return (
-        <div className="bg-white rounded-xl border border-slate-100 overflow-hidden transition-all">
+        <div className="bg-surface rounded-xl border border-border overflow-hidden transition-all">
             {/* Main Row */}
             <div
-                className="flex items-center gap-3 p-4 cursor-pointer hover:bg-slate-50 transition-colors"
+                className="flex items-center gap-3 p-4 cursor-pointer hover:bg-background transition-colors"
                 onClick={() => setExpanded(!expanded)}>
                 {/* Avatar */}
                 <UserAvatar
@@ -74,10 +74,10 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
 
                 {/* Name & Stats Preview */}
                 <div className="flex-1 min-w-0">
-                    <p className="font-bold text-slate-900 truncate">
+                    <p className="font-bold text-text-primary truncate">
                         {friend.name}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-text-tertiary">
                         {friend.weeklyStats ? (
                             <span
                                 className={getWeightDeltaColor(
@@ -93,21 +93,21 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
                 </div>
 
                 {/* Expand Toggle */}
-                <div className="text-slate-400">
+                <div className="text-text-tertiary">
                     {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </div>
             </div>
 
             {/* Expanded Details */}
             {expanded && (
-                <div className="px-4 pb-4 border-t border-slate-50 pt-3">
+                <div className="px-4 pb-4 border-t border-border pt-3">
                     {friend.weeklyStats ? (
                         <div className="grid grid-cols-2 gap-3 mb-4">
                             {/* Weight Delta */}
-                            <div className="bg-slate-50 rounded-lg p-3 text-center">
+                            <div className="bg-background rounded-lg p-3 text-center">
                                 <Scale
                                     size={16}
-                                    className="mx-auto mb-1 text-slate-400"
+                                    className="mx-auto mb-1 text-text-tertiary"
                                 />
                                 <p
                                     className={`font-black text-sm ${getWeightDeltaColor(friend.weeklyStats.weightDelta)}`}>
@@ -115,56 +115,56 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
                                         friend.weeklyStats.weightDelta,
                                     )}
                                 </p>
-                                <p className="text-[10px] text-slate-400 uppercase">
+                                <p className="text-[10px] text-text-tertiary uppercase">
                                     {t('social.leaderboard.metrics.weight')}
                                 </p>
                             </div>
 
                             {/* Workouts */}
-                            <div className="bg-slate-50 rounded-lg p-3 text-center">
+                            <div className="bg-background rounded-lg p-3 text-center">
                                 <Dumbbell
                                     size={16}
-                                    className="mx-auto mb-1 text-slate-400"
+                                    className="mx-auto mb-1 text-text-tertiary"
                                 />
-                                <p className="font-black text-sm text-slate-700">
+                                <p className="font-black text-sm text-text-secondary">
                                     {friend.weeklyStats.workoutCount}
                                 </p>
-                                <p className="text-[10px] text-slate-400 uppercase">
+                                <p className="text-[10px] text-text-tertiary uppercase">
                                     {t('social.leaderboard.metrics.workouts')}
                                 </p>
                             </div>
 
                             {/* Streak */}
-                            <div className="bg-slate-50 rounded-lg p-3 text-center">
+                            <div className="bg-background rounded-lg p-3 text-center">
                                 <Flame
                                     size={16}
-                                    className="mx-auto mb-1 text-slate-400"
+                                    className="mx-auto mb-1 text-text-tertiary"
                                 />
                                 <p className="font-black text-sm text-orange-500">
                                     {friend.weeklyStats.consistencyStreak}
                                 </p>
-                                <p className="text-[10px] text-slate-400 uppercase">
+                                <p className="text-[10px] text-text-tertiary uppercase">
                                     {t('social.leaderboard.metrics.streak')}
                                 </p>
                             </div>
 
                             {/* Avg Deficit */}
-                            <div className="bg-slate-50 rounded-lg p-3 text-center">
+                            <div className="bg-background rounded-lg p-3 text-center">
                                 <TrendingDown
                                     size={16}
-                                    className="mx-auto mb-1 text-slate-400"
+                                    className="mx-auto mb-1 text-text-tertiary"
                                 />
                                 <p
                                     className={`font-black text-sm ${getDeficitColor(friend.weeklyStats.avgDeficit)}`}>
                                     {formatAvgDeficit(friend.weeklyStats.avgDeficit)}
                                 </p>
-                                <p className="text-[10px] text-slate-400 uppercase">
+                                <p className="text-[10px] text-text-tertiary uppercase">
                                     {t('social.leaderboard.metrics.deficit')}
                                 </p>
                             </div>
                         </div>
                     ) : (
-                        <p className="text-sm text-slate-400 text-center py-4">
+                        <p className="text-sm text-text-tertiary text-center py-4">
                             {t('social.leaderboard.noData')}
                         </p>
                     )}
@@ -178,7 +178,7 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
                         className={`w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-sm font-medium transition-all ${
                             showConfirm
                                 ? 'bg-red-500 text-white'
-                                : 'bg-slate-100 text-slate-500 hover:bg-red-50 hover:text-red-500'
+                                : 'bg-surface-lighter text-text-tertiary hover:bg-red-50 hover:text-red-500'
                         }`}>
                         <Trash2 size={16} />
                         {showConfirm

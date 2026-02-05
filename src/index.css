@@ -20,7 +20,7 @@
     /* Neutral Colors (Light Mode) */
     --color-background: #f8fafc;
     --color-surface: #ffffff;
-    --color-surface-lighter: #ffffff;
+    --color-surface-lighter: #f1f5f9; /* Slate 100 - for hover states */
     --color-text-primary: #0f172a;
     --color-text-secondary: #475569;
     --color-text-tertiary: #94a3b8;

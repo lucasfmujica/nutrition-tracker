@@ -74,11 +74,11 @@ export const SocialTab: React.FC<SocialTabProps> = ({
             {/* Header */}
             <div className="flex items-center justify-between px-1">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                    <h1 className="text-2xl font-bold text-text-primary flex items-center gap-2">
                         <Users size={28} className="text-primary" />
                         {t('social.title')}
                     </h1>
-                    <p className="text-sm text-slate-500 font-medium">
+                    <p className="text-sm text-text-tertiary font-medium">
                         {t('social.subtitle')}
                     </p>
                 </div>
@@ -86,7 +86,7 @@ export const SocialTab: React.FC<SocialTabProps> = ({
                     <button
                         onClick={onRefresh}
                         disabled={socialLoading}
-                        className="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 flex items-center justify-center text-slate-500 transition-all active:scale-95 disabled:opacity-50 ring-1 ring-slate-100">
+                        className="w-10 h-10 rounded-xl bg-background hover:bg-surface-lighter flex items-center justify-center text-text-tertiary transition-all active:scale-95 disabled:opacity-50 ring-1 ring-slate-100">
                         <RefreshCw
                             size={18}
                             className={socialLoading ? 'animate-spin' : ''}
@@ -110,11 +110,11 @@ export const SocialTab: React.FC<SocialTabProps> = ({
                         onClick={() => setRequestsExpanded(!requestsExpanded)}
                         className="w-full flex items-center justify-between p-4 hover:bg-rose-50 transition-colors">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm text-rose-500">
+                            <div className="w-10 h-10 rounded-xl bg-surface flex items-center justify-center shadow-sm text-rose-500">
                                 <UserPlus size={20} />
                             </div>
                             <div className="text-left">
-                                <h3 className="font-bold text-slate-900">
+                                <h3 className="font-bold text-text-primary">
                                     {t('social.friends.requests')}
                                 </h3>
                                 <p className="text-xs text-rose-600 font-medium">
@@ -125,7 +125,7 @@ export const SocialTab: React.FC<SocialTabProps> = ({
                                 </p>
                             </div>
                         </div>
-                        <div className="text-slate-400">
+                        <div className="text-text-tertiary">
                             {requestsExpanded ? (
                                 <ChevronUp size={20} />
                             ) : (

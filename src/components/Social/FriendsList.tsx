@@ -21,7 +21,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({
     const { t } = useTranslation();
 
     return (
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+        <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm">
             {/* Header */}
             <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
@@ -29,10 +29,10 @@ export const FriendsList: React.FC<FriendsListProps> = ({
                         <Users size={20} className="text-cyan-500" />
                     </div>
                     <div>
-                        <h2 className="font-bold text-slate-900 text-lg">
+                        <h2 className="font-bold text-text-primary text-lg">
                             {t('social.friends.title')}
                         </h2>
-                        <p className="text-xs text-slate-500 font-medium">
+                        <p className="text-xs text-text-tertiary font-medium">
                             {t('social.friends.count', { count: friends.length })}
                         </p>
                     </div>
@@ -46,10 +46,10 @@ export const FriendsList: React.FC<FriendsListProps> = ({
                         <div
                             key={i}
                             className="flex items-center gap-3 size-full p-2 animate-pulse">
-                            <div className="w-12 h-12 rounded-full bg-slate-100" />
+                            <div className="w-12 h-12 rounded-full bg-surface-lighter" />
                             <div className="flex-1 space-y-2">
-                                <div className="h-4 bg-slate-100 rounded w-1/3" />
-                                <div className="h-3 bg-slate-100 rounded w-1/4" />
+                                <div className="h-4 bg-surface-lighter rounded w-1/3" />
+                                <div className="h-3 bg-surface-lighter rounded w-1/4" />
                             </div>
                         </div>
                     ))}

@@ -54,7 +54,7 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
 
     // Score color helper
     const getScoreColor = (score: number | null): string => {
-        if (!score) return 'text-gray-400';
+        if (!score) return 'text-text-tertiary';
         if (score >= 85) return 'text-green-600';
         if (score >= 70) return 'text-yellow-600';
         return 'text-red-600';
@@ -62,7 +62,7 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
 
     // Metric color helper
     const getMetricColor = (value: number | null, type: 'hrv' | 'rhr'): string => {
-        if (!value) return 'text-gray-400';
+        if (!value) return 'text-text-tertiary';
         if (type === 'hrv') {
             // Higher HRV is better
             if (value >= 60) return 'text-green-600';
@@ -77,8 +77,8 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
     };
 
     return (
-        <div className="bg-white rounded-2xl p-4 md:p-6 border border-gray-100 shadow-sm">
-            <h2 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <div className="bg-surface rounded-2xl p-4 md:p-6 border border-border shadow-sm">
+            <h2 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
                 <span className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-xs">
                     📊
                 </span>
@@ -89,8 +89,8 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
             <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-xs">
                     <thead>
-                        <tr className="border-b border-gray-100">
-                            <th className="text-left py-2 px-2 font-bold text-gray-500 uppercase tracking-wider">
+                        <tr className="border-b border-border">
+                            <th className="text-left py-2 px-2 font-bold text-text-tertiary uppercase tracking-wider">
                                 {t('oura.weeklyView.date')}
                             </th>
                             <th className="text-center py-2 px-2 font-bold text-purple-600 uppercase tracking-wider">
@@ -122,12 +122,12 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
                             return (
                                 <tr
                                     key={date}
-                                    className={`border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors ${
+                                    className={`border-b border-border last:border-0 hover:bg-background transition-colors ${
                                         isToday ? 'bg-purple-50/30' : ''
                                     }`}>
                                     <td className="py-3 px-2">
                                         <div className="flex items-center gap-2">
-                                            <span className="font-bold text-gray-700">
+                                            <span className="font-bold text-text-secondary">
                                                 {formatDateShort(date)}
                                             </span>
                                             {isToday && (
@@ -180,11 +180,11 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
                             className={`p-4 rounded-xl border ${
                                 isToday
                                     ? 'bg-purple-50 border-purple-200'
-                                    : 'bg-gray-50 border-gray-100'
+                                    : 'bg-background border-border'
                             }`}>
                             {/* Date Header */}
                             <div className="flex items-center justify-between mb-3">
-                                <span className="font-bold text-gray-700">
+                                <span className="font-bold text-text-secondary">
                                     {formatDateShort(date)}
                                 </span>
                                 {isToday && (
@@ -269,10 +269,10 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
             {/* Empty State */}
             {ouraLog.length === 0 && (
                 <div className="text-center py-8">
-                    <p className="text-sm text-gray-400 mb-2">
+                    <p className="text-sm text-text-tertiary mb-2">
                         {t('oura.weeklyView.noData')}
                     </p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-text-tertiary">
                         {t('oura.weeklyView.syncPrompt')}
                     </p>
                 </div>

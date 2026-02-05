@@ -30,8 +30,8 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                     onClick={() => i18n.changeLanguage('es')}
                     className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                         i18n.language === 'es'
-                            ? 'bg-white text-gray-900 shadow-lg shadow-white/10 scale-105'
-                            : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700'
+                            ? 'bg-surface text-text-primary shadow-lg shadow-white/10 scale-105'
+                            : 'bg-gray-800 text-text-tertiary hover:text-white border border-gray-700'
                     }`}>
                     🇦🇷 ES
                 </button>
@@ -39,8 +39,8 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                     onClick={() => i18n.changeLanguage('en')}
                     className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                         i18n.language === 'en'
-                            ? 'bg-white text-gray-900 shadow-lg shadow-white/10 scale-105'
-                            : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700'
+                            ? 'bg-surface text-text-primary shadow-lg shadow-white/10 scale-105'
+                            : 'bg-gray-800 text-text-tertiary hover:text-white border border-gray-700'
                     }`}>
                     🇺🇸 EN
                 </button>
@@ -51,8 +51,8 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                     onClick={() => updateField('unitSystem', 'metric')}
                     className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                         data.unitSystem === 'metric'
-                            ? 'bg-white text-gray-900 shadow-lg shadow-white/10 scale-105'
-                            : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700'
+                            ? 'bg-surface text-text-primary shadow-lg shadow-white/10 scale-105'
+                            : 'bg-gray-800 text-text-tertiary hover:text-white border border-gray-700'
                     }`}>
                     📏 Metric (kg/cm)
                 </button>
@@ -60,8 +60,8 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                     onClick={() => updateField('unitSystem', 'imperial')}
                     className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                         data.unitSystem === 'imperial'
-                            ? 'bg-white text-gray-900 shadow-lg shadow-white/10 scale-105'
-                            : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700'
+                            ? 'bg-surface text-text-primary shadow-lg shadow-white/10 scale-105'
+                            : 'bg-gray-800 text-text-tertiary hover:text-white border border-gray-700'
                     }`}>
                     ⚖️ Imperial (lbs/ft)
                 </button>
@@ -72,13 +72,13 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                 <h2 className="text-xl font-bold text-white">
                     {t('onboarding.step1.greeting')} {t('onboarding.step1.name')}
                 </h2>
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-sm text-text-tertiary mt-1">
                     {t('onboarding.step1.title')}
                 </p>
             </div>
 
             <div>
-                <label className="block text-sm text-gray-400 mb-1.5">
+                <label className="block text-sm text-text-tertiary mb-1.5">
                     {t('onboarding.step1.name')} *
                 </label>
                 <input
@@ -98,7 +98,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
 
             <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-sm text-gray-400 mb-1.5">
+                    <label className="block text-sm text-text-tertiary mb-1.5">
                         {t('onboarding.step1.currentWeight')} (
                         {data.unitSystem === 'metric' ? 'kg' : 'lbs'}) *
                     </label>
@@ -113,7 +113,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                     />
                 </div>
                 <div>
-                    <label className="block text-sm text-gray-400 mb-1.5">
+                    <label className="block text-sm text-text-tertiary mb-1.5">
                         {t('onboarding.step1.height')} *
                     </label>
                     <input
@@ -127,7 +127,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
             </div>
 
             <div>
-                <label className="block text-sm text-gray-400 mb-1.5">
+                <label className="block text-sm text-text-tertiary mb-1.5">
                     {t('onboarding.step1.age')} *
                 </label>
                 <input
@@ -140,7 +140,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
             </div>
 
             <div>
-                <label className="block text-sm text-gray-400 mb-2">
+                <label className="block text-sm text-text-tertiary mb-2">
                     {t('onboarding.step1.gender')}
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -149,7 +149,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                         className={`py-3 rounded-xl font-medium transition-all ${
                             data.gender === 'male'
                                 ? 'bg-blue-600 text-white'
-                                : 'bg-gray-700/50 text-gray-400 hover:bg-gray-600/50'
+                                : 'bg-gray-700/50 text-text-tertiary hover:bg-gray-600/50'
                         }`}>
                         👨 {t('onboarding.step1.male')}
                     </button>
@@ -158,7 +158,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                         className={`py-3 rounded-xl font-medium transition-all ${
                             data.gender === 'female'
                                 ? 'bg-pink-600 text-white'
-                                : 'bg-gray-700/50 text-gray-400 hover:bg-gray-600/50'
+                                : 'bg-gray-700/50 text-text-tertiary hover:bg-gray-600/50'
                         }`}>
                         👩 {t('onboarding.step1.female')}
                     </button>

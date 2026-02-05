@@ -21,17 +21,17 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
     const { t } = useTranslation();
 
     return (
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+        <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm">
             {/* Header */}
             <div className="flex items-center gap-3 mb-5">
                 <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
                     <Sparkles size={20} className="text-indigo-500" />
                 </div>
                 <div>
-                    <h2 className="font-bold text-slate-900 text-lg">
+                    <h2 className="font-bold text-text-primary text-lg">
                         {t('social.feed.title')}
                     </h2>
-                    <p className="text-xs text-slate-500 font-medium">
+                    <p className="text-xs text-text-tertiary font-medium">
                         {t('social.feed.subtitle')}
                     </p>
                 </div>
@@ -44,10 +44,10 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
                         <div
                             key={i}
                             className="flex items-start gap-3 py-2 animate-pulse">
-                            <div className="w-10 h-10 rounded-xl bg-slate-100" />
+                            <div className="w-10 h-10 rounded-xl bg-surface-lighter" />
                             <div className="flex-1 space-y-2 py-1">
-                                <div className="h-4 bg-slate-100 rounded w-3/4" />
-                                <div className="h-3 bg-slate-100 rounded w-1/4" />
+                                <div className="h-4 bg-surface-lighter rounded w-3/4" />
+                                <div className="h-3 bg-surface-lighter rounded w-1/4" />
                             </div>
                         </div>
                     ))}

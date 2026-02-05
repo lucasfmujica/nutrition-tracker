@@ -56,7 +56,7 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
             case 'gaining':
                 return <TrendingUp className="w-8 h-8 text-amber-500" />;
             default:
-                return <Activity className="w-8 h-8 text-gray-500" />;
+                return <Activity className="w-8 h-8 text-text-tertiary" />;
         }
     };
 
@@ -69,7 +69,7 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
             case 'danger':
                 return 'bg-red-500/10 border-red-200 text-red-700';
             default:
-                return 'bg-gray-100 border-gray-200 text-gray-700';
+                return 'bg-surface-lighter border-border text-text-secondary';
         }
     };
 
@@ -82,7 +82,7 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
             />
 
             {/* Modal Card */}
-            <div className="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl pointer-events-auto overflow-hidden flex flex-col max-h-[90vh] animate-slide-up sm:animate-fade-in-up transition-all duration-300">
+            <div className="relative w-full max-w-md bg-surface rounded-t-3xl sm:rounded-3xl shadow-2xl pointer-events-auto overflow-hidden flex flex-col max-h-[90vh] animate-slide-up sm:animate-fade-in-up transition-all duration-300">
                 {/* Header */}
                 <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 text-white text-center pb-12">
                     <h2 className="text-2xl font-bold mb-1">
@@ -102,8 +102,8 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                 <div className="px-6 pb-6 -mt-8 overflow-y-auto">
                     {/* 1. Status Badge */}
                     <div
-                        className={`flex flex-col items-center p-4 rounded-2xl border ${getStatusColor()} bg-white shadow-lg mb-6`}>
-                        <div className="mb-2 p-3 bg-white rounded-full shadow-sm">
+                        className={`flex flex-col items-center p-4 rounded-2xl border ${getStatusColor()} bg-surface shadow-lg mb-6`}>
+                        <div className="mb-2 p-3 bg-surface rounded-full shadow-sm">
                             {getStatusIcon()}
                         </div>
                         <h3 className="font-bold text-lg mb-1">
@@ -118,18 +118,18 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
 
                     {/* 2. Stats Grid */}
                     <div className="grid grid-cols-2 gap-3 mb-6">
-                        <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 text-center">
-                            <span className="text-xs text-gray-500 block mb-1">
+                        <div className="bg-background p-3 rounded-xl border border-border text-center">
+                            <span className="text-xs text-text-tertiary block mb-1">
                                 {t('modals.mondayBriefing.currentTempo')}
                             </span>
                             <span
                                 className={`text-lg font-bold ${currentTrend < 0 ? 'text-green-600' : 'text-amber-600'}`}>
                                 {currentTrend ? `${currentTrend.toFixed(2)}` : '0'}{' '}
-                                <span className="text-xs text-gray-400">kg/sem</span>
+                                <span className="text-xs text-text-tertiary">kg/sem</span>
                             </span>
                         </div>
-                        <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 text-center">
-                            <span className="text-xs text-gray-500 block mb-1">
+                        <div className="bg-background p-3 rounded-xl border border-border text-center">
+                            <span className="text-xs text-text-tertiary block mb-1">
                                 {t('modals.mondayBriefing.adherence')}
                             </span>
                             <span
@@ -143,7 +143,7 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                     {actionType !== 'maintain' ? (
                         <div className="mb-6">
                             <div className="flex items-center justify-between mb-3">
-                                <h4 className="font-bold text-gray-800">
+                                <h4 className="font-bold text-text-primary">
                                     {t('modals.mondayBriefing.proposal')}
                                 </h4>
                                 <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-lg font-medium">
@@ -155,13 +155,13 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                                 <div className="flex items-center justify-between">
                                     {/* Old */}
                                     <div className="text-center opacity-60">
-                                        <span className="block text-xs text-gray-500 uppercase">
+                                        <span className="block text-xs text-text-tertiary uppercase">
                                             Actual
                                         </span>
-                                        <span className="block text-lg font-bold text-gray-700">
+                                        <span className="block text-lg font-bold text-text-secondary">
                                             {currentTargets.calories}
                                         </span>
-                                        <span className="text-xs text-gray-400">
+                                        <span className="text-xs text-text-tertiary">
                                             kcal
                                         </span>
                                     </div>
@@ -183,7 +183,7 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                                 </div>
                             </div>
 
-                            <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100 flex gap-2">
+                            <p className="text-sm text-text-secondary bg-background p-3 rounded-lg border border-border flex gap-2">
                                 <Activity className="w-4 h-4 text-purple-500 mt-0.5 shrink-0" />
                                 {reasoning}
                             </p>
@@ -215,7 +215,7 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                             className={`w-full py-3.5 rounded-xl font-bold transition-all ${
                                 actionType === 'maintain'
                                     ? 'bg-gray-900 text-white shadow-lg'
-                                    : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                                    : 'bg-surface border border-border text-text-secondary hover:bg-background'
                             }`}>
                             {actionType === 'maintain'
                                 ? t('modals.mondayBriefing.continue')

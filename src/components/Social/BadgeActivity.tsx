@@ -116,7 +116,7 @@ export const BadgeActivity: React.FC<BadgeActivityProps> = ({
                     className={`text-xs font-bold opacity-70 mt-1 ${config.textColor}`}>
                     {config.subtitle}
                 </p>
-                <p className="text-[10px] text-slate-400 font-medium mt-3 uppercase tracking-widest">
+                <p className="text-[10px] text-text-tertiary font-medium mt-3 uppercase tracking-widest">
                     {userName}
                 </p>
             </div>
@@ -131,8 +131,8 @@ export const BadgeActivity: React.FC<BadgeActivityProps> = ({
                         }}
                         className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 shadow-sm border ${
                             hasReacted
-                                ? 'bg-white text-orange-500 border-orange-100 ring-2 ring-orange-50'
-                                : 'bg-white/80 hover:bg-white text-slate-400 border-white/50 hover:text-orange-500'
+                                ? 'bg-surface text-orange-500 border-orange-100 ring-2 ring-orange-50'
+                                : 'bg-surface/80 hover:bg-surface text-text-tertiary border-white/50 hover:text-orange-500'
                         }`}>
                         <Flame
                             size={12}

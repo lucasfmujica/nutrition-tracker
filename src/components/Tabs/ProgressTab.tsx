@@ -29,15 +29,15 @@ export const ProgressTab: React.FC = () => {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">
+                    <h1 className="text-2xl font-bold text-text-primary">
                         {t('progress.title')}
                     </h1>
-                    <p className="text-sm text-gray-500">{t('progress.subtitle')}</p>
+                    <p className="text-sm text-text-tertiary">{t('progress.subtitle')}</p>
                 </div>
             </div>
 
             {/* Mode Toggle - 5 tabs */}
-            <div className="flex gap-2 p-1 bg-slate-100 rounded-xl overflow-x-auto">
+            <div className="flex gap-2 p-1 bg-surface-lighter rounded-xl overflow-x-auto">
                 <TabButton
                     icon={Camera}
                     label={t('progress.photos.title')}
@@ -102,10 +102,10 @@ const TabButton: React.FC<{
         disabled={disabled}
         className={`flex-none px-4 flex items-center justify-center gap-2 py-3 rounded-lg font-bold text-sm transition-all whitespace-nowrap ${
             isActive
-                ? 'bg-white text-purple-600 shadow-sm'
+                ? 'bg-surface text-purple-600 shadow-sm'
                 : disabled
-                  ? 'text-slate-300 cursor-not-allowed'
-                  : 'text-slate-500 hover:text-slate-700'
+                  ? 'text-text-tertiary cursor-not-allowed'
+                  : 'text-text-tertiary hover:text-text-secondary'
         }`}>
         <Icon size={18} />
         {label}
@@ -113,11 +113,11 @@ const TabButton: React.FC<{
 );
 
 const ComingSoonView: React.FC<{ feature: string }> = ({ feature }) => (
-    <div className="bg-white rounded-2xl p-12 text-center border border-slate-100">
+    <div className="bg-surface rounded-2xl p-12 text-center border border-border">
         <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
             <TrendingUp size={28} className="text-purple-400" />
         </div>
-        <h3 className="font-bold text-slate-900 mb-2">{feature}</h3>
-        <p className="text-sm text-slate-500">Próximamente disponible</p>
+        <h3 className="font-bold text-text-primary mb-2">{feature}</h3>
+        <p className="text-sm text-text-tertiary">Próximamente disponible</p>
     </div>
 );

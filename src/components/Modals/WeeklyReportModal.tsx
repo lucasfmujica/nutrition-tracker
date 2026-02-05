@@ -70,8 +70,8 @@ export const WeeklyReportModal: React.FC<WeeklyReportModalProps> = ({
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute -top-3 -right-3 z-20 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
-                    <X className="w-5 h-5 text-gray-500" />
+                    className="absolute -top-3 -right-3 z-20 w-10 h-10 bg-surface rounded-full shadow-lg flex items-center justify-center hover:bg-background transition-colors">
+                    <X className="w-5 h-5 text-text-tertiary" />
                 </button>
 
                 {/* Content Container */}
@@ -79,11 +79,11 @@ export const WeeklyReportModal: React.FC<WeeklyReportModalProps> = ({
                     {/* Loading State */}
                     {isLoading && (
                         <div
-                            className="bg-white rounded-3xl flex items-center justify-center shadow-2xl"
+                            className="bg-surface rounded-3xl flex items-center justify-center shadow-2xl"
                             style={{ width: '22rem', height: '28rem' }}>
                             <div className="text-center">
                                 <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
-                                <p className="text-gray-500">
+                                <p className="text-text-tertiary">
                                     {t('modals.weeklyReport.generatingStatus')}
                                 </p>
                             </div>
@@ -93,16 +93,16 @@ export const WeeklyReportModal: React.FC<WeeklyReportModalProps> = ({
                     {/* Error State */}
                     {error && !isLoading && (
                         <div
-                            className="bg-white rounded-3xl flex items-center justify-center shadow-2xl"
+                            className="bg-surface rounded-3xl flex items-center justify-center shadow-2xl"
                             style={{ width: '22rem', height: '28rem' }}>
                             <div className="text-center px-8">
                                 <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
                                     <X className="w-8 h-8 text-red-500" />
                                 </div>
-                                <p className="text-gray-900 font-medium mb-2">
+                                <p className="text-text-primary font-medium mb-2">
                                     {t('modals.weeklyReport.errorTitle')}
                                 </p>
-                                <p className="text-gray-500 text-sm">{error}</p>
+                                <p className="text-text-tertiary text-sm">{error}</p>
                             </div>
                         </div>
                     )}

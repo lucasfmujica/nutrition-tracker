@@ -162,42 +162,42 @@ export const FoodCameraInput: React.FC = () => {
     // If showing results/edit view
     if (result) {
         return (
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-4">
+            <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border space-y-4">
                 {/* Header */}
                 <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-gray-900">
+                    <h3 className="text-lg font-bold text-text-primary">
                         {t('food.camera.editTitle')}
                     </h3>
                     <button
                         onClick={handleCancel}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                        <X className="w-5 h-5 text-gray-500" />
+                        className="p-2 hover:bg-surface-lighter rounded-lg transition-colors">
+                        <X className="w-5 h-5 text-text-tertiary" />
                     </button>
                 </div>
 
                 {/* Meal Name */}
                 <div>
-                    <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                    <label className="text-sm font-semibold text-text-secondary mb-2 block">
                         {t('food.camera.nameLabel')}
                     </label>
                     <input
                         type="text"
                         value={editableMeal}
                         onChange={(e) => setEditableMeal(e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         placeholder={t('food.camera.namePlaceholder')}
                     />
                 </div>
 
                 {/* Meal Type Dropdown */}
                 <div>
-                    <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                    <label className="text-sm font-semibold text-text-secondary mb-2 block">
                         {t('food.camera.typeLabel')}
                     </label>
                     <select
                         value={selectedMealType}
                         onChange={(e) => setSelectedMealType(e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                         <option value="breakfast">{t('mealTypes.breakfast')}</option>
                         <option value="lunch">{t('mealTypes.lunch')}</option>
                         <option value="snack">{t('mealTypes.snack')}</option>
@@ -207,7 +207,7 @@ export const FoodCameraInput: React.FC = () => {
 
                 {/* Items List */}
                 <div>
-                    <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                    <label className="text-sm font-semibold text-text-secondary mb-2 block">
                         {t('food.camera.ingredientsLabel')}
                     </label>
                     <div className="space-y-2">
@@ -221,7 +221,7 @@ export const FoodCameraInput: React.FC = () => {
                                         newItems[index].amount = e.target.value;
                                         setEditableItems(newItems);
                                     }}
-                                    className="w-24 px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                                    className="w-24 px-3 py-2 border border-border rounded-lg text-sm"
                                     placeholder={t(
                                         'food.camera.ingredientsPlaceholderAmount',
                                     )}
@@ -234,7 +234,7 @@ export const FoodCameraInput: React.FC = () => {
                                         newItems[index].name = e.target.value;
                                         setEditableItems(newItems);
                                     }}
-                                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                                    className="flex-1 px-3 py-2 border border-border rounded-lg text-sm"
                                     placeholder={t(
                                         'food.camera.ingredientsPlaceholderName',
                                     )}
@@ -246,12 +246,12 @@ export const FoodCameraInput: React.FC = () => {
 
                 {/* Macros */}
                 <div>
-                    <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                    <label className="text-sm font-semibold text-text-secondary mb-2 block">
                         {t('food.camera.macrosLabel')}
                     </label>
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="text-xs text-gray-600 mb-1 block">
+                            <label className="text-xs text-text-secondary mb-1 block">
                                 {t('modals.foodForm.calories')}
                             </label>
                             <input
@@ -263,11 +263,11 @@ export const FoodCameraInput: React.FC = () => {
                                         calories: parseFloat(e.target.value) || 0,
                                     })
                                 }
-                                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                                className="w-full px-3 py-2 border border-border rounded-lg text-sm"
                             />
                         </div>
                         <div>
-                            <label className="text-xs text-gray-600 mb-1 block">
+                            <label className="text-xs text-text-secondary mb-1 block">
                                 {t('modals.foodForm.protein')}
                             </label>
                             <input
@@ -279,11 +279,11 @@ export const FoodCameraInput: React.FC = () => {
                                         protein: parseFloat(e.target.value) || 0,
                                     })
                                 }
-                                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                                className="w-full px-3 py-2 border border-border rounded-lg text-sm"
                             />
                         </div>
                         <div>
-                            <label className="text-xs text-gray-600 mb-1 block">
+                            <label className="text-xs text-text-secondary mb-1 block">
                                 {t('modals.foodForm.carbs')}
                             </label>
                             <input
@@ -295,11 +295,11 @@ export const FoodCameraInput: React.FC = () => {
                                         carbs: parseFloat(e.target.value) || 0,
                                     })
                                 }
-                                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                                className="w-full px-3 py-2 border border-border rounded-lg text-sm"
                             />
                         </div>
                         <div>
-                            <label className="text-xs text-gray-600 mb-1 block">
+                            <label className="text-xs text-text-secondary mb-1 block">
                                 {t('modals.foodForm.fat')}
                             </label>
                             <input
@@ -311,11 +311,11 @@ export const FoodCameraInput: React.FC = () => {
                                         fat: parseFloat(e.target.value) || 0,
                                     })
                                 }
-                                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                                className="w-full px-3 py-2 border border-border rounded-lg text-sm"
                             />
                         </div>
                         <div className="col-span-2">
-                            <label className="text-xs text-gray-600 mb-1 block">
+                            <label className="text-xs text-text-secondary mb-1 block">
                                 {t('modals.foodForm.fiber')}
                             </label>
                             <input
@@ -327,7 +327,7 @@ export const FoodCameraInput: React.FC = () => {
                                         fiber: parseFloat(e.target.value) || 0,
                                     })
                                 }
-                                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                                className="w-full px-3 py-2 border border-border rounded-lg text-sm"
                             />
                         </div>
                     </div>
@@ -337,7 +337,7 @@ export const FoodCameraInput: React.FC = () => {
                 <div className="flex gap-3 pt-2">
                     <button
                         onClick={handleCancel}
-                        className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors">
+                        className="flex-1 py-3 bg-surface-lighter text-text-secondary rounded-xl font-semibold hover:bg-surface-lighter transition-colors">
                         {t('common.cancel')}
                     </button>
                     <button
@@ -353,7 +353,7 @@ export const FoodCameraInput: React.FC = () => {
 
     // Default view - Scan button
     return (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border">
             <input
                 ref={fileInputRef}
                 type="file"
@@ -398,13 +398,13 @@ export const FoodCameraInput: React.FC = () => {
                 <button
                     onClick={() => galleryInputRef.current?.click()}
                     disabled={isLoading}
-                    className="w-full py-4 bg-white border-2 border-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-all active:scale-[0.99] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                    className="w-full py-4 bg-surface border-2 border-border text-text-secondary rounded-xl font-bold hover:bg-background transition-all active:scale-[0.99] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
                     <ImageIcon className="w-5 h-5" />
                     {t('food.camera.galleryButton')}
                 </button>
             </div>
 
-            <p className="text-xs text-gray-500 text-center mt-3">
+            <p className="text-xs text-text-tertiary text-center mt-3">
                 {t('food.camera.helper')}
             </p>
         </div>

@@ -16,10 +16,10 @@ export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ entry, metric })
         if (rank === 1)
             return { emoji: '🥇', bg: 'bg-amber-50', text: 'text-amber-600' };
         if (rank === 2)
-            return { emoji: '🥈', bg: 'bg-slate-100', text: 'text-slate-500' };
+            return { emoji: '🥈', bg: 'bg-surface-lighter', text: 'text-text-tertiary' };
         if (rank === 3)
             return { emoji: '🥉', bg: 'bg-orange-50', text: 'text-orange-500' };
-        return { emoji: `${rank}`, bg: 'bg-slate-50', text: 'text-slate-400' };
+        return { emoji: `${rank}`, bg: 'bg-background', text: 'text-text-tertiary' };
     };
 
     const formatValue = (value: number, metric: LeaderboardMetric): string => {
@@ -47,7 +47,7 @@ export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ entry, metric })
             className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
                 entry.isCurrentUser
                     ? 'bg-primary/5 border border-primary/20'
-                    : 'hover:bg-slate-50'
+                    : 'hover:bg-background'
             }`}>
             {/* Rank */}
             <div
@@ -69,7 +69,7 @@ export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ entry, metric })
             <div className="flex-1 min-w-0">
                 <p
                     className={`font-bold truncate ${
-                        entry.isCurrentUser ? 'text-primary' : 'text-slate-900'
+                        entry.isCurrentUser ? 'text-primary' : 'text-text-primary'
                     }`}>
                     {entry.name}
                     {entry.isCurrentUser && (
@@ -88,14 +88,14 @@ export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ entry, metric })
                             ? 'text-green-600'
                             : entry.value > 0
                               ? 'text-red-500'
-                              : 'text-slate-400'
+                              : 'text-text-tertiary'
                         : metric === 'deficit'
                           ? entry.value > 0
                               ? 'text-green-600' // Déficit positivo (comió menos)
                               : entry.value < 0
                                 ? 'text-red-500' // Superávit (comió más)
-                                : 'text-slate-400'
-                          : 'text-slate-700'
+                                : 'text-text-tertiary'
+                          : 'text-text-secondary'
                 }`}>
                 {formatValue(entry.value, metric)}
             </div>

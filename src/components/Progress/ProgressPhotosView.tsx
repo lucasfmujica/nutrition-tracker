@@ -88,21 +88,21 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
             {/* Upload Form Modal */}
             {showUploadForm && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl p-6 w-full max-w-sm">
+                    <div className="bg-surface rounded-3xl p-6 w-full max-w-sm">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-bold text-slate-900">
+                            <h3 className="text-lg font-bold text-text-primary">
                                 {t('progress.photos.newPhoto')}
                             </h3>
                             <button
                                 onClick={() => setShowUploadForm(false)}
-                                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500">
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-surface-lighter text-text-tertiary">
                                 <X size={18} />
                             </button>
                         </div>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5">
+                                <label className="block text-xs font-bold text-text-tertiary uppercase mb-1.5">
                                     {t('progress.photos.date')}
                                 </label>
                                 <LukenFitDatePicker
@@ -113,7 +113,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
                             </div>
 
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5">
+                                <label className="block text-xs font-bold text-text-tertiary uppercase mb-1.5">
                                     {t('progress.photos.angle')}
                                 </label>
                                 <div className="grid grid-cols-4 gap-2">
@@ -131,7 +131,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
                                             className={`py-2 rounded-xl text-sm font-medium transition-colors ${
                                                 uploadAngle === angle
                                                     ? 'bg-purple-100 text-purple-700 border-2 border-purple-500'
-                                                    : 'bg-slate-100 text-slate-600 border-2 border-transparent'
+                                                    : 'bg-surface-lighter text-text-secondary border-2 border-transparent'
                                             }`}>
                                             {formatAngleLabel(angle)}
                                         </button>
@@ -140,7 +140,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
                             </div>
 
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5">
+                                <label className="block text-xs font-bold text-text-tertiary uppercase mb-1.5">
                                     {t('progress.photos.notes')}
                                 </label>
                                 <input
@@ -150,7 +150,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
                                     placeholder={t(
                                         'progress.photos.notesPlaceholder',
                                     )}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm"
+                                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm"
                                 />
                             </div>
 
@@ -166,7 +166,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
                             <button
                                 onClick={() => fileInputRef.current?.click()}
                                 disabled={isUploading}
-                                className="w-full py-4 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors">
+                                className="w-full py-4 bg-purple-600 hover:bg-purple-700 disabled:bg-surface-lighter text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors">
                                 {isUploading ? (
                                     <>
                                         <Loader2
@@ -204,14 +204,14 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
 
             {/* Empty State */}
             {!isLoading && photos.length === 0 && (
-                <div className="bg-white rounded-2xl p-8 text-center border border-slate-100">
+                <div className="bg-surface rounded-2xl p-8 text-center border border-border">
                     <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <ImageIcon size={28} className="text-purple-400" />
                     </div>
-                    <h3 className="font-bold text-slate-900 mb-1">
+                    <h3 className="font-bold text-text-primary mb-1">
                         {t('progress.photos.noPhotos')}
                     </h3>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-text-tertiary">
                         {t('progress.photos.noPhotosDesc')}
                     </p>
                 </div>
@@ -220,7 +220,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
             {/* Photo Grid by Month */}
             {Object.entries(photosByMonth).map(([monthKey, monthPhotos]) => (
                 <div key={monthKey} className="space-y-3">
-                    <h3 className="text-sm font-bold text-slate-500 uppercase">
+                    <h3 className="text-sm font-bold text-text-tertiary uppercase">
                         {format(parseISO(monthKey + '-01'), 'MMMM yyyy', {
                             locale: dateLocale,
                         })}
@@ -230,7 +230,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
                             <button
                                 key={photo.id}
                                 onClick={() => setSelectedPhoto(photo)}
-                                className="aspect-square rounded-xl overflow-hidden bg-slate-100 relative group">
+                                className="aspect-square rounded-xl overflow-hidden bg-surface-lighter relative group">
                                 <img
                                     src={photo.thumbnailUrl || photo.photoUrl}
                                     alt={`Progreso ${photo.date}`}
@@ -244,7 +244,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
                                     </p>
                                 </div>
                                 {photo.angle && (
-                                    <span className="absolute top-1 right-1 bg-white/90 text-[10px] font-bold px-1.5 py-0.5 rounded text-slate-600 uppercase">
+                                    <span className="absolute top-1 right-1 bg-surface/90 text-[10px] font-bold px-1.5 py-0.5 rounded text-text-secondary uppercase">
                                         {getAngleBadge(photo.angle)}
                                     </span>
                                 )}
@@ -260,7 +260,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
                     className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
                     onClick={() => setSelectedPhoto(null)}>
                     <div
-                        className="bg-white rounded-3xl overflow-hidden max-w-lg w-full max-h-[90vh] overflow-y-auto"
+                        className="bg-surface rounded-3xl overflow-hidden max-w-lg w-full max-h-[90vh] overflow-y-auto"
                         onClick={(e) => e.stopPropagation()}>
                         <img
                             src={selectedPhoto.photoUrl}
@@ -270,7 +270,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
                         <div className="p-4 space-y-3">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="font-bold text-slate-900">
+                                    <p className="font-bold text-text-primary">
                                         {format(
                                             parseISO(selectedPhoto.date),
                                             'd MMMM yyyy',
@@ -278,7 +278,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
                                         )}
                                     </p>
                                     {selectedPhoto.angle && (
-                                        <p className="text-sm text-slate-500 capitalize">
+                                        <p className="text-sm text-text-tertiary capitalize">
                                             {t('progress.photos.view')}:{' '}
                                             {formatAngleLabel(selectedPhoto.angle)}
                                         </p>
@@ -291,14 +291,14 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
                                 </button>
                             </div>
                             {selectedPhoto.notes && (
-                                <p className="text-sm text-slate-600 bg-slate-50 px-3 py-2 rounded-lg">
+                                <p className="text-sm text-text-secondary bg-background px-3 py-2 rounded-lg">
                                     {selectedPhoto.notes}
                                 </p>
                             )}
                             {selectedPhoto.weight && (
-                                <p className="text-sm text-slate-500">
+                                <p className="text-sm text-text-tertiary">
                                     {t('progress.photos.weight')}:{' '}
-                                    <span className="font-bold text-slate-900">
+                                    <span className="font-bold text-text-primary">
                                         {selectedPhoto.weight} kg
                                     </span>
                                 </p>

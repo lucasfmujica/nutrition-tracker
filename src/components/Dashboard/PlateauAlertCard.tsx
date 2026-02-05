@@ -87,8 +87,8 @@ export const PlateauAlertCard: React.FC<PlateauAlertCardProps> = ({
                             selectedOption === option.id
                                 ? 'bg-amber-500 border-amber-500 text-white'
                                 : selectedOption !== null
-                                  ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed'
-                                  : 'bg-white border-amber-200 hover:border-amber-400 hover:shadow-sm'
+                                  ? 'bg-background border-border text-text-tertiary cursor-not-allowed'
+                                  : 'bg-surface border-amber-200 hover:border-amber-400 hover:shadow-sm'
                         }`}>
                         <div
                             className={`flex items-center justify-center w-8 h-8 rounded-lg ${

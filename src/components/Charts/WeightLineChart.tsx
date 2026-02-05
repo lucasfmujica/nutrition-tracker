@@ -34,8 +34,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     const { t } = useTranslation();
     if (active && payload && payload.length) {
         return (
-            <div className="bg-white p-4 rounded-xl shadow-xl border border-gray-100 ring-1 ring-gray-50">
-                <p className="text-gray-500 text-xs font-semibold mb-2">{label}</p>
+            <div className="bg-surface p-4 rounded-xl shadow-xl border border-border ring-1 ring-gray-50">
+                <p className="text-text-tertiary text-xs font-semibold mb-2">{label}</p>
                 {payload.map((entry: any, index: number) => (
                     <div
                         key={index}
@@ -44,7 +44,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                             className="w-2 h-2 rounded-full"
                             style={{ backgroundColor: entry.color }}
                         />
-                        <span className="text-sm font-bold text-gray-700">
+                        <span className="text-sm font-bold text-text-secondary">
                             {entry.name}: {entry.value} kg
                         </span>
                     </div>
@@ -68,13 +68,13 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
     const maxWeight = Math.max(...weights, targetWeight) + 1;
 
     return (
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm h-[350px] w-full">
+        <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm h-[350px] w-full">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                 <div>
-                    <h3 className="text-lg font-bold text-gray-900">
+                    <h3 className="text-lg font-bold text-text-primary">
                         {t('charts.weight.title')}
                     </h3>
-                    <p className="text-xs text-gray-400 font-medium">
+                    <p className="text-xs text-text-tertiary font-medium">
                         {t('charts.weight.trend')}
                     </p>
                 </div>
@@ -83,25 +83,25 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                 <div className="flex gap-4 text-xs">
                     <div className="flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
-                        <span className="text-gray-600 font-medium">
+                        <span className="text-text-secondary font-medium">
                             {t('navigation.weight')}
                         </span>
                     </div>
                     <div className="flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-                        <span className="text-gray-600 font-medium">
+                        <span className="text-text-secondary font-medium">
                             {t('charts.weight.average')}
                         </span>
                     </div>
                     <div className="flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-pink-500"></span>
-                        <span className="text-gray-600 font-medium">
+                        <span className="text-text-secondary font-medium">
                             {t('charts.weight.average30d')}
                         </span>
                     </div>
                     <div className="flex items-center gap-1.5">
                         <span className="w-2 h-0.5 border-t border-dashed border-emerald-400"></span>
-                        <span className="text-gray-600 font-medium">
+                        <span className="text-text-secondary font-medium">
                             {t('charts.weight.goal')} ({targetWeight})
                         </span>
                     </div>

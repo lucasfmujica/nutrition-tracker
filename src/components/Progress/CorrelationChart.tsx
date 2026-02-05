@@ -58,9 +58,9 @@ export const CorrelationChart: React.FC<CorrelationChartProps> = ({
 
         const data = payload[0].payload;
         return (
-            <div className="bg-white px-3 py-2 rounded-lg shadow-lg border border-slate-200">
-                <p className="text-xs text-slate-500 mb-1">{data.date}</p>
-                <p className="text-sm font-bold text-slate-900">
+            <div className="bg-surface px-3 py-2 rounded-lg shadow-lg border border-border">
+                <p className="text-xs text-text-tertiary mb-1">{data.date}</p>
+                <p className="text-sm font-bold text-text-primary">
                     {xLabel}: {data.x.toFixed(1)} kg
                 </p>
                 <p className="text-sm font-bold text-purple-600">
@@ -75,10 +75,10 @@ export const CorrelationChart: React.FC<CorrelationChartProps> = ({
     // Empty state
     if (dataPoints.length === 0) {
         return (
-            <div className="bg-white rounded-2xl p-6 border border-slate-100">
-                <h3 className="font-bold text-slate-900 mb-2">{title}</h3>
+            <div className="bg-surface rounded-2xl p-6 border border-border">
+                <h3 className="font-bold text-text-primary mb-2">{title}</h3>
                 <div className="flex items-center justify-center py-8">
-                    <p className="text-sm text-slate-400">
+                    <p className="text-sm text-text-tertiary">
                         {t('progress.analytics.noDataDesc')}
                     </p>
                 </div>
@@ -89,10 +89,10 @@ export const CorrelationChart: React.FC<CorrelationChartProps> = ({
     // Need at least 3 points for meaningful correlation
     if (dataPoints.length < 3) {
         return (
-            <div className="bg-white rounded-2xl p-6 border border-slate-100">
-                <h3 className="font-bold text-slate-900 mb-2">{title}</h3>
+            <div className="bg-surface rounded-2xl p-6 border border-border">
+                <h3 className="font-bold text-text-primary mb-2">{title}</h3>
                 <div className="flex items-center justify-center py-8">
-                    <p className="text-sm text-slate-400">
+                    <p className="text-sm text-text-tertiary">
                         {t('progress.analytics.insufficientDataDesc')}
                     </p>
                 </div>
@@ -111,12 +111,12 @@ export const CorrelationChart: React.FC<CorrelationChartProps> = ({
               : Minus;
 
     return (
-        <div className="bg-white rounded-2xl p-6 border border-slate-100">
+        <div className="bg-surface rounded-2xl p-6 border border-border">
             {/* Header */}
             <div className="flex items-start justify-between mb-4">
                 <div>
-                    <h3 className="font-bold text-slate-900 mb-1">{title}</h3>
-                    <p className="text-xs text-slate-500">
+                    <h3 className="font-bold text-text-primary mb-1">{title}</h3>
+                    <p className="text-xs text-text-tertiary">
                         {dataPoints.length} mediciones
                     </p>
                 </div>
@@ -130,13 +130,13 @@ export const CorrelationChart: React.FC<CorrelationChartProps> = ({
                                         ? 'text-orange-500'
                                         : regression.slope < -0.1
                                           ? 'text-green-500'
-                                          : 'text-slate-400',
+                                          : 'text-text-tertiary',
                             })}
-                            <span className="text-sm font-bold text-slate-900">
+                            <span className="text-sm font-bold text-text-primary">
                                 R² = {regression.rSquared.toFixed(2)}
                             </span>
                         </div>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-text-tertiary">
                             {correlationStrength}
                         </p>
                     </div>
@@ -194,8 +194,8 @@ export const CorrelationChart: React.FC<CorrelationChartProps> = ({
 
             {/* Equation */}
             {regression && (
-                <div className="mt-3 pt-3 border-t border-slate-100">
-                    <p className="text-xs text-slate-500 text-center font-mono">
+                <div className="mt-3 pt-3 border-t border-border">
+                    <p className="text-xs text-text-tertiary text-center font-mono">
                         {regression.equation}
                     </p>
                 </div>

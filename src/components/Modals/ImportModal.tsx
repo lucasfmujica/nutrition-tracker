@@ -48,21 +48,21 @@ export const ImportModal: React.FC<ImportModalProps> = ({
 
     return (
         <div className="fixed inset-0 bg-slate-900/40 flex items-start justify-center z-50 p-4 pt-20 overflow-y-auto backdrop-blur-sm">
-            <div className="bg-white rounded-3xl p-6 w-full max-w-md border border-gray-100 shadow-2xl">
+            <div className="bg-surface rounded-3xl p-6 w-full max-w-md border border-border shadow-2xl">
                 <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold text-slate-900">{title}</h3>
+                    <h3 className="text-xl font-bold text-text-primary">{title}</h3>
                     <button
                         onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400">
+                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-lighter text-text-tertiary">
                         ×
                     </button>
                 </div>
-                <p className="text-sm text-slate-500 mb-4">{description}</p>
+                <p className="text-sm text-text-tertiary mb-4">{description}</p>
                 <textarea
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder={placeholder}
-                    className={`w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-slate-900 text-sm font-mono h-48 resize-none ${colors.ring} outline-none transition-all`}
+                    className={`w-full bg-background border border-border rounded-2xl px-4 py-4 text-text-primary text-sm font-mono h-48 resize-none ${colors.ring} outline-none transition-all`}
                 />
                 {error && (
                     <div className="bg-red-50 text-red-500 text-xs p-3 rounded-xl mt-3 flex items-center gap-2">
@@ -72,7 +72,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                 <div className="flex gap-4 mt-6">
                     <button
                         onClick={onClose}
-                        className="flex-1 bg-slate-100 hover:bg-slate-200 py-4 rounded-2xl text-slate-600 font-bold transition-all active:scale-95">
+                        className="flex-1 bg-surface-lighter hover:bg-surface-lighter py-4 rounded-2xl text-text-secondary font-bold transition-all active:scale-95">
                         {t('modals.import.cancel')}
                     </button>
                     <button

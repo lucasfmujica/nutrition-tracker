@@ -70,10 +70,10 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
                         className={`${fontSize} font-bold ${isOver ? 'text-red-400' : 'text-white'}`}>
                         {current}
                     </span>
-                    <span className={`${subFontSize} text-gray-400`}>/{target}</span>
+                    <span className={`${subFontSize} text-text-tertiary`}>/{target}</span>
                 </div>
             </div>
-            <span className={`${labelSize} font-medium text-gray-300 mt-1`}>
+            <span className={`${labelSize} font-medium text-text-tertiary mt-1`}>
                 {label}
             </span>
         </div>

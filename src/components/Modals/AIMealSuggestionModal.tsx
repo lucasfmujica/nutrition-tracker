@@ -88,7 +88,7 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-3xl p-6 w-full max-w-md border border-purple-200 shadow-2xl relative overflow-hidden">
+            <div className="bg-surface rounded-3xl p-6 w-full max-w-md border border-purple-200 shadow-2xl relative overflow-hidden">
                 {/* Background Decor */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-bl-full -mr-8 -mt-8 pointer-events-none" />
 
@@ -97,14 +97,14 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                         <div className="p-2 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl text-white shadow-lg shadow-purple-500/20">
                             <Sparkles size={20} />
                         </div>
-                        <h3 className="text-xl font-black text-gray-900 tracking-tight">
+                        <h3 className="text-xl font-black text-text-primary tracking-tight">
                             Chef IA
                         </h3>
                     </div>
                     <button
                         onClick={onClose}
                         aria-label="Close modal"
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:text-gray-600 hover:bg-gray-200 transition-colors">
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-surface-lighter text-text-tertiary hover:text-text-secondary hover:bg-surface-lighter transition-colors">
                         ×
                     </button>
                 </div>
@@ -115,10 +115,10 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                             size={40}
                             className="text-purple-600 animate-spin mb-4"
                         />
-                        <p className="text-gray-900 font-bold mb-1">
+                        <p className="text-text-primary font-bold mb-1">
                             Pensando en deliciosas opciones...
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-text-tertiary">
                             Analizando tus macros restantes
                         </p>
                     </div>
@@ -127,7 +127,7 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                         <p className="text-red-500 font-medium mb-2">{error}</p>
                         <button
                             onClick={onClose}
-                            className="text-sm font-bold text-gray-600 hover:text-gray-900 underline">
+                            className="text-sm font-bold text-text-secondary hover:text-text-primary underline">
                             Cerrar
                         </button>
                     </div>
@@ -137,16 +137,16 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                             (suggestion: MealSuggestion, idx: number) => (
                                 <div
                                     key={idx}
-                                    className="group relative bg-white border border-gray-100 hover:border-purple-200 rounded-2xl p-4 transition-all hover:shadow-lg hover:shadow-purple-500/5">
+                                    className="group relative bg-surface border border-border hover:border-purple-200 rounded-2xl p-4 transition-all hover:shadow-lg hover:shadow-purple-500/5">
                                     <div className="flex justify-between items-start mb-2">
-                                        <h4 className="font-bold text-gray-900 group-hover:text-purple-700 transition-colors">
+                                        <h4 className="font-bold text-text-primary group-hover:text-purple-700 transition-colors">
                                             {suggestion.name}
                                         </h4>
                                         <span className="text-xs font-bold bg-gray-900 text-white px-2 py-1 rounded-lg">
                                             {suggestion.macros.calories} kcal
                                         </span>
                                     </div>
-                                    <p className="text-xs text-gray-500 mb-3 line-clamp-2">
+                                    <p className="text-xs text-text-tertiary mb-3 line-clamp-2">
                                         {suggestion.description}
                                     </p>
 
@@ -166,7 +166,7 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                                         onClick={() =>
                                             handleAddSuggestion(suggestion)
                                         }
-                                        className="w-full py-2.5 rounded-xl bg-gray-50 text-gray-600 font-bold text-xs group-hover:bg-purple-600 group-hover:text-white transition-all flex items-center justify-center gap-2">
+                                        className="w-full py-2.5 rounded-xl bg-background text-text-secondary font-bold text-xs group-hover:bg-purple-600 group-hover:text-white transition-all flex items-center justify-center gap-2">
                                         <Plus size={14} />
                                         Agregar al Diario
                                     </button>

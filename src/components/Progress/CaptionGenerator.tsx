@@ -124,9 +124,9 @@ export const CaptionGenerator: React.FC<CaptionGeneratorProps> = ({
 
             {/* Caption Display/Edit */}
             {caption && (
-                <div className="bg-white rounded-2xl p-4 border border-slate-200">
+                <div className="bg-surface rounded-2xl p-4 border border-border">
                     <div className="flex items-center justify-between mb-3">
-                        <label className="text-sm font-bold text-slate-700">
+                        <label className="text-sm font-bold text-text-secondary">
                             {t('captionGenerator.caption')}
                         </label>
                         <div className="flex gap-2">
@@ -140,7 +140,7 @@ export const CaptionGenerator: React.FC<CaptionGeneratorProps> = ({
                             <button
                                 onClick={handleRegenerate}
                                 disabled={isGenerating}
-                                className="flex items-center gap-1 text-xs text-slate-600 font-bold hover:text-slate-700 disabled:opacity-50">
+                                className="flex items-center gap-1 text-xs text-text-secondary font-bold hover:text-text-secondary disabled:opacity-50">
                                 <RefreshCw
                                     size={12}
                                     className={isGenerating ? 'animate-spin' : ''}
@@ -154,19 +154,19 @@ export const CaptionGenerator: React.FC<CaptionGeneratorProps> = ({
                         <textarea
                             value={caption}
                             onChange={(e) => handleCaptionChange(e.target.value)}
-                            className="w-full p-3 border border-slate-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            className="w-full p-3 border border-border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
                             rows={3}
                             placeholder={t('captionGenerator.placeholder')}
                         />
                     ) : (
-                        <p className="text-sm text-slate-900 leading-relaxed">
+                        <p className="text-sm text-text-primary leading-relaxed">
                             {caption}
                         </p>
                     )}
 
                     {/* Hashtags */}
                     {hashtags.length > 0 && (
-                        <div className="mt-3 pt-3 border-t border-slate-100">
+                        <div className="mt-3 pt-3 border-t border-border">
                             <div className="flex flex-wrap gap-2">
                                 {hashtags.map((tag, index) => (
                                     <span

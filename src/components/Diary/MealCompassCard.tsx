@@ -26,7 +26,7 @@ export const MealCompassCard: React.FC<MealCompassCardProps> = ({
     return (
         <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-5 border border-indigo-100 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-                <div className="bg-white p-1.5 rounded-lg shadow-sm">
+                <div className="bg-surface p-1.5 rounded-lg shadow-sm">
                     <span className="text-xl">🧭</span>
                 </div>
                 <div>
@@ -44,13 +44,13 @@ export const MealCompassCard: React.FC<MealCompassCardProps> = ({
                     <button
                         key={`${meal.name}-${index}`}
                         onClick={() => onSelect(meal)}
-                        className="flex items-center justify-between bg-white p-3 rounded-xl border border-indigo-50 hover:border-indigo-200 hover:shadow-md transition-all group text-left w-full">
+                        className="flex items-center justify-between bg-surface p-3 rounded-xl border border-indigo-50 hover:border-indigo-200 hover:shadow-md transition-all group text-left w-full">
                         <div className="min-w-0">
-                            <p className="font-bold text-gray-800 truncate group-hover:text-indigo-600 transition-colors">
+                            <p className="font-bold text-text-primary truncate group-hover:text-indigo-600 transition-colors">
                                 {meal.name}
                             </p>
-                            <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
-                                <span className="font-semibold text-gray-700">
+                            <div className="flex items-center gap-2 text-xs text-text-tertiary mt-0.5">
+                                <span className="font-semibold text-text-secondary">
                                     {meal.calories} kcal
                                 </span>
                                 <span>•</span>

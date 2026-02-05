@@ -117,17 +117,17 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
     // Empty state - need measurements and weight data
     if (measurements.length === 0 || weightData.length === 0) {
         return (
-            <div className="bg-white rounded-2xl p-8 text-center border border-slate-100">
+            <div className="bg-surface rounded-2xl p-8 text-center border border-border">
                 <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <BarChart3 size={28} className="text-purple-400" />
                 </div>
-                <h3 className="font-bold text-slate-900 mb-1">
+                <h3 className="font-bold text-text-primary mb-1">
                     {t('progress.analytics.noDataTitle')}
                 </h3>
-                <p className="text-sm text-slate-500 mb-4">
+                <p className="text-sm text-text-tertiary mb-4">
                     {t('progress.analytics.noDataDesc')}
                 </p>
-                <div className="text-xs text-slate-400 space-y-1">
+                <div className="text-xs text-text-tertiary space-y-1">
                     <p>• {t('progress.photos.addPhoto')}</p>
                     <p>• {t('progress.measurements.noMeasurementsDesc')}</p>
                     <p>• {t('progress.analytics.insufficientDataDesc')}</p>
@@ -144,14 +144,14 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
         hipsData.length < 3
     ) {
         return (
-            <div className="bg-white rounded-2xl p-8 text-center border border-slate-100">
+            <div className="bg-surface rounded-2xl p-8 text-center border border-border">
                 <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <BarChart3 size={28} className="text-purple-400" />
                 </div>
-                <h3 className="font-bold text-slate-900 mb-2">
+                <h3 className="font-bold text-text-primary mb-2">
                     {t('progress.analytics.insufficientDataTitle')}
                 </h3>
-                <p className="text-sm text-slate-600 mb-4 max-w-md mx-auto">
+                <p className="text-sm text-text-secondary mb-4 max-w-md mx-auto">
                     {t('progress.analytics.insufficientDataDesc')}
                 </p>
                 <div className="bg-blue-50 rounded-xl p-4 max-w-md mx-auto">
@@ -169,14 +169,14 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
             {/* Header */}
             <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 border border-purple-100">
                 <div className="flex items-start gap-3">
-                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                    <div className="p-2 bg-surface rounded-lg shadow-sm">
                         <TrendingUp size={24} className="text-purple-600" />
                     </div>
                     <div>
-                        <h2 className="font-bold text-slate-900 mb-1">
+                        <h2 className="font-bold text-text-primary mb-1">
                             {t('progress.analytics.headerTitle')}
                         </h2>
-                        <p className="text-sm text-slate-600">
+                        <p className="text-sm text-text-secondary">
                             {t('progress.analytics.headerSubtitle', {
                                 count: weightData.length,
                             })}
@@ -188,7 +188,7 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
             {/* Predictions Section */}
             {waistPredictions && (
                 <div>
-                    <h3 className="font-bold text-slate-900 mb-3">
+                    <h3 className="font-bold text-text-primary mb-3">
                         {t('progress.analytics.waistPredictions')}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -222,7 +222,7 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
 
             {/* Correlation Charts */}
             <div>
-                <h3 className="font-bold text-slate-900 mb-3">
+                <h3 className="font-bold text-text-primary mb-3">
                     {t('progress.analytics.correlations')}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
