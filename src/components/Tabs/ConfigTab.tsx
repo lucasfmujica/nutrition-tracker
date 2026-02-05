@@ -10,6 +10,7 @@ import {
     Workout,
 } from '../../types/domain';
 
+import { useTheme } from '../../context/ThemeContext';
 import { calculateMacros } from '../../utils/macroCalculator';
 import {
     convertWeightForDisplay,
@@ -62,6 +63,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
 }) => {
     const { t, i18n } = useTranslation();
     const { unitSystem, updateUnitSystem } = useTracker();
+    const { theme, setTheme } = useTheme();
     const [isRecalculating, setIsRecalculating] = useState(false);
 
     const unitLabel = getWeightUnit(unitSystem);
@@ -235,6 +237,46 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                             }`}>
                             {t('config.preferences.english')}
                         </button>
+                    </div>
+
+                    {/* Preferences Section: Appearance */}
+                    <div className="mb-8">
+                        <h2 className="text-xs font-black text-gray-400 mb-4 uppercase tracking-[0.2em] flex items-center gap-2">
+                            {t('config.preferences.appearance')}
+                        </h2>
+
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
+                            {t('config.preferences.theme')}
+                        </label>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => setTheme('light')}
+                                className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${
+                                    theme === 'light'
+                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                        : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                                }`}>
+                                {t('config.preferences.light')}
+                            </button>
+                            <button
+                                onClick={() => setTheme('dark')}
+                                className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${
+                                    theme === 'dark'
+                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                        : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                                }`}>
+                                {t('config.preferences.dark')}
+                            </button>
+                            <button
+                                onClick={() => setTheme('system')}
+                                className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${
+                                    theme === 'system'
+                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                        : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                                }`}>
+                                {t('config.preferences.system')}
+                            </button>
+                        </div>
                     </div>
                 </div>
 

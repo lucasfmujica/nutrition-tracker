@@ -3,6 +3,7 @@ import { useTracker } from '../../../context/TrackerContext';
 import { useSmartMealType } from '../../../hooks/useSmartMealType';
 import { FoodEntry } from '../../../types/domain';
 import { FoodHistoryPanel } from '../../Food/FoodHistoryPanel';
+import { AIMealSuggestionModal } from '../../Modals/AIMealSuggestionModal';
 import { BarcodeScannerModal } from '../../Modals/BarcodeScannerModal';
 import { DeleteConfirmModal } from '../../Modals/DeleteConfirmModal';
 import { FoodCameraModal } from '../../Modals/FoodCameraModal';
@@ -73,6 +74,10 @@ export const ModalsManager: React.FC = () => {
         templateToSave,
         setTemplateToSave,
         confirmSaveTemplate,
+
+        // AI Suggestions
+        showSuggestionModal,
+        setShowSuggestionModal,
 
         // Weekly Report
         showWeeklyReport,
@@ -306,7 +311,9 @@ export const ModalsManager: React.FC = () => {
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-2xl p-5 w-full max-w-xs border border-purple-200 shadow-2xl">
                         <h3 className="text-base font-bold text-purple-600 mb-3">
-                            ⭐ Guardar como Favorito
+                            {templateToSave.items && templateToSave.items.length > 0
+                                ? '⭐ Guardar Combo'
+                                : '⭐ Guardar como Favorito'}
                         </h3>
                         <div className="space-y-3">
                             <div>
@@ -316,6 +323,12 @@ export const ModalsManager: React.FC = () => {
                                 <input
                                     type="text"
                                     value={templateToSave.name}
+                                    placeholder={
+                                        templateToSave.items
+                                            ? 'Ej. Desayuno Completo'
+                                            : 'Ej. Café con Leche'
+                                    }
+                                    autoFocus
                                     onChange={(e) =>
                                         setTemplateToSave({
                                             ...templateToSave,
@@ -353,6 +366,12 @@ export const ModalsManager: React.FC = () => {
                                     <input
                                         type="number"
                                         value={templateToSave.calories}
+                                        disabled={
+                                            !!(
+                                                templateToSave.items &&
+                                                templateToSave.items.length > 0
+                                            )
+                                        }
                                         onChange={(e) =>
                                             setTemplateToSave({
                                                 ...templateToSave,
@@ -360,13 +379,22 @@ export const ModalsManager: React.FC = () => {
                                                     parseInt(e.target.value) || 0,
                                             })
                                         }
-                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
+                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all disabled:opacity-60 disabled:bg-gray-100"
                                     />
                                 </div>
                             </div>
-                            <div className="text-xs text-gray-600 font-medium bg-gray-50 px-3 py-2 rounded-lg">
-                                P: {templateToSave.protein}g · C:{' '}
-                                {templateToSave.carbs}g · F: {templateToSave.fat}g
+                            <div className="text-xs text-gray-600 font-medium bg-gray-50 px-3 py-2 rounded-lg flex justify-between items-center">
+                                <span>
+                                    P: {templateToSave.protein}g · C:{' '}
+                                    {templateToSave.carbs}g · F: {templateToSave.fat}
+                                    g
+                                </span>
+                                {templateToSave.items &&
+                                    templateToSave.items.length > 0 && (
+                                        <span className="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">
+                                            {templateToSave.items.length} items
+                                        </span>
+                                    )}
                             </div>
                         </div>
                         <div className="flex gap-2 mt-4">
@@ -406,6 +434,11 @@ export const ModalsManager: React.FC = () => {
                     {...briefingData}
                 />
             )}
+
+            <AIMealSuggestionModal
+                isOpen={showSuggestionModal}
+                onClose={() => setShowSuggestionModal(false)}
+            />
         </>
     );
 };

@@ -239,6 +239,11 @@
             "imperial": "Imperial (lbs/ft)",
             "language": "Idioma",
             "spanish": "Español",
+            "appearance": "Apariencia",
+            "theme": "Tema",
+            "light": "Claro",
+            "dark": "Oscuro",
+            "system": "Sistema",
             "english": "English"
         },
         "stepsTracking": {

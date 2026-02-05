@@ -9,13 +9,13 @@
     --color-primary: #0066ee;
     --color-primary-dark: #0044bb;
     --color-primary-light: #f0f7ff;
-    --color-accent: #00bf70; /* Slightly darker Emerald for contrast */
-    --color-accent-blue: #00a3ff;
+    --color-accent: #059669; /* Emerald 600 for better text contrast */
+    --color-accent-blue: #0284c7; /* Sky 600 */
 
-    /* Macro Colors */
-    --color-protein: #00d67d;
-    --color-carbs: #ffc700;
-    --color-fat: #ff4d00;
+    /* Macro Colors - Adjusted for text accessibility */
+    --color-protein: #16a34a; /* Green 600 */
+    --color-carbs: #d97706; /* Amber 600 */
+    --color-fat: #ea580c; /* Orange 600 */
 
     /* Neutral Colors (Light Mode) */
     --color-background: #f8fafc;
@@ -48,6 +48,37 @@
     --color-text-secondary: #D1D5DB;
     --color-border: #374151;
   } */
+}
+
+@media (prefers-color-scheme: dark) {
+    /* Auto-applied by system if using 'system' theme */
+}
+
+/* Explicit class-based dark mode */
+:root.dark {
+    /* Brand Colors - High Performance Lab (Dark Mode) */
+    --color-primary: #3b82f6; /* Lighter blue for dark mode */
+    --color-primary-dark: #60a5fa;
+    --color-primary-light: #1e3a8a;
+
+    /* Neutral Colors (Dark Mode) */
+    --color-background: #0f172a; /* Slate 900 */
+    --color-surface: #1e293b; /* Slate 800 */
+    --color-surface-lighter: #334155; /* Slate 700 */
+
+    --color-text-primary: #f1f5f9; /* Slate 100 */
+    --color-text-secondary: #94a3b8; /* Slate 400 */
+    --color-text-tertiary: #64748b; /* Slate 500 */
+
+    --color-border: #334155; /* Slate 700 */
+
+    /* Dark Mode Glass */
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+
+    /* Dark Mode Shadows */
+    --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.4);
+    --shadow-neon: 0 0 20px rgba(0, 191, 112, 0.3);
 }
 
 html {

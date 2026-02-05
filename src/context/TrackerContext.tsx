@@ -8,6 +8,7 @@ import React, {
     useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAIMealSuggestions } from '../hooks/useAIMealSuggestions';
 import { useBiometrics } from '../hooks/useBiometrics';
 import { useDataOperations } from '../hooks/useDataOperations';
 import { useExport } from '../hooks/useExport';
@@ -48,7 +49,9 @@ export type TrackerContextType = ReturnType<typeof useTrackerSync> &
     ReturnType<typeof useDataOperations> &
     ReturnType<typeof useFoodEntry> &
     ReturnType<typeof useWorkoutEntry> &
+    ReturnType<typeof useWorkoutEntry> &
     ReturnType<typeof useMealTemplates> &
+    ReturnType<typeof useAIMealSuggestions> &
     ReturnType<typeof useOuraSync> &
     ReturnType<typeof useQuickLog> &
     ReturnType<typeof useSafetyNet> &
@@ -332,7 +335,10 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         useCloud,
     });
 
-    // 20. UI Helpers
+    // 20. AI Meal Suggestions
+    const aiMealSuggestions = useAIMealSuggestions();
+
+    // 21. UI Helpers
     const changeDate = (days: number) => {
         const targetTab = uiState.activeTab;
         if (targetTab === 'dashboard') {
@@ -435,6 +441,9 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
             // Social Feature
             ...social,
 
+            // AI Meal Suggestions
+            ...aiMealSuggestions,
+
             // UI Helpers
             changeDate,
             getWaterForDate: getWaterDataForDate,
@@ -475,6 +484,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
             quickLog,
             safetyNet,
             social,
+            aiMealSuggestions,
             supabase,
             changeDate,
             addStepsEntry,

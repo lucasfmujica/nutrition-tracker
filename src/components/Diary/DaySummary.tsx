@@ -1,3 +1,4 @@
+import { ChevronRight, Sparkles } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Macros } from '../../types/domain';
@@ -5,18 +6,33 @@ import { Macros } from '../../types/domain';
 interface DaySummaryProps {
     totals: Macros;
     targets: Macros;
+    onSuggestMeal?: () => void;
 }
 
-export const DaySummary: React.FC<DaySummaryProps> = ({ totals, targets }) => {
+export const DaySummary: React.FC<DaySummaryProps> = ({
+    totals,
+    targets,
+    onSuggestMeal,
+}) => {
     const { t } = useTranslation();
     const calsLeft = Math.round(targets.calories - totals.calories);
 
     return (
         <div className="bg-white border border-gray-100 rounded-2xl p-4 mt-2 relative max-w-4xl mx-auto shadow-sm">
             <div className="flex justify-between items-end mb-2">
-                <span className="text-xs font-medium text-gray-500">
-                    {t('diary.summary.title')}
-                </span>
+                <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-gray-500">
+                        {t('diary.summary.title')}
+                    </span>
+                    {onSuggestMeal && calsLeft > 100 && (
+                        <button
+                            onClick={onSuggestMeal}
+                            className="bg-purple-100 hover:bg-purple-200 text-purple-700 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors">
+                            <Sparkles size={10} />
+                            Sugerir
+                        </button>
+                    )}
+                </div>
                 <span
                     className={`text-sm font-bold ${calsLeft < 0 ? 'text-red-500' : 'text-green-600'}`}>
                     {calsLeft} kcal {t('diary.summary.remaining')}
@@ -53,6 +69,11 @@ export const DaySummary: React.FC<DaySummaryProps> = ({ totals, targets }) => {
                         <div className="relative h-1 w-full bg-gray-200 rounded-full overflow-hidden mb-1">
                             <div
                                 className={`h-full ${macro.color}`}
+                                role="progressbar"
+                                aria-label={`${macro.label} progress`}
+                                aria-valuenow={Math.round(macro.current || 0)}
+                                aria-valuemin={0}
+                                aria-valuemax={Math.round(macro.target || 1)}
                                 style={{
                                     width: `${Math.min(((macro.current || 0) / (macro.target || 1)) * 100, 100)}%`,
                                 }}

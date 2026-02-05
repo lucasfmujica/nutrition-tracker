@@ -2,6 +2,7 @@ import React, { Suspense, useCallback } from 'react';
 import { TrackerFAB } from './components/layout/FAB/TrackerFAB';
 import { TrackerHeader } from './components/layout/Header/TrackerHeader';
 import { ModalsManager } from './components/layout/Modals/ModalsManager';
+import { ThemeProvider } from './context/ThemeContext';
 import { lazyWithRetry } from './utils/lazyUtils';
 
 import { AuthShell } from './components/layout/Shell/AuthShell';
@@ -345,7 +346,9 @@ const NutritionTrackerContent = () => {
 const NutritionTracker = () => {
     return (
         <TrackerProvider>
-            <NutritionTrackerContent />
+            <ThemeProvider>
+                <NutritionTrackerContent />
+            </ThemeProvider>
         </TrackerProvider>
     );
 };

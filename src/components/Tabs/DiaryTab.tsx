@@ -74,6 +74,8 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
         setShowFoodScanModal,
         setShowFoodHistoryPanel,
         saveFoodEntry,
+        openSaveComboModal,
+        getSuggestions,
     } = useTracker() as any;
 
     const { getAutoMealType } = useSmartMealType();
@@ -291,6 +293,7 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                                     onDeleteFood={(food) =>
                                         confirmDelete('food', food.id, food.name)
                                     }
+                                    onCreateCombo={openSaveComboModal}
                                 />
                             );
                         })}
@@ -307,6 +310,27 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                                 fiber: 25,
                             }
                         }
+                        onSuggestMeal={() => {
+                            const currentTotals = getTotalsForDate(selectedFoodDate);
+                            const currentTargets = getTargetsForDate(
+                                selectedFoodDate,
+                            ) || {
+                                calories: 2000,
+                                protein: 150,
+                                carbs: 200,
+                                fat: 70,
+                                fiber: 25,
+                            };
+                            const remaining = {
+                                calories:
+                                    currentTargets.calories - currentTotals.calories,
+                                protein:
+                                    currentTargets.protein - currentTotals.protein,
+                                carbs: currentTargets.carbs - currentTotals.carbs,
+                                fat: currentTargets.fat - currentTotals.fat,
+                            };
+                            getSuggestions(remaining);
+                        }}
                     />
                 </div>
             )}

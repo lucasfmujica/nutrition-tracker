@@ -65,7 +65,7 @@ export const useMealTemplates = ({
         }
     };
 
-    // Add food from template
+    // Add food from template (supports single item or combo)
     const addFromTemplate = async (template: MealTemplate) => {
         const now = new Date();
         const time = now.toLocaleTimeString('en-GB', {
@@ -74,6 +74,46 @@ export const useMealTemplates = ({
             timeZone: ARGENTINA_TZ,
         });
 
+        // If template has items, add them all
+        if (template.items && template.items.length > 0) {
+            const entries = template.items.map((item) => ({
+                id: crypto.randomUUID(),
+                date: selectedFoodDate,
+                time,
+                meal: template.meal, // Use the template's meal category (e.g. Lunch)
+                name: item.name,
+                description: item.description || '',
+                calories: item.calories,
+                protein: item.protein,
+                carbs: item.carbs,
+                fat: item.fat,
+                fiber: item.fiber || 0,
+                source: 'template' as const,
+                reviewed: true,
+                confidence: 1,
+                sourceId: template.id.startsWith('tpl-')
+                    ? template.id
+                    : `tpl-${template.id}`,
+            }));
+
+            // Save all entries
+            // We do this sequentially to ensure order or just parallel if saveFoodEntry handles it
+            // Assuming saveFoodEntry is independent
+            for (const entry of entries) {
+                try {
+                    await saveFoodEntry(entry);
+                } catch (saveErr) {
+                    console.error('Error saving combo item to Supabase:', saveErr);
+                }
+            }
+
+            setShowTemplatesModal(false);
+            setSaveStatus(`✓ Combo added: ${template.name}`);
+            setTimeout(() => setSaveStatus(''), 2000);
+            return;
+        }
+
+        // Fallback: Single item template
         const entry: FoodEntry = {
             id: crypto.randomUUID(),
             date: selectedFoodDate,
@@ -120,6 +160,7 @@ export const useMealTemplates = ({
             carbs: templateToSave.carbs || 0,
             fat: templateToSave.fat || 0,
             fiber: templateToSave.fiber || 0,
+            items: templateToSave.items, // Persist items for combos
         };
 
         // Optimistic update
@@ -235,6 +276,32 @@ export const useMealTemplates = ({
         setTimeout(() => setSaveStatus(''), 2000);
     };
 
+    // Open modal to save a combo
+    const openSaveComboModal = (items: FoodEntry[]) => {
+        if (items.length === 0) return;
+
+        // Calculate totals
+        const totals = items.reduce(
+            (acc, item) => ({
+                calories: acc.calories + item.calories,
+                protein: acc.protein + item.protein,
+                carbs: acc.carbs + item.carbs,
+                fat: acc.fat + item.fat,
+                fiber: acc.fiber + (item.fiber || 0),
+            }),
+            { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 },
+        );
+
+        setTemplateToSave({
+            name: '', // User must name it
+            meal: items[0].meal, // Default to first item's meal
+            description: `${items.length} items`,
+            items: items,
+            ...totals,
+        });
+        setShowSaveTemplateModal(true);
+    };
+
     return {
         mealTemplates,
         setMealTemplates,
@@ -262,5 +329,6 @@ export const useMealTemplates = ({
         getFoodTemplate,
         deleteTemplate,
         addFromTemplate,
+        openSaveComboModal,
     };
 };

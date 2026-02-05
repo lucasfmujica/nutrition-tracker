@@ -318,6 +318,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                                     key={tab.id}
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                                     data-tutorial={tab.tutorialId}
+                                    aria-label="Open quick actions"
                                     className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 relative -top-7 z-20 shadow-2xl ${
                                         isMenuOpen
                                             ? 'bg-slate-900 text-white rotate-45 scale-110'

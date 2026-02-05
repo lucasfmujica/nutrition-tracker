@@ -233,7 +233,12 @@
             "imperial": "Imperial (lbs/ft)",
             "language": "Language",
             "spanish": "Español",
-            "english": "English"
+            "english": "English",
+            "appearance": "Appearance",
+            "theme": "Theme",
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
         },
         "stepsTracking": {
             "title": "Steps Tracking",

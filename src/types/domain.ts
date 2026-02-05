@@ -40,6 +40,7 @@ export interface Profile {
     // Steps tracking preferences
     stepsAutoSync?: boolean; // Enable Oura Ring auto-sync for steps (default: false)
     smartHydration?: boolean; // Enable weather-based hydration targets
+    theme?: 'light' | 'dark' | 'system'; // App theme preference
 }
 
 export type UnitSystem = 'metric' | 'imperial';
@@ -153,6 +154,7 @@ export interface MealTemplate {
     carbs: number;
     fat: number;
     fiber: number;
+    items?: FoodEntry[]; // For Combo Meals support
 }
 
 export interface CustomTargets {
