@@ -601,7 +601,7 @@ const buildWeeklyPlanPromptEN = (request: WeeklyMealPlanRequest): string => {
         lactose_free: 'Lactose-free'
     };
 
-    let prompt = `You are a sports nutritionist specialized in Argentina.
+    let prompt = `You are a sports nutritionist specialized in the United States.
 
 USER CONTEXT:
 - Goal: ${goalMap[goal]}
@@ -633,7 +633,7 @@ Generate a 7-day meal plan (Monday-Sunday) that:
 4. Uses user's favorite foods with variation
 5. Avoids repeating the same meal more than 2x per week
 6. Considers prep time (workdays = quicker meals)
-7. Includes typical Argentine ingredients (available at Carrefour/Coto)
+7. Includes typical US ingredients (available at Whole Foods/Trader Joe's/Walmart)
 
 OUTPUT FORMAT (strict JSON):
 {
