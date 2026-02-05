@@ -278,7 +278,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                             {selectedSearchFood && previewMacros && (
                                 <div className="mt-2 p-3 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 rounded-xl border border-blue-100 dark:border-blue-800">
                                     <div className="flex items-center justify-between mb-2">
-                                        <span className="text-xs font-bold text-blue-600 uppercase">
+                                        <span className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase">
                                             {t('modals.foods.found')}
                                         </span>
                                         <button
@@ -330,7 +330,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
 
                                     {/* Preview macros */}
                                     <div className="flex items-center justify-between text-xs">
-                                        <span className="font-bold text-orange-600">
+                                        <span className="font-bold text-orange-600 dark:text-orange-400">
                                             {previewMacros.calories} kcal
                                         </span>
                                         <span className="text-text-secondary">

@@ -229,7 +229,7 @@ export const ModalsManager: React.FC = () => {
 
             {showTemplatesModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start justify-center z-50 p-2 pt-8 overflow-y-auto">
-                    <div className="bg-surface rounded-2xl p-5 w-full max-w-sm border border-purple-200 dark:border-purple-800 shadow-2xl">
+                    <div className="bg-surface rounded-2xl p-5 w-full max-w-md border border-purple-200 dark:border-purple-800 shadow-2xl">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg lg:text-xl font-bold text-purple-600 dark:text-purple-400">
                                 ⭐ Favoritos
@@ -247,8 +247,20 @@ export const ModalsManager: React.FC = () => {
                                 guardalas como favoritos.
                             </p>
                         ) : (
-                            <div className="space-y-2 max-h-80 overflow-y-auto">
-                                {mealTemplates.map((template: any) => (
+                            <div className="space-y-3 max-h-[70vh] overflow-y-auto">
+                                {/* Sort templates by meal type */}
+                                {['breakfast', 'lunch', 'snack', 'dinner', 'other'].map((mealType) => {
+                                    const mealsOfType = mealTemplates.filter((t: any) => t.meal === mealType);
+                                    if (mealsOfType.length === 0) return null;
+                                    return (
+                                        <div key={mealType} className="space-y-2">
+                                            <div className="text-xs font-bold text-text-tertiary uppercase tracking-wider px-1">
+                                                {mealType === 'breakfast' ? '🌅 Desayuno' :
+                                                 mealType === 'lunch' ? '☀️ Almuerzo' :
+                                                 mealType === 'snack' ? '🍎 Merienda' :
+                                                 mealType === 'dinner' ? '🌙 Cena' : '🍴 Otro'}
+                                            </div>
+                                            {mealsOfType.map((template: any) => (
                                     <div
                                         key={template.id}
                                         className="bg-purple-50 dark:bg-purple-900/30 rounded-xl p-3 border border-purple-100 dark:border-purple-800 active:bg-purple-100 dark:active:bg-purple-800/50 transition-colors">
@@ -295,7 +307,10 @@ export const ModalsManager: React.FC = () => {
                                             </button>
                                         </div>
                                     </div>
-                                ))}
+                                            ))}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         )}
 

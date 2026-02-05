@@ -140,7 +140,7 @@ export const WeeklyCalendarNav: React.FC<WeeklyCalendarNavProps> = ({
                     {selectedDate !== today && (
                         <button
                             onClick={goToToday}
-                            className="text-xs text-blue-600 hover:text-blue-700 font-medium mt-0.5">
+                            className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium mt-0.5">
                             {t('diary.calendar.goToToday')}
                         </button>
                     )}
@@ -204,9 +204,9 @@ const DayCell: React.FC<DayCellProps> = ({ day, onSelect }) => {
     const getStatusColor = () => {
         if (isFuture) return 'bg-surface-lighter';
         if (!hasFood) return 'bg-background';
-        if (isOnTrack) return 'bg-emerald-50';
-        if (calories > targetCalories * 1.1) return 'bg-red-50';
-        return 'bg-amber-50';
+        if (isOnTrack) return 'bg-emerald-50 dark:bg-emerald-900/30';
+        if (calories > targetCalories * 1.1) return 'bg-red-50 dark:bg-red-900/30';
+        return 'bg-amber-50 dark:bg-amber-900/30';
     };
 
     const getBorderColor = () => {
@@ -227,13 +227,13 @@ const DayCell: React.FC<DayCellProps> = ({ day, onSelect }) => {
             `}>
             {/* Day name */}
             <span
-                className={`text-[10px] font-bold uppercase ${isToday ? 'text-blue-600' : 'text-text-tertiary'}`}>
+                className={`text-[10px] font-bold uppercase ${isToday ? 'text-blue-600 dark:text-blue-400' : 'text-text-tertiary'}`}>
                 {dayName}
             </span>
 
             {/* Day number */}
             <span
-                className={`text-lg font-bold ${isSelected ? 'text-blue-600' : 'text-text-primary'}`}>
+                className={`text-lg font-bold ${isSelected ? 'text-blue-600 dark:text-blue-400' : 'text-text-primary'}`}>
                 {dayNum}
             </span>
 

@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
-const MODEL_NAME = 'gemini-1.5-flash'; // Fast and capable enough for creative lists
+const MODEL_NAME = 'gemini-2.0-flash'; // Fast and capable for creative lists
 
 interface MealSuggestionParams {
     remainingCalories: number;
