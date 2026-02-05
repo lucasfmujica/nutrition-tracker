@@ -173,7 +173,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                         {selectedDate !== today && (
                             <button
                                 onClick={goToToday}
-                                className="text-xs text-blue-600 hover:text-blue-700 font-medium">
+                                className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
                                 {t('diary.calendar.goToToday')}
                             </button>
                         )}
@@ -220,13 +220,13 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                                 : 'hover:bg-surface-lighter'
                                     }`}>
                                     <div
-                                        className={`text-xs font-bold ${day.isToday ? 'text-blue-600' : 'text-text-tertiary'}`}>
+                                        className={`text-xs font-bold ${day.isToday ? 'text-blue-600 dark:text-blue-400' : 'text-text-tertiary'}`}>
                                         {day.dayNameFull}
                                     </div>
                                     <div
                                         className={`text-lg font-bold ${
                                             day.isSelected
-                                                ? 'text-blue-600'
+                                                ? 'text-blue-600 dark:text-blue-400'
                                                 : 'text-text-primary'
                                         }`}>
                                         {day.dayNum}
@@ -236,9 +236,9 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                             className={`text-[10px] font-medium ${
                                                 day.totalCalories >
                                                 day.targetCalories * 1.1
-                                                    ? 'text-red-500'
+                                                    ? 'text-red-500 dark:text-red-400'
                                                     : day.totalCalories > 0
-                                                      ? 'text-emerald-600'
+                                                      ? 'text-emerald-600 dark:text-emerald-400'
                                                       : 'text-text-tertiary'
                                             }`}>
                                             {day.totalCalories > 0
@@ -383,19 +383,19 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                                 <div
                                                     className={`text-sm font-bold ${
                                                         isOver
-                                                            ? 'text-red-600'
+                                                            ? 'text-red-600 dark:text-red-400'
                                                             : isUnder
-                                                              ? 'text-amber-600'
-                                                              : 'text-emerald-600'
+                                                              ? 'text-amber-600 dark:text-amber-400'
+                                                              : 'text-emerald-600 dark:text-emerald-400'
                                                     }`}>
                                                     {day.totalCalories}
                                                 </div>
                                                 <div
                                                     className={`text-[10px] ${
                                                         isOver
-                                                            ? 'text-red-500'
+                                                            ? 'text-red-500 dark:text-red-400'
                                                             : isUnder
-                                                              ? 'text-amber-500'
+                                                              ? 'text-amber-500 dark:text-amber-400'
                                                               : 'text-text-tertiary'
                                                     }`}>
                                                     {percentOfTarget}%
