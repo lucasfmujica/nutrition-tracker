@@ -12,11 +12,7 @@
        <stop offset="100%" stop-color="#22D3EE" /> <!-- Cyan 400 -->
     </linearGradient>
 
-    <!-- Button Gradient -->
-    <linearGradient id="btnGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-       <stop offset="0%" stop-color="#22D3EE" />
-       <stop offset="100%" stop-color="#3B82F6" />
-    </linearGradient>
+    <!-- OLD Button Gradient Removed. Using Solid Brand Color #0066ee -->
 
     <!-- Icon Stroke Color -->
     <style>
@@ -28,6 +24,18 @@
         fill: none;
       }
     </style>
+
+    <!-- Shadow Filter for Button -->
+    <filter id="btnShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4" />
+      <feOffset dx="0" dy="4" result="offsetblur"/>
+      <feFlood flood-color="rgba(0, 102, 238, 0.3)"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
 
   <!-- Background -->
@@ -37,7 +45,7 @@
   <circle cx="100" cy="100" r="300" fill="#3B82F6" opacity="0.1" />
   <circle cx="1100" cy="500" r="250" fill="#06B6D4" opacity="0.1" />
 
-  <!-- Main Content Group: Shifted UP to 200 (was 250) -->
+  <!-- Main Content Group: Shifted UP to 200 -->
   <g transform="translate(600, 200)">
 
       <!-- Logo Scaled -->
@@ -101,16 +109,12 @@
       </g>
 
       <!-- Call to Action -->
-      <!-- Positioned relative to the group center (600, 200).
-           We want it at y=550 absolute approx.
-           550 - 200 = 350.
-      -->
       <g transform="translate(0, 360)">
-          <!-- Pill Button Background -->
-          <rect x="-140" y="-35" width="280" height="70" rx="35" fill="url(#btnGrad)" />
+          <!-- Pill Button Background: #0066ee with Shadow -->
+          <rect x="-140" y="-35" width="280" height="70" rx="35" fill="#0066ee" filter="url(#btnShadow)" />
 
-          <!-- Button Text -->
-          <text x="0" y="10" text-anchor="middle" font-family="'Satoshi', 'Inter', 'Segoe UI', sans-serif" font-size="30" fill="#0F172A" font-weight="800" letter-spacing="1">
+          <!-- Button Text: White -->
+          <text x="0" y="10" text-anchor="middle" font-family="'Satoshi', 'Inter', 'Segoe UI', sans-serif" font-size="30" fill="#FFFFFF" font-weight="700" letter-spacing="1">
               EMPIEZA AHORA
           </text>
       </g>
