@@ -706,7 +706,9 @@
                 "warning": "⚠️ Comés muy cerca de dormir. Intentá 2.5-3h antes de acostarte.",
                 "bad": "🔴 {{count}} días con comidas después de 21:00",
                 "good": "✅ Timing óptimo para calidad de sueño",
-                "lateCalories": "Calorías Nocturnas (Prom.)"
+                "lateCalories": "Calorías Nocturnas (Prom.)",
+                "positiveCorrelation": "✨ Más gap = Mejor sueño detectado",
+                "negativeCorrelation": "⚠️ Menos gap parece estar afectando tu sueño"
             },
             "workoutNutrition": {
                 "title": "Ingesta en Entrenos",
@@ -1045,6 +1047,14 @@
             "title": "Seleccionar Foto",
             "cancel": "Cancelar",
             "all": "Todas"
+        },
+        "aiSuggestion": {
+            "title": "Chef IA",
+            "loading": "Pensando en deliciosas opciones...",
+            "loadingSubtitle": "Analizando tus macros restantes",
+            "error": "Error al generar sugerencias",
+            "close": "Cerrar",
+            "addToDiary": "Agregar al Diario"
         }
     },
     "onboarding": {

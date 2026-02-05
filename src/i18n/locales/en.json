@@ -700,7 +700,9 @@
                 "warning": "⚠️ Eating too close to bedtime. Try 2.5-3h before sleep.",
                 "bad": "🔴 {{count}} days with meals after 9:00 PM",
                 "good": "✅ Optimal timing for sleep quality",
-                "lateCalories": "Late Night Calories (Avg)"
+                "lateCalories": "Late Night Calories (Avg)",
+                "positiveCorrelation": "✨ More gap = Better sleep detected",
+                "negativeCorrelation": "⚠️ Less gap seems to be affecting your sleep"
             },
             "workoutNutrition": {
                 "title": "Workout Intake",
@@ -1037,6 +1039,14 @@
             "title": "Select Photo",
             "cancel": "Cancel",
             "all": "All"
+        },
+        "aiSuggestion": {
+            "title": "AI Chef",
+            "loading": "Thinking of delicious options...",
+            "loadingSubtitle": "Analyzing your remaining macros",
+            "error": "Failed to generate suggestions",
+            "close": "Close",
+            "addToDiary": "Add to Diary"
         }
     },
     "onboarding": {

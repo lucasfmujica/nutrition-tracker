@@ -26,45 +26,28 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
 
     if (!isOpen) return null;
 
+    // Infer meal type from current time
+    const inferMealType = (): 'breakfast' | 'lunch' | 'snack' | 'dinner' => {
+        const hour = new Date().getHours();
+        if (hour >= 5 && hour < 11) return 'breakfast';
+        if (hour >= 11 && hour < 15) return 'lunch';
+        if (hour >= 15 && hour < 19) return 'snack';
+        return 'dinner';
+    };
+
     const handleAddSuggestion = async (suggestion: MealSuggestion) => {
-        // Create entries for each ingredient
         const now = new Date();
         const time = now.toLocaleTimeString('en-GB', {
             hour: '2-digit',
             minute: '2-digit',
         });
 
-        const newEntries: FoodEntry[] = suggestion.ingredients.map((ing) => ({
-            id: crypto.randomUUID(),
-            date: selectedFoodDate,
-            time,
-            meal: 'lunch', // Default, user can change later
-            name: ing.name,
-            description: ing.amount,
-            calories: ing.calories || 0,
-            protein: 0, // AI prompt currently returns total macros, not per ingredient. TODO: Improve prompt to distribute macros
-            carbs: 0,
-            fat: 0,
-            fiber: 0,
-            source: 'template', // Mark as template/ai
-            reviewed: true,
-            confidence: 1,
-            sourceId: null,
-        }));
-
-        // Distribute macros proportionally to calories?
-        // Or just add ONE main item with the macros and others as 0-cal ingredients?
-        // Better: Add ONE single entry representing the whole meal if ingredients don't have macros.
-        // OR: Improved prompt returns simple list.
-        // Let's stick to: Create ONE entry for the meal, and maybe put ingredients in description?
-        // "Chicken Salad (Chicken, Lettuce...)"
-
-        // Revised Strategy: Single Entry for simplicity now, as ingredients lack detailed macros in current prompt
+        // Create a single entry for the meal with all macros
         const singleEntry: FoodEntry = {
             id: crypto.randomUUID(),
             date: selectedFoodDate,
             time,
-            meal: 'lunch',
+            meal: inferMealType(),
             name: suggestion.name,
             description: suggestion.description,
             calories: suggestion.macros.calories,
@@ -98,7 +81,7 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                             <Sparkles size={20} />
                         </div>
                         <h3 className="text-xl font-black text-text-primary tracking-tight">
-                            Chef IA
+                            {t('modals.aiSuggestion.title')}
                         </h3>
                     </div>
                     <button
@@ -116,10 +99,10 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                             className="text-purple-600 animate-spin mb-4"
                         />
                         <p className="text-text-primary font-bold mb-1">
-                            Pensando en deliciosas opciones...
+                            {t('modals.aiSuggestion.loading')}
                         </p>
                         <p className="text-xs text-text-tertiary">
-                            Analizando tus macros restantes
+                            {t('modals.aiSuggestion.loadingSubtitle')}
                         </p>
                     </div>
                 ) : error ? (
@@ -128,7 +111,7 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                         <button
                             onClick={onClose}
                             className="text-sm font-bold text-text-secondary hover:text-text-primary underline">
-                            Cerrar
+                            {t('modals.aiSuggestion.close')}
                         </button>
                     </div>
                 ) : (
@@ -168,7 +151,7 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                                         }
                                         className="w-full py-2.5 rounded-xl bg-background text-text-secondary font-bold text-xs group-hover:bg-purple-600 group-hover:text-white transition-all flex items-center justify-center gap-2">
                                         <Plus size={14} />
-                                        Agregar al Diario
+                                        {t('modals.aiSuggestion.addToDiary')}
                                     </button>
                                 </div>
                             ),

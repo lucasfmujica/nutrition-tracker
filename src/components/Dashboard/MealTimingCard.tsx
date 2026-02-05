@@ -176,10 +176,10 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
                         </div>
                     )}
                     {Math.abs(insights.sleepImpact.sleepScoreCorrelation) > 0.2 && (
-                        <p className="text-[10px] text-indigo-600 mt-1 italic">
+                        <p className="text-[10px] text-indigo-600 dark:text-indigo-400 mt-1 italic">
                             {insights.sleepImpact.sleepScoreCorrelation > 0
-                                ? '✨ Más gap = Mejor sueño detectado'
-                                : '⚠️ Menos gap parece estar afectando tu sueño'}
+                                ? t('dashboard.mealTiming.sleepImpact.positiveCorrelation')
+                                : t('dashboard.mealTiming.sleepImpact.negativeCorrelation')}
                         </p>
                     )}
                 </div>
