@@ -203,7 +203,8 @@
         "userNotAuthenticated": "User not authenticated",
         "repeatWeek": "Error repeating week",
         "addMeal": "Error adding meal",
-        "removeMeal": "Error removing meal"
+        "removeMeal": "Error removing meal",
+        "generatePlan": "Error generating plan"
     },
 
     "mealPrep": {
@@ -240,6 +241,23 @@
             "title": "Export List",
             "filename": "grocery-list",
             "success": "List exported successfully"
+        },
+        "generateWeeklyPlan": "Generate Weekly Meal Plan with AI",
+        "generating": "Generating plan...",
+        "generatedSuccess": "Plan generated successfully",
+        "aiPowered": "AI-powered meal planning",
+        "weekRange": "Week",
+        "yourGoals": "Your Goals",
+        "workoutsThisWeek": "Workouts this week",
+        "estimatedTime": "Estimated time:",
+        "aiWillGenerate": "AI will generate 28 meals (7 days × 4 meals/day) based on your goals and workouts.",
+        "generate": "Generate Plan",
+        "progress": {
+            "loadingProfile": "Loading user profile...",
+            "analyzingFavorites": "Analyzing favorite foods...",
+            "loadingWorkouts": "Loading workout schedule...",
+            "generatingWithAI": "Generating plan with AI... (~30 seconds)",
+            "savingMeals": "Saving meals to database..."
         }
     },
 
@@ -989,7 +1007,11 @@
         "tomorrow": "Tomorrow",
         "favorites": "Favorites",
         "scan": "Scan",
-        "more": "more"
+        "more": "more",
+        "retry": "Retry",
+        "seconds": "seconds",
+        "perDay": "per day",
+        "protein": "protein"
     },
     "aiChef": {
         "title": "AI Chef",

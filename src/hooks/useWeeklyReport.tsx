@@ -1,16 +1,43 @@
 import { useCallback, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { retryWithBackoff } from '../utils/retryWithBackoff';
+
+/**
+ * Weekly Stats Response Type
+ */
+export interface WeeklyStats {
+    // Activity
+    workouts: number;
+    gymCount: number;
+    tennisCount: number;
+
+    // Nutrition
+    proteinAvg: number;
+    avgDeficit: number;
+    consistencyStreak: number;
+    daysTracked: number;
+
+    // Weight
+    weightDelta: number | null;
+    totalLost: number | null;
+    percentToGoal: number | null;
+    currentWeight: number | null;
+
+    // Meta
+    weekRange: string;
+}
 
 /**
  * useWeeklyReport - Hook for fetching weekly stats for Social Accountability Reports
  *
  * Manages API calls, loading states, and error handling for the weekly report feature.
  * Gets user ID directly from Supabase auth to ensure availability.
+ * Implements retry logic with exponential backoff for resilience.
  *
  * @returns {Object} { stats, isLoading, error, fetchStats }
  */
 export const useWeeklyReport = () => {
-    const [stats, setStats] = useState<any>(null); // TODO: Define specific WeeklyStats type
+    const [stats, setStats] = useState<WeeklyStats | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -27,32 +54,38 @@ export const useWeeklyReport = () => {
             } = await supabase.auth.getUser();
 
             if (!user?.id) {
-                console.error('[useWeeklyReport] No userId available from auth');
+                const timestamp = new Date().toISOString();
+                console.error(`[useWeeklyReport ${timestamp}] No userId available from auth`);
                 setError('No se pudo obtener el usuario');
                 setIsLoading(false);
                 return null;
             }
 
-            console.log('[useWeeklyReport] Fetching stats for user:', user.id);
+            const timestamp = new Date().toISOString();
+            console.log(`[useWeeklyReport ${timestamp}] Fetching stats for user: ${user.id}`);
 
             // Determine API URL based on environment
             const baseUrl = import.meta.env.PROD ? '' : 'http://localhost:3000';
 
-            const response = await fetch(
-                `${baseUrl}/api/get-weekly-stats?userId=${user.id}`,
-            );
+            // Wrap fetch in retryWithBackoff for resilience
+            const data = await retryWithBackoff(async () => {
+                const response = await fetch(
+                    `${baseUrl}/api/get-weekly-stats?userId=${user.id}`,
+                );
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Error al obtener estadísticas');
-            }
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Error al obtener estadísticas');
+                }
 
-            const data = await response.json();
+                return response.json();
+            }, 3, 1000);
 
             setStats(data);
             return data;
         } catch (err: any) {
-            console.error('[useWeeklyReport] Fetch error:', err);
+            const timestamp = new Date().toISOString();
+            console.error(`[useWeeklyReport ${timestamp}] Fetch error:`, err);
             setError(err.message || 'Error de conexión');
             return null;
         } finally {

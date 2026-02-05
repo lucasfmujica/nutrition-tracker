@@ -402,3 +402,71 @@ export interface AIChefContext {
     // Language
     language: string;
 }
+
+// =====================================================
+// WEEKLY MEAL PREP GENERATION TYPES
+// =====================================================
+
+export interface WeeklyMealPlanRequest {
+    userId: string;
+    weekStartDate: string; // YYYY-MM-DD (Monday)
+
+    dailyTargets: {
+        calories: number;
+        protein: number;
+        carbs: number;
+        fat: number;
+    };
+
+    goal: 'cut' | 'maintain' | 'bulk';
+    activityLevel: string;
+
+    weeklyWorkouts: Array<{
+        day: 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0=Monday, 6=Sunday
+        type?: string;
+        intensity?: 'high' | 'moderate' | 'recovery';
+    }>;
+
+    preferences: {
+        dietaryMode: 'standard' | 'vegetarian' | 'vegan' | 'gluten_free' | 'lactose_free';
+        prepTime: 'quick' | 'medium' | 'long';
+        difficulty: 'easy' | 'medium' | 'hard';
+        rejectedMeals: string[];
+    };
+
+    favoriteFoods?: string[]; // Top 10 from foodLog
+    language: string;
+}
+
+export interface GeneratedMealItem {
+    name: string;
+    amount: string;
+    calories: number;
+}
+
+export interface GeneratedMeal {
+    name: string;
+    items: GeneratedMealItem[];
+    macros: {
+        calories: number;
+        protein: number;
+        carbs: number;
+        fat: number;
+    };
+    notes?: string;
+}
+
+export interface WeeklyMealPlanResponse {
+    weekPlan: Record<
+        string,
+        {
+            breakfast: GeneratedMeal[];
+            lunch: GeneratedMeal[];
+            snack: GeneratedMeal[];
+            dinner: GeneratedMeal[];
+        }
+    >;
+    weekSummary?: string;
+    generatedAt: string;
+    model: string;
+}

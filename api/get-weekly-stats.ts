@@ -122,7 +122,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 .select('type, name')
                 .eq('user_id', userId)
                 .gte('date', monday)
-                .lte('date', todayArgentina);
+                .lte('date', sunday);
 
             if (workoutError) throw workoutError;
 
@@ -173,7 +173,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 .select('date, calories, protein')
                 .eq('user_id', userId)
                 .gte('date', monday)
-                .lte('date', todayArgentina);
+                .lte('date', sunday);
 
             if (foodLogs && foodLogs.length > 0) {
                 // Group by date
@@ -186,8 +186,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         dailyLogs[log.date] = { calories: 0, protein: 0 };
                     }
                     dailyLogs[log.date].calories += log.calories || 0;
-                    dailyLogs[log.date].protein +=
-                        parseFloat(log.protein as unknown as string) || 0;
+
+                    // Safe type validation before parsing
+                    const proteinValue = typeof log.protein === 'number'
+                        ? log.protein
+                        : parseFloat(String(log.protein)) || 0;
+                    dailyLogs[log.date].protein += proteinValue;
                 }
 
                 const days = Object.keys(dailyLogs);
@@ -210,22 +214,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     ).length;
 
                     // 3. Average Caloric Deficit
-                    // Only considers days with logs. Deficit = Target - Consumed.
+                    // Includes ALL days with any tracking. Deficit = Target - Consumed.
                     // If Consumed > Target, deficit is negative (surplus).
                     let totalDeficit = 0;
                     days.forEach((day) => {
                         const consumed = dailyLogs[day].calories;
-                        // Ignore days with very low calories (likely incomplete logs, e.g. < 500)
-                        if (consumed > 500) {
-                            totalDeficit += targetCalories - consumed;
-                        }
+                        totalDeficit += targetCalories - consumed;
                     });
-                    // Avoid division by zero if all days were < 500
-                    const validDays = days.filter(
-                        (d) => dailyLogs[d].calories > 500,
-                    ).length;
+                    // Calculate average across all tracked days
                     nutritionStats.avgDeficit =
-                        validDays > 0 ? Math.round(totalDeficit / validDays) : 0;
+                        days.length > 0 ? Math.round(totalDeficit / days.length) : 0;
                 }
             }
         } catch (err) {

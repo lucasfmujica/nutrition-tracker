@@ -462,3 +462,258 @@ REGLAS:
         throw new Error('Failed to generate recipe instructions.');
     }
 };
+
+// =====================================================
+// WEEKLY MEAL PLAN GENERATION
+// =====================================================
+
+import type { WeeklyMealPlanRequest, WeeklyMealPlanResponse } from '../../types/domain';
+
+const buildWeeklyPlanPromptES = (request: WeeklyMealPlanRequest): string => {
+    const { dailyTargets, goal, activityLevel, weeklyWorkouts, preferences, favoriteFoods } = request;
+
+    const goalMap: Record<string, string> = {
+        cut: 'Pérdida de grasa (déficit calórico)',
+        maintain: 'Mantenimiento',
+        bulk: 'Ganancia muscular (superávit calórico)'
+    };
+
+    const workoutSchedule = Array.from({ length: 7 }, (_, i) => {
+        const workout = weeklyWorkouts.find(w => w.day === i);
+        const dayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+        if (workout) {
+            const intensityMap = {
+                high: 'intenso',
+                moderate: 'moderado',
+                recovery: 'recuperación'
+            };
+            return `- ${dayNames[i]}: ${workout.type || 'Entrenamiento'} (${intensityMap[workout.intensity || 'moderate']})`;
+        }
+        return `- ${dayNames[i]}: Descanso`;
+    }).join('\n');
+
+    const dietaryMap: Record<string, string> = {
+        standard: 'Sin restricciones',
+        vegetarian: 'Vegetariano',
+        vegan: 'Vegano',
+        gluten_free: 'Sin gluten',
+        lactose_free: 'Sin lactosa'
+    };
+
+    let prompt = `Sos un nutricionista deportivo especializado en Argentina.
+
+CONTEXTO DEL USUARIO:
+- Objetivo: ${goalMap[goal]}
+- Macros diarios: ${dailyTargets.calories} kcal, ${dailyTargets.protein}g prot, ${dailyTargets.carbs}g carbs, ${dailyTargets.fat}g grasas
+- Nivel actividad: ${activityLevel}
+- Restricción dietaria: ${dietaryMap[preferences.dietaryMode]}
+
+ENTRENAMIENTOS ESTA SEMANA:
+${workoutSchedule}
+`;
+
+    if (favoriteFoods && favoriteFoods.length > 0) {
+        prompt += `\nCOMIDAS FAVORITAS DEL USUARIO (por frecuencia):
+${favoriteFoods.slice(0, 10).map((f, i) => `${i + 1}. ${f}`).join('\n')}
+`;
+    }
+
+    prompt += `
+RESTRICCIONES:
+- Evitar: ${preferences.rejectedMeals.length > 0 ? preferences.rejectedMeals.join(', ') : 'Ninguna'}
+- Tiempo de preparación: ${preferences.prepTime} (quick=15min, medium=30min, long=45min+)
+- Dificultad: ${preferences.difficulty}
+
+TAREA:
+Genera un plan de comidas para 7 días (lunes a domingo) que:
+1. Respete los macros diarios (±5% tolerancia)
+2. En días de entrenamiento intenso: más carbs, proteína post-entreno
+3. En días de descanso: reducir carbs ligeramente
+4. Use comidas favoritas del usuario pero con variación
+5. Evite repetir la misma comida más de 2 veces por semana
+6. Considere tiempo de prep (días laborales = comidas más rápidas)
+7. Incluya ingredientes típicos de Argentina (disponibles en Carrefour/Coto)
+
+FORMATO DE SALIDA (JSON estricto):
+{
+  "weekPlan": {
+    "2026-02-10": {
+      "breakfast": [{
+        "name": "Nombre de la comida",
+        "items": [
+          {"name": "Huevos", "amount": "3 unidades", "calories": 210},
+          {"name": "Pan integral", "amount": "2 rebanadas", "calories": 140}
+        ],
+        "macros": {
+          "calories": 350,
+          "protein": 25,
+          "carbs": 30,
+          "fat": 12
+        },
+        "notes": "Opcional: tips de prep"
+      }],
+      "lunch": [{"name": "...", "items": [...], "macros": {...}}],
+      "snack": [{"name": "...", "items": [...], "macros": {...}}],
+      "dinner": [{"name": "...", "items": [...], "macros": {...}}]
+    },
+    ... (7 días totales desde ${request.weekStartDate})
+  },
+  "weekSummary": "Plan adaptado a tus entrenamientos con énfasis en proteína post-gym"
+}
+
+IMPORTANTE:
+- Cada día debe tener exactamente 4 tipos de comida: breakfast, lunch, snack, dinner
+- Los macros deben sumar ~${dailyTargets.calories} por día
+- Incluye ingredientes específicos con cantidades (ej: "200g pechuga de pollo", no solo "pollo")
+- Las comidas deben ser realistas y prácticas para preparar`;
+
+    return prompt;
+};
+
+const buildWeeklyPlanPromptEN = (request: WeeklyMealPlanRequest): string => {
+    const { dailyTargets, goal, activityLevel, weeklyWorkouts, preferences, favoriteFoods } = request;
+
+    const goalMap: Record<string, string> = {
+        cut: 'Fat loss (caloric deficit)',
+        maintain: 'Maintenance',
+        bulk: 'Muscle gain (caloric surplus)'
+    };
+
+    const workoutSchedule = Array.from({ length: 7 }, (_, i) => {
+        const workout = weeklyWorkouts.find(w => w.day === i);
+        const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        if (workout) {
+            const intensityMap = {
+                high: 'intense',
+                moderate: 'moderate',
+                recovery: 'recovery'
+            };
+            return `- ${dayNames[i]}: ${workout.type || 'Workout'} (${intensityMap[workout.intensity || 'moderate']})`;
+        }
+        return `- ${dayNames[i]}: Rest`;
+    }).join('\n');
+
+    const dietaryMap: Record<string, string> = {
+        standard: 'No restrictions',
+        vegetarian: 'Vegetarian',
+        vegan: 'Vegan',
+        gluten_free: 'Gluten-free',
+        lactose_free: 'Lactose-free'
+    };
+
+    let prompt = `You are a sports nutritionist specialized in Argentina.
+
+USER CONTEXT:
+- Goal: ${goalMap[goal]}
+- Daily macros: ${dailyTargets.calories} kcal, ${dailyTargets.protein}g protein, ${dailyTargets.carbs}g carbs, ${dailyTargets.fat}g fat
+- Activity level: ${activityLevel}
+- Dietary restriction: ${dietaryMap[preferences.dietaryMode]}
+
+WORKOUTS THIS WEEK:
+${workoutSchedule}
+`;
+
+    if (favoriteFoods && favoriteFoods.length > 0) {
+        prompt += `\nUSER'S FAVORITE FOODS (by frequency):
+${favoriteFoods.slice(0, 10).map((f, i) => `${i + 1}. ${f}`).join('\n')}
+`;
+    }
+
+    prompt += `
+CONSTRAINTS:
+- Avoid: ${preferences.rejectedMeals.length > 0 ? preferences.rejectedMeals.join(', ') : 'None'}
+- Prep time: ${preferences.prepTime} (quick=15min, medium=30min, long=45min+)
+- Difficulty: ${preferences.difficulty}
+
+TASK:
+Generate a 7-day meal plan (Monday-Sunday) that:
+1. Respects daily macros (±5% tolerance)
+2. On intense training days: more carbs, post-workout protein
+3. On rest days: slightly reduce carbs
+4. Uses user's favorite foods with variation
+5. Avoids repeating the same meal more than 2x per week
+6. Considers prep time (workdays = quicker meals)
+7. Includes typical Argentine ingredients (available at Carrefour/Coto)
+
+OUTPUT FORMAT (strict JSON):
+{
+  "weekPlan": {
+    "2026-02-10": {
+      "breakfast": [{
+        "name": "Meal name",
+        "items": [
+          {"name": "Eggs", "amount": "3 units", "calories": 210},
+          {"name": "Whole wheat bread", "amount": "2 slices", "calories": 140}
+        ],
+        "macros": {
+          "calories": 350,
+          "protein": 25,
+          "carbs": 30,
+          "fat": 12
+        },
+        "notes": "Optional: prep tips"
+      }],
+      "lunch": [{"name": "...", "items": [...], "macros": {...}}],
+      "snack": [{"name": "...", "items": [...], "macros": {...}}],
+      "dinner": [{"name": "...", "items": [...], "macros": {...}}]
+    },
+    ... (7 total days starting from ${request.weekStartDate})
+  },
+  "weekSummary": "Plan adapted to your workouts with emphasis on post-gym protein"
+}
+
+IMPORTANT:
+- Each day must have exactly 4 meal types: breakfast, lunch, snack, dinner
+- Macros should sum to ~${dailyTargets.calories} per day
+- Include specific ingredients with amounts (e.g., "200g chicken breast", not just "chicken")
+- Meals should be realistic and practical to prepare`;
+
+    return prompt;
+};
+
+/**
+ * Generate a full 7-day meal plan using AI
+ */
+export const generateWeeklyMealPlan = async (
+    request: WeeklyMealPlanRequest,
+    language: string
+): Promise<WeeklyMealPlanResponse> => {
+    try {
+        const timestamp = new Date().toISOString();
+        console.log(`[mealService ${timestamp}] Generating weekly meal plan for user: ${request.userId}`);
+
+        const systemPrompt = language === 'es'
+            ? buildWeeklyPlanPromptES(request)
+            : buildWeeklyPlanPromptEN(request);
+
+        const model = genAI.getGenerativeModel({
+            model: MODEL_NAME,
+            systemInstruction: systemPrompt,
+            generationConfig: {
+                responseMimeType: 'application/json',
+            },
+        });
+
+        const userPrompt = language === 'es'
+            ? `Genera el plan de comidas completo para 7 días siguiendo el formato JSON especificado.`
+            : `Generate the complete 7-day meal plan following the specified JSON format.`;
+
+        const result = await model.generateContent(userPrompt);
+        const response = await result.response;
+        const text = response.text();
+
+        const parsed = JSON.parse(text);
+
+        console.log(`[mealService ${timestamp}] ✓ Weekly meal plan generated successfully`);
+
+        return {
+            ...parsed,
+            generatedAt: timestamp,
+            model: MODEL_NAME,
+        };
+    } catch (error) {
+        const timestamp = new Date().toISOString();
+        console.error(`[mealService ${timestamp}] Error generating weekly meal plan:`, error);
+        throw new Error('Failed to generate weekly meal plan.');
+    }
+};

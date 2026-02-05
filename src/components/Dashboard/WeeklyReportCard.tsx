@@ -170,12 +170,12 @@ export const WeeklyReportCard = React.forwardRef<
                                         {totalLost}{' '}
                                         {t('units.kg', { defaultValue: 'kg' })}
                                     </span>
-                                    {percentToGoal && (
+                                    {percentToGoal !== null && percentToGoal !== undefined && (
                                         <span className="text-text-tertiary mx-1">
                                             /
                                         </span>
                                     )}
-                                    {percentToGoal && (
+                                    {percentToGoal !== null && percentToGoal !== undefined && (
                                         <span>{percentToGoal}% meta</span>
                                     )}
                                 </div>
