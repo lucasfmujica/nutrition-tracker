@@ -26,8 +26,8 @@ Disallow: /sw.js
 Disallow: /manifest.json
 Disallow: /*.json$
 
-# Sitemap (crear después)
-# Sitemap: https://www.lukenfit.com/sitemap.xml
+# Sitemap
+Sitemap: https://www.lukenfit.com/sitemap.xml
 
 # Crawl-delay para evitar saturación
 Crawl-delay: 1
