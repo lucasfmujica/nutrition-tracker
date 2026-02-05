@@ -937,6 +937,9 @@
         "regenerate": "Regenerate",
         "tryAgain": "Try again",
         "reject": "Reject",
+        "showMore": "Show more",
+        "showLess": "Show less",
+        "applyAndRegenerate": "Apply & regenerate",
         "tabs": {
             "suggestions": "Suggestions",
             "ingredients": "Ingredients",

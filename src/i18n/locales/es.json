@@ -944,6 +944,9 @@
         "regenerate": "Regenerar",
         "tryAgain": "Intentar de nuevo",
         "reject": "Rechazar",
+        "showMore": "Ver más",
+        "showLess": "Ver menos",
+        "applyAndRegenerate": "Aplicar y regenerar",
         "tabs": {
             "suggestions": "Sugerencias",
             "ingredients": "Ingredientes",

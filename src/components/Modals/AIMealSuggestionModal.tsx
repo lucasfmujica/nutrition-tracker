@@ -1,5 +1,7 @@
 import {
     ChefHat,
+    ChevronDown,
+    ChevronUp,
     Clock,
     Dumbbell,
     Leaf,
@@ -12,7 +14,7 @@ import {
     Wheat,
     X,
 } from 'lucide-react';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
 import { MealSuggestion } from '../../services/ai/mealService';
@@ -33,14 +35,17 @@ interface ContextBannerProps {
     mealTime: AIChefMealTime;
     isTrainingDay: boolean;
     remainingCalories: number;
+    onMealTimeChange: (mealTime: AIChefMealTime) => void;
 }
 
 const AIChefContextBanner: React.FC<ContextBannerProps> = ({
     mealTime,
     isTrainingDay,
     remainingCalories,
+    onMealTimeChange,
 }) => {
     const { t } = useTranslation();
+    const [showSelector, setShowSelector] = useState(false);
 
     const mealTimeLabels: Record<AIChefMealTime, string> = {
         breakfast: t('mealTypes.breakfast'),
@@ -49,25 +54,57 @@ const AIChefContextBanner: React.FC<ContextBannerProps> = ({
         dinner: t('mealTypes.dinner'),
     };
 
+    const mealTimeOptions: AIChefMealTime[] = ['breakfast', 'lunch', 'snack', 'dinner'];
+
     return (
-        <div className="flex items-center gap-2 px-3 py-2 bg-purple-50 dark:bg-purple-900/30 rounded-xl mb-4">
-            <Clock size={14} className="text-purple-600 dark:text-purple-400" />
-            <span className="text-xs font-medium text-purple-700 dark:text-purple-300">
-                {mealTimeLabels[mealTime]}
-            </span>
-            {isTrainingDay && (
-                <>
-                    <span className="text-purple-300 dark:text-purple-600">•</span>
-                    <Dumbbell size={14} className="text-purple-600 dark:text-purple-400" />
+        <div className="mb-4">
+            <div className="flex items-center gap-2 px-3 py-2 bg-purple-50 dark:bg-purple-900/30 rounded-xl">
+                <button
+                    onClick={() => setShowSelector(!showSelector)}
+                    className="flex items-center gap-1 text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors"
+                >
+                    <Clock size={14} />
                     <span className="text-xs font-medium text-purple-700 dark:text-purple-300">
-                        {t('aiChef.trainingDay')}
+                        {mealTimeLabels[mealTime]}
                     </span>
-                </>
+                    <ChevronDown size={12} className={`transition-transform ${showSelector ? 'rotate-180' : ''}`} />
+                </button>
+                {isTrainingDay && (
+                    <>
+                        <span className="text-purple-300 dark:text-purple-600">•</span>
+                        <Dumbbell size={14} className="text-purple-600 dark:text-purple-400" />
+                        <span className="text-xs font-medium text-purple-700 dark:text-purple-300">
+                            {t('aiChef.trainingDay')}
+                        </span>
+                    </>
+                )}
+                <span className="text-purple-300 dark:text-purple-600">•</span>
+                <span className="text-xs font-bold text-purple-700 dark:text-purple-300">
+                    {Math.round(remainingCalories)} kcal
+                </span>
+            </div>
+
+            {/* Meal Time Selector */}
+            {showSelector && (
+                <div className="flex gap-1 mt-2">
+                    {mealTimeOptions.map((option) => (
+                        <button
+                            key={option}
+                            onClick={() => {
+                                onMealTimeChange(option);
+                                setShowSelector(false);
+                            }}
+                            className={`flex-1 px-2 py-1.5 rounded-lg text-[10px] font-bold transition-all ${
+                                mealTime === option
+                                    ? 'bg-purple-600 text-white'
+                                    : 'bg-background dark:bg-surface-lighter text-text-tertiary hover:bg-purple-100 dark:hover:bg-purple-900/30'
+                            }`}
+                        >
+                            {mealTimeLabels[option]}
+                        </button>
+                    ))}
+                </div>
             )}
-            <span className="text-purple-300 dark:text-purple-600">•</span>
-            <span className="text-xs font-bold text-purple-700 dark:text-purple-300">
-                {Math.round(remainingCalories)} kcal
-            </span>
         </div>
     );
 };
@@ -84,6 +121,10 @@ const AIChefSuggestionCard: React.FC<SuggestionCardProps> = ({
     onReject,
 }) => {
     const { t } = useTranslation();
+    const [expanded, setExpanded] = useState(false);
+
+    // Check if description is long enough to need expansion
+    const needsExpansion = suggestion.description && suggestion.description.length > 100;
 
     return (
         <div className="group relative bg-surface border border-border hover:border-purple-200 dark:hover:border-purple-700 rounded-2xl p-4 transition-all hover:shadow-lg hover:shadow-purple-500/5">
@@ -101,9 +142,30 @@ const AIChefSuggestionCard: React.FC<SuggestionCardProps> = ({
                 </h4>
             </div>
 
-            <p className="text-xs text-text-tertiary mb-3 line-clamp-2">
-                {suggestion.description}
-            </p>
+            {/* Expandable description */}
+            <div className="mb-3">
+                <p className={`text-xs text-text-tertiary ${!expanded && needsExpansion ? 'line-clamp-2' : ''}`}>
+                    {suggestion.description}
+                </p>
+                {needsExpansion && (
+                    <button
+                        onClick={() => setExpanded(!expanded)}
+                        className="flex items-center gap-1 mt-1 text-[10px] font-bold text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300"
+                    >
+                        {expanded ? (
+                            <>
+                                <ChevronUp size={12} />
+                                {t('aiChef.showLess')}
+                            </>
+                        ) : (
+                            <>
+                                <ChevronDown size={12} />
+                                {t('aiChef.showMore')}
+                            </>
+                        )}
+                    </button>
+                )}
+            </div>
 
             {/* Macros row */}
             <div className="flex gap-2 mb-3 flex-wrap">
@@ -236,11 +298,15 @@ const AIChefIngredientInput: React.FC<IngredientInputProps> = ({
 interface PreferencesPanelProps {
     preferences: AIChefPreferences;
     onUpdate: (partial: Partial<AIChefPreferences>) => void;
+    onApplyAndRegenerate: () => void;
+    loading: boolean;
 }
 
 const AIChefPreferencesPanel: React.FC<PreferencesPanelProps> = ({
     preferences,
     onUpdate,
+    onApplyAndRegenerate,
+    loading,
 }) => {
     const { t } = useTranslation();
 
@@ -343,6 +409,20 @@ const AIChefPreferencesPanel: React.FC<PreferencesPanelProps> = ({
                     </button>
                 </div>
             )}
+
+            {/* Apply and Regenerate Button */}
+            <button
+                onClick={onApplyAndRegenerate}
+                disabled={loading}
+                className="w-full py-3 mt-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-bold text-sm disabled:opacity-50 hover:from-purple-700 hover:to-indigo-700 transition-all flex items-center justify-center gap-2"
+            >
+                {loading ? (
+                    <Loader2 size={16} className="animate-spin" />
+                ) : (
+                    <RefreshCw size={16} />
+                )}
+                {t('aiChef.applyAndRegenerate')}
+            </button>
         </div>
     );
 };
@@ -389,6 +469,12 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
         workoutLog,
     } = useTracker() as any;
 
+    // Local state for meal time override
+    const [selectedMealTime, setSelectedMealTime] = useState<AIChefMealTime | null>(null);
+
+    // Use override if set, otherwise use current meal time
+    const effectiveMealTime = selectedMealTime || currentMealTime;
+
     // Calculate remaining macros
     const remaining = useMemo(() => {
         const totals = getTotalsForDate?.(selectedFoodDate) || { calories: 0, protein: 0, carbs: 0, fat: 0 };
@@ -407,9 +493,9 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
         return workoutLog?.some((w: any) => w.date === selectedFoodDate) || false;
     }, [workoutLog, selectedFoodDate]);
 
-    // Infer meal type from time
+    // Get effective meal type (respects user override)
     const inferMealType = (): 'breakfast' | 'lunch' | 'snack' | 'dinner' => {
-        return currentMealTime || 'lunch';
+        return effectiveMealTime || 'lunch';
     };
 
     // Handle add suggestion to diary
@@ -448,12 +534,18 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
 
     // Handle regenerate
     const handleRegenerate = () => {
-        getContextualSuggestions(remaining, isTrainingDay);
+        getContextualSuggestions(remaining, isTrainingDay, null, effectiveMealTime);
     };
 
     // Handle ingredient search
     const handleIngredientSearch = () => {
-        getSuggestionsFromIngredients(remaining, isTrainingDay);
+        getSuggestionsFromIngredients(remaining, isTrainingDay, null, effectiveMealTime);
+    };
+
+    // Handle apply config and regenerate
+    const handleApplyAndRegenerate = () => {
+        setAIChefTab('suggestions');
+        getContextualSuggestions(remaining, isTrainingDay, null, effectiveMealTime);
     };
 
     if (!isOpen) return null;
@@ -516,9 +608,10 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                         <>
                             {/* Context Banner */}
                             <AIChefContextBanner
-                                mealTime={currentMealTime}
+                                mealTime={effectiveMealTime}
                                 isTrainingDay={isTrainingDay}
                                 remainingCalories={remaining.calories}
+                                onMealTimeChange={setSelectedMealTime}
                             />
 
                             {loading ? (
@@ -599,6 +692,8 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                         <AIChefPreferencesPanel
                             preferences={preferences}
                             onUpdate={updatePreferences}
+                            onApplyAndRegenerate={handleApplyAndRegenerate}
+                            loading={loading}
                         />
                     )}
                 </div>

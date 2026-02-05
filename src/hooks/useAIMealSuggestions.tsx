@@ -136,12 +136,14 @@ interface UseAIMealSuggestionsReturn {
     getContextualSuggestions: (
         remaining: Macros,
         isTrainingDay: boolean,
-        workoutIntensity?: 'high' | 'moderate' | 'recovery' | null
+        workoutIntensity?: 'high' | 'moderate' | 'recovery' | null,
+        mealTimeOverride?: AIChefMealTime
     ) => Promise<void>;
     getSuggestionsFromIngredients: (
         remaining: Macros,
         isTrainingDay: boolean,
-        workoutIntensity?: 'high' | 'moderate' | 'recovery' | null
+        workoutIntensity?: 'high' | 'moderate' | 'recovery' | null,
+        mealTimeOverride?: AIChefMealTime
     ) => Promise<void>;
     rejectSuggestion: (mealName: string) => void;
     clearSuggestions: () => void;
@@ -319,7 +321,8 @@ export const useAIMealSuggestions = (
         async (
             remaining: Macros,
             isTrainingDay: boolean,
-            workoutIntensity?: 'high' | 'moderate' | 'recovery' | null
+            workoutIntensity?: 'high' | 'moderate' | 'recovery' | null,
+            mealTimeOverride?: AIChefMealTime
         ) => {
             setLoading(true);
             setError(null);
@@ -328,6 +331,10 @@ export const useAIMealSuggestions = (
 
             try {
                 const context = buildContext(remaining, isTrainingDay, workoutIntensity);
+                // Apply meal time override if provided
+                if (mealTimeOverride) {
+                    context.mealTime = mealTimeOverride;
+                }
                 const result = await suggestMealsWithContext(context);
                 setSuggestions(result);
             } catch (err) {
@@ -351,7 +358,8 @@ export const useAIMealSuggestions = (
         async (
             remaining: Macros,
             isTrainingDay: boolean,
-            workoutIntensity?: 'high' | 'moderate' | 'recovery' | null
+            workoutIntensity?: 'high' | 'moderate' | 'recovery' | null,
+            mealTimeOverride?: AIChefMealTime
         ) => {
             if (ingredients.length === 0) {
                 setError(
@@ -372,6 +380,10 @@ export const useAIMealSuggestions = (
                     workoutIntensity,
                     ingredients
                 );
+                // Apply meal time override if provided
+                if (mealTimeOverride) {
+                    context.mealTime = mealTimeOverride;
+                }
                 const result = await suggestMealsWithContext(context);
                 setSuggestions(result);
                 setAIChefTab('suggestions'); // Switch to suggestions tab to show results
