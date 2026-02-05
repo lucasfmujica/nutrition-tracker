@@ -80,7 +80,8 @@ CONTEXTO REGIONAL (Argentina):
         breakfast: 'DESAYUNO - opciones rápidas para empezar el día con energía',
         lunch: 'ALMUERZO - plato principal balanceado y saciante',
         snack: 'MERIENDA/SNACK - opciones ligeras para mantener energía',
-        dinner: 'CENA - opciones más livianas, fáciles de digerir'
+        dinner: 'CENA - opciones más livianas, fáciles de digerir',
+        late_night: 'NOCTURNO - snacks livianos, bajo en carbos, alto en proteína (yogur, queso, frutos secos)'
     };
     parts.push(`\nHORARIO: ${mealTimeMap[context.mealTime]}`);
 
@@ -216,7 +217,8 @@ REGIONAL CONTEXT (United States):
         breakfast: 'BREAKFAST - quick options to start the day with energy',
         lunch: 'LUNCH - balanced, filling main dish',
         snack: 'SNACK - light options to maintain energy',
-        dinner: 'DINNER - lighter options, easy to digest'
+        dinner: 'DINNER - lighter options, easy to digest',
+        late_night: 'LATE NIGHT - light snacks, low carb, high protein (yogurt, cheese, nuts)'
     };
     parts.push(`\nMEAL TIME: ${mealTimeMap[context.mealTime]}`);
 

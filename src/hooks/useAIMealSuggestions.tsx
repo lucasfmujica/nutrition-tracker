@@ -44,7 +44,8 @@ const inferMealTime = (hour: number): AIChefMealTime => {
     if (hour >= 5 && hour < 11) return 'breakfast';
     if (hour >= 11 && hour < 15) return 'lunch';
     if (hour >= 15 && hour < 19) return 'snack';
-    return 'dinner';
+    if (hour >= 19 && hour < 22) return 'dinner';
+    return 'late_night'; // 22:00 - 05:00
 };
 
 /**

@@ -52,9 +52,10 @@ const AIChefContextBanner: React.FC<ContextBannerProps> = ({
         lunch: t('mealTypes.lunch'),
         snack: t('mealTypes.snack'),
         dinner: t('mealTypes.dinner'),
+        late_night: t('mealTypes.lateNight'),
     };
 
-    const mealTimeOptions: AIChefMealTime[] = ['breakfast', 'lunch', 'snack', 'dinner'];
+    const mealTimeOptions: AIChefMealTime[] = ['breakfast', 'lunch', 'snack', 'dinner', 'late_night'];
 
     return (
         <div className="mb-4">
@@ -86,7 +87,7 @@ const AIChefContextBanner: React.FC<ContextBannerProps> = ({
 
             {/* Meal Time Selector */}
             {showSelector && (
-                <div className="flex gap-1 mt-2">
+                <div className="grid grid-cols-3 gap-1 mt-2">
                     {mealTimeOptions.map((option) => (
                         <button
                             key={option}
@@ -94,7 +95,7 @@ const AIChefContextBanner: React.FC<ContextBannerProps> = ({
                                 onMealTimeChange(option);
                                 setShowSelector(false);
                             }}
-                            className={`flex-1 px-2 py-1.5 rounded-lg text-[10px] font-bold transition-all ${
+                            className={`px-2 py-2 rounded-lg text-[10px] font-bold transition-all ${
                                 mealTime === option
                                     ? 'bg-purple-600 text-white'
                                     : 'bg-background dark:bg-surface-lighter text-text-tertiary hover:bg-purple-100 dark:hover:bg-purple-900/30'

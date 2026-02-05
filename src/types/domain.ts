@@ -368,7 +368,7 @@ export interface BodyMeasurement {
 export type DietaryMode = 'standard' | 'vegetarian' | 'vegan' | 'gluten_free' | 'lactose_free';
 export type PrepTime = 'quick' | 'medium' | 'long'; // <15min, 15-30min, >30min
 export type Difficulty = 'easy' | 'medium' | 'hard';
-export type AIChefMealTime = 'breakfast' | 'lunch' | 'snack' | 'dinner';
+export type AIChefMealTime = 'breakfast' | 'lunch' | 'snack' | 'dinner' | 'late_night';
 
 export interface AIChefPreferences {
     dietaryMode: DietaryMode;
