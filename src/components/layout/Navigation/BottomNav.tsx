@@ -124,7 +124,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         },
         {
             icon: <Import size={20} />,
-            label: 'IMP. GRAVL',
+            label: t('workouts.importGravl').toUpperCase(),
             sublabel: 'GEMINI AI',
             onClick: () => setShowImportWorkoutModal(true),
             color: 'text-carbs',

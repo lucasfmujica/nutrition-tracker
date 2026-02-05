@@ -27,9 +27,9 @@ export const DaySummary: React.FC<DaySummaryProps> = ({
                     {onSuggestMeal && calsLeft > 100 && (
                         <button
                             onClick={onSuggestMeal}
-                            className="bg-purple-100 hover:bg-purple-200 text-purple-700 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors">
+                            className="bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-800/50 text-purple-700 dark:text-purple-300 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors">
                             <Sparkles size={10} />
-                            Sugerir
+                            {t('diary.aiSuggest')}
                         </button>
                     )}
                 </div>

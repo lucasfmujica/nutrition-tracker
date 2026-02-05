@@ -301,6 +301,7 @@
             "button": "Registrar Comida"
         },
         "swipeHint": "← Desliza para eliminar",
+        "aiSuggest": "Sugerir",
         "summary": {
             "title": "RESUMEN DIARIO",
             "remaining": "Restantes",

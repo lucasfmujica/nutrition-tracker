@@ -229,9 +229,9 @@ export const ModalsManager: React.FC = () => {
 
             {showTemplatesModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start justify-center z-50 p-2 pt-8 overflow-y-auto">
-                    <div className="bg-surface rounded-2xl p-5 w-full max-w-sm border border-purple-200 shadow-2xl">
+                    <div className="bg-surface rounded-2xl p-5 w-full max-w-sm border border-purple-200 dark:border-purple-800 shadow-2xl">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg lg:text-xl font-bold text-purple-600">
+                            <h3 className="text-lg lg:text-xl font-bold text-purple-600 dark:text-purple-400">
                                 ⭐ Favoritos
                             </h3>
                             <button
@@ -251,7 +251,7 @@ export const ModalsManager: React.FC = () => {
                                 {mealTemplates.map((template: any) => (
                                     <div
                                         key={template.id}
-                                        className="bg-purple-50 rounded-xl p-3 border border-purple-100 active:bg-purple-100 transition-colors">
+                                        className="bg-purple-50 dark:bg-purple-900/30 rounded-xl p-3 border border-purple-100 dark:border-purple-800 active:bg-purple-100 dark:active:bg-purple-800/50 transition-colors">
                                         <div className="flex justify-between items-start">
                                             <button
                                                 onClick={() =>
@@ -259,7 +259,7 @@ export const ModalsManager: React.FC = () => {
                                                 }
                                                 className="flex-1 text-left">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-xs text-purple-600 uppercase font-bold">
+                                                    <span className="text-xs text-purple-600 dark:text-purple-400 uppercase font-bold">
                                                         {template.meal}
                                                     </span>
                                                 </div>
@@ -272,16 +272,16 @@ export const ModalsManager: React.FC = () => {
                                                     </p>
                                                 )}
                                                 <div className="flex gap-2 mt-1 text-xs font-medium">
-                                                    <span className="text-blue-600">
+                                                    <span className="text-blue-600 dark:text-blue-400">
                                                         {template.calories}kcal
                                                     </span>
-                                                    <span className="text-blue-600">
+                                                    <span className="text-blue-600 dark:text-blue-400">
                                                         {template.protein}P
                                                     </span>
-                                                    <span className="text-amber-600">
+                                                    <span className="text-amber-600 dark:text-amber-400">
                                                         {template.carbs}C
                                                     </span>
-                                                    <span className="text-pink-600">
+                                                    <span className="text-pink-600 dark:text-pink-400">
                                                         {template.fat}F
                                                     </span>
                                                 </div>
@@ -309,8 +309,8 @@ export const ModalsManager: React.FC = () => {
 
             {showSaveTemplateModal && templateToSave && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-surface rounded-2xl p-5 w-full max-w-xs border border-purple-200 shadow-2xl">
-                        <h3 className="text-base font-bold text-purple-600 mb-3">
+                    <div className="bg-surface rounded-2xl p-5 w-full max-w-xs border border-purple-200 dark:border-purple-800 shadow-2xl">
+                        <h3 className="text-base font-bold text-purple-600 dark:text-purple-400 mb-3">
                             {templateToSave.items && templateToSave.items.length > 0
                                 ? '⭐ Guardar Combo'
                                 : '⭐ Guardar como Favorito'}
@@ -391,7 +391,7 @@ export const ModalsManager: React.FC = () => {
                                 </span>
                                 {templateToSave.items &&
                                     templateToSave.items.length > 0 && (
-                                        <span className="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">
+                                        <span className="text-[10px] bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 px-1.5 py-0.5 rounded">
                                             {templateToSave.items.length} items
                                         </span>
                                     )}

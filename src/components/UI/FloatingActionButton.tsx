@@ -85,8 +85,8 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
         },
         {
             icon: <Import size={20} />,
-            label: 'IMP. GRAVL',
-            sublabel: 'SINC GEN AI',
+            label: t('workouts.importGravl').toUpperCase(),
+            sublabel: 'GEMINI AI',
             onClick: onImportWorkout,
             color: 'text-carbs',
             bg: 'bg-carbs/10',

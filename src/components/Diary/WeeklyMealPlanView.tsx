@@ -320,7 +320,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                                                 +
                                                                 {mealFoods.length -
                                                                     3}{' '}
-                                                                más
+                                                                {t('common.more')}
                                                             </div>
                                                         )}
                                                 </div>

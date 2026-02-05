@@ -75,7 +75,7 @@ export const FoodHistoryPanel: React.FC<FoodHistoryPanelProps> = ({
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-border">
                     <div className="flex items-center gap-2">
-                        <Clock className="text-indigo-600" size={20} />
+                        <Clock className="text-indigo-600 dark:text-indigo-400" size={20} />
                         <h2 className="text-lg font-bold text-text-primary">
                             {t('food.history.title')}
                         </h2>
@@ -178,10 +178,10 @@ const FoodHistoryItem: React.FC<{
 }> = ({ food, onSelect, lastSeen }) => (
     <button
         onClick={onSelect}
-        className="w-full text-left p-3 bg-background hover:bg-indigo-50 rounded-2xl transition-colors group border border-transparent hover:border-indigo-100">
+        className="w-full text-left p-3 bg-background hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-2xl transition-colors group border border-transparent hover:border-indigo-100 dark:hover:border-indigo-800">
         <div className="flex justify-between items-start mb-1">
             <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-text-primary truncate group-hover:text-indigo-600 transition-colors">
+                <h3 className="font-bold text-text-primary truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                     {food.name}
                 </h3>
                 {food.description && (
@@ -193,10 +193,10 @@ const FoodHistoryItem: React.FC<{
         </div>
         <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 text-xs">
-                <span className="font-bold text-orange-600">
+                <span className="font-bold text-orange-600 dark:text-orange-400">
                     {food.calories} kcal
                 </span>
-                <span className="text-green-600">P: {food.protein}g</span>
+                <span className="text-green-600 dark:text-green-400">P: {food.protein}g</span>
             </div>
             <span className="text-[10px] text-text-tertiary">{lastSeen}</span>
         </div>

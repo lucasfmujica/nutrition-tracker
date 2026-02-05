@@ -37,7 +37,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ message = null }) 
     const displayMessage = message || LOADING_MESSAGES[currentMessageIndex];
 
     return (
-        <div className="min-h-screen bg-[#F9FAFB] flex items-center justify-center">
+        <div className="min-h-screen bg-background flex items-center justify-center">
             <div className="text-center px-6 flex flex-col items-center">
                 {/* Logo/Branding */}
                 <div className="mb-8 flex flex-col items-center gap-4">

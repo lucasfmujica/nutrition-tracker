@@ -295,6 +295,7 @@
             "button": "Log Meal"
         },
         "swipeHint": "← Swipe to delete",
+        "aiSuggest": "Suggest",
         "summary": {
             "title": "DAILY SUMMARY",
             "remaining": "Remaining",
@@ -921,7 +922,8 @@
         "yesterday": "Yesterday",
         "tomorrow": "Tomorrow",
         "favorites": "Favorites",
-        "scan": "Scan"
+        "scan": "Scan",
+        "more": "more"
     },
     "modals": {
         "barcode": {

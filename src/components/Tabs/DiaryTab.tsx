@@ -200,25 +200,25 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => setShowFoodHistoryPanel(true)}
-                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 active:bg-indigo-200 transition-colors"
+                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-800/40 active:bg-indigo-200 dark:active:bg-indigo-700/50 transition-colors"
                             title={t('diary.quickActions.history')}>
                             <Clock size={20} />
                         </button>
                         <button
                             onClick={() => setShowFoodSearchModal(true)}
-                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 active:bg-blue-200 transition-colors"
+                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800/40 active:bg-blue-200 dark:active:bg-blue-700/50 transition-colors"
                             title={t('diary.quickActions.search')}>
                             <Search size={20} />
                         </button>
                         <button
                             onClick={() => setShowBarcodeModal(true)}
-                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 active:bg-emerald-200 transition-colors"
+                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-800/40 active:bg-emerald-200 dark:active:bg-emerald-700/50 transition-colors"
                             title={t('diary.quickActions.barcode')}>
                             <ScanBarcode size={20} />
                         </button>
                         <button
                             onClick={() => setShowFoodScanModal(true)}
-                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-purple-50 text-purple-600 hover:bg-purple-100 active:bg-purple-200 transition-colors"
+                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-800/40 active:bg-purple-200 dark:active:bg-purple-700/50 transition-colors"
                             title={t('diary.quickActions.camera')}>
                             <Drumstick size={20} />
                         </button>
@@ -260,7 +260,7 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
 
             {!hasFoods ? (
                 <div className="bg-surface rounded-2xl p-8 text-center border border-border shadow-sm">
-                    <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                         <span className="text-2xl">🍽️</span>
                     </div>
                     <h3 className="text-text-primary font-bold text-lg mb-1">
