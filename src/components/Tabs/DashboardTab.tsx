@@ -5,6 +5,7 @@ import { useTracker } from '../../context/TrackerContext';
 import { useCorrelationAnalytics } from '../../hooks/useCorrelationAnalytics';
 import { useIdealDayPilot } from '../../hooks/useIdealDayPilot';
 import { useMealTimingAnalytics } from '../../hooks/useMealTimingAnalytics';
+import { useOuraAutoAdjust } from '../../hooks/useOuraAutoAdjust';
 import { usePatternRecognition } from '../../hooks/usePatternRecognition';
 import { usePlateauDetector } from '../../hooks/usePlateauDetector';
 import { useWeeklyPeriodization } from '../../hooks/useWeeklyPeriodization';
@@ -24,6 +25,7 @@ import CoachInsight from '../Dashboard/CoachInsight';
 import { CorrelationSection } from '../Dashboard/CorrelationSection';
 import { IdealDayCard } from '../Dashboard/IdealDayCard';
 import { MacroCards } from '../Dashboard/MacroCards';
+import { OuraInsightCard } from '../Dashboard/OuraInsightCard';
 
 import { MealTimingCard } from '../Dashboard/MealTimingCard';
 import { PerformanceForecastCard } from '../Dashboard/PerformanceForecastCard';
@@ -170,6 +172,9 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         workoutLog,
     );
 
+    // Oura Auto-Adjust Engine
+    const ouraAutoAdjustData = useOuraAutoAdjust(ouraLog, dashboardDate);
+
     // Weekly Report Modal State
     const [showWeeklyReport, setShowWeeklyReport] = useState(false);
     const { stats, isLoading, error, fetchStats } = useWeeklyReport();
@@ -288,6 +293,9 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                         periodizationState={periodizationIntensity}
                     />
                     <PerformanceForecastCard />
+                    {profile?.hasOuraRing && (
+                        <OuraInsightCard ouraData={ouraAutoAdjustData} />
+                    )}
                     {plateauData && plateauData.isInPlateau && (
                         <PlateauAlertCard plateauData={plateauData} />
                     )}

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18n';
 import { CustomTargets, Profile, StepsEntry, Workout } from '../types/domain';
 import { getArgentinaDateString } from '../utils/dateUtils';
 
@@ -42,6 +43,8 @@ export const useAdaptiveCalories = (
     customTargets: CustomTargets,
     selectedDate?: string,
 ): AdaptiveCaloriesData => {
+    const { t } = useTranslation();
+
     return useMemo(() => {
         // Default return if missing required data
         if (!customTargets) {
@@ -105,7 +108,7 @@ export const useAdaptiveCalories = (
             if (isHighSteps && !hasTennis) {
                 reasons.push(`${todaySteps.toLocaleString()} pasos`);
             }
-            boostReason = reasons.join(' + ') || 'Día de Entreno';
+            boostReason = reasons.join(' + ') || t('adaptive.defaultBoostReason');
         }
 
         return {

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DEFAULT_WEEKLY_PLAN, PlannedWorkout } from '../constants/weeklyPlan';
 import { supabase } from '../lib/supabase';
 
@@ -14,6 +15,7 @@ type WeeklyPlan = Record<number, PlannedWorkout | null>;
  * @returns {Object} Plan state and management functions
  */
 export const useWeeklyPlan = (userId?: string) => {
+    const { t } = useTranslation();
     const [plan, setPlan] = useState<WeeklyPlan>({});
     const [isLoading, setIsLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -74,7 +76,7 @@ export const useWeeklyPlan = (userId?: string) => {
             }
         } catch (err: any) {
             console.error('Error fetching weekly plan:', err);
-            setError(err.message || 'Error al obtener el plan semanal');
+            setError(err.message || t('errors.fetchWeeklyPlan'));
             // Do NOT overwrite with default on error, might be temporary network issue
             // Keep previous state or empty
         } finally {
@@ -89,8 +91,8 @@ export const useWeeklyPlan = (userId?: string) => {
     const deleteDayPlan = useCallback(
         async (dayIndex: number) => {
             try {
-                if (!supabase) throw new Error('Supabase no configurado');
-                if (!userId) throw new Error('Usuario no autenticado');
+                if (!supabase) throw new Error(t('errors.supabaseNotConfigured'));
+                if (!userId) throw new Error(t('errors.userNotAuthenticated'));
 
                 const { error: deleteError } = await supabase
                     // @ts-ignore
@@ -110,7 +112,7 @@ export const useWeeklyPlan = (userId?: string) => {
                 return true;
             } catch (err: any) {
                 console.error('Error deleting day from weekly plan:', err);
-                setError(err.message || 'Error al borrar el día');
+                setError(err.message || t('errors.deleteWeeklyPlanDay'));
                 return false;
             }
         },
@@ -125,8 +127,8 @@ export const useWeeklyPlan = (userId?: string) => {
     const updateDayPlan = useCallback(
         async (dayIndex: number, workoutData: PlannedWorkout | null) => {
             try {
-                if (!supabase) throw new Error('Supabase no configurado');
-                if (!userId) throw new Error('Usuario no autenticado');
+                if (!supabase) throw new Error(t('errors.supabaseNotConfigured'));
+                if (!userId) throw new Error(t('errors.userNotAuthenticated'));
 
                 // If setting to rest, delete the day from the plan
                 if (workoutData === null) {
@@ -178,7 +180,7 @@ export const useWeeklyPlan = (userId?: string) => {
                 return true;
             } catch (err: any) {
                 console.error('Error updating weekly plan:', err);
-                setError(err.message || 'Error al actualizar el día');
+                setError(err.message || t('errors.updateWeeklyPlanDay'));
                 return false;
             }
         },

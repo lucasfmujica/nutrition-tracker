@@ -18,6 +18,7 @@ import { useTracker } from '../../context/TrackerContext';
 import { useFoodAnalysis } from '../../hooks/useFoodAnalysis';
 import { useSmartMealType } from '../../hooks/useSmartMealType';
 import { getArgentinaDateString } from '../../utils/dateUtils';
+import { PortionAdjustmentUI } from './PortionAdjustmentUI';
 
 interface FoodItem {
     name: string;
@@ -52,6 +53,16 @@ export const FoodCameraInput: React.FC = () => {
     });
     const [selectedMealType, setSelectedMealType] = useState('');
 
+    // Portion adjustment phase
+    const [showPortionAdjust, setShowPortionAdjust] = useState(false);
+    const [baseMacros, setBaseMacros] = useState<Macros>({
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+        fiber: 0,
+    });
+
     /**
      * Handle file selection from camera/gallery
      */
@@ -63,6 +74,16 @@ export const FoodCameraInput: React.FC = () => {
         const aiResult = await analyzeFood(file);
 
         if (aiResult) {
+            // Store base macros for portion adjustment
+            const macros = aiResult.total_macros || {
+                calories: 0,
+                protein: 0,
+                carbs: 0,
+                fat: 0,
+                fiber: 0,
+            };
+            setBaseMacros(macros);
+
             // Populate editable fields with AI results
             setEditableMeal(aiResult.meal_name || '');
             setEditableItems(
@@ -71,21 +92,15 @@ export const FoodCameraInput: React.FC = () => {
                     amount: item.amount,
                 })),
             );
-            setEditableMacros(
-                aiResult.total_macros || {
-                    calories: 0,
-                    protein: 0,
-                    carbs: 0,
-                    fat: 0,
-                    fiber: 0,
-                },
-            );
 
             // Use file timestamp if available, otherwise default to current time via auto-meal logic
             const fileDate = file.lastModified
                 ? new Date(file.lastModified)
                 : undefined;
             setSelectedMealType(getAutoMealType(fileDate));
+
+            // Show portion adjustment UI first
+            setShowPortionAdjust(true);
         }
 
         // Reset file input
@@ -149,6 +164,16 @@ export const FoodCameraInput: React.FC = () => {
     };
 
     /**
+     * Handle portion adjustment confirmation
+     */
+    const handlePortionConfirm = (multiplier: number, adjustedMacros: typeof baseMacros) => {
+        // Update editable macros with adjusted values
+        setEditableMacros(adjustedMacros);
+        // Hide portion adjustment UI and show edit view
+        setShowPortionAdjust(false);
+    };
+
+    /**
      * Handle cancel - discard AI results
      */
     const handleCancel = () => {
@@ -157,10 +182,30 @@ export const FoodCameraInput: React.FC = () => {
         setEditableItems([]);
         setEditableMacros({ calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 });
         setSelectedMealType('');
+        setShowPortionAdjust(false);
+        setBaseMacros({ calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 });
     };
 
+    // If showing portion adjustment view
+    if (result && showPortionAdjust) {
+        return (
+            <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border">
+                <PortionAdjustmentUI
+                    baseMacros={{
+                        calories: baseMacros.calories,
+                        protein: baseMacros.protein,
+                        carbs: baseMacros.carbs,
+                        fat: baseMacros.fat,
+                    }}
+                    onConfirm={handlePortionConfirm}
+                    onCancel={handleCancel}
+                />
+            </div>
+        );
+    }
+
     // If showing results/edit view
-    if (result) {
+    if (result && !showPortionAdjust) {
         return (
             <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border space-y-4">
                 {/* Header */}

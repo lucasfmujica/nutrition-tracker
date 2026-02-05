@@ -50,6 +50,11 @@ const ProgressTab = lazyWithRetry(() =>
         default: m.ProgressTab,
     })),
 );
+const MealPrepView = lazyWithRetry(() =>
+    import('./components/MealPrep/MealPrepView').then((m) => ({
+        default: m.MealPrepView,
+    })),
+);
 
 import { PullToRefresh } from './components/UI/PullToRefresh';
 import { TrackerProvider, useTracker } from './context/TrackerContext';
@@ -331,6 +336,9 @@ const NutritionTrackerContent = () => {
                                         importBackup={importBackup}
                                         userId={supabase?.user?.id}
                                     />
+                                ) : null}
+                                {activeTab === 'meal-prep' && supabase?.user?.id ? (
+                                    <MealPrepView userId={supabase.user.id} />
                                 ) : null}
                             </Suspense>
                         </main>

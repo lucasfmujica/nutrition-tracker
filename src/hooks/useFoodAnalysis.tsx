@@ -7,6 +7,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getGeminiVisionModel } from '../services/ai/geminiVision';
+import { validateImageQuality } from '../utils/imageValidation';
+import { retryWithBackoff } from '../utils/retryWithBackoff';
+import { useScanHistory } from './useScanHistory';
 
 export interface FoodAnalysisItem {
     id: string;
@@ -51,6 +54,7 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
     const [result, setResult] = useState<FoodAnalysisResult | null>(null);
     const [error, setError] = useState<string | null>(null);
     const { i18n } = useTranslation();
+    const { saveScanToHistory } = useScanHistory();
 
     /**
      * Analyze food image using Gemini Vision API
@@ -68,6 +72,27 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
         setResult(null);
 
         try {
+            // Pre-scan validation
+            const timestamp = new Date().toISOString();
+            console.log(`[FoodAnalysis ${timestamp}] Starting image validation...`);
+
+            const validationResult = await validateImageQuality(file);
+
+            // Show warnings but allow continuation
+            if (validationResult.warnings.length > 0) {
+                console.warn(`[FoodAnalysis ${timestamp}] Validation warnings:`, validationResult.warnings);
+                // Could show warnings to user here via a toast/notification
+            }
+
+            // Block if critical errors
+            if (!validationResult.isValid) {
+                const errorMsg = validationResult.errors.join('. ');
+                console.error(`[FoodAnalysis ${timestamp}] ✗ Validation failed:`, errorMsg);
+                throw new Error(errorMsg);
+            }
+
+            console.log(`[FoodAnalysis ${timestamp}] ✓ Validation passed`);
+
             // Convert file to base64
             const base64Image = await fileToBase64(file);
 
@@ -82,25 +107,29 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
                 },
             };
 
-            // Generate content with image (prompt is now in systemInstruction)
-            const response = await model.generateContent({
-                contents: [
-                    {
-                        role: 'user',
-                        parts: [
-                            {
-                                text: i18n.language.startsWith('en')
-                                    ? 'Describe the food in this image and calculate macros.'
-                                    : 'Describe la comida en la imagen y calcula sus macros.',
-                            },
-                            imagePart,
-                        ],
-                    },
-                ],
-            });
+            // Generate content with retry logic (exponential backoff)
+            console.log(`[FoodAnalysis ${timestamp}] Sending request to Gemini API...`);
 
-            // Get response text
-            const responseText = response.response.text();
+            const responseText = await retryWithBackoff(async () => {
+                const response = await model.generateContent({
+                    contents: [
+                        {
+                            role: 'user',
+                            parts: [
+                                {
+                                    text: i18n.language.startsWith('en')
+                                        ? 'Describe the food in this image and calculate macros.'
+                                        : 'Describe la comida en la imagen y calcula sus macros.',
+                                },
+                                imagePart,
+                            ],
+                        },
+                    ],
+                });
+                return response.response.text();
+            }, 3, 1000);
+
+            console.log(`[FoodAnalysis ${timestamp}] ✓ API response received`);
 
             // Parse JSON response
             const parsedResult = JSON.parse(responseText) as FoodAnalysisResult;
@@ -126,6 +155,23 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
             // Ensure fiber exists (default to 0 if missing)
             if (!parsedResult.total_macros.fiber) {
                 parsedResult.total_macros.fiber = 0;
+            }
+
+            // Save successful scan to history
+            try {
+                await saveScanToHistory(file, {
+                    foodName: parsedResult.meal_name,
+                    calories: parsedResult.total_macros.calories,
+                    protein: parsedResult.total_macros.protein,
+                    carbs: parsedResult.total_macros.carbs,
+                    fat: parsedResult.total_macros.fat,
+                    confidence: parsedResult.confidence,
+                    ingredients: parsedResult.items?.map((item) => item.name),
+                });
+                console.log(`[FoodAnalysis ${timestamp}] ✓ Scan saved to history`);
+            } catch (historyErr) {
+                // Non-critical error - don't block the main flow
+                console.error(`[FoodAnalysis ${timestamp}] ⚠ Failed to save to history:`, historyErr);
             }
 
             setResult(parsedResult);

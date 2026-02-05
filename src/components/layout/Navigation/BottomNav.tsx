@@ -2,6 +2,7 @@ import gsap from 'gsap';
 import {
     BarChart2,
     BookOpen,
+    CalendarDays,
     Camera,
     Drumstick,
     Dumbbell,
@@ -133,6 +134,17 @@ export const BottomNav: React.FC<BottomNavProps> = ({
     ];
 
     const moreOptions = [
+        {
+            icon: <CalendarDays size={22} />,
+            label: t('mealPrep.title').toUpperCase(),
+            sublabel: t('mealPrep.subtitle').toUpperCase(),
+            onClick: () => {
+                setActiveTab('meal-prep');
+                setIsMoreMenuOpen(false);
+            },
+            color: 'text-green-400',
+            bg: 'bg-green-400/10',
+        },
         {
             icon: <Footprints size={22} />,
             label: t('navigation.steps').toUpperCase(),
@@ -339,6 +351,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
 
                         if (tab.isMore) {
                             const isMoreActive = [
+                                'meal-prep',
                                 'pasos',
                                 'oura',
                                 'progreso',

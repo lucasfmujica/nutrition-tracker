@@ -9,6 +9,7 @@ import {
     WeightEntry,
     Workout,
 } from '../types/domain';
+import { retryWithBackoff } from '../utils/retryWithBackoff';
 import {
     clearCache,
     clearPendingWrites,
@@ -183,7 +184,7 @@ export const useTrackerSync = ({
 
     // Handle auth state changes
     useEffect(() => {
-        console.log('[TrackerSync] Auth state check:', {
+        console.log(`[TrackerSync ${new Date().toISOString()}] Auth state check:`, {
             loading: supabase.loading,
             isAuthenticated: supabase.isAuthenticated,
             isOnline: supabase.isOnline,
@@ -191,17 +192,17 @@ export const useTrackerSync = ({
         });
 
         if (supabase.loading) {
-            console.log('[TrackerSync] Supabase still loading, waiting...');
+            console.log(`[TrackerSync ${new Date().toISOString()}] Supabase still loading, waiting...`);
             return;
         }
 
         if (supabase.isAuthenticated) {
-            console.log('[TrackerSync] User authenticated, hiding auth screen');
+            console.log(`[TrackerSync ${new Date().toISOString()}] User authenticated, hiding auth screen`);
             setShowAuth(false);
             // 🔒 Mark auth as completed for SW reload safety
             sessionStorage.setItem('auth-completed', 'true');
         } else {
-            console.log('[TrackerSync] User not authenticated, showing auth screen');
+            console.log(`[TrackerSync ${new Date().toISOString()}] User not authenticated, showing auth screen`);
             setShowAuth(true);
             setIsLoading(false); // Stop loading so AuthUI can be shown
             hasInitialized.current = false;
@@ -214,7 +215,11 @@ export const useTrackerSync = ({
         setIsRefreshing(true);
         try {
             if (useCloud) {
-                const data = await supabase.fetchAllData();
+                const data = await retryWithBackoff(
+                    () => supabase.fetchAllData(),
+                    3, // max 3 retries
+                    1000 // base delay 1s
+                );
                 if (data) {
                     // Supabase is source of truth - always sync (even empty arrays)
                     if (data.profile) setProfile(data.profile);
@@ -247,15 +252,15 @@ export const useTrackerSync = ({
                     setCacheStale(false);
 
                     setSaveStatus('✓ Actualizado');
-                    console.log('[handleRefresh] Data updated successfully');
+                    console.log(`[handleRefresh ${new Date().toISOString()}] Data updated successfully`);
                 } else {
                     setSaveStatus('Error al actualizar');
                 }
             } else {
-                console.log('[handleRefresh] useCloud is false, skipping fetch');
+                console.log(`[handleRefresh ${new Date().toISOString()}] useCloud is false, skipping fetch`);
             }
         } catch (err) {
-            console.error('[TrackerSync] Refresh error:', err);
+            console.error(`[TrackerSync ${new Date().toISOString()}] Refresh error:`, err);
             setSaveStatus('Error al actualizar');
         } finally {
             setIsRefreshing(false);

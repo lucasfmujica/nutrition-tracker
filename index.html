@@ -145,7 +145,7 @@
             if ('serviceWorker' in navigator) {
                 // Track when page was loaded to prevent reloading during initial auth
                 const pageLoadTime = Date.now();
-                const MIN_TIME_BEFORE_RELOAD = 15000; // 15 seconds
+                const MIN_TIME_BEFORE_RELOAD = 30000; // 30 seconds (increased from 15s to prevent loops on slow networks)
 
                 // 🔒 CRITICAL FIX: Clear auth-completed flag on page load
                 // This prevents infinite reload loops caused by sessionStorage persistence
@@ -161,11 +161,12 @@
                     const timeSinceLastReload = Date.now() - lastReloadTime;
                     const authCompleted = sessionStorage.getItem('auth-completed') === 'true';
 
-                    console.log('[SW] Reload safety check:', {
-                        timeSinceLoad,
-                        timeSinceLastReload,
+                    const timestamp = new Date().toISOString();
+                    console.log(`[SW ${timestamp}] Reload safety check:`, {
+                        timeSinceLoad: `${Math.round(timeSinceLoad / 1000)}s`,
+                        timeSinceLastReload: `${Math.round(timeSinceLastReload / 1000)}s`,
                         authCompleted,
-                        minTimeRequired: MIN_TIME_BEFORE_RELOAD
+                        minTimeRequired: `${MIN_TIME_BEFORE_RELOAD / 1000}s`
                     });
 
                     // Prevent duplicate reloads within 2 seconds

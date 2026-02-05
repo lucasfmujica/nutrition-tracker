@@ -1,21 +1,20 @@
 /**
- * ProgressAnalyticsView - Measurement analytics with correlations and predictions
- * Sprint 2: Main analytics orchestrator
+ * ProgressAnalyticsView - Main analytics orchestrator
+ * Combines extended analytics (comparison, streaks, best day) with body measurement analytics.
  */
 
-import { AlertCircle, BarChart3, Loader2, TrendingUp } from 'lucide-react';
-import React, { useMemo } from 'react';
+import { BarChart3, Download, Loader2, TrendingUp } from 'lucide-react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useTracker } from '../../context/TrackerContext';
+import { useAnalytics } from '../../hooks/useAnalytics';
+import { useAnalyticsExtended } from '../../hooks/useAnalyticsExtended';
 import { useBodyMeasurements } from '../../hooks/useBodyMeasurements';
 import { useProgressPhotos } from '../../hooks/useProgressPhotos';
-import {
-    calculateLinearRegression,
-    groupMeasurementsByWeight,
-    predictMeasurement,
-    type DataPoint,
-} from '../../utils/analyticsUtils';
-import { CorrelationChart } from './CorrelationChart';
-import { PredictionCard } from './PredictionCard';
+import { exportChartAsPNG } from '../../utils/chartExport';
+import { BodyMeasurementAnalytics } from './BodyMeasurementAnalytics';
+import { StreaksVisualizer } from './StreaksVisualizer';
+import { WeekComparison } from './WeekComparison';
 
 interface ProgressAnalyticsViewProps {
     userId: string | null;
@@ -30,13 +29,42 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
 }) => {
     const { t } = useTranslation();
     const { photos, isLoading: photosLoading } = useProgressPhotos({ userId });
-    const { measurements, isLoading: measurementsLoading } = useBodyMeasurements({
-        userId,
+    const { measurements, isLoading: measurementsLoading } = useBodyMeasurements({ userId });
+
+    const {
+        foodLog, workoutLog, stepsLog, weightHistory,
+        customTargets, getTotalsForDate, getTargetsForDate, profile,
+    } = useTracker() as any;
+
+    const { getWeeklyAdherence } = useAnalytics({
+        weightHistory: weightHistory || [],
+        foodLog: foodLog || [],
+        workoutLog: workoutLog || [],
+        stepsLog: stepsLog || [],
+        customTargets: customTargets || {},
+        stepGoal: profile?.stepGoal || 8000,
+        getTotalsForDate,
+        getTargetsForDate,
     });
+
+    const { getWeeklyComparison, getStreakData, getBestDayOfWeek } = useAnalyticsExtended({
+        stepsLog: stepsLog || [],
+        stepGoal: profile?.stepGoal || 8000,
+        getTotalsForDate,
+        getTargetsForDate,
+        getWeeklyAdherence,
+    });
+
+    const weekComparison = useMemo(() => getWeeklyComparison(), [getWeeklyComparison]);
+    const streakData = useMemo(() => getStreakData(), [getStreakData]);
+    const bestDay = useMemo(() => getBestDayOfWeek(), [getBestDayOfWeek]);
+
+    const weekComparisonRef = useRef<HTMLDivElement>(null);
+    const streaksRef = useRef<HTMLDivElement>(null);
+    const [isExporting, setIsExporting] = useState(false);
 
     const isLoading = photosLoading || measurementsLoading;
 
-    // Extract weight data from photos
     const weightData = useMemo(() => {
         return photos
             .filter((p) => p.weight !== undefined)
@@ -44,68 +72,30 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
             .sort((a, b) => a.date.localeCompare(b.date));
     }, [photos]);
 
-    // Prepare correlation data
-    const waistData = useMemo(
-        () => groupMeasurementsByWeight(weightData, measurements, 'waist'),
-        [weightData, measurements],
-    );
+    const handleExportWeekComparison = async () => {
+        if (!weekComparisonRef.current) return;
+        setIsExporting(true);
+        try {
+            await exportChartAsPNG(weekComparisonRef.current, `week-comparison-${new Date().toISOString().split('T')[0]}`);
+        } catch (err) {
+            console.error('[ProgressAnalytics] Export error:', err);
+        } finally {
+            setIsExporting(false);
+        }
+    };
 
-    const bodyFatData = useMemo(
-        () => groupMeasurementsByWeight(weightData, measurements, 'bodyFatPercent'),
-        [weightData, measurements],
-    );
+    const handleExportStreaks = async () => {
+        if (!streaksRef.current) return;
+        setIsExporting(true);
+        try {
+            await exportChartAsPNG(streaksRef.current, `protein-streak-${new Date().toISOString().split('T')[0]}`);
+        } catch (err) {
+            console.error('[ProgressAnalytics] Export error:', err);
+        } finally {
+            setIsExporting(false);
+        }
+    };
 
-    const chestData = useMemo(
-        () => groupMeasurementsByWeight(weightData, measurements, 'chest'),
-        [weightData, measurements],
-    );
-
-    const hipsData = useMemo(
-        () => groupMeasurementsByWeight(weightData, measurements, 'hips'),
-        [weightData, measurements],
-    );
-
-    // Calculate predictions for waist (most common measurement)
-    const waistPredictions = useMemo(() => {
-        if (waistData.length < 3 || !currentWeight || !targetWeight) return null;
-
-        const regression = calculateLinearRegression(waistData);
-        if (!regression) return null;
-
-        // Predict at target weight
-        const targetPrediction = predictMeasurement(
-            targetWeight,
-            regression,
-            waistData,
-        );
-
-        // Predict 4 weeks out (assuming -0.5kg/week)
-        const fourWeekWeight = currentWeight - 2; // 4 weeks * 0.5kg
-        const fourWeekPrediction = predictMeasurement(
-            fourWeekWeight,
-            regression,
-            waistData,
-        );
-
-        // Predict 8 weeks out
-        const eightWeekWeight = currentWeight - 4; // 8 weeks * 0.5kg
-        const eightWeekPrediction = predictMeasurement(
-            eightWeekWeight,
-            regression,
-            waistData,
-        );
-
-        const currentWaist = waistData[waistData.length - 1]?.y || 0;
-
-        return {
-            current: currentWaist,
-            fourWeek: fourWeekPrediction,
-            eightWeek: eightWeekPrediction,
-            target: targetPrediction,
-        };
-    }, [waistData, currentWeight, targetWeight]);
-
-    // Loading state
     if (isLoading) {
         return (
             <div className="flex items-center justify-center py-12">
@@ -114,7 +104,6 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
         );
     }
 
-    // Empty state - need measurements and weight data
     if (measurements.length === 0 || weightData.length === 0) {
         return (
             <div className="bg-surface rounded-2xl p-8 text-center border border-border">
@@ -136,34 +125,6 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
         );
     }
 
-    // Empty state - need at least 3 measurements with different weights
-    if (
-        waistData.length < 3 &&
-        bodyFatData.length < 3 &&
-        chestData.length < 3 &&
-        hipsData.length < 3
-    ) {
-        return (
-            <div className="bg-surface rounded-2xl p-8 text-center border border-border">
-                <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <BarChart3 size={28} className="text-purple-400" />
-                </div>
-                <h3 className="font-bold text-text-primary mb-2">
-                    {t('progress.analytics.insufficientDataTitle')}
-                </h3>
-                <p className="text-sm text-text-secondary mb-4 max-w-md mx-auto">
-                    {t('progress.analytics.insufficientDataDesc')}
-                </p>
-                <div className="bg-blue-50 rounded-xl p-4 max-w-md mx-auto">
-                    <p className="text-xs text-blue-700 leading-relaxed">
-                        💡 <strong>{t('progress.analytics.tip')}:</strong>{' '}
-                        {t('progress.analytics.tipDesc')}
-                    </p>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -177,105 +138,109 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
                             {t('progress.analytics.headerTitle')}
                         </h2>
                         <p className="text-sm text-text-secondary">
-                            {t('progress.analytics.headerSubtitle', {
-                                count: weightData.length,
-                            })}
+                            {t('progress.analytics.headerSubtitle', { count: weightData.length })}
                         </p>
                     </div>
                 </div>
             </div>
 
-            {/* Predictions Section */}
-            {waistPredictions && (
-                <div>
-                    <h3 className="font-bold text-text-primary mb-3">
-                        {t('progress.analytics.waistPredictions')}
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <PredictionCard
-                            title={t('progress.analytics.weeks', { count: 4 })}
-                            currentValue={waistPredictions.current}
-                            predictedValue={waistPredictions.fourWeek.predictedValue}
-                            confidenceInterval={
-                                waistPredictions.fourWeek.confidenceInterval
-                            }
-                            weeks={4}
-                            unit="cm"
-                            trend={waistPredictions.fourWeek.trend}
-                        />
-                        <PredictionCard
-                            title={t('progress.analytics.weeks', { count: 8 })}
-                            currentValue={waistPredictions.current}
-                            predictedValue={
-                                waistPredictions.eightWeek.predictedValue
-                            }
-                            confidenceInterval={
-                                waistPredictions.eightWeek.confidenceInterval
-                            }
-                            weeks={8}
-                            unit="cm"
-                            trend={waistPredictions.eightWeek.trend}
-                        />
-                    </div>
-                </div>
-            )}
-
-            {/* Correlation Charts */}
+            {/* Weekly Comparison Section */}
             <div>
-                <h3 className="font-bold text-text-primary mb-3">
-                    {t('progress.analytics.correlations')}
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {waistData.length >= 3 && (
-                        <CorrelationChart
-                            dataPoints={waistData}
-                            xLabel={`${t('progress.photos.weight')} (kg)`}
-                            yLabel={`${t('progress.measurements.waist')} (cm)`}
-                            title={`${t('progress.photos.weight')} vs ${t('progress.measurements.waist')}`}
-                        />
-                    )}
-                    {bodyFatData.length >= 3 && (
-                        <CorrelationChart
-                            dataPoints={bodyFatData}
-                            xLabel={`${t('progress.photos.weight')} (kg)`}
-                            yLabel={`${t('progress.measurements.bodyFat')}`}
-                            title={`${t('progress.photos.weight')} vs ${t('progress.measurements.bodyFat')}`}
-                        />
-                    )}
-                    {chestData.length >= 3 && (
-                        <CorrelationChart
-                            dataPoints={chestData}
-                            xLabel={`${t('progress.photos.weight')} (kg)`}
-                            yLabel={`${t('progress.measurements.chest')} (cm)`}
-                            title={`${t('progress.photos.weight')} vs ${t('progress.measurements.chest')}`}
-                        />
-                    )}
-                    {hipsData.length >= 3 && (
-                        <CorrelationChart
-                            dataPoints={hipsData}
-                            xLabel={`${t('progress.photos.weight')} (kg)`}
-                            yLabel={`${t('progress.measurements.hips')} (cm)`}
-                            title={`${t('progress.photos.weight')} vs ${t('progress.measurements.hips')}`}
-                        />
-                    )}
+                <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-bold text-text-primary">
+                        {t('analytics.weekComparison.title')}
+                    </h3>
+                    <button
+                        onClick={handleExportWeekComparison}
+                        disabled={isExporting}
+                        className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-text-secondary hover:text-accent bg-background hover:bg-surface-lighter rounded-lg transition-colors disabled:opacity-50">
+                        <Download className="w-4 h-4" />
+                        {isExporting ? t('analytics.export.exporting') : t('analytics.export.button')}
+                    </button>
+                </div>
+                <div ref={weekComparisonRef}>
+                    <WeekComparison comparison={weekComparison} />
                 </div>
             </div>
 
-            {/* Info Footer */}
-            <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                <div className="flex items-start gap-2">
-                    <AlertCircle
-                        size={16}
-                        className="text-blue-600 mt-0.5 flex-shrink-0"
-                    />
-                    <div className="text-xs text-blue-700">
-                        <p className="font-bold mb-1">
-                            {t('progress.analytics.aboutPredictions')}
-                        </p>
-                        <p>{t('progress.analytics.aboutPredictionsDesc')}</p>
-                    </div>
+            {/* Protein Streaks Section */}
+            <div>
+                <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-bold text-text-primary">
+                        {t('analytics.streaks.title')}
+                    </h3>
+                    <button
+                        onClick={handleExportStreaks}
+                        disabled={isExporting}
+                        className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-text-secondary hover:text-accent bg-background hover:bg-surface-lighter rounded-lg transition-colors disabled:opacity-50">
+                        <Download className="w-4 h-4" />
+                        {isExporting ? t('analytics.export.exporting') : t('analytics.export.button')}
+                    </button>
+                </div>
+                <div ref={streaksRef}>
+                    <StreaksVisualizer streakData={streakData} />
                 </div>
             </div>
+
+            {/* Best Day Section */}
+            <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border">
+                <h3 className="text-lg font-black text-text-primary mb-1">
+                    {t('analytics.bestDay.title')}
+                </h3>
+                <p className="text-sm text-text-tertiary mb-4">
+                    {t('analytics.bestDay.subtitle')}
+                </p>
+
+                {bestDay.averageScore > 0 ? (
+                    <>
+                        <div className="flex items-center justify-center gap-4 py-6">
+                            <div className="text-center">
+                                <p className="text-5xl font-black text-accent mb-2">
+                                    {bestDay.dayName}
+                                </p>
+                                <p className="text-sm text-text-tertiary font-semibold">
+                                    {t('analytics.bestDay.score')}: {bestDay.averageScore}
+                                </p>
+                            </div>
+                        </div>
+
+                        <p className="text-sm text-text-secondary text-center italic mt-4">
+                            {t('analytics.bestDay.insight', { day: bestDay.dayName })}
+                        </p>
+
+                        <div className="mt-6 grid grid-cols-7 gap-2">
+                            {bestDay.allDayScores.map((day: any) => (
+                                <div
+                                    key={day.dayIndex}
+                                    className={`text-center p-2 rounded-lg ${
+                                        day.dayIndex === bestDay.dayIndex
+                                            ? 'bg-accent/10 border-2 border-accent'
+                                            : 'bg-background'
+                                    }`}>
+                                    <p className="text-xs font-bold text-text-secondary mb-1">
+                                        {day.dayName.substring(0, 3)}
+                                    </p>
+                                    <p className="text-lg font-black text-text-primary">
+                                        {day.averageScore.toFixed(1)}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                ) : (
+                    <p className="text-sm text-text-tertiary text-center py-6">
+                        {t('analytics.bestDay.noData')}
+                    </p>
+                )}
+            </div>
+
+            {/* Body Measurement Analytics (Predictions + Correlations) */}
+            <BodyMeasurementAnalytics
+                weightData={weightData}
+                measurements={measurements}
+                currentWeight={currentWeight}
+                targetWeight={targetWeight}
+            />
         </div>
     );
 };

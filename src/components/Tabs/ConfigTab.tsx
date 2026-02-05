@@ -134,10 +134,10 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     </div>
                     <div>
                         <h3 className="text-xl font-black text-text-primary leading-tight">
-                            {profile.name || 'Usuario'}
+                            {profile.name || t('config.defaultUserName')}
                         </h3>
                         <p className="text-sm text-text-tertiary font-medium">
-                            Plan Premium · Activo
+                            {t('config.premiumStatus')}
                         </p>
                     </div>
                 </div>

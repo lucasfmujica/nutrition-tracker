@@ -17,6 +17,14 @@
         "connect": "Conectar Oura",
         "disconnect": "Desconectar",
         "sync": "Sincronizar",
+        "adjust": {
+            "criticalRecovery": "⚠️ Baja recuperación",
+            "optimalRecovery": "🚀 Recuperación óptima"
+        },
+        "alerts": {
+            "lowRecovery": "Recuperación baja ({{score}}). Considera descanso.",
+            "optimalRecovery": "Recuperación óptima ({{score}}). ¡Gran momento para entrenar!"
+        },
         "metrics": {
             "sleep": "Sueño",
             "readiness": "Preparación",
@@ -188,12 +196,57 @@
         "min": "min"
     },
 
+    "adaptive": {
+        "defaultBoostReason": "Día de Entreno"
+    },
+
+    "errors": {
+        "fetchWeeklyPlan": "Error al obtener el plan semanal",
+        "deleteWeeklyPlanDay": "Error al borrar el día",
+        "updateWeeklyPlanDay": "Error al actualizar el día",
+        "supabaseNotConfigured": "Supabase no configurado",
+        "userNotAuthenticated": "Usuario no autenticado",
+        "repeatWeek": "Error al repetir la semana",
+        "addMeal": "Error al agregar comida",
+        "removeMeal": "Error al eliminar comida"
+    },
+
+    "mealPrep": {
+        "title": "Planificación de Comidas",
+        "subtitle": "Organiza tu semana",
+        "weeklyCalendar": "Calendario Semanal",
+        "groceryList": "Lista de Compras",
+        "repeatWeek": "Repetir Semana",
+        "repeatWeekSuccess": "Semana copiada exitosamente",
+        "noMealsPlanned": "No hay comidas planificadas",
+        "planFirstMeal": "Planifica tu primera comida para comenzar",
+        "addMeal": "Agregar Comida",
+        "completedMeals": "Comidas Completadas",
+        "categories": {
+            "proteins": "Proteínas",
+            "carbs": "Carbohidratos",
+            "vegetables": "Verduras",
+            "fruits": "Frutas",
+            "dairy": "Lácteos",
+            "fats": "Grasas Saludables",
+            "condiments": "Condimentos y Otros"
+        },
+        "uniqueIngredients": "ingredientes únicos",
+        "export": {
+            "title": "Exportar Lista",
+            "filename": "lista-compras",
+            "success": "Lista exportada exitosamente"
+        }
+    },
+
     "config": {
         "title": "Configuración",
         "subtitle": "Ajustes de perfil y objetivos",
         "section_profile": "PERFIL Y DATOS",
         "name": "Nombre",
         "name_placeholder": "Tu nombre",
+        "defaultUserName": "Usuario",
+        "premiumStatus": "Plan Premium · Activo",
         "currentWeight": "Peso Actual",
         "startWeight": "Peso Inicial",
         "targetWeight": "Peso Objetivo",
@@ -1302,6 +1355,38 @@
             "ingredientsPlaceholderName": "Bife de Chorizo",
             "macrosLabel": "Macronutrientes"
         },
+        "validation": {
+            "fileTooLarge": "Imagen muy grande ({{size}}MB). Máximo: 10MB",
+            "invalidFileType": "El archivo no es una imagen válida",
+            "lowResolution": "Resolución muy baja ({{width}}x{{height}}px). Mínimo: 200x200px",
+            "lowBrightness": "⚠️ Imagen muy oscura ({{brightness}}%). Para mejores resultados, usa mejor iluminación.",
+            "validationFailed": "Validación fallida",
+            "processing": "Procesando imagen..."
+        },
+        "portionAdjust": {
+            "title": "Ajustar Porción",
+            "subtitle": "Modifica el tamaño de la porción según lo que comiste",
+            "currentPortion": "Porción Actual",
+            "quickSizes": "Tamaños Rápidos",
+            "fineTune": "Ajuste Fino",
+            "range": "{{min}}x - {{max}}x",
+            "macrosPreview": "Vista Previa de Macros",
+            "confirmButton": "Confirmar y Agregar",
+            "kcal": "Kcal",
+            "protein": "Prot",
+            "carbs": "Carbs",
+            "fat": "Grasas"
+        },
+        "scanHistory": {
+            "title": "Historial de Escaneos",
+            "recent": "Últimos Escaneos",
+            "empty": "No hay escaneos guardados",
+            "emptyDesc": "Tus últimos 10 escaneos aparecerán aquí",
+            "clearHistory": "Limpiar Historial",
+            "clearConfirm": "¿Estás seguro? Se borrarán todos los escaneos guardados.",
+            "confidence": "Confianza: {{value}}%",
+            "scanDate": "Escaneado el {{date}}"
+        },
         "history": {
             "title": "Historial de Comidas",
             "recent": "Recientes",
@@ -1350,7 +1435,53 @@
             "correlations": "Correlaciones",
             "aboutPredictions": "Sobre las predicciones",
             "aboutPredictionsDesc": "Las predicciones se basan en regresión lineal de tus datos históricos.",
-            "weeks": "{{count}} Semanas"
+            "weeks": "{{count}} Semanas",
+            "weekComparison": {
+                "title": "Esta Semana vs Anterior",
+                "subtitle": "Comparación de promedios diarios",
+                "noData": "No hay datos suficientes para comparar",
+                "calories": "Calorías",
+                "protein": "Proteína",
+                "carbs": "Carbohidratos",
+                "fat": "Grasas",
+                "steps": "Pasos",
+                "stepsUnit": "pasos",
+                "adherenceScore": "Score de Adherencia"
+            },
+            "streaks": {
+                "title": "Racha de Proteína",
+                "subtitle": "Días consecutivos cumpliendo proteína (≥90%)",
+                "days": "Días",
+                "longestStreak": "Racha Máxima",
+                "daysInStreak": "Días en Racha",
+                "last30Days": "Últimos 30 Días",
+                "calendarLegend": "🟠 Día con objetivo cumplido",
+                "milestone7": "¡Una semana fuerte!",
+                "milestone14": "¡Dos semanas imparable!",
+                "milestone30": "¡Un mes de constancia!",
+                "milestone60": "¡Dos meses épicos!",
+                "milestone90": "¡Leyenda del gimnasio!",
+                "milestoneStart": "Comenzando el viaje",
+                "motivation1": "¡Gran comienzo! Un día a la vez.",
+                "motivationEarly": "¡Vas bien! La consistencia es clave.",
+                "motivationMid": "¡Impresionante! Esto se está convirtiendo en hábito.",
+                "motivationHigh": "¡Sos una máquina! Inspirás a otros.",
+                "noStreak": "Comenzá tu racha cumpliendo tu objetivo de proteína hoy."
+            },
+            "bestDay": {
+                "title": "Tu Mejor Día",
+                "subtitle": "Día con mejor adherencia (últimas 12 semanas)",
+                "score": "Score Promedio",
+                "noData": "No hay datos suficientes para determinar el mejor día",
+                "insight": "Tus {{day}} tienden a ser tu día más fuerte. ¡Usá ese momentum!"
+            },
+            "export": {
+                "button": "Exportar PNG",
+                "exporting": "Exportando...",
+                "success": "Gráfico exportado exitosamente",
+                "error": "Error al exportar. Intenta nuevamente.",
+                "multiExport": "Exportar Todo"
+            }
         },
         "timeline": {
             "title": "Línea de Tiempo",

@@ -17,6 +17,14 @@
         "connect": "Connect Oura",
         "disconnect": "Disconnect",
         "sync": "Sync",
+        "adjust": {
+            "criticalRecovery": "⚠️ Low recovery",
+            "optimalRecovery": "🚀 Optimal recovery"
+        },
+        "alerts": {
+            "lowRecovery": "Low recovery ({{score}}). Consider rest.",
+            "optimalRecovery": "Optimal recovery ({{score}}). Great time to train!"
+        },
         "metrics": {
             "sleep": "Sleep",
             "readiness": "Readiness",
@@ -182,12 +190,58 @@
         "weeks": "wk",
         "days": "days"
     },
+
+    "adaptive": {
+        "defaultBoostReason": "Training Day"
+    },
+
+    "errors": {
+        "fetchWeeklyPlan": "Error fetching weekly plan",
+        "deleteWeeklyPlanDay": "Error deleting day",
+        "updateWeeklyPlanDay": "Error updating day",
+        "supabaseNotConfigured": "Supabase not configured",
+        "userNotAuthenticated": "User not authenticated",
+        "repeatWeek": "Error repeating week",
+        "addMeal": "Error adding meal",
+        "removeMeal": "Error removing meal"
+    },
+
+    "mealPrep": {
+        "title": "Meal Planning",
+        "subtitle": "Organize your week",
+        "weeklyCalendar": "Weekly Calendar",
+        "groceryList": "Grocery List",
+        "repeatWeek": "Repeat Week",
+        "repeatWeekSuccess": "Week copied successfully",
+        "noMealsPlanned": "No meals planned",
+        "planFirstMeal": "Plan your first meal to get started",
+        "addMeal": "Add Meal",
+        "completedMeals": "Completed Meals",
+        "categories": {
+            "proteins": "Proteins",
+            "carbs": "Carbohydrates",
+            "vegetables": "Vegetables",
+            "fruits": "Fruits",
+            "dairy": "Dairy",
+            "fats": "Healthy Fats",
+            "condiments": "Condiments & Others"
+        },
+        "uniqueIngredients": "unique ingredients",
+        "export": {
+            "title": "Export List",
+            "filename": "grocery-list",
+            "success": "List exported successfully"
+        }
+    },
+
     "config": {
         "title": "Settings",
         "subtitle": "Profile and goal settings",
         "section_profile": "PROFILE & DATA",
         "name": "Name",
         "name_placeholder": "Your name",
+        "defaultUserName": "User",
+        "premiumStatus": "Premium Plan · Active",
         "currentWeight": "Current Weight",
         "startWeight": "Start Weight",
         "targetWeight": "Goal Weight",
@@ -1285,6 +1339,38 @@
             "ingredientsPlaceholderName": "Chorizo Steak",
             "macrosLabel": "Macronutrients"
         },
+        "validation": {
+            "fileTooLarge": "Image too large ({{size}}MB). Maximum: 10MB",
+            "invalidFileType": "File is not a valid image",
+            "lowResolution": "Resolution too low ({{width}}x{{height}}px). Minimum: 200x200px",
+            "lowBrightness": "⚠️ Image too dark ({{brightness}}%). For better results, use better lighting.",
+            "validationFailed": "Validation failed",
+            "processing": "Processing image..."
+        },
+        "portionAdjust": {
+            "title": "Adjust Portion",
+            "subtitle": "Modify portion size according to what you ate",
+            "currentPortion": "Current Portion",
+            "quickSizes": "Quick Sizes",
+            "fineTune": "Fine Tune",
+            "range": "{{min}}x - {{max}}x",
+            "macrosPreview": "Macros Preview",
+            "confirmButton": "Confirm and Add",
+            "kcal": "Kcal",
+            "protein": "Prot",
+            "carbs": "Carbs",
+            "fat": "Fat"
+        },
+        "scanHistory": {
+            "title": "Scan History",
+            "recent": "Recent Scans",
+            "empty": "No saved scans",
+            "emptyDesc": "Your last 10 scans will appear here",
+            "clearHistory": "Clear History",
+            "clearConfirm": "Are you sure? All saved scans will be deleted.",
+            "confidence": "Confidence: {{value}}%",
+            "scanDate": "Scanned on {{date}}"
+        },
         "history": {
             "title": "Food History",
             "recent": "Recent",
@@ -1333,7 +1419,53 @@
             "correlations": "Correlations",
             "aboutPredictions": "About predictions",
             "aboutPredictionsDesc": "Predictions are based on linear regression of your historical data.",
-            "weeks": "{{count}} Weeks"
+            "weeks": "{{count}} Weeks",
+            "weekComparison": {
+                "title": "This Week vs Previous",
+                "subtitle": "Daily averages comparison",
+                "noData": "Not enough data to compare",
+                "calories": "Calories",
+                "protein": "Protein",
+                "carbs": "Carbohydrates",
+                "fat": "Fat",
+                "steps": "Steps",
+                "stepsUnit": "steps",
+                "adherenceScore": "Adherence Score"
+            },
+            "streaks": {
+                "title": "Protein Streak",
+                "subtitle": "Consecutive days meeting protein (≥90%)",
+                "days": "Days",
+                "longestStreak": "Longest Streak",
+                "daysInStreak": "Days in Streak",
+                "last30Days": "Last 30 Days",
+                "calendarLegend": "🟠 Day with goal met",
+                "milestone7": "One week strong!",
+                "milestone14": "Two weeks unstoppable!",
+                "milestone30": "One month of consistency!",
+                "milestone60": "Two epic months!",
+                "milestone90": "Gym legend!",
+                "milestoneStart": "Starting the journey",
+                "motivation1": "Great start! One day at a time.",
+                "motivationEarly": "You're doing well! Consistency is key.",
+                "motivationMid": "Impressive! This is becoming a habit.",
+                "motivationHigh": "You're a machine! You inspire others.",
+                "noStreak": "Start your streak by meeting your protein goal today."
+            },
+            "bestDay": {
+                "title": "Your Best Day",
+                "subtitle": "Day with best adherence (last 12 weeks)",
+                "score": "Average Score",
+                "noData": "Not enough data to determine best day",
+                "insight": "Your {{day}}s tend to be your strongest day. Use that momentum!"
+            },
+            "export": {
+                "button": "Export PNG",
+                "exporting": "Exporting...",
+                "success": "Chart exported successfully",
+                "error": "Export error. Try again.",
+                "multiExport": "Export All"
+            }
         },
         "timeline": {
             "title": "Timeline",
