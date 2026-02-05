@@ -360,3 +360,45 @@ export interface BodyMeasurement {
     createdAt: string;
     updatedAt?: string;
 }
+
+// =====================================================
+// AI CHEF FEATURE TYPES
+// =====================================================
+
+export type DietaryMode = 'standard' | 'vegetarian' | 'vegan' | 'gluten_free' | 'lactose_free';
+export type PrepTime = 'quick' | 'medium' | 'long'; // <15min, 15-30min, >30min
+export type Difficulty = 'easy' | 'medium' | 'hard';
+export type AIChefMealTime = 'breakfast' | 'lunch' | 'snack' | 'dinner';
+
+export interface AIChefPreferences {
+    dietaryMode: DietaryMode;
+    prepTime: PrepTime;
+    difficulty: Difficulty;
+    rejectedMeals: string[]; // Meal names to avoid
+    rejectedMealsExpiry: number; // Timestamp when rejected meals list should be cleared (30 days)
+}
+
+export interface AIChefContext {
+    // Time context
+    mealTime: AIChefMealTime;
+    currentHour: number;
+
+    // Remaining macros
+    remainingCalories: number;
+    remainingProtein: number;
+    remainingCarbs: number;
+    remainingFat: number;
+
+    // Workout context
+    isTrainingDay: boolean;
+    workoutIntensity?: 'high' | 'moderate' | 'recovery' | null;
+
+    // User preferences
+    preferences: AIChefPreferences;
+
+    // Ingredient mode (optional)
+    availableIngredients?: string[];
+
+    // Language
+    language: string;
+}

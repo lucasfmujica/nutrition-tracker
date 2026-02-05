@@ -24,7 +24,8 @@ export const TrackerFAB: React.FC = () => {
         selectedFoodDate,
         selectedWorkoutDate,
         setShowFoodScanModal,
-    } = useTracker() as TrackerContextType;
+        setShowSuggestionModal,
+    } = useTracker() as TrackerContextType & { setShowSuggestionModal: (v: boolean) => void };
 
     if (
         !showFab ||
@@ -72,6 +73,7 @@ export const TrackerFAB: React.FC = () => {
                 onImportWorkout={() => setShowImportWorkoutModal(true)}
                 onQuickAdd={() => setShowTemplatesModal(true)}
                 onScanFood={() => setShowFoodScanModal(true)}
+                onAIChef={() => setShowSuggestionModal(true)}
             />
         </div>
     );

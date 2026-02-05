@@ -932,6 +932,49 @@
         "favorites": "Favoritos",
         "scan": "Escanear"
     },
+    "aiChef": {
+        "title": "AI Chef",
+        "subtitle": "Sugerencias inteligentes",
+        "cardSubtitle": "Comidas personalizadas",
+        "fabSublabel": "Comidas inteligentes",
+        "openButton": "Ver Sugerencias",
+        "trainingDay": "Día de Entreno",
+        "noSuggestions": "Tocá el botón para generar sugerencias basadas en tus macros restantes",
+        "generateSuggestions": "Generar Sugerencias",
+        "regenerate": "Regenerar",
+        "tryAgain": "Intentar de nuevo",
+        "reject": "Rechazar",
+        "tabs": {
+            "suggestions": "Sugerencias",
+            "ingredients": "Ingredientes",
+            "config": "Config"
+        },
+        "ingredientPlaceholder": "Ej: pollo, arroz, brócoli...",
+        "ingredientHint": "Agregá los ingredientes que tenés disponibles y te sugeriré recetas",
+        "findRecipes": "Buscar Recetas",
+        "dietaryLabel": "Restricción Alimentaria",
+        "dietary": {
+            "standard": "Sin restricción",
+            "vegetarian": "Vegetariano",
+            "vegan": "Vegano",
+            "glutenFree": "Sin Gluten",
+            "lactoseFree": "Sin Lactosa"
+        },
+        "prepTimeLabel": "Tiempo de Preparación",
+        "prepTime": {
+            "quick": "<15 min",
+            "medium": "15-30 min",
+            "long": ">30 min"
+        },
+        "difficultyLabel": "Dificultad",
+        "difficulty": {
+            "easy": "Fácil",
+            "medium": "Intermedio",
+            "hard": "Difícil"
+        },
+        "rejectedCount": "{{count}} comidas rechazadas",
+        "clearRejected": "Limpiar"
+    },
     "modals": {
         "barcode": {
             "title": "Escanear Código de Barras",

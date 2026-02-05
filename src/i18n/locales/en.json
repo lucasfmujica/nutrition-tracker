@@ -925,6 +925,49 @@
         "scan": "Scan",
         "more": "more"
     },
+    "aiChef": {
+        "title": "AI Chef",
+        "subtitle": "Smart suggestions",
+        "cardSubtitle": "Personalized meals",
+        "fabSublabel": "Smart meals",
+        "openButton": "View Suggestions",
+        "trainingDay": "Training Day",
+        "noSuggestions": "Tap the button to generate suggestions based on your remaining macros",
+        "generateSuggestions": "Generate Suggestions",
+        "regenerate": "Regenerate",
+        "tryAgain": "Try again",
+        "reject": "Reject",
+        "tabs": {
+            "suggestions": "Suggestions",
+            "ingredients": "Ingredients",
+            "config": "Config"
+        },
+        "ingredientPlaceholder": "e.g. chicken, rice, broccoli...",
+        "ingredientHint": "Add the ingredients you have and I'll suggest recipes",
+        "findRecipes": "Find Recipes",
+        "dietaryLabel": "Dietary Restriction",
+        "dietary": {
+            "standard": "No restriction",
+            "vegetarian": "Vegetarian",
+            "vegan": "Vegan",
+            "glutenFree": "Gluten-Free",
+            "lactoseFree": "Lactose-Free"
+        },
+        "prepTimeLabel": "Prep Time",
+        "prepTime": {
+            "quick": "<15 min",
+            "medium": "15-30 min",
+            "long": ">30 min"
+        },
+        "difficultyLabel": "Difficulty",
+        "difficulty": {
+            "easy": "Easy",
+            "medium": "Intermediate",
+            "hard": "Hard"
+        },
+        "rejectedCount": "{{count}} rejected meals",
+        "clearRejected": "Clear"
+    },
     "modals": {
         "barcode": {
             "title": "Scan Barcode",

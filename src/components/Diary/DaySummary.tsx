@@ -1,4 +1,4 @@
-import { ChevronRight, Sparkles } from 'lucide-react';
+import { ChefHat, Sparkles } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Macros } from '../../types/domain';
@@ -27,9 +27,9 @@ export const DaySummary: React.FC<DaySummaryProps> = ({
                     {onSuggestMeal && calsLeft > 100 && (
                         <button
                             onClick={onSuggestMeal}
-                            className="bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-800/50 text-purple-700 dark:text-purple-300 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors">
-                            <Sparkles size={10} />
-                            {t('diary.aiSuggest')}
+                            className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 transition-all shadow-md shadow-purple-500/20 hover:shadow-lg hover:shadow-purple-500/30">
+                            <ChefHat size={12} />
+                            {t('aiChef.title')}
                         </button>
                     )}
                 </div>

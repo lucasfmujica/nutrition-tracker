@@ -19,6 +19,7 @@ import {
     WeightEntry,
 } from '../../types/domain';
 import { ActivityCards } from '../Dashboard/ActivityCards';
+import { AIChefCard } from '../Dashboard/AIChefCard';
 import CoachInsight from '../Dashboard/CoachInsight';
 import { CorrelationSection } from '../Dashboard/CorrelationSection';
 import { IdealDayCard } from '../Dashboard/IdealDayCard';
@@ -107,6 +108,8 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         mealTemplates,
         weeklyPlan,
         performanceForecast,
+        setShowSuggestionModal,
+        getContextualSuggestions,
     } = useTracker() as any;
 
     // Pattern Recognition Engine
@@ -175,6 +178,19 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
     const handleOpenWeeklyReport = async () => {
         setShowWeeklyReport(true);
         await fetchStats();
+    };
+
+    // Handler to open AI Chef modal
+    const handleOpenAIChef = () => {
+        const remaining = {
+            calories: Math.max(0, dashboardTargets.calories - dashboardTotals.calories),
+            protein: Math.max(0, dashboardTargets.protein - dashboardTotals.protein),
+            carbs: Math.max(0, dashboardTargets.carbs - dashboardTotals.carbs),
+            fat: Math.max(0, dashboardTargets.fat - dashboardTotals.fat),
+            fiber: 0,
+        };
+        const isTraining = workoutLog?.some((w: any) => w.date === dashboardDate) || false;
+        getContextualSuggestions?.(remaining, isTraining);
     };
 
     // Memoized periodization and targets for the current date
@@ -295,8 +311,13 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                 </div>
 
                 {/* ROW 4: PRIMARY ACTION (100% Width) */}
-                <div className="md:col-span-2 lg:col-span-12 min-w-0">
+                <div className="md:col-span-2 lg:col-span-8 min-w-0">
                     <FoodCameraInput />
+                </div>
+
+                {/* AI CHEF CARD */}
+                <div className="md:col-span-2 lg:col-span-4 min-w-0">
+                    <AIChefCard onOpen={handleOpenAIChef} />
                 </div>
 
                 {/* ROW 5: PERFORMANCE & TRACKING (50/50 Split) */}

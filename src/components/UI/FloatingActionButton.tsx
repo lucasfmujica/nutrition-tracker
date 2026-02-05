@@ -1,5 +1,5 @@
 import gsap from 'gsap';
-import { Drumstick, Dumbbell, Import, Plus, Star, Utensils } from 'lucide-react';
+import { ChefHat, Drumstick, Dumbbell, Import, Plus, Star, Utensils } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -14,6 +14,7 @@ interface FloatingActionButtonProps {
     onImportWorkout: () => void;
     onQuickAdd: () => void;
     onScanFood: () => void;
+    onAIChef: () => void;
 }
 
 export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
@@ -22,6 +23,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
     onImportWorkout,
     onQuickAdd,
     onScanFood,
+    onAIChef,
 }) => {
     const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
@@ -51,6 +53,14 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
     }, [isOpen]);
 
     const actions = [
+        {
+            icon: <ChefHat size={24} />,
+            label: t('aiChef.title').toUpperCase(),
+            sublabel: t('aiChef.fabSublabel').toUpperCase(),
+            onClick: onAIChef,
+            color: 'text-purple-600',
+            bg: 'bg-gradient-to-br from-purple-500/20 to-indigo-500/20',
+        },
         {
             icon: <Utensils size={24} />,
             label: t('navigation.meals').toUpperCase(),
