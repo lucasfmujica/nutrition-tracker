@@ -26,8 +26,8 @@ interface WeeklyMealPlanViewProps {
 const MEAL_TYPES = [
     { id: 'breakfast', emoji: '🌅', labelKey: 'mealTypes.breakfast' },
     { id: 'lunch', emoji: '☀️', labelKey: 'mealTypes.lunch' },
-    { id: 'dinner', emoji: '🌙', labelKey: 'mealTypes.dinner' },
     { id: 'snack', emoji: '🍵', labelKey: 'mealTypes.snack' },
+    { id: 'dinner', emoji: '🌙', labelKey: 'mealTypes.dinner' },
 ];
 
 const DAY_NAMES_SHORT = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];

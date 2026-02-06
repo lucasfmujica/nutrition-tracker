@@ -168,7 +168,7 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
     const groupedMeals = useMemo(() => {
         if (!hasFoods) return [];
 
-        const MEAL_ORDER = ['breakfast', 'lunch', 'dinner', 'snack', 'other'];
+        const MEAL_ORDER = ['breakfast', 'lunch', 'snack', 'dinner', 'other'];
 
         const groups = foods.reduce((acc: any, food) => {
             let meal = (food.meal || 'other').trim();

@@ -10,8 +10,8 @@ export const getMealTypesOrdered = (): MealType[] => {
     return [
         'breakfast',
         'lunch',
-        'dinner',
         'snack',
+        'dinner',
         'other',
         'preworkout',
         'postworkout',
