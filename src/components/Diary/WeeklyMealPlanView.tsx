@@ -28,6 +28,7 @@ const MEAL_TYPES = [
     { id: 'lunch', emoji: '☀️', labelKey: 'mealTypes.lunch' },
     { id: 'snack', emoji: '🍵', labelKey: 'mealTypes.snack' },
     { id: 'dinner', emoji: '🌙', labelKey: 'mealTypes.dinner' },
+    { id: 'other', emoji: '🍪', labelKey: 'mealTypes.other' },
 ];
 
 const DAY_NAMES_SHORT = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
