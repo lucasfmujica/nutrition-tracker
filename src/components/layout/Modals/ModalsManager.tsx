@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../../context/TrackerContext';
 import { useSmartMealType } from '../../../hooks/useSmartMealType';
 import { FoodEntry } from '../../../types/domain';
@@ -100,6 +101,7 @@ export const ModalsManager: React.FC = () => {
         selectedFoodDate,
     } = useTracker() as any;
 
+    const { t } = useTranslation();
     const { getAutoMealType } = useSmartMealType();
 
     // Handler for selecting a food from history - duplicates it to today
@@ -243,8 +245,7 @@ export const ModalsManager: React.FC = () => {
 
                         {mealTemplates.length === 0 ? (
                             <p className="text-text-tertiary text-sm text-center py-4">
-                                No hay plantillas guardadas. Agregá comidas y
-                                guardalas como favoritos.
+                                {t('favorites.empty')}
                             </p>
                         ) : (
                             <div className="space-y-3 max-h-[70vh] overflow-y-auto">
@@ -255,10 +256,10 @@ export const ModalsManager: React.FC = () => {
                                     return (
                                         <div key={mealType} className="space-y-2">
                                             <div className="text-xs font-bold text-text-tertiary uppercase tracking-wider px-1">
-                                                {mealType === 'breakfast' ? '🌅 Desayuno' :
-                                                 mealType === 'lunch' ? '☀️ Almuerzo' :
-                                                 mealType === 'snack' ? '🍎 Merienda' :
-                                                 mealType === 'dinner' ? '🌙 Cena' : '🍴 Otro'}
+                                                {mealType === 'breakfast' ? `🌅 ${t('mealTypes.breakfast')}` :
+                                                 mealType === 'lunch' ? `☀️ ${t('mealTypes.lunch')}` :
+                                                 mealType === 'snack' ? `🍎 ${t('mealTypes.snack')}` :
+                                                 mealType === 'dinner' ? `🌙 ${t('mealTypes.dinner')}` : `🍴 ${t('mealTypes.other')}`}
                                             </div>
                                             {mealsOfType.map((template: any) => (
                                     <div
@@ -315,8 +316,7 @@ export const ModalsManager: React.FC = () => {
                         )}
 
                         <p className="text-xs text-text-tertiary mt-3 text-center">
-                            Toca una comida para agregarla · Desliza a las comidas
-                            para guardar nuevas
+                            {t('favorites.hint')}
                         </p>
                     </div>
                 </div>
@@ -327,21 +327,21 @@ export const ModalsManager: React.FC = () => {
                     <div className="bg-surface rounded-2xl p-5 w-full max-w-xs border border-purple-200 dark:border-purple-800 shadow-2xl">
                         <h3 className="text-base font-bold text-purple-600 dark:text-purple-400 mb-3">
                             {templateToSave.items && templateToSave.items.length > 0
-                                ? '⭐ Guardar Combo'
-                                : '⭐ Guardar como Favorito'}
+                                ? `⭐ ${t('favorites.saveCombo')}`
+                                : `⭐ ${t('favorites.saveAsFavorite')}`}
                         </h3>
                         <div className="space-y-3">
                             <div>
                                 <label className="block text-xs font-medium text-text-secondary mb-1.5">
-                                    Nombre
+                                    {t('favorites.name')}
                                 </label>
                                 <input
                                     type="text"
                                     value={templateToSave.name}
                                     placeholder={
                                         templateToSave.items
-                                            ? 'Ej. Desayuno Completo'
-                                            : 'Ej. Café con Leche'
+                                            ? t('favorites.placeholderCombo')
+                                            : t('favorites.placeholderSingle')
                                     }
                                     autoFocus
                                     onChange={(e) =>
@@ -356,7 +356,7 @@ export const ModalsManager: React.FC = () => {
                             <div className="grid grid-cols-2 gap-2">
                                 <div>
                                     <label className="block text-xs font-medium text-text-secondary mb-1.5">
-                                        Tipo
+                                        {t('favorites.type')}
                                     </label>
                                     <select
                                         value={templateToSave.meal}
@@ -367,16 +367,16 @@ export const ModalsManager: React.FC = () => {
                                             })
                                         }
                                         className="w-full bg-background border border-border rounded-xl px-3 py-2.5 text-sm text-text-primary focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all">
-                                        <option value="breakfast">Desayuno</option>
-                                        <option value="lunch">Almuerzo</option>
-                                        <option value="snack">Merienda</option>
-                                        <option value="dinner">Cena</option>
-                                        <option value="other">Snack</option>
+                                        <option value="breakfast">{t('mealTypes.breakfast')}</option>
+                                        <option value="lunch">{t('mealTypes.lunch')}</option>
+                                        <option value="snack">{t('mealTypes.snack')}</option>
+                                        <option value="dinner">{t('mealTypes.dinner')}</option>
+                                        <option value="other">{t('mealTypes.other')}</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label className="block text-xs font-medium text-text-secondary mb-1.5">
-                                        Calorías
+                                        {t('favorites.calories')}
                                     </label>
                                     <input
                                         type="number"
@@ -419,12 +419,12 @@ export const ModalsManager: React.FC = () => {
                                     setTemplateToSave(null);
                                 }}
                                 className="flex-1 bg-surface-lighter hover:bg-surface-lighter text-text-secondary py-2.5 rounded-xl text-sm font-medium transition-colors">
-                                Cancelar
+                                {t('common.cancel')}
                             </button>
                             <button
                                 onClick={confirmSaveTemplate}
                                 className="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-2.5 rounded-xl text-sm font-bold transition-colors">
-                                Guardar
+                                {t('common.save')}
                             </button>
                         </div>
                     </div>

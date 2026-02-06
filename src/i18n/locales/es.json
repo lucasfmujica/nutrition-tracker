@@ -150,6 +150,17 @@
         "preworkout": "Pre-Entreno",
         "postworkout": "Post-Entreno"
     },
+    "favorites": {
+        "empty": "No hay plantillas guardadas. Agregá comidas y guardalas como favoritos.",
+        "hint": "Toca una comida para agregarla · Desliza a las comidas para guardar nuevas",
+        "saveCombo": "Guardar Combo",
+        "saveAsFavorite": "Guardar como Favorito",
+        "name": "Nombre",
+        "type": "Tipo",
+        "calories": "Calorías",
+        "placeholderCombo": "Ej. Desayuno Completo",
+        "placeholderSingle": "Ej. Café con Leche"
+    },
     "weight": {
         "title": "Peso",
         "subtitle": "Seguimiento de progreso corporal",

@@ -149,6 +149,17 @@
         "preworkout": "Pre-Workout",
         "postworkout": "Post-Workout"
     },
+    "favorites": {
+        "empty": "No saved templates. Add meals and save them as favorites.",
+        "hint": "Tap a meal to add it · Swipe to meals to save new ones",
+        "saveCombo": "Save Combo",
+        "saveAsFavorite": "Save as Favorite",
+        "name": "Name",
+        "type": "Type",
+        "calories": "Calories",
+        "placeholderCombo": "E.g. Full Breakfast",
+        "placeholderSingle": "E.g. Coffee with Milk"
+    },
     "weight": {
         "title": "Weight",
         "subtitle": "Body progress tracking",
