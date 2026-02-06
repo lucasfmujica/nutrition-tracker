@@ -17,8 +17,8 @@ const MEAL_ICONS: Record<string, string> = {
 const MEAL_KEYS: Array<'breakfast' | 'lunch' | 'snack' | 'dinner'> = [
     'breakfast',
     'lunch',
-    'snack',
     'dinner',
+    'snack',
 ];
 
 /**

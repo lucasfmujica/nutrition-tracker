@@ -1,8 +1,17 @@
-import { Star } from 'lucide-react';
+import { Clock, Star } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FoodEntry } from '../../types/domain';
 import { SwipeableItem } from '../UI/SwipeableItem';
+
+const formatTime12h = (time: string | null | undefined): string | null => {
+    if (!time) return null;
+    const [hours, minutes] = time.split(':').map(Number);
+    if (isNaN(hours) || isNaN(minutes)) return null;
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
+    return `${displayHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}${period}`;
+};
 
 interface FoodItemProps {
     food: FoodEntry;
@@ -24,6 +33,7 @@ export const FoodItem: React.FC<FoodItemProps> = ({
     const { t } = useTranslation();
     const needsReview =
         !food.reviewed || (food.confidence !== undefined && food.confidence < 0.7);
+    const formattedTime = formatTime12h(food.time);
 
     return (
         <SwipeableItem onDelete={onDelete} onDuplicate={onDuplicate}>
@@ -34,8 +44,14 @@ export const FoodItem: React.FC<FoodItemProps> = ({
                         <h4 className="text-text-primary font-medium truncate">
                             {food.name}
                         </h4>
+                        {formattedTime && (
+                            <span className="flex items-center gap-0.5 text-[10px] text-text-tertiary font-medium flex-shrink-0">
+                                <Clock size={10} className="text-text-tertiary" />
+                                {formattedTime}
+                            </span>
+                        )}
                         {needsReview && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0"></span>
                         )}
                     </div>
                     <p className="text-xs text-text-tertiary truncate">
