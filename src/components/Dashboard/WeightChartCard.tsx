@@ -17,6 +17,28 @@ interface WeightChartCardProps {
     weeklyTrend?: number | null;
 }
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-surface p-3 rounded-xl shadow-xl border border-border">
+                <p className="text-text-tertiary text-xs font-semibold mb-1">{label}</p>
+                {payload.map((entry: any, index: number) => (
+                    <div key={index} className="flex items-center gap-2">
+                        <div
+                            className="w-2 h-2 rounded-full"
+                            style={{ backgroundColor: entry.color }}
+                        />
+                        <span className="text-sm font-bold text-text-primary">
+                            {entry.value} {entry.name}
+                        </span>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+    return null;
+};
+
 export const WeightChartCard: React.FC<WeightChartCardProps> = ({
     data = [],
     currentWeight,
@@ -131,7 +153,7 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                         </span>
                     </span>
                     <span
-                        className={`text-xs font-bold px-2 py-0.5 rounded-full ${isLoss ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        className={`text-xs font-bold px-2 py-0.5 rounded-full ${isLoss ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'}`}>
                         {displayTrend && displayTrend > 0 ? '+' : ''}
                         {displayTrend !== null ? absTrend : '0.0'} {unitLabel}/sem
                     </span>
@@ -173,21 +195,12 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                                 hide={true}
                             />
                             <Tooltip
-                                contentStyle={{
-                                    borderRadius: '8px',
-                                    border: 'none',
-                                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                                }}
-                                itemStyle={{ color: '#0066EE', fontWeight: 'bold' }}
+                                content={<CustomTooltip />}
                                 cursor={{
                                     stroke: '#0066EE',
                                     strokeWidth: 1,
                                     strokeDasharray: '4 4',
                                 }}
-                                formatter={(value: any) => [
-                                    `${value} ${unitLabel}`,
-                                    t('dashboard.weightChart.title'),
-                                ]}
                             />
                             <Area
                                 type="monotone"

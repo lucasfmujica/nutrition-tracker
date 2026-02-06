@@ -34,7 +34,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     const { t } = useTranslation();
     if (active && payload && payload.length) {
         return (
-            <div className="bg-surface p-4 rounded-xl shadow-xl border border-border ring-1 ring-gray-50">
+            <div className="bg-surface p-4 rounded-xl shadow-xl border border-border">
                 <p className="text-text-tertiary text-xs font-semibold mb-2">{label}</p>
                 {payload.map((entry: any, index: number) => (
                     <div
