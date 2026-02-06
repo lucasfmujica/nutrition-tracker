@@ -54,8 +54,8 @@ export const FoodItem: React.FC<FoodItemProps> = ({
                         </p>
                     )}
                     {formattedTime && (
-                        <span className="inline-flex items-center gap-1 text-[11px] text-text-tertiary font-medium mt-0.5">
-                            <Clock size={11} />
+                        <span className="inline-flex items-center gap-1 text-xs md:text-sm text-text-tertiary font-medium mt-0.5">
+                            <Clock size={12} className="md:w-3.5 md:h-3.5" />
                             {formattedTime}
                         </span>
                     )}
