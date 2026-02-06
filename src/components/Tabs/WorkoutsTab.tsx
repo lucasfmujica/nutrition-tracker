@@ -394,7 +394,7 @@ const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
 
         const nameMap: Record<string, string | null> = {
             gym: 'Gym',
-            sport: 'Tenis',
+            sport: t('workouts.tennis'),
             cardio: 'Cardio',
             rest: null,
         };

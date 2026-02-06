@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Copy, Trash2 } from 'lucide-react';
 
 // =====================================================
@@ -18,9 +19,12 @@ export const SwipeableItem: React.FC<SwipeableItemProps> = ({
     children,
     onDelete,
     onDuplicate,
-    deleteLabel = 'Eliminar',
-    duplicateLabel = 'Log Again',
+    deleteLabel,
+    duplicateLabel,
 }) => {
+    const { t } = useTranslation();
+    const resolvedDeleteLabel = deleteLabel || t('common.delete');
+    const resolvedDuplicateLabel = duplicateLabel || t('common.logAgain');
     const itemRef = useRef<HTMLDivElement>(null);
     const [translateX, setTranslateX] = useState(0);
     const [isSwiping, setIsSwiping] = useState(false);
@@ -94,7 +98,7 @@ export const SwipeableItem: React.FC<SwipeableItemProps> = ({
                     {translateX < -60 && (
                         <span className="flex items-center gap-2">
                             <Trash2 size={16} />
-                            <span className="text-sm">{deleteLabel}</span>
+                            <span className="text-sm">{resolvedDeleteLabel}</span>
                         </span>
                     )}
                 </button>
@@ -114,7 +118,7 @@ export const SwipeableItem: React.FC<SwipeableItemProps> = ({
                         {translateX > 60 && (
                             <span className="flex items-center gap-2">
                                 <Copy size={16} />
-                                <span className="text-sm">{duplicateLabel}</span>
+                                <span className="text-sm">{resolvedDuplicateLabel}</span>
                             </span>
                         )}
                     </button>

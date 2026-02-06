@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18n';
+import { useTranslation } from 'react-i18next';
 import { CustomTargets, Profile, StepsEntry, Workout } from '../types/domain';
 import { getArgentinaDateString } from '../utils/dateUtils';
 
@@ -104,9 +104,9 @@ export const useAdaptiveCalories = (
         let boostReason: string | null = null;
         if (isTrainingDay) {
             const reasons: string[] = [];
-            if (hasTennis) reasons.push('Partido de Tenis');
+            if (hasTennis) reasons.push(t('adaptive.tennisMatch'));
             if (isHighSteps && !hasTennis) {
-                reasons.push(`${todaySteps.toLocaleString()} pasos`);
+                reasons.push(t('adaptive.stepsCount', { steps: todaySteps.toLocaleString() }));
             }
             boostReason = reasons.join(' + ') || t('adaptive.defaultBoostReason');
         }

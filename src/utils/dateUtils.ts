@@ -48,14 +48,15 @@ export const getMondayOfWeek = (dateStr: string): string => {
     return addDaysToDate(dateStr, -daysToMonday);
 };
 
-// Format date for display (Hoy, Ayer, or date)
-export const formatDateDisplay = (dateStr: string): string => {
+// Format date for display (Today/Hoy, Yesterday/Ayer, or date)
+export const formatDateDisplay = (dateStr: string, language: string = 'es'): string => {
     const today = getArgentinaDateString();
     const yesterday = addDaysToDate(today, -1);
-    if (dateStr === today) return 'Hoy';
-    if (dateStr === yesterday) return 'Ayer';
+    if (dateStr === today) return language === 'en' ? 'Today' : 'Hoy';
+    if (dateStr === yesterday) return language === 'en' ? 'Yesterday' : 'Ayer';
     const date = new Date(dateStr + 'T12:00:00');
-    return new Intl.DateTimeFormat('es-AR', {
+    const locale = language === 'en' ? 'en-US' : 'es-AR';
+    return new Intl.DateTimeFormat(locale, {
         weekday: 'short',
         day: 'numeric',
         month: 'short',
@@ -87,14 +88,13 @@ export const formatTime = (timestamp: number | null): string => {
 };
 
 /**
- * Format relative time in Spanish for Argentina timezone
+ * Format relative time for Argentina timezone
  * CRITICAL: Always respects Argentina timezone as per CLAUDE.md rules
  * @param {string|Date|number} date - Date to format
- * @returns {string} Relative time ("Ahora", "Hace 2 min", etc.)
- * @example
- * formatRelativeTime(new Date(Date.now() - 120000)) // "Hace 2 min"
+ * @param {string} language - 'es' or 'en'
+ * @returns {string} Relative time ("Ahora"/"Now", "Hace 2 min"/"2 min ago", etc.)
  */
-export const formatRelativeTime = (date: string | Date | number): string => {
+export const formatRelativeTime = (date: string | Date | number, language: string = 'es'): string => {
     if (!date) return '';
 
     // CRITICAL FIX: Convert both dates to Argentina timezone for consistent comparison
@@ -121,17 +121,19 @@ export const formatRelativeTime = (date: string | Date | number): string => {
 
     const diffMs = now - dateInTz;
 
+    const isEN = language === 'en';
+
     // Handle future dates (shouldn't happen for lastSyncTime, but defensive)
-    if (diffMs < 0) return 'Ahora';
+    if (diffMs < 0) return isEN ? 'Now' : 'Ahora';
 
     const diffSec = Math.floor(diffMs / 1000);
     const diffMin = Math.floor(diffSec / 60);
     const diffHour = Math.floor(diffMin / 60);
     const diffDay = Math.floor(diffHour / 24);
 
-    if (diffSec < 60) return 'Ahora';
-    if (diffMin < 60) return `Hace ${diffMin} min`;
-    if (diffHour < 24) return `Hace ${diffHour} h`; // FIXED: Consistent spacing
-    if (diffDay === 1) return 'Ayer';
-    return `Hace ${diffDay} días`;
+    if (diffSec < 60) return isEN ? 'Now' : 'Ahora';
+    if (diffMin < 60) return isEN ? `${diffMin} min ago` : `Hace ${diffMin} min`;
+    if (diffHour < 24) return isEN ? `${diffHour}h ago` : `Hace ${diffHour} h`;
+    if (diffDay === 1) return isEN ? 'Yesterday' : 'Ayer';
+    return isEN ? `${diffDay}d ago` : `Hace ${diffDay} días`;
 };

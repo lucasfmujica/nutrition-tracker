@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CustomTargets, StepsEntry } from '../types/domain';
 import { addDaysToDate, getArgentinaDateString } from '../utils/dateUtils';
 
@@ -23,6 +24,7 @@ export const useAnalyticsExtended = ({
     getTargetsForDate,
     getWeeklyAdherence,
 }: UseAnalyticsExtendedParams) => {
+    const { i18n } = useTranslation();
     /**
      * Get weekly comparison: current week vs previous week
      * Returns delta and percentage change for macros
@@ -223,8 +225,9 @@ export const useAnalyticsExtended = ({
             }
         });
 
-        const dayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+        const dayNamesES = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
         const dayNamesEN = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const dayNames = i18n.language === 'en' ? dayNamesEN : dayNamesES;
 
         return {
             dayIndex: bestDay,

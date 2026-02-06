@@ -203,7 +203,16 @@
     },
 
     "adaptive": {
-        "defaultBoostReason": "Training Day"
+        "defaultBoostReason": "Training Day",
+        "tennisMatch": "Tennis Match",
+        "stepsCount": "{{steps}} steps"
+    },
+    "macroOptimizer": {
+        "usualPortion": "usual portion",
+        "quick": "Quick",
+        "meal": "Meal",
+        "finishingTouch": "Finishing Touch",
+        "suggestion": "Suggestion"
     },
 
     "errors": {
@@ -1045,6 +1054,7 @@
         "save": "Save",
         "cancel": "Cancel",
         "delete": "Delete",
+        "logAgain": "Log Again",
         "edit": "Edit",
         "add": "Add",
         "adding": "Adding...",
@@ -1337,6 +1347,7 @@
         "unit": "steps"
     },
     "workouts": {
+        "tennis": "Tennis",
         "sets": "SETS",
         "reps": "REPS",
         "noExercises": "No exercises logged in this workout.",

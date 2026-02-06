@@ -22,9 +22,9 @@ export interface PlannedWorkout {
  * Generic plan for new users - can be customized in Dashboard
  */
 export const DEFAULT_WEEKLY_PLAN: Record<number, PlannedWorkout> = {
-    0: { type: 'gym', name: 'Entrenamiento', intensity: INTENSITY.MODERATE }, // Lunes
-    2: { type: 'gym', name: 'Entrenamiento', intensity: INTENSITY.MODERATE }, // Miércoles
-    4: { type: 'gym', name: 'Entrenamiento', intensity: INTENSITY.MODERATE }, // Viernes
+    0: { type: 'gym', name: 'Workout', intensity: INTENSITY.MODERATE }, // Lunes
+    2: { type: 'gym', name: 'Workout', intensity: INTENSITY.MODERATE }, // Miércoles
+    4: { type: 'gym', name: 'Workout', intensity: INTENSITY.MODERATE }, // Viernes
     // 1, 3, 5, 6 are rest days (recovery by default)
     // Users can customize this plan in Dashboard → Weekly Planning Card
 };

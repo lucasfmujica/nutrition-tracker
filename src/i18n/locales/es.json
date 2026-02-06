@@ -208,7 +208,16 @@
     },
 
     "adaptive": {
-        "defaultBoostReason": "Día de Entreno"
+        "defaultBoostReason": "Día de Entreno",
+        "tennisMatch": "Partido de Tenis",
+        "stepsCount": "{{steps}} pasos"
+    },
+    "macroOptimizer": {
+        "usualPortion": "porción usual",
+        "quick": "Rápido",
+        "meal": "Comida",
+        "finishingTouch": "Toque Final",
+        "suggestion": "Sugerencia"
     },
 
     "errors": {
@@ -1052,6 +1061,7 @@
         "save": "Guardar",
         "cancel": "Cancelar",
         "delete": "Eliminar",
+        "logAgain": "Registrar de nuevo",
         "edit": "Editar",
         "add": "Agregar",
         "adding": "Agregando...",
@@ -1344,6 +1354,7 @@
         "unit": "pasos"
     },
     "workouts": {
+        "tennis": "Tenis",
         "sets": "SERIES",
         "reps": "REPS",
         "noExercises": "No hay ejercicios registrados en este entreno.",

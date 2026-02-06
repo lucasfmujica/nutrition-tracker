@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FoodEntry, Macros, MealTemplate } from '../types/domain';
 
 interface FoodTemplate {
@@ -116,6 +117,7 @@ export const useMacroOptimizer = (
     foodHistory: FoodEntry[] = [],
     templates: MealTemplate[] = [],
 ) => {
+    const { t } = useTranslation();
     const gap = useMemo(() => {
         if (!totals || !targets) return { protein: 0, calories: 0 };
         return {
@@ -166,7 +168,7 @@ export const useMacroOptimizer = (
                     name: name,
                     protein: avgP,
                     calories: avgC,
-                    unit: 'porción usual',
+                    unit: t('macroOptimizer.usualPortion'),
                     type: avgP > 20 ? 'meal' : 'quick',
                 });
             });
@@ -241,16 +243,16 @@ export const useMacroOptimizer = (
         const meal = pickBest('meal');
         const finish = pickBest('finish');
 
-        if (quick) options.push({ title: 'Rápido', ...quick });
-        if (meal && gap.protein > 15) options.push({ title: 'Comida', ...meal });
+        if (quick) options.push({ title: t('macroOptimizer.quick'), ...quick });
+        if (meal && gap.protein > 15) options.push({ title: t('macroOptimizer.meal'), ...meal });
         if (finish && gap.protein <= 12)
-            options.push({ title: 'Toque Final', ...finish });
+            options.push({ title: t('macroOptimizer.finishingTouch'), ...finish });
 
         if (options.length === 0) {
             return validCandidates
                 .sort((a, b) => Math.abs(a.diffCalories) - Math.abs(b.diffCalories))
                 .slice(0, 3)
-                .map((c) => ({ title: 'Sugerencia', ...c }));
+                .map((c) => ({ title: t('macroOptimizer.suggestion'), ...c }));
         }
 
         return options.slice(0, 3);
