@@ -89,6 +89,7 @@ const NutritionTrackerContent = () => {
         exportForNutritionist,
         exportBackup,
         importBackup,
+        exportForBiometrics,
         // Tab Specific Props
         selectedFoodDate,
         setSelectedFoodDate,
@@ -334,6 +335,7 @@ const NutritionTrackerContent = () => {
                                         exportForNutritionist={exportForNutritionist}
                                         exportBackup={exportBackup}
                                         importBackup={importBackup}
+                                        exportForBiometrics={exportForBiometrics}
                                         userId={supabase?.user?.id}
                                     />
                                 ) : null}

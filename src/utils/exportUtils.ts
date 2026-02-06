@@ -2,6 +2,7 @@ import { getArgentinaDateString } from './dateUtils';
 export { formatArgentinaTimestamp, sanitizeForExport } from './export/exportHelpers';
 export { generateClaudeReport } from './export/formatClaudeReport';
 export { generateFoodJournal } from './export/formatNutriJournal';
+export { generateBiometricsJournal } from './export/formatBiometricsJournal';
 
 /**
  * EXPORT UTILITIES - Orchestrator Module

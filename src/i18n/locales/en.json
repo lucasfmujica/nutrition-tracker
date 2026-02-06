@@ -204,7 +204,51 @@
         "repeatWeek": "Error repeating week",
         "addMeal": "Error adding meal",
         "removeMeal": "Error removing meal",
-        "generatePlan": "Error generating plan"
+        "generatePlan": "Error generating plan",
+        "exportBackup": "Error exporting backup",
+        "importBackup": "Error importing backup: invalid file",
+        "exportJournal": "Error generating food journal",
+        "exportBiometrics": "Error generating biometrics report"
+    },
+
+    "export": {
+        "journalExported": "Food journal exported successfully",
+        "biometricsExported": "Biometrics report exported successfully",
+        "backupRestored": "Backup restored successfully",
+        "clipboardCopied": "Copied to clipboard. Paste it in your Claude chat for full analysis.",
+        "fileDownloaded": "File downloaded as {{filename}}",
+        "journalHeader": "FOOD JOURNAL",
+        "journalName": "Name",
+        "journalPeriod": "Period",
+        "journalGenerated": "Generated",
+        "journalNoEntries": "No entries.",
+        "journalTotal": "TOTAL",
+        "journalNotes": "NOTES",
+        "journalTimezone": "Times in Argentina timezone (America/Argentina/Buenos_Aires)",
+        "journalDailyTotals": "Totals are specific to each day",
+        "journalMacroLegend": "P = Protein | C = Carbs | F = Fat | Fib = Fiber",
+        "biometricsHeader": "BIOMETRICS REPORT",
+        "biometricsWeight": "WEIGHT",
+        "biometricsSteps": "STEPS",
+        "biometricsSleep": "SLEEP",
+        "biometricsReadiness": "READINESS",
+        "biometricsHrv": "HRV",
+        "biometricsRestHr": "REST HR",
+        "biometricsSleepDetails": "SLEEP DETAILS",
+        "biometricsHours": "HOURS",
+        "biometricsDeep": "DEEP",
+        "biometricsRem": "REM",
+        "biometricsBedtime": "BEDTIME",
+        "biometricsWake": "WAKE",
+        "biometricsNotes": "NOTES",
+        "biometricsNoData": "No data for the selected period",
+        "trainingContext": {
+            "rest": "Rest",
+            "gym": "Gym",
+            "tennis": "Tennis",
+            "cardio": "Cardio",
+            "activity": "Activity"
+        }
     },
 
     "mealPrep": {
@@ -306,6 +350,7 @@
             "nutritionist": "Nutri",
             "backup": "Backup",
             "import": "Import",
+            "biometrics": "Biometrics",
             "warning": "⚠️ Import replaces ALL data"
         },
         "preferences": {
@@ -375,6 +420,16 @@
             "title": "No meals logged",
             "subtitle": "Log your first meal of the day.",
             "button": "Log Meal"
+        },
+        "mealTimeStats": {
+            "title": "Average Meal Times",
+            "subtitle": "Based on the last 30 days",
+            "basedOn": "{{count}} entries",
+            "noData": "Log meals with times to see statistics"
+        },
+        "inconsistency": {
+            "title": "Unusual Meal Times",
+            "label": "{{meal}}: {{food}} at {{time}} (expected: {{window}})"
         },
         "swipeHint": "← Swipe to delete",
         "aiSuggest": "Suggest",

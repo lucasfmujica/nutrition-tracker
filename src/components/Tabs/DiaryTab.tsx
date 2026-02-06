@@ -2,12 +2,16 @@ import { Clock, Drumstick, Plus, ScanBarcode, Search } from 'lucide-react';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
+import { useMealTimeStats } from '../../hooks/useMealTimeStats';
 import { useProteinPacing } from '../../hooks/useProteinPacing';
 import { useSmartMealType } from '../../hooks/useSmartMealType';
 import { FoodEntry, Macros, MealTemplate, WaterEntry } from '../../types/domain';
+import { detectMealInconsistencies } from '../../utils/mealTimeValidation';
 import { HydrationGuard, HydrationTarget } from '../Dashboard/HydrationGuard';
 import { DaySummary } from '../Diary/DaySummary';
+import { MealInconsistencyCard } from '../Diary/MealInconsistencyCard';
 import { MealSection } from '../Diary/MealSection';
+import { MealTimeStatsCard } from '../Diary/MealTimeStatsCard';
 import { ProteinTimeline } from '../Diary/ProteinTimeline';
 import { WeeklyCalendarNav } from '../Diary/WeeklyCalendarNav';
 import { WeeklyMealPlanView } from '../Diary/WeeklyMealPlanView';
@@ -95,6 +99,12 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
         foodLog,
         customTargets?.protein,
         selectedFoodDate,
+    );
+
+    const mealTimeStats = useMealTimeStats(foodLog);
+    const inconsistencies = useMemo(
+        () => detectMealInconsistencies(foods),
+        [foods],
     );
 
     const handleAddFood = (meal: string) => {
@@ -347,6 +357,10 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                 remaining={proteinPacing.remainingProtein}
                 targetProtein={proteinPacing.targetProtein}
             />
+
+            <MealTimeStatsCard stats={mealTimeStats} />
+
+            <MealInconsistencyCard inconsistencies={inconsistencies} />
 
             {hasFoods && (
                 <p className="text-xs text-text-tertiary text-center">

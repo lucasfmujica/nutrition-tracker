@@ -35,6 +35,7 @@ interface ConfigTabProps {
     exportForNutritionist: () => void;
     exportBackup: () => void;
     importBackup: (e: ChangeEvent<HTMLInputElement>) => void;
+    exportForBiometrics: () => void;
     // User ID for iOS Shortcuts
     userId?: string;
 }
@@ -58,6 +59,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
     exportForNutritionist,
     exportBackup,
     importBackup,
+    exportForBiometrics,
     // User ID
     userId,
 }) => {
@@ -904,7 +906,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     </span>
                     {t('config.export.title')}
                 </h2>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                     <button
                         onClick={exportForClaude}
                         className="bg-cyan-50 dark:bg-cyan-900/30 hover:bg-cyan-100 dark:hover:bg-cyan-800/40 text-cyan-700 dark:text-cyan-400 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors">
@@ -915,6 +917,13 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                         className="bg-pink-50 dark:bg-pink-900/30 hover:bg-pink-100 dark:hover:bg-pink-800/40 text-pink-700 dark:text-pink-400 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors">
                         🩺 {t('config.export.nutritionist')}
                     </button>
+                    <button
+                        onClick={exportForBiometrics}
+                        className="bg-teal-50 dark:bg-teal-900/30 hover:bg-teal-100 dark:hover:bg-teal-800/40 text-teal-700 dark:text-teal-400 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors">
+                        📊 {t('config.export.biometrics')}
+                    </button>
+                </div>
+                <div className="grid grid-cols-2 gap-3 mt-3">
                     <button
                         onClick={exportBackup}
                         className="bg-amber-50 dark:bg-amber-900/30 hover:bg-amber-100 dark:hover:bg-amber-800/40 text-amber-700 dark:text-amber-400 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors">

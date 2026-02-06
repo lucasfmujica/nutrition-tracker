@@ -1,4 +1,5 @@
 import { ChangeEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     CustomTargets,
     FoodEntry,
@@ -14,6 +15,7 @@ import { getArgentinaDateString } from '../utils/dateUtils';
 import {
     downloadBackup,
     downloadFile,
+    generateBiometricsJournal,
     generateClaudeReport,
     generateFoodJournal,
     parseBackupFile,
@@ -46,6 +48,7 @@ export interface UseExportReturn {
     importBackup: (event: ChangeEvent<HTMLInputElement>) => Promise<void>;
     exportForNutritionist: () => void;
     exportForClaude: () => void;
+    exportForBiometrics: () => void;
 }
 
 export const useExport = (
@@ -53,6 +56,8 @@ export const useExport = (
     analyticsObject: any,
     weightAnalytics: WeightAnalytics,
 ): UseExportReturn => {
+    const { t, i18n } = useTranslation();
+
     const {
         profile,
         setProfile,
@@ -68,7 +73,6 @@ export const useExport = (
         saveStepsLog,
         ouraLog,
         saveOuraLog,
-        // helpers needed for reports
         getMostRecentWeight,
         getTotalsForDate,
         getTargetsForDate,
@@ -76,7 +80,6 @@ export const useExport = (
         getWorkoutsForDate,
     } = trackerData;
 
-    // Export all data as JSON backup
     const exportBackup = () => {
         try {
             downloadBackup({
@@ -89,12 +92,11 @@ export const useExport = (
                 ouraLog,
             });
         } catch (err) {
-            console.error('Error exporting backup:', err);
-            alert('Error al exportar backup');
+            console.error(`[Export ${new Date().toISOString()}] Error exporting backup:`, err);
+            alert(t('errors.exportBackup'));
         }
     };
 
-    // Import backup from JSON file
     const importBackup = async (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) return;
@@ -110,34 +112,53 @@ export const useExport = (
             if (data.stepsLog) saveStepsLog(data.stepsLog);
             if (data.ouraLog) saveOuraLog(data.ouraLog);
 
-            alert('Backup restaurado correctamente!');
+            alert(`✓ ${t('export.backupRestored')}`);
         } catch (err) {
-            console.error('Error importing backup:', err);
-            alert('Error al importar backup: archivo inválido');
+            console.error(`[Export ${new Date().toISOString()}] Error importing backup:`, err);
+            alert(t('errors.importBackup'));
         }
-        event.target.value = ''; // Reset input
+        event.target.value = '';
     };
 
-    // Export Food Journal for nutritionist (human-readable format)
     const exportForNutritionist = () => {
         try {
             const journal = generateFoodJournal({
                 foodLog,
                 workoutLog,
                 profile,
+                language: i18n.language,
             });
-            downloadFile(
-                journal,
-                `diario-alimentacion-${getArgentinaDateString()}.txt`,
-            );
-            alert('✓ Diario exportado correctamente!');
+            const filename = i18n.language === 'en'
+                ? `food-journal-${getArgentinaDateString()}.txt`
+                : `diario-alimentacion-${getArgentinaDateString()}.txt`;
+            downloadFile(journal, filename);
+            alert(`✓ ${t('export.journalExported')}`);
         } catch (err) {
-            console.error('Error exporting food journal:', err);
-            alert('Error al generar el diario');
+            console.error(`[Export ${new Date().toISOString()}] Error exporting food journal:`, err);
+            alert(t('errors.exportJournal'));
         }
     };
 
-    // Export structured Markdown report for Claude AI
+    const exportForBiometrics = () => {
+        try {
+            const report = generateBiometricsJournal({
+                weightHistory,
+                stepsLog,
+                ouraLog,
+                profile,
+                language: i18n.language,
+            });
+            const filename = i18n.language === 'en'
+                ? `biometrics-${getArgentinaDateString()}.txt`
+                : `biometricos-${getArgentinaDateString()}.txt`;
+            downloadFile(report, filename);
+            alert(`✓ ${t('export.biometricsExported')}`);
+        } catch (err) {
+            console.error(`[Export ${new Date().toISOString()}] Error exporting biometrics:`, err);
+            alert(t('errors.exportBiometrics'));
+        }
+    };
+
     const exportForClaude = () => {
         try {
             const report = generateClaudeReport({
@@ -156,28 +177,23 @@ export const useExport = (
 
             const today = getArgentinaDateString();
 
-            // Try to copy to clipboard first
             navigator.clipboard
                 .writeText(report)
                 .then(() => {
-                    alert(
-                        '✓ Copiado al portapapeles!\n\nPegalo en el chat con Claude para análisis completo.',
-                    );
+                    alert(`✓ ${t('export.clipboardCopied')}`);
                 })
                 .catch(() => {
-                    // Fallback: download as markdown file
+                    const filename = `export-claude-${today}.md`;
                     downloadFile(
                         report,
-                        `export-claude-${today}.md`,
+                        filename,
                         'text/markdown;charset=utf-8',
                     );
-                    alert(
-                        '📄 Archivo descargado como export-claude-' + today + '.md',
-                    );
+                    alert(`📄 ${t('export.fileDownloaded', { filename })}`);
                 });
         } catch (err) {
-            console.error('Error exporting for Claude:', err);
-            alert('Error al generar el reporte para Claude');
+            console.error(`[Export ${new Date().toISOString()}] Error exporting for Claude:`, err);
+            alert(t('errors.exportJournal'));
         }
     };
 
@@ -186,5 +202,6 @@ export const useExport = (
         importBackup,
         exportForNutritionist,
         exportForClaude,
+        exportForBiometrics,
     };
 };

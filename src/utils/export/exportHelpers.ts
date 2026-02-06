@@ -67,6 +67,46 @@ export const formatFullDateSpanish = (dateStr: string): string => {
 };
 
 /**
+ * Format date as full day name with language support
+ * Example (es): "Sábado 17 de Enero" | Example (en): "Saturday, January 17"
+ *
+ * @param {string} dateStr - Date string (YYYY-MM-DD)
+ * @param {string} language - Language code ('es' | 'en')
+ * @returns {string} Formatted date in specified language
+ */
+export const formatFullDate = (dateStr: string, language: string): string => {
+    const date = new Date(dateStr + 'T12:00:00');
+    const locale = language === 'en' ? 'en-US' : 'es-AR';
+    return new Intl.DateTimeFormat(locale, {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        timeZone: ARGENTINA_TZ,
+    }).format(date);
+};
+
+/**
+ * Format timestamp with language support
+ *
+ * @param {Date} date - Date object
+ * @param {string} language - Language code ('es' | 'en')
+ * @returns {string} Formatted timestamp with timezone
+ */
+export const formatTimestamp = (date: Date, language: string): string => {
+    const locale = language === 'en' ? 'en-US' : 'es-AR';
+    const formatted = new Intl.DateTimeFormat(locale, {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: ARGENTINA_TZ,
+    }).format(date);
+
+    return `${formatted} (America/Argentina/Buenos_Aires)`;
+};
+
+/**
  * Capitalize first letter of a string
  *
  * @param {string} str - String to capitalize
@@ -89,28 +129,21 @@ interface Workout {
  * @param {string} date - Date string (YYYY-MM-DD)
  * @returns {string} Training context emoji and name
  */
-export const getTrainingContext = (workoutLog: Workout[], date: string): string => {
+export const getTrainingContext = (
+    workoutLog: Workout[],
+    date: string,
+    language: string = 'es',
+): string => {
     const workouts = workoutLog.filter((w) => w.date === date);
 
-    if (workouts.length === 0) {
-        return '🏠 Descanso';
-    }
+    const labels =
+        language === 'en'
+            ? { rest: 'Rest', gym: 'Gym', tennis: 'Tennis', cardio: 'Cardio', activity: 'Activity' }
+            : { rest: 'Descanso', gym: 'Gimnasio', tennis: 'Tenis', cardio: 'Cardio', activity: 'Actividad' };
 
-    // Check for gym workouts
-    if (workouts.some((w) => w.type === 'gym')) {
-        return '🏋️ Gimnasio';
-    }
-
-    // Check for tennis
-    if (workouts.some((w) => w.type === 'tennis')) {
-        return '🎾 Tenis';
-    }
-
-    // Check for cardio
-    if (workouts.some((w) => w.type === 'cardio')) {
-        return '🏃 Cardio';
-    }
-
-    // Generic activity
-    return '💪 Actividad';
+    if (workouts.length === 0) return `🏠 ${labels.rest}`;
+    if (workouts.some((w) => w.type === 'gym')) return `🏋️ ${labels.gym}`;
+    if (workouts.some((w) => w.type === 'tennis')) return `🎾 ${labels.tennis}`;
+    if (workouts.some((w) => w.type === 'cardio')) return `🏃 ${labels.cardio}`;
+    return `💪 ${labels.activity}`;
 };
