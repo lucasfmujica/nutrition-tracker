@@ -41,6 +41,7 @@ export interface Profile {
     stepsAutoSync?: boolean; // Enable Oura Ring auto-sync for steps (default: false)
     smartHydration?: boolean; // Enable weather-based hydration targets
     theme?: 'light' | 'dark' | 'system'; // App theme preference
+    timezone?: string; // IANA timezone (e.g. 'America/New_York'). Default: 'America/Argentina/Buenos_Aires'
 }
 
 export type UnitSystem = 'metric' | 'imperial';

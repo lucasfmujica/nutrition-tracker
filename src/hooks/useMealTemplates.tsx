@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { FoodEntry, MealTemplate } from '../types/domain';
-import { ARGENTINA_TZ } from '../utils/dateUtils';
+import { ARGENTINA_TZ, getCurrentTimeString } from '../utils/dateUtils';
 
 interface UseMealTemplatesParams {
     mealTemplates: MealTemplate[];
@@ -67,12 +67,7 @@ export const useMealTemplates = ({
 
     // Add food from template (supports single item or combo)
     const addFromTemplate = async (template: MealTemplate) => {
-        const now = new Date();
-        const time = now.toLocaleTimeString('en-GB', {
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZone: ARGENTINA_TZ,
-        });
+        const time = getCurrentTimeString();
 
         // If template has items, add them all
         if (template.items && template.items.length > 0) {

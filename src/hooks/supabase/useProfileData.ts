@@ -93,10 +93,33 @@ export function useProfileData(
                 return null;
             }
 
-            return {
-                profile: mappers.profileFromDb(data),
-                targets: mappers.targetsFromDb(data),
-            };
+            const profile = mappers.profileFromDb(data);
+            const targets = mappers.targetsFromDb(data);
+
+            // Auto-detect browser timezone and sync if different
+            try {
+                const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                if (browserTz && profile.timezone !== browserTz) {
+                    console.log(
+                        `[ProfileData ${new Date().toISOString()}] Timezone changed: ${profile.timezone} → ${browserTz}`,
+                    );
+                    // Update profile timezone
+                    await supabase!.from('profiles').update({ timezone: browserTz }).eq('user_id', user.id);
+                    // Migrate historical food_log times
+                    const { data: migrated } = await supabase!.rpc('migrate_food_log_times', {
+                        p_user_id: user.id,
+                        p_new_timezone: browserTz,
+                    });
+                    console.log(
+                        `[ProfileData ${new Date().toISOString()}] Migrated ${migrated} food_log times to ${browserTz}`,
+                    );
+                    profile.timezone = browserTz;
+                }
+            } catch (tzErr) {
+                console.error('[ProfileData] Timezone sync failed (non-blocking):', tzErr);
+            }
+
+            return { profile, targets };
         } catch (err) {
             console.error('fetchProfile failed:', err);
             return null;

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../../context/TrackerContext';
 import { useSmartMealType } from '../../../hooks/useSmartMealType';
 import { FoodEntry } from '../../../types/domain';
+import { getCurrentTimeString } from '../../../utils/dateUtils';
 import { FoodHistoryPanel } from '../../Food/FoodHistoryPanel';
 import { AIMealSuggestionModal } from '../../Modals/AIMealSuggestionModal';
 import { BarcodeScannerModal } from '../../Modals/BarcodeScannerModal';
@@ -110,12 +111,7 @@ export const ModalsManager: React.FC = () => {
             ...food,
             id: crypto.randomUUID(),
             date: selectedFoodDate,
-            time: new Date().toLocaleTimeString('es-AR', {
-                timeZone: 'America/Argentina/Buenos_Aires',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-            }),
+            time: getCurrentTimeString(),
             meal: getAutoMealType(), // Auto-detect meal type based on current time
         };
 

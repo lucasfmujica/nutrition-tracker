@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
 import { useBarcodeScanner } from '../../hooks/useBarcodeScanner';
 import type { FoodEntry } from '../../types/domain';
-import { getArgentinaDateString } from '../../utils/dateUtils';
+import { getArgentinaDateString, getCurrentTimeString } from '../../utils/dateUtils';
 
 interface BarcodeScannerModalProps {
     isOpen: boolean;
@@ -98,12 +98,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
             const entry: FoodEntry = {
                 id: crypto.randomUUID(),
                 date: selectedFoodDate || getArgentinaDateString(),
-                time: new Date().toLocaleTimeString('es-AR', {
-                    timeZone: 'America/Argentina/Buenos_Aires',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                }),
+                time: getCurrentTimeString(),
                 meal: selectedMeal,
                 name: product.brand
                     ? `${product.name} (${product.brand})`

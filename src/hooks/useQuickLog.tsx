@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { FoodEntry } from '../types/domain';
-import { getArgentinaDateString } from '../utils/dateUtils';
+import { getArgentinaDateString, getCurrentTimeString } from '../utils/dateUtils';
 
 /**
  * useQuickLog
@@ -117,15 +117,7 @@ export const useQuickLog = (
         async (itemOrCombo: any): Promise<string | null> => {
             const today = getArgentinaDateString();
 
-            // Get current time in Argentina
-            // Hack: Create date object, convert to Argentina string, extract time
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('es-AR', {
-                timeZone: 'America/Argentina/Buenos_Aires',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-            });
+            const timeString = getCurrentTimeString();
 
             // Helper: Smart Meal Guessing for Argentina Time
             const getSmartMealType = (timeStr: string) => {

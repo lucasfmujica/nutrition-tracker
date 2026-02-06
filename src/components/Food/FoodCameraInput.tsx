@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
 import { useFoodAnalysis } from '../../hooks/useFoodAnalysis';
 import { useSmartMealType } from '../../hooks/useSmartMealType';
-import { getArgentinaDateString } from '../../utils/dateUtils';
+import { getArgentinaDateString, getCurrentTimeString } from '../../utils/dateUtils';
 import { PortionAdjustmentUI } from './PortionAdjustmentUI';
 
 interface FoodItem {
@@ -118,12 +118,7 @@ export const FoodCameraInput: React.FC = () => {
         try {
             // Get current date and time in Argentina TZ
             const date = getArgentinaDateString();
-            const time = new Date().toLocaleTimeString('es-AR', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-                timeZone: 'America/Argentina/Buenos_Aires',
-            });
+            const time = getCurrentTimeString();
 
             // Transform items array to description string
             const description = editableItems

@@ -9,6 +9,7 @@ import {
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
+import { getCurrentTimeString } from '../../utils/dateUtils';
 import {
     generateRecipeInstructions,
     MealSuggestion,
@@ -106,11 +107,7 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
 
     // Handle add suggestion to diary
     const handleAddSuggestion = async (suggestion: MealSuggestion) => {
-        const now = new Date();
-        const time = now.toLocaleTimeString('en-GB', {
-            hour: '2-digit',
-            minute: '2-digit',
-        });
+        const time = getCurrentTimeString();
 
         const entry: FoodEntry = {
             id: crypto.randomUUID(),

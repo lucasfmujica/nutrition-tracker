@@ -6,6 +6,7 @@ import { useMealTimeStats } from '../../hooks/useMealTimeStats';
 import { useProteinPacing } from '../../hooks/useProteinPacing';
 import { useSmartMealType } from '../../hooks/useSmartMealType';
 import { FoodEntry, Macros, MealTemplate, WaterEntry } from '../../types/domain';
+import { getCurrentTimeString } from '../../utils/dateUtils';
 import { detectMealInconsistencies } from '../../utils/mealTimeValidation';
 import { HydrationGuard, HydrationTarget } from '../Dashboard/HydrationGuard';
 import { DaySummary } from '../Diary/DaySummary';
@@ -149,12 +150,7 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
             ...food,
             id: crypto.randomUUID(),
             date: selectedFoodDate,
-            time: new Date().toLocaleTimeString('es-AR', {
-                timeZone: 'America/Argentina/Buenos_Aires',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-            }),
+            time: getCurrentTimeString(),
             meal: getAutoMealType(),
         };
 

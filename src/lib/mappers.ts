@@ -47,6 +47,7 @@ export const mappers = {
         unit_system: profile.unitSystem,
         language: profile.language,
         steps_auto_sync: profile.stepsAutoSync,
+        timezone: profile.timezone,
     }),
 
     // Profile: Supabase -> localStorage format (for compatibility)
@@ -81,6 +82,7 @@ export const mappers = {
         unitSystem: dbProfile.unit_system as 'metric' | 'imperial', // Type assertion as DB might be text
         language: dbProfile.language as 'es' | 'en',
         stepsAutoSync: (dbProfile as any).steps_auto_sync ?? false,
+        timezone: (dbProfile as any).timezone ?? 'America/Argentina/Buenos_Aires',
     }),
 
     // Targets: localStorage -> Supabase (stored in profiles table)

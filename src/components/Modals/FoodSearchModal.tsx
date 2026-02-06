@@ -11,7 +11,7 @@ import { useFoodSearch } from '../../hooks/useFoodSearch';
 import { useSmartMealType } from '../../hooks/useSmartMealType';
 import type { FoodSearchResult } from '../../services/foodApi/types';
 import { FoodEntry } from '../../types/domain';
-import { getArgentinaDateString } from '../../utils/dateUtils';
+import { getArgentinaDateString, getCurrentTimeString } from '../../utils/dateUtils';
 
 interface FoodSearchModalProps {
     isOpen: boolean;
@@ -75,12 +75,7 @@ export const FoodSearchModal: React.FC<FoodSearchModalProps> = ({
             const entry: FoodEntry = {
                 id: crypto.randomUUID(),
                 date: selectedFoodDate || getArgentinaDateString(),
-                time: new Date().toLocaleTimeString('es-AR', {
-                    timeZone: 'America/Argentina/Buenos_Aires',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                }),
+                time: getCurrentTimeString(),
                 meal: selectedMeal,
                 name: selectedFood.brand
                     ? `${selectedFood.name} (${selectedFood.brand})`
