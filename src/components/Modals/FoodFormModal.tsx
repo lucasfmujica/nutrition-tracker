@@ -405,7 +405,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                             onChange={(e) =>
                                 onFoodChange({ ...food, time: e.target.value })
                             }
-                            className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                            className="block w-full min-w-0 max-w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none"
                         />
                     </div>
 
