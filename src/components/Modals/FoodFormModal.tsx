@@ -364,51 +364,49 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                         </div>
                     )}
 
-                    {/* Row 1: Meal type + Time */}
-                    <div className="grid grid-cols-[1.5fr_1fr] gap-3">
-                        <div className="min-w-0">
-                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
-                                {t('modals.foodForm.meal')}
-                            </label>
-                            <select
-                                value={food.meal || ''}
-                                onChange={(e) =>
-                                    onFoodChange({
-                                        ...food,
-                                        meal: e.target.value as any,
-                                    })
-                                }
-                                className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer">
-                                <option value="breakfast">
-                                    {t('mealTypes.breakfast')}
-                                </option>
-                                <option value="lunch">{t('mealTypes.lunch')}</option>
-                                <option value="snack">{t('mealTypes.snack')}</option>
-                                <option value="dinner">
-                                    {t('mealTypes.dinner')}
-                                </option>
-                                <option value="other">{t('mealTypes.other')}</option>
-                                <option value="preworkout">
-                                    {t('mealTypes.preworkout')}
-                                </option>
-                                <option value="postworkout">
-                                    {t('mealTypes.postworkout')}
-                                </option>
-                            </select>
-                        </div>
-                        <div className="min-w-0">
-                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
-                                {t('modals.foodForm.time')}
-                            </label>
-                            <input
-                                type="time"
-                                value={food.time || ''}
-                                onChange={(e) =>
-                                    onFoodChange({ ...food, time: e.target.value })
-                                }
-                                className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all min-w-0"
-                            />
-                        </div>
+                    {/* Meal Type */}
+                    <div>
+                        <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
+                            {t('modals.foodForm.meal')}
+                        </label>
+                        <select
+                            value={food.meal || ''}
+                            onChange={(e) =>
+                                onFoodChange({
+                                    ...food,
+                                    meal: e.target.value as any,
+                                })
+                            }
+                            className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer">
+                            <option value="breakfast">
+                                {t('mealTypes.breakfast')}
+                            </option>
+                            <option value="lunch">{t('mealTypes.lunch')}</option>
+                            <option value="snack">{t('mealTypes.snack')}</option>
+                            <option value="dinner">{t('mealTypes.dinner')}</option>
+                            <option value="other">{t('mealTypes.other')}</option>
+                            <option value="preworkout">
+                                {t('mealTypes.preworkout')}
+                            </option>
+                            <option value="postworkout">
+                                {t('mealTypes.postworkout')}
+                            </option>
+                        </select>
+                    </div>
+
+                    {/* Time */}
+                    <div>
+                        <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
+                            {t('modals.foodForm.time')}
+                        </label>
+                        <input
+                            type="time"
+                            value={food.time || ''}
+                            onChange={(e) =>
+                                onFoodChange({ ...food, time: e.target.value })
+                            }
+                            className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                        />
                     </div>
 
                     {/* Row 2: Name */}
@@ -565,7 +563,9 @@ const SourceBadge: React.FC<{ source: FoodSearchResult['source'] }> = ({
     return (
         <span
             className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${
-                isOFF ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400' : 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400'
+                isOFF
+                    ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400'
+                    : 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400'
             }`}>
             {isOFF ? <Globe size={8} /> : <Database size={8} />}
             {isOFF ? 'OFF' : 'USDA'}
