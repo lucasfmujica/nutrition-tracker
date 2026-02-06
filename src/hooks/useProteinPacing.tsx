@@ -179,7 +179,11 @@ export const useProteinPacing = (
         });
 
         // Calculate totals
-        const totalConsumed = slots.reduce((sum, s) => sum + s.consumedGrams, 0);
+        // Sum ALL protein from food log (including workout meals), not just filtered slots
+        const totalConsumed = dayFoods.reduce(
+            (sum, food) => sum + (Number(food.protein) || 0),
+            0
+        );
         const remainingProtein = Math.max(0, protein - totalConsumed);
         const missedSlots = slots.filter((s) => s.status === 'missed').length;
 
