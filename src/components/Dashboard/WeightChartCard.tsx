@@ -205,7 +205,7 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                             <Area
                                 type="monotone"
                                 dataKey="weight"
-                                name="Peso"
+                                name={unitLabel}
                                 stroke="#0066EE"
                                 strokeWidth={3}
                                 strokeLinecap="round"

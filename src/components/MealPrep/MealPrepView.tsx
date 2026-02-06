@@ -122,10 +122,10 @@ export const MealPrepView: React.FC<MealPrepViewProps> = ({ userId }) => {
     };
 
     return (
-        <div className="min-h-screen bg-background pb-24">
+        <div className="w-full bg-background pb-24">
             {/* Header */}
             <div className="sticky top-0 z-10 bg-background border-b border-border">
-                <div className="max-w-4xl mx-auto px-4 py-4">
+                <div className="px-4 py-4">
                     <h1 className="text-2xl font-black text-text-primary mb-1">
                         {t('mealPrep.title')}
                     </h1>
@@ -135,7 +135,7 @@ export const MealPrepView: React.FC<MealPrepViewProps> = ({ userId }) => {
                 </div>
 
                 {/* Tab Navigation */}
-                <div className="max-w-4xl mx-auto px-4">
+                <div className="px-4">
                     <div className="flex gap-2 border-b border-border">
                         <button
                             onClick={() => setActiveTab('calendar')}
@@ -165,7 +165,7 @@ export const MealPrepView: React.FC<MealPrepViewProps> = ({ userId }) => {
             </div>
 
             {/* Content */}
-            <div className="max-w-4xl mx-auto px-4 py-6">
+            <div className="px-4 py-6">
                 {/* Generate Button CTA */}
                 <button
                     onClick={() => setShowGenerateModal(true)}
