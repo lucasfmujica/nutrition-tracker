@@ -121,16 +121,16 @@ export const usePerformanceForecast = (
         let status = 'Normal';
         let forecastCode = 'steady';
         let icon = 'cloud-sun';
-        let gradient = 'from-blue-50 to-indigo-50';
-        let textColor = 'text-blue-700';
+        let gradient = 'from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40';
+        let textColor = 'text-blue-700 dark:text-blue-300';
 
         // PEAK: Both metrics trending up significantly (>3%)
         if (readinessTrendPct > 3 && sleepTrendPct > 2) {
             status = 'Peak';
             icon = 'sun';
             forecastCode = 'peak';
-            gradient = 'from-amber-50 to-orange-100';
-            textColor = 'text-amber-700';
+            gradient = 'from-amber-50 to-orange-100 dark:from-amber-950/40 dark:to-orange-950/40';
+            textColor = 'text-amber-700 dark:text-amber-300';
         }
         // GOOD: Readiness stable/up, decent sleep
         else if (
@@ -141,23 +141,23 @@ export const usePerformanceForecast = (
             status = 'Good';
             icon = 'cloud-sun';
             forecastCode = 'good';
-            gradient = 'from-green-50 to-emerald-50';
-            textColor = 'text-green-700';
+            gradient = 'from-green-50 to-emerald-50 dark:from-green-950/40 dark:to-emerald-950/40';
+            textColor = 'text-green-700 dark:text-green-300';
         }
         // CAUTION: Declining trends but not critical
         else if (readinessTrendPct < -3 || sleepTrendPct < -5) {
             status = 'Caution';
             icon = 'cloud';
             forecastCode = 'caution';
-            gradient = 'from-yellow-50 to-amber-50';
-            textColor = 'text-yellow-700';
+            gradient = 'from-yellow-50 to-amber-50 dark:from-yellow-950/40 dark:to-amber-950/40';
+            textColor = 'text-yellow-700 dark:text-yellow-300';
         }
         // RECOVERY: Both metrics clearly declining
         else if (readinessTrendPct < -5 && sleepTrendPct < -3) {
             status = 'Recovery';
             icon = 'cloud-rain';
             forecastCode = 'recovery';
-            gradient = 'from-slate-100 to-gray-200';
+            gradient = 'from-slate-100 to-gray-200 dark:from-slate-900/40 dark:to-gray-900/40';
             textColor = 'text-text-secondary';
         }
         // REST PRIORITY: High recent volume with declining metrics
@@ -165,16 +165,16 @@ export const usePerformanceForecast = (
             status = 'Rest Priority';
             icon = 'battery-charging';
             forecastCode = 'rest_volume';
-            gradient = 'from-purple-50 to-pink-50';
-            textColor = 'text-purple-700';
+            gradient = 'from-purple-50 to-pink-50 dark:from-purple-950/40 dark:to-pink-950/40';
+            textColor = 'text-purple-700 dark:text-purple-300';
         }
         // LOW SLEEP: Today's sleep was particularly poor
         else if (todaySleep < 60) {
             status = 'Sleep Focus';
             icon = 'moon';
             forecastCode = 'sleep_focus';
-            gradient = 'from-indigo-50 to-purple-50';
-            textColor = 'text-indigo-700';
+            gradient = 'from-indigo-50 to-purple-50 dark:from-indigo-950/40 dark:to-purple-950/40';
+            textColor = 'text-indigo-700 dark:text-indigo-300';
         }
 
         return {

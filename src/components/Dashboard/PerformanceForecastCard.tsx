@@ -60,17 +60,17 @@ export const PerformanceForecastCard: React.FC = () => {
         }
     };
 
-    const gradientClass = ui?.gradient || 'from-gray-50 to-slate-50';
+    const gradientClass = ui?.gradient || 'from-gray-50 to-slate-50 dark:from-gray-900/40 dark:to-slate-900/40';
     const textClass = ui?.textColor || 'text-text-secondary';
 
     return (
         <div
-            className={`card bg-gradient-to-br ${gradientClass} p-5 shadow-sm rounded-2xl border border-white/60 relative overflow-hidden`}>
+            className={`card bg-gradient-to-br ${gradientClass} p-5 shadow-sm rounded-2xl border border-white/60 dark:border-white/10 relative overflow-hidden`}>
             {/* Decorative background circle */}
             <div className="absolute -top-4 -right-4 w-24 h-24 bg-surface/40 rounded-full blur-2xl pointer-events-none"></div>
 
             <div className="flex items-start gap-4 relative z-10">
-                <div className="p-3 bg-surface/80 backdrop-blur-sm rounded-xl shadow-sm ring-1 ring-black/5">
+                <div className="p-3 bg-surface/80 backdrop-blur-sm rounded-xl shadow-sm ring-1 ring-black/5 dark:ring-white/10">
                     {getIcon()}
                 </div>
 
@@ -95,7 +95,7 @@ export const PerformanceForecastCard: React.FC = () => {
                             </button>
                             {/* Status Badge */}
                             {forecastCode === 'peak' && (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
                                     {t('dashboard.forecast.prime')}
                                 </span>
                             )}
@@ -115,8 +115,8 @@ export const PerformanceForecastCard: React.FC = () => {
 
             {/* Logic Explanation */}
             {showExplanation && metrics && (
-                <div className="mt-4 pt-4 border-t border-white/40 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <div className="bg-surface/60 backdrop-blur-md rounded-xl p-4 space-y-3 ring-1 ring-black/5 shadow-inner">
+                <div className="mt-4 pt-4 border-t border-white/40 dark:border-white/10 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="bg-surface/60 backdrop-blur-md rounded-xl p-4 space-y-3 ring-1 ring-black/5 dark:ring-white/10 shadow-inner">
                         <h4 className="text-xs font-black text-text-primary uppercase tracking-widest flex items-center gap-2">
                             <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></span>
                             {t('dashboard.forecast.algorithm')}
@@ -178,7 +178,7 @@ export const PerformanceForecastCard: React.FC = () => {
                                         </span>
                                     </span>
                                     <span
-                                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${(metrics.volume48h ?? 0) > 10000 ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>
+                                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${(metrics.volume48h ?? 0) > 10000 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'}`}>
                                         {(metrics.volume48h ?? 0) > 10000
                                             ? t('dashboard.forecast.highLoad')
                                             : t('dashboard.forecast.optimal')}
@@ -187,10 +187,10 @@ export const PerformanceForecastCard: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-blue-50/50 p-2.5 rounded-lg">
+                        <div className="bg-blue-50/50 dark:bg-blue-950/30 p-2.5 rounded-lg">
                             <div
-                                className={`p-4 rounded-xl border border-blue-200 bg-surface/50`}>
-                                <p className="text-[10px] text-blue-700 italic leading-snug">
+                                className={`p-4 rounded-xl border border-blue-200 dark:border-blue-800 bg-surface/50`}>
+                                <p className="text-[10px] text-blue-700 dark:text-blue-300 italic leading-snug">
                                     <strong>
                                         {t('dashboard.forecast.whyStatement')}
                                     </strong>{' '}
