@@ -1091,7 +1091,9 @@
         "retry": "Retry",
         "seconds": "seconds",
         "perDay": "per day",
-        "protein": "protein"
+        "protein": "protein",
+        "swipeToDelete": "Swipe to delete",
+        "saving": "Saving..."
     },
     "aiChef": {
         "title": "AI Chef",
@@ -1358,7 +1360,9 @@
         "title": "Workouts",
         "subtitle": "Training history",
         "addWorkout": "Add Workout",
+        "addQuickWorkout": "Add Workout",
         "noWorkouts": "No workouts recorded",
+        "noWorkoutsCTA": "Log your first workout",
         "duration": "Duration",
         "calories": "Calories",
         "exercises": "Exercises",
@@ -1367,6 +1371,7 @@
         "edit": "Edit",
         "done": "Done",
         "total": "Total",
+        "thisWeek": "This Week",
         "workoutsLabel": "Workouts",
         "time": "Time",
         "totalMinutes": "Total Minutes",
@@ -1376,6 +1381,29 @@
         "readiness": "Readiness",
         "logActivityPrompt": "Log your activity for today.",
         "importGravl": "Import Workout",
+        "types": {
+            "gym": "GYM",
+            "sport": "TENNIS",
+            "cardio": "CARDIO",
+            "other": "OTHER",
+            "rest": "OFF"
+        },
+        "weeklyPlanSection": {
+            "editHint": "Tap a day to change workout type",
+            "dayLabels": ["M", "T", "W", "T", "F", "S", "S"]
+        },
+        "personalRecords": "Personal Records",
+        "newPR": "New PR",
+        "prProgression": "{{previous}}kg → {{current}}kg",
+        "volumeVsLastWeek": "Volume vs Last Week",
+        "prevWeekWorkouts": "Last week workouts",
+        "analysis": {
+            "greatGymConsistency": "Excellent gym consistency!",
+            "goodTennisVolume": "Good tennis volume this week.",
+            "highWeeklyIntensity": "High weekly intensity",
+            "keepMoving": "Keep moving!",
+            "noActivity": "No activity logged this week."
+        },
         "effort": {
             "title": "Effort Radar",
             "intensity": "Intensity",

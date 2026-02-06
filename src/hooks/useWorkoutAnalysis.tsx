@@ -6,11 +6,15 @@ import {
     getMondayOfWeek,
 } from '../utils/dateUtils';
 
-interface WorkoutAnalysis {
+export interface WorkoutAnalysis {
     weekStart: string;
     gymCount: number;
     tennisCount: number;
     totalDuration: number;
+    totalVolume: number;
+    prevWeekVolume: number;
+    volumeChange: number | null;
+    prevWeekWorkouts: number;
     analysis: string[];
 }
 
@@ -25,7 +29,6 @@ export const useWorkoutAnalysis = (
     selectedDate: string | null = null,
 ): WorkoutAnalysis => {
     return useMemo(() => {
-        // Use selectedDate if provided, otherwise use today
         const referenceDate = selectedDate || getArgentinaDateString();
         const monday = getMondayOfWeek(referenceDate);
         const sunday = addDaysToDate(monday, 6);
@@ -34,8 +37,14 @@ export const useWorkoutAnalysis = (
             (w) => w.date >= monday && w.date <= sunday,
         );
 
+        // Previous week range
+        const prevMonday = addDaysToDate(monday, -7);
+        const prevSunday = addDaysToDate(prevMonday, 6);
+        const prevWeekWorkouts = workoutLog.filter(
+            (w) => w.date >= prevMonday && w.date <= prevSunday,
+        );
+
         const gymCount = currentWeekWorkouts.filter((w) => w.type === 'gym').length;
-        // CRITICAL FIX: Tennis recognition with fallback to name-based detection
         const tennisCount = currentWeekWorkouts.filter((w) => {
             const nameLower = w.name?.toLowerCase() || '';
             return (
@@ -50,14 +59,28 @@ export const useWorkoutAnalysis = (
             0,
         );
 
+        // Volume calculations
+        const totalVolume = currentWeekWorkouts.reduce(
+            (sum, w) => sum + (Number(w.volume) || 0),
+            0,
+        );
+        const prevWeekVolume = prevWeekWorkouts.reduce(
+            (sum, w) => sum + (Number(w.volume) || 0),
+            0,
+        );
+        const volumeChange =
+            prevWeekVolume > 0
+                ? Math.round(((totalVolume - prevWeekVolume) / prevWeekVolume) * 100)
+                : null;
+
+        // Analysis keys (not hardcoded strings - consumers should use t() with these)
         const analysis: string[] = [];
-        if (gymCount >= 3) analysis.push('¡Excelente constancia en el gimnasio!');
-        if (tennisCount >= 2) analysis.push('Buen volumen de tenis esta semana.');
-        if (totalDuration > 300) analysis.push('Alta intensidad semanal 🔥');
+        if (gymCount >= 3) analysis.push('greatGymConsistency');
+        if (tennisCount >= 2) analysis.push('goodTennisVolume');
+        if (totalDuration > 300) analysis.push('highWeeklyIntensity');
         if (analysis.length === 0 && currentWeekWorkouts.length > 0)
-            analysis.push('¡Sigue sumando movimiento!');
-        if (currentWeekWorkouts.length === 0)
-            analysis.push('Sin actividad registrada esta semana.');
+            analysis.push('keepMoving');
+        if (currentWeekWorkouts.length === 0) analysis.push('noActivity');
 
         const weekStartDate = new Date(monday + 'T12:00:00').toLocaleDateString(
             'es-AR',
@@ -69,6 +92,10 @@ export const useWorkoutAnalysis = (
             gymCount,
             tennisCount,
             totalDuration,
+            totalVolume,
+            prevWeekVolume,
+            volumeChange,
+            prevWeekWorkouts: prevWeekWorkouts.length,
             analysis,
         };
     }, [workoutLog, selectedDate]);

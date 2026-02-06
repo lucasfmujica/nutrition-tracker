@@ -1098,7 +1098,9 @@
         "retry": "Reintentar",
         "seconds": "segundos",
         "perDay": "por día",
-        "protein": "proteína"
+        "protein": "proteína",
+        "swipeToDelete": "Desliza para eliminar",
+        "saving": "Guardando..."
     },
     "aiChef": {
         "title": "AI Chef",
@@ -1365,7 +1367,9 @@
         "title": "Entrenos",
         "subtitle": "Historial de entrenamientos",
         "addWorkout": "Agregar Entreno",
+        "addQuickWorkout": "Agregar Entreno",
         "noWorkouts": "Sin entrenos registrados",
+        "noWorkoutsCTA": "Registrar tu primer entreno",
         "duration": "Duración",
         "calories": "Calorías",
         "exercises": "Ejercicios",
@@ -1374,6 +1378,7 @@
         "edit": "Editar",
         "done": "Listo",
         "total": "Total",
+        "thisWeek": "Esta Semana",
         "workoutsLabel": "Entrenamientos",
         "time": "Tiempo",
         "totalMinutes": "Minutos Totales",
@@ -1383,6 +1388,29 @@
         "readiness": "Readiness",
         "logActivityPrompt": "Registra tu actividad para hoy.",
         "importGravl": "Importar Entrenamiento",
+        "types": {
+            "gym": "GYM",
+            "sport": "TENIS",
+            "cardio": "CARDIO",
+            "other": "OTRO",
+            "rest": "OFF"
+        },
+        "weeklyPlanSection": {
+            "editHint": "Toca un día para cambiar el tipo de entrenamiento",
+            "dayLabels": ["L", "M", "X", "J", "V", "S", "D"]
+        },
+        "personalRecords": "Records Personales",
+        "newPR": "Nuevo PR",
+        "prProgression": "{{previous}}kg → {{current}}kg",
+        "volumeVsLastWeek": "Volumen vs Sem. Anterior",
+        "prevWeekWorkouts": "Entrenos sem. anterior",
+        "analysis": {
+            "greatGymConsistency": "¡Excelente constancia en el gimnasio!",
+            "goodTennisVolume": "Buen volumen de tenis esta semana.",
+            "highWeeklyIntensity": "Alta intensidad semanal",
+            "keepMoving": "¡Sigue sumando movimiento!",
+            "noActivity": "Sin actividad registrada esta semana."
+        },
         "effort": {
             "title": "Radar de Esfuerzo",
             "intensity": "Intensidad",
