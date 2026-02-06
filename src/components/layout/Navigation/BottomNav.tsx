@@ -327,7 +327,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
 
             {/* Main Navigation Island */}
             <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-sm z-50">
-                <nav className="glass rounded-full px-6 h-14 flex items-center justify-between border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.15)] relative overflow-visible">
+                <nav className="glass rounded-full px-6 h-14 flex items-center justify-between border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.15)] relative overflow-visible" style={{ touchAction: 'manipulation' }}>
                     <div className="absolute inset-0 bg-noise opacity-[0.02] pointer-events-none rounded-full" />
 
                     {tabs.map((tab) => {
@@ -337,7 +337,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                             return (
                                 <button
                                     key={tab.id}
-                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                    onClick={() => {
+                                        setIsMenuOpen(!isMenuOpen);
+                                        setIsMoreMenuOpen(false);
+                                    }}
                                     data-tutorial={tab.tutorialId}
                                     aria-label="Open quick actions"
                                     className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 relative -top-7 z-20 shadow-2xl ${
@@ -369,9 +372,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                             return (
                                 <button
                                     key={tab.id}
-                                    onClick={() =>
-                                        setIsMoreMenuOpen(!isMoreMenuOpen)
-                                    }
+                                    onClick={() => {
+                                        setIsMoreMenuOpen(!isMoreMenuOpen);
+                                        setIsMenuOpen(false);
+                                    }}
                                     className={`flex flex-col items-center justify-center transition-[color,transform,opacity] duration-200 relative group min-w-[40px] h-full ${
                                         isMoreActive
                                             ? 'text-primary'
@@ -413,7 +417,11 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                         return (
                             <button
                                 key={tab.id}
-                                onClick={() => setActiveTab(tab.id as string)}
+                                onClick={() => {
+                                    setActiveTab(tab.id as string);
+                                    setIsMoreMenuOpen(false);
+                                    setIsMenuOpen(false);
+                                }}
                                 data-tutorial={tab.tutorialId}
                                 className={`flex flex-col items-center justify-center transition-[color,transform,opacity] duration-200 relative group min-w-[40px] h-full ${
                                     isActive
