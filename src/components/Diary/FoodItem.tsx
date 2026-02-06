@@ -40,21 +40,22 @@ export const FoodItem: React.FC<FoodItemProps> = ({
             <div
                 className={`p-3 bg-surface border-b border-border flex justify-between items-center ${needsReview ? 'bg-amber-50/50' : ''}`}>
                 <div className="flex-1 min-w-0 pr-3">
-                    <div className="flex items-center gap-2 mb-0.5">
+                    <div className="flex items-center gap-1.5 mb-0.5">
                         <h4 className="text-text-primary font-medium truncate">
                             {food.name}
                         </h4>
-                        {formattedTime && (
-                            <span className="flex items-center gap-0.5 text-[10px] text-text-tertiary font-medium flex-shrink-0">
-                                <Clock size={10} className="text-text-tertiary" />
-                                {formattedTime}
-                            </span>
-                        )}
                         {needsReview && (
                             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0"></span>
                         )}
                     </div>
                     <p className="text-xs text-text-tertiary truncate">
+                        {formattedTime && (
+                            <span className="inline-flex items-center gap-0.5 text-text-tertiary font-medium">
+                                <Clock size={10} />
+                                {formattedTime}
+                            </span>
+                        )}
+                        {formattedTime && food.description ? ' · ' : ''}
                         {food.description || ''}
                     </p>
                 </div>
