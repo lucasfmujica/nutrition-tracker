@@ -36,14 +36,12 @@ export const Layout: React.FC<LayoutProps> = ({
 
                 {/* Floating Bottom Navigation (Mobile Only) */}
                 {showNav && (
-                    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
-                        <div className="max-w-md mx-auto pointer-events-auto">
-                            <BottomNav
-                                activeTab={activeTab}
-                                setActiveTab={setActiveTab}
-                                pendingRequestCount={pendingRequestCount}
-                            />
-                        </div>
+                    <div className="lg:hidden">
+                        <BottomNav
+                            activeTab={activeTab}
+                            setActiveTab={setActiveTab}
+                            pendingRequestCount={pendingRequestCount}
+                        />
                     </div>
                 )}
             </div>

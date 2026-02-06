@@ -29,28 +29,44 @@ export const SwipeableItem: React.FC<SwipeableItemProps> = ({
     const [translateX, setTranslateX] = useState(0);
     const [isSwiping, setIsSwiping] = useState(false);
     const startXRef = useRef(0);
+    const startYRef = useRef(0);
     const currentXRef = useRef(0);
+    const directionLocked = useRef<'horizontal' | 'vertical' | null>(null);
     const DELETE_THRESHOLD = -80;
     const DUPLICATE_THRESHOLD = 80;
 
     const handleTouchStart = (e: React.TouchEvent) => {
         startXRef.current = e.touches[0].clientX;
+        startYRef.current = e.touches[0].clientY;
         currentXRef.current = translateX;
-        setIsSwiping(true);
+        directionLocked.current = null;
     };
 
     const handleTouchMove = (e: React.TouchEvent) => {
-        if (!isSwiping) return;
-        const diff = e.touches[0].clientX - startXRef.current;
+        const diffX = e.touches[0].clientX - startXRef.current;
+        const diffY = e.touches[0].clientY - startYRef.current;
+
+        // Lock direction on first significant movement
+        if (!directionLocked.current) {
+            if (Math.abs(diffX) < 5 && Math.abs(diffY) < 5) return;
+            directionLocked.current = Math.abs(diffX) > Math.abs(diffY) ? 'horizontal' : 'vertical';
+            if (directionLocked.current === 'horizontal') {
+                setIsSwiping(true);
+            }
+        }
+
+        // Only handle horizontal swipes, let vertical scroll through
+        if (directionLocked.current !== 'horizontal') return;
 
         // Allow both left (-120) and right (+120) swipes
         const maxLeft = -120;
         const maxRight = onDuplicate ? 120 : 0;
-        const newX = Math.min(maxRight, Math.max(maxLeft, currentXRef.current + diff));
+        const newX = Math.min(maxRight, Math.max(maxLeft, currentXRef.current + diffX));
         setTranslateX(newX);
     };
 
     const handleTouchEnd = () => {
+        directionLocked.current = null;
         setIsSwiping(false);
 
         // Left swipe - delete
@@ -129,7 +145,7 @@ export const SwipeableItem: React.FC<SwipeableItemProps> = ({
             <div
                 ref={itemRef}
                 className={`swipe-item relative bg-surface ${isSwiping ? 'swiping' : ''}`}
-                style={{ transform: `translateX(${translateX}px)` }}
+                style={{ transform: `translateX(${translateX}px)`, touchAction: 'pan-y' }}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}

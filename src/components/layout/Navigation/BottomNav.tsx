@@ -372,7 +372,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                                     onClick={() =>
                                         setIsMoreMenuOpen(!isMoreMenuOpen)
                                     }
-                                    className={`flex flex-col items-center justify-center transition-all duration-300 relative group min-w-[40px] h-full ${
+                                    className={`flex flex-col items-center justify-center transition-[color,transform,opacity] duration-200 relative group min-w-[40px] h-full ${
                                         isMoreActive
                                             ? 'text-primary'
                                             : 'text-text-tertiary hover:text-text-secondary'
@@ -385,12 +385,12 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                                                     strokeWidth: isMoreActive
                                                         ? 2.5
                                                         : 2,
-                                                    className: `transition-all duration-300 ${isMoreActive ? '-translate-y-1 scale-110' : 'group-hover:scale-105'}`,
+                                                    className: `transition-[color,transform,opacity] duration-200 ${isMoreActive ? '-translate-y-1 scale-110' : 'group-hover:scale-105'}`,
                                                 })}
                                         </div>
 
                                         <div
-                                            className={`flex flex-col items-center transition-all duration-300 overflow-hidden ${
+                                            className={`flex flex-col items-center transition-[color,transform,opacity] duration-200 overflow-hidden ${
                                                 isMoreActive
                                                     ? 'max-h-6 opacity-100 mt-1'
                                                     : 'max-h-0 opacity-0'
@@ -415,7 +415,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as string)}
                                 data-tutorial={tab.tutorialId}
-                                className={`flex flex-col items-center justify-center transition-all duration-300 relative group min-w-[40px] h-full ${
+                                className={`flex flex-col items-center justify-center transition-[color,transform,opacity] duration-200 relative group min-w-[40px] h-full ${
                                     isActive
                                         ? 'text-primary'
                                         : 'text-text-tertiary hover:text-text-secondary'
@@ -426,7 +426,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                                             React.createElement(tab.icon, {
                                                 size: 20,
                                                 strokeWidth: isActive ? 2.5 : 2,
-                                                className: `transition-all duration-300 ${isActive ? '-translate-y-1 scale-110' : 'group-hover:scale-105'}`,
+                                                className: `transition-[color,transform,opacity] duration-200 ${isActive ? '-translate-y-1 scale-110' : 'group-hover:scale-105'}`,
                                             })}
 
                                         {/* Notification Badge for Social Tab */}
@@ -443,7 +443,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                                     </div>
 
                                     <div
-                                        className={`flex flex-col items-center transition-all duration-300 overflow-hidden ${
+                                        className={`flex flex-col items-center transition-[color,transform,opacity] duration-200 overflow-hidden ${
                                             isActive
                                                 ? 'max-h-6 opacity-100 mt-1'
                                                 : 'max-h-0 opacity-0'
