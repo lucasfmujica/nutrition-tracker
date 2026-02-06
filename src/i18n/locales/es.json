@@ -1037,7 +1037,11 @@
             "userId": "Tu ID de usuario:",
             "instructionsShort": "Tocá \"Instalar\" si estás en tu iPhone, o escaneá el QR desde otro dispositivo.",
             "detailedInstructions": "Instrucciones detalladas",
-            "scan": "Escanea el QR"
+            "scan": "Escanea el QR",
+            "weight": "Peso",
+            "steps": "Pasos",
+            "install": "Instalar",
+            "copyIdHint": "Copiá tu ID antes de instalar. El shortcut te lo pedirá al configurarse."
         }
     },
     "common": {

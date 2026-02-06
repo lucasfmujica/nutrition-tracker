@@ -1030,7 +1030,11 @@
             "userId": "Your user ID:",
             "instructionsShort": "Tap \"Install\" if you're on your iPhone, or scan the QR from another device.",
             "detailedInstructions": "Detailed instructions",
-            "scan": "Scan the QR"
+            "scan": "Scan the QR",
+            "weight": "Weight",
+            "steps": "Steps",
+            "install": "Install",
+            "copyIdHint": "Copy your ID before installing. The shortcut will ask for it during setup."
         }
     },
     "common": {
