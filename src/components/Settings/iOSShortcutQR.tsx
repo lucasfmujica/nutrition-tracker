@@ -25,9 +25,9 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
     const [showInstructions, setShowInstructions] = useState(false);
     const [copiedId, setCopiedId] = useState(false);
 
-    // iOS Shortcut URLs with user ID
-    const weightShortcutUrl = `shortcuts://import-shortcut?url=https://www.icloud.com/shortcuts/da059df06b604715a9e51e9243bdd3da&input=text&text=${userId}`;
-    const stepsShortcutUrl = `shortcuts://import-shortcut?url=https://www.icloud.com/shortcuts/2ba1fb49fae0403e84c46a391d496c5a&input=text&text=${userId}`;
+    // iOS Shortcut iCloud URLs (opens in Safari → redirects to Shortcuts app)
+    const weightShortcutUrl = `https://www.icloud.com/shortcuts/da059df06b604715a9e51e9243bdd3da`;
+    const stepsShortcutUrl = `https://www.icloud.com/shortcuts/2ba1fb49fae0403e84c46a391d496c5a`;
 
     const shortUserId = userId?.substring(0, 8) || '';
 
@@ -97,7 +97,7 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                         </div>
                         <div>
                             <p className="text-sm font-medium text-text-primary">
-                                ⚖️ Peso
+                                ⚖️ {t('settings.iosShortcut.weight') || 'Peso'}
                             </p>
                             <p className="text-xs text-text-tertiary">
                                 Apple Health → App
@@ -105,9 +105,11 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                         </div>
                         <a
                             href={weightShortcutUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-100 transition-all active:scale-95 shadow-sm">
                             <Smartphone className="w-3 h-3" />
-                            Instalar
+                            {t('settings.iosShortcut.install') || 'Instalar'}
                         </a>
                     </div>
 
@@ -123,7 +125,7 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                         </div>
                         <div>
                             <p className="text-sm font-medium text-text-primary">
-                                👟 Pasos
+                                👟 {t('settings.iosShortcut.steps') || 'Pasos'}
                             </p>
                             <p className="text-xs text-text-tertiary">
                                 Apple Health → App
@@ -131,19 +133,25 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                         </div>
                         <a
                             href={stepsShortcutUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 px-3 py-2 bg-purple-50 text-purple-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-purple-100 transition-all active:scale-95 shadow-sm">
                             <Smartphone className="w-3 h-3" />
-                            Instalar
+                            {t('settings.iosShortcut.install') || 'Instalar'}
                         </a>
                     </div>
                 </div>
 
                 {/* Quick Instructions */}
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-center sm:text-left">
-                    <p className="text-sm text-blue-800">
+                <div className="bg-blue-50 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-800 rounded-xl p-3 text-center sm:text-left space-y-1">
+                    <p className="text-sm text-blue-800 dark:text-blue-200">
                         <strong>{t('common.howToUse') || 'Cómo usar'}:</strong>{' '}
                         {t('settings.iosShortcut.instructionsShort') ||
                             'Tocá "Instalar" si estás en tu iPhone, o escaneá el QR desde otro dispositivo.'}
+                    </p>
+                    <p className="text-xs text-blue-600 dark:text-blue-300">
+                        {t('settings.iosShortcut.copyIdHint') ||
+                            'Copiá tu ID antes de instalar. El shortcut te lo pedirá al configurarse.'}
                     </p>
                 </div>
 

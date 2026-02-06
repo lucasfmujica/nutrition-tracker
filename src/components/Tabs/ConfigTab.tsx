@@ -164,9 +164,9 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                             '🦾',
                             '🧠',
                             '❤️',
-                            '🌟',
+                            '♟️',
                             '👑',
-                            '🎪',
+                            '♞',
                         ].map((emoji) => (
                             <button
                                 key={emoji}

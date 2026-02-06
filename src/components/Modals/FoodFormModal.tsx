@@ -173,7 +173,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
 
     return (
         <div
-            className="fixed inset-0 bg-slate-900/40 flex items-start justify-center z-50 p-4 pt-12 pb-20 overflow-y-auto backdrop-blur-sm"
+            className="fixed inset-0 bg-slate-900/40 flex items-start justify-center z-50 p-4 pt-8 pb-24 overflow-y-auto backdrop-blur-sm"
             onClick={handleBackdropClick}>
             <div
                 className="bg-surface rounded-3xl p-4 lg:p-8 w-full max-w-sm lg:max-w-md border border-border shadow-2xl"
@@ -365,8 +365,8 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                     )}
 
                     {/* Row 1: Meal type + Time */}
-                    <div className="grid grid-cols-1 sm:grid-cols-[1.5fr_1fr] gap-3">
-                        <div>
+                    <div className="grid grid-cols-[1.5fr_1fr] gap-3">
+                        <div className="min-w-0">
                             <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                                 {t('modals.foodForm.meal')}
                             </label>
@@ -396,7 +396,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                 </option>
                             </select>
                         </div>
-                        <div>
+                        <div className="min-w-0">
                             <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                                 {t('modals.foodForm.time')}
                             </label>
@@ -406,7 +406,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                 onChange={(e) =>
                                     onFoodChange({ ...food, time: e.target.value })
                                 }
-                                className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all min-w-0"
                             />
                         </div>
                     </div>
@@ -432,8 +432,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                         <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                             {t('modals.foodForm.description')}
                         </label>
-                        <input
-                            type="text"
+                        <textarea
                             value={food.description || ''}
                             onChange={(e) =>
                                 onFoodChange({
@@ -441,8 +440,9 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                     description: e.target.value,
                                 })
                             }
+                            rows={3}
                             placeholder={t('modals.foodForm.descriptionPlaceholder')}
-                            className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                            className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-sm lg:text-base focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none overflow-y-auto max-h-32"
                         />
                     </div>
 
