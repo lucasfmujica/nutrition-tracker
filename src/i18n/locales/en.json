@@ -21,7 +21,6 @@
         "progress": "Progress",
         "oura": "Oura"
     },
-
     "oura": {
         "title": "Oura Ring",
         "subtitle": "Health and sleep data",
@@ -87,6 +86,14 @@
             "bedtime": "Bedtime",
             "wakeTime": "Wake Time",
             "basedOn": "Based on your 30-day average"
+        },
+        "oauth": {
+            "connect": "Connect with Oura",
+            "reconnect": "Reconnect with Oura",
+            "description": "Connect your Oura ring in one click to sync sleep, readiness and steps.",
+            "manualAdvanced": "Advanced: use manual token",
+            "connected": "Oura connected! Syncing data…",
+            "connectError": "Could not connect to Oura. Try again."
         }
     },
     "auth": {
@@ -186,7 +193,12 @@
         "perWeek": "Per week",
         "toGo": "To go",
         "estimatedDate": "Estimated date",
-        "trendDisclaimer": "Based on your actual trend from the last 14 days"
+        "trendDisclaimer": "Based on your actual trend from the last 14 days",
+        "empty": {
+            "title": "No weight entries",
+            "description": "Log your first weight to start seeing your trend and projection.",
+            "cta": "Log weight"
+        }
     },
     "proteinPacing": {
         "title": "Protein Pacing",
@@ -210,9 +222,10 @@
         "kcal": "kcal",
         "grams": "g",
         "weeks": "wk",
-        "days": "days"
+        "days": "days",
+        "min": "min",
+        "workouts": "workouts"
     },
-
     "adaptive": {
         "defaultBoostReason": "Training Day",
         "tennisMatch": "Tennis Match",
@@ -225,7 +238,6 @@
         "finishingTouch": "Finishing Touch",
         "suggestion": "Suggestion"
     },
-
     "errors": {
         "fetchWeeklyPlan": "Error fetching weekly plan",
         "deleteWeeklyPlanDay": "Error deleting day",
@@ -241,7 +253,6 @@
         "exportJournal": "Error generating food journal",
         "exportBiometrics": "Error generating biometrics report"
     },
-
     "export": {
         "journalExported": "Food journal exported successfully",
         "biometricsExported": "Biometrics report exported successfully",
@@ -281,7 +292,6 @@
             "activity": "Activity"
         }
     },
-
     "mealPrep": {
         "title": "Meal Planning",
         "subtitle": "Organize your week",
@@ -333,9 +343,10 @@
             "loadingWorkouts": "Loading workout schedule...",
             "generatingWithAI": "Generating plan with AI... (~30 seconds)",
             "savingMeals": "Saving meals to database..."
-        }
+        },
+        "rejectMeal": "Dislike",
+        "rejectMealConfirm": "Remove this meal from the plan and stop suggesting it?"
     },
-
     "config": {
         "title": "Settings",
         "subtitle": "Profile and goal settings",
@@ -432,6 +443,46 @@
         "smartHydration": {
             "title": "Smart Hydration",
             "subtitle": "Adjust daily target based on temperature and activity."
+        },
+        "notifications": {
+            "title": "Notifications",
+            "subtitle": "Local reminders while the app is open or installed",
+            "unsupported": "Your browser does not support notifications.",
+            "denied": "Notifications are blocked. Enable them in your browser settings.",
+            "disclaimer": "Reminders work while the app is open or installed as a PWA; they will not fire if it is fully closed.",
+            "hydration": {
+                "title": "Hydration",
+                "subtitle": "Reminder to drink water",
+                "interval": "Every (hours)",
+                "from": "From",
+                "to": "Until",
+                "notifTitle": "💧 Time to hydrate!",
+                "notifBody": "Drink a glass of water and log it in the app."
+            },
+            "meals": {
+                "title": "Meals",
+                "subtitle": "Reminder to log your meals",
+                "notifTitle": "🍽️ Did you log your meal?",
+                "notifBody": "Don't forget to log what you ate."
+            },
+            "weighIn": {
+                "title": "Weigh-in",
+                "subtitle": "Morning reminder to weigh yourself",
+                "notifTitle": "⚖️ Time to weigh in",
+                "notifBody": "Weigh yourself fasted and log your weight."
+            }
+        },
+        "dietary": {
+            "title": "Dietary preferences",
+            "subtitle": "Personalize AI suggestions and the weekly plan",
+            "mode": "Dietary mode",
+            "allergies": "Allergies and exclusions",
+            "allergiesPlaceholder": "E.g.: peanuts, shellfish… (Enter to add)",
+            "dislikedMeals": "Meals you dislike",
+            "dislikedMealsPlaceholder": "E.g.: liver, broccoli… (Enter to add)",
+            "rejectedMeals": "Rejected plan meals",
+            "clearRejected": "Clear all",
+            "rejectedMealsHelp": "Meals you reject in the weekly plan will not be suggested again for 30 days."
         }
     },
     "diary": {
@@ -501,6 +552,16 @@
             "side": "Side",
             "back": "Back",
             "other": "Other"
+        },
+        "foodItem": {
+            "edit": "Edit",
+            "delete": "Delete",
+            "saveFavorite": "Save as favorite",
+            "removeFavorite": "Remove from favorites"
+        },
+        "requests": {
+            "yesterday": "Yesterday",
+            "daysAgo": "{{count}} days ago"
         }
     },
     "social": {
@@ -524,7 +585,9 @@
             "noFriends": "No friends yet",
             "noFriendsDesc": "Add friends to see their progress and compete in the Leaderboard",
             "remove": "Remove friend",
-            "confirmRemove": "Confirm removal"
+            "confirmRemove": "Confirm removal",
+            "pending": "Pending",
+            "count": "friends"
         },
         "leaderboard": {
             "title": "Leaderboard",
@@ -605,7 +668,10 @@
             "pendingInvites_one": "{{count}} pending invitation",
             "pendingInvites_other": "{{count}} pending invitations",
             "empty": "No challenges yet",
-            "emptyDesc": "Create a challenge and compete with friends on steps, protein, workouts and more"
+            "emptyDesc": "Create a challenge and compete with friends on steps, protein, workouts and more",
+            "days": "days",
+            "daysLeft": "days left",
+            "pendingInvites": "Pending invitations"
         },
         "groups": {
             "all": "All Friends",
@@ -650,7 +716,8 @@
             "maintenance": "Maintenance",
             "target": "Goal",
             "consumed": "Consumed",
-            "remaining": "Remaining"
+            "remaining": "Remaining",
+            "syncStatus": "Synced"
         },
         "macros": {
             "protein": "Protein",
@@ -807,7 +874,8 @@
             "refeedLabel": "Refeed Day",
             "refeedDesc": "One day at {{calories}} kcal to reset metabolism",
             "deficitLabel": "10% Deficit",
-            "deficitDesc": "3 days at {{calories}} kcal to accelerate loss"
+            "deficitDesc": "3 days at {{calories}} kcal to accelerate loss",
+            "suggestion": "Consider adjusting your calories or adding activity this week."
         },
         "forecast": {
             "title": "Tomorrow's Outlook",
@@ -1049,7 +1117,8 @@
         "steps": "Steps",
         "progress": "Progress",
         "social": "Social",
-        "config": "Settings"
+        "config": "Settings",
+        "more": "More"
     },
     "layout": {
         "loading": "Loading...",
@@ -1132,7 +1201,7 @@
         "edit": "Edit",
         "add": "Add",
         "adding": "Adding...",
-        "optional": "optional",
+        "optional": "Optional",
         "new": "New",
         "search": "Search",
         "filter": "Filter",
@@ -1145,7 +1214,6 @@
         "loading": "Loading...",
         "error": "Error",
         "success": "Success",
-        "optional": "Optional",
         "required": "Required",
         "yes": "Yes",
         "no": "No",
@@ -1163,7 +1231,10 @@
         "perDay": "per day",
         "protein": "protein",
         "swipeToDelete": "Swipe to delete",
-        "saving": "Saving..."
+        "saving": "Saving...",
+        "user": "User",
+        "beta": "Beta",
+        "today": "Today"
     },
     "aiChef": {
         "title": "AI Chef",
@@ -1420,7 +1491,11 @@
         "save": "Save",
         "history": "HISTORY",
         "chartLabel": "7-day steps",
-        "unit": "steps"
+        "unit": "steps",
+        "empty": {
+            "title": "No steps data",
+            "description": "Log your steps manually or connect Oura / Apple Health to import them automatically."
+        }
     },
     "workouts": {
         "tennis": "Tennis",
@@ -1446,7 +1521,6 @@
         "time": "Time",
         "totalMinutes": "Total Minutes",
         "gym": "Gym",
-        "tennis": "Tennis",
         "sleep": "Sleep",
         "readiness": "Readiness",
         "logActivityPrompt": "Log your activity for today.",
@@ -1460,7 +1534,15 @@
         },
         "weeklyPlanSection": {
             "editHint": "Tap a day to change workout type",
-            "dayLabels": ["M", "T", "W", "T", "F", "S", "S"]
+            "dayLabels": [
+                "M",
+                "T",
+                "W",
+                "T",
+                "F",
+                "S",
+                "S"
+            ]
         },
         "personalRecords": "Personal Records",
         "newPR": "New PR",
@@ -1497,7 +1579,8 @@
                 "caution": "Fatigue signals detected. Moderate intensity today.",
                 "prime": "You're at your best! Ideal day for high intensity or PR.",
                 "normal": "Normal training capacity. Keep your planned pace.",
-                "needMoreData": "Need more data."
+                "needMoreData": "Need more data.",
+                "lowReadinessWarning": "Your readiness is low: consider a light workout today."
             },
             "warnings": {
                 "future": "Future date: This projection is based on your history. No real Oura or workout data for this date.",
@@ -1512,7 +1595,9 @@
                 "caution": "Caution",
                 "normal": "Normal",
                 "unknown": "Unknown"
-            }
+            },
+            "readiness": "Readiness",
+            "sleep": "Sleep"
         },
         "exercise": {
             "title": "Exercises",
@@ -1549,7 +1634,6 @@
             "exerciseName": "Exercise name"
         }
     },
-
     "food": {
         "camera": {
             "title": "Scan Food",
@@ -1630,7 +1714,6 @@
             "duplicate": "Duplicate"
         }
     },
-
     "progress": {
         "title": "Progress",
         "subtitle": "Photos, measurements and analytics",
@@ -1771,6 +1854,52 @@
             "title": "Your Story",
             "started": "You started",
             "lost": "You lost"
+        },
+        "photoSelection": {
+            "title": "Select photos",
+            "all": "All"
+        },
+        "angles": {
+            "front": "Front",
+            "side": "Side",
+            "back": "Back",
+            "other": "Other"
         }
+    },
+    "toast": {
+        "ouraSyncError": "Could not sync with Oura. Retry from the Oura tab.",
+        "refreshError": "Could not refresh data. Check your connection.",
+        "socialLoadError": "Could not load social data.",
+        "leaderboardError": "Could not load the leaderboard.",
+        "acceptRequestError": "Error accepting the request.",
+        "rejectRequestError": "Error rejecting the request.",
+        "removeFriendError": "Error removing friend.",
+        "reactionError": "Could not send the reaction.",
+        "syncExhausted": "Some changes could not be synced. Check your connection.",
+        "queuedOffline": "Offline: it will be saved automatically when you are back online.",
+        "deleteError": "Could not delete. Try again.",
+        "barcodeLookupError": "Product not found for the scanned barcode.",
+        "foodSearchError": "Error searching foods. Try again."
+    },
+    "meals": {
+        "breakfast": "Breakfast",
+        "lunch": "Lunch",
+        "dinner": "Dinner"
+    },
+    "profile": {
+        "goals": {
+            "cut": "Cut",
+            "maintain": "Maintain",
+            "bulk": "Bulk"
+        }
+    },
+    "captionGenerator": {
+        "generating": "Generating…",
+        "generate": "Generate caption",
+        "caption": "Caption",
+        "save": "Save",
+        "edit": "Edit",
+        "regenerate": "Regenerate",
+        "placeholder": "Your caption will appear here…"
     }
 }

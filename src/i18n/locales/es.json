@@ -21,7 +21,6 @@
         "progress": "Progreso",
         "oura": "Oura"
     },
-
     "oura": {
         "title": "Oura Ring",
         "subtitle": "Datos de salud y sueño",
@@ -87,9 +86,16 @@
             "bedtime": "Hora de dormir",
             "wakeTime": "Hora de despertar",
             "basedOn": "Basado en tu promedio de 30 días"
+        },
+        "oauth": {
+            "connect": "Conectar con Oura",
+            "reconnect": "Reconectar con Oura",
+            "description": "Conectá tu anillo Oura con un click para sincronizar sueño, readiness y pasos.",
+            "manualAdvanced": "Avanzado: usar token manual",
+            "connected": "¡Oura conectado! Sincronizando datos…",
+            "connectError": "No se pudo conectar con Oura. Probá de nuevo."
         }
     },
-
     "auth": {
         "login": {
             "title": "Iniciar Sesión",
@@ -187,7 +193,12 @@
         "perWeek": "Por semana",
         "toGo": "Para llegar",
         "estimatedDate": "Fecha estimada",
-        "trendDisclaimer": "Basado en tu tendencia real de los últimos 30 días"
+        "trendDisclaimer": "Basado en tu tendencia real de los últimos 30 días",
+        "empty": {
+            "title": "Sin registros de peso",
+            "description": "Registrá tu primer peso para empezar a ver tu tendencia y proyección.",
+            "cta": "Registrar peso"
+        }
     },
     "proteinPacing": {
         "title": "Protein Pacing",
@@ -217,7 +228,6 @@
         "workouts_other": "entrenos",
         "min": "min"
     },
-
     "adaptive": {
         "defaultBoostReason": "Día de Entreno",
         "tennisMatch": "Partido de Tenis",
@@ -230,7 +240,6 @@
         "finishingTouch": "Toque Final",
         "suggestion": "Sugerencia"
     },
-
     "errors": {
         "fetchWeeklyPlan": "Error al obtener el plan semanal",
         "deleteWeeklyPlanDay": "Error al borrar el día",
@@ -246,7 +255,6 @@
         "exportJournal": "Error al generar el diario",
         "exportBiometrics": "Error al generar el reporte de biométricos"
     },
-
     "export": {
         "journalExported": "Diario exportado correctamente",
         "biometricsExported": "Biométricos exportados correctamente",
@@ -286,7 +294,6 @@
             "activity": "Actividad"
         }
     },
-
     "mealPrep": {
         "title": "Planificación de Comidas",
         "subtitle": "Organiza tu semana",
@@ -296,8 +303,6 @@
         "repeatWeekSuccess": "Semana copiada exitosamente",
         "noMealsPlanned": "No hay comidas planificadas",
         "planFirstMeal": "Planifica tu primera comida para comenzar",
-        "addMeal": "Agregar Comida",
-        "completedMeals": "Comidas Completadas",
         "addMeal": {
             "title": "Agregar Comida",
             "useAIChef": "Usar AI Chef para Sugerencias",
@@ -308,6 +313,7 @@
             "notes": "Notas",
             "notesPlaceholder": "Receta, ingredientes, etc."
         },
+        "completedMeals": "Comidas Completadas",
         "categories": {
             "proteins": "Proteínas",
             "carbs": "Carbohidratos",
@@ -339,9 +345,10 @@
             "loadingWorkouts": "Cargando plan de entrenamientos...",
             "generatingWithAI": "Generando plan con IA... (~30 segundos)",
             "savingMeals": "Guardando comidas en base de datos..."
-        }
+        },
+        "rejectMeal": "No me gusta",
+        "rejectMealConfirm": "¿Quitar esta comida del plan y no volver a sugerirla?"
     },
-
     "config": {
         "title": "Configuración",
         "subtitle": "Ajustes de perfil y objetivos",
@@ -438,6 +445,46 @@
         "smartHydration": {
             "title": "Hidratación Inteligente",
             "subtitle": "Ajusta tu meta diaria según la temperatura y actividad."
+        },
+        "notifications": {
+            "title": "Notificaciones",
+            "subtitle": "Recordatorios locales mientras la app está abierta o instalada",
+            "unsupported": "Tu navegador no soporta notificaciones.",
+            "denied": "Las notificaciones están bloqueadas. Habilitalas en la configuración del navegador.",
+            "disclaimer": "Los recordatorios funcionan con la app abierta o instalada como PWA; no se disparan si está totalmente cerrada.",
+            "hydration": {
+                "title": "Hidratación",
+                "subtitle": "Recordatorio para tomar agua",
+                "interval": "Cada (horas)",
+                "from": "Desde",
+                "to": "Hasta",
+                "notifTitle": "💧 ¡Hora de hidratarse!",
+                "notifBody": "Tomá un vaso de agua y registralo en la app."
+            },
+            "meals": {
+                "title": "Comidas",
+                "subtitle": "Recordatorio para registrar tus comidas",
+                "notifTitle": "🍽️ ¿Registraste tu comida?",
+                "notifBody": "No te olvides de registrar lo que comiste."
+            },
+            "weighIn": {
+                "title": "Pesaje",
+                "subtitle": "Recordatorio matutino para pesarte",
+                "notifTitle": "⚖️ Hora de pesarte",
+                "notifBody": "Pesate en ayunas y registrá tu peso."
+            }
+        },
+        "dietary": {
+            "title": "Preferencias dietarias",
+            "subtitle": "Personalizá las sugerencias y el plan semanal de IA",
+            "mode": "Modo dietario",
+            "allergies": "Alergias y exclusiones",
+            "allergiesPlaceholder": "Ej: maní, mariscos… (Enter para agregar)",
+            "dislikedMeals": "Comidas que no te gustan",
+            "dislikedMealsPlaceholder": "Ej: hígado, brócoli… (Enter para agregar)",
+            "rejectedMeals": "Comidas rechazadas del plan",
+            "clearRejected": "Limpiar todo",
+            "rejectedMealsHelp": "Las comidas que rechaces en el plan semanal no se volverán a sugerir por 30 días."
         }
     },
     "diary": {
@@ -507,6 +554,16 @@
             "side": "Lado",
             "back": "Espalda",
             "other": "Otro"
+        },
+        "foodItem": {
+            "edit": "Editar",
+            "delete": "Eliminar",
+            "saveFavorite": "Guardar como favorito",
+            "removeFavorite": "Quitar de favoritos"
+        },
+        "requests": {
+            "yesterday": "Ayer",
+            "daysAgo": "hace {{count}} días"
         }
     },
     "social": {
@@ -530,7 +587,9 @@
             "noFriends": "Sin amigos aún",
             "noFriendsDesc": "Agrega amigos para ver sus progresos y competir en el Ranking",
             "remove": "Eliminar amigo",
-            "confirmRemove": "Confirmar eliminación"
+            "confirmRemove": "Confirmar eliminación",
+            "pending": "Pendiente",
+            "count": "amigos"
         },
         "leaderboard": {
             "title": "Ranking",
@@ -611,7 +670,10 @@
             "pendingInvites_one": "{{count}} invitación pendiente",
             "pendingInvites_other": "{{count}} invitaciones pendientes",
             "empty": "Sin desafíos",
-            "emptyDesc": "Creá un desafío y competí con tus amigos en pasos, proteína, entrenos y más"
+            "emptyDesc": "Creá un desafío y competí con tus amigos en pasos, proteína, entrenos y más",
+            "days": "días",
+            "daysLeft": "días restantes",
+            "pendingInvites": "Invitaciones pendientes"
         },
         "groups": {
             "all": "Todos",
@@ -656,7 +718,8 @@
             "maintenance": "Mantenimiento",
             "target": "Objetivo",
             "consumed": "Alimentos",
-            "remaining": "Restante"
+            "remaining": "Restante",
+            "syncStatus": "Sincronizado"
         },
         "macros": {
             "protein": "Proteína",
@@ -813,7 +876,8 @@
             "refeedLabel": "Día Refeed",
             "refeedDesc": "Un día a {{calories}} kcal para resetear el metabolismo",
             "deficitLabel": "Déficit 10%",
-            "deficitDesc": "3 días a {{calories}} kcal para acelerar la pérdida"
+            "deficitDesc": "3 días a {{calories}} kcal para acelerar la pérdida",
+            "suggestion": "Considerá ajustar tus calorías o sumar actividad esta semana."
         },
         "forecast": {
             "title": "Pronóstico Mañana",
@@ -1139,7 +1203,7 @@
         "edit": "Editar",
         "add": "Agregar",
         "adding": "Agregando...",
-        "optional": "opcional",
+        "optional": "Opcional",
         "new": "Nuevo",
         "search": "Buscar",
         "filter": "Filtrar",
@@ -1152,7 +1216,6 @@
         "loading": "Cargando...",
         "error": "Error",
         "success": "Éxito",
-        "optional": "Opcional",
         "required": "Requerido",
         "yes": "Sí",
         "no": "No",
@@ -1170,7 +1233,10 @@
         "perDay": "por día",
         "protein": "proteína",
         "swipeToDelete": "Desliza para eliminar",
-        "saving": "Guardando..."
+        "saving": "Guardando...",
+        "user": "Usuario",
+        "beta": "Beta",
+        "more": "Más"
     },
     "aiChef": {
         "title": "AI Chef",
@@ -1427,7 +1493,11 @@
         "save": "Guardar",
         "history": "HISTORIAL",
         "chartLabel": "Pasos 7 días",
-        "unit": "pasos"
+        "unit": "pasos",
+        "empty": {
+            "title": "Sin datos de pasos",
+            "description": "Cargá tus pasos manualmente o conectá Oura / Apple Health para importarlos automáticamente."
+        }
     },
     "workouts": {
         "tennis": "Tenis",
@@ -1453,7 +1523,6 @@
         "time": "Tiempo",
         "totalMinutes": "Minutos Totales",
         "gym": "Gym",
-        "tennis": "Tenis",
         "sleep": "Sueño",
         "readiness": "Readiness",
         "logActivityPrompt": "Registra tu actividad para hoy.",
@@ -1467,7 +1536,15 @@
         },
         "weeklyPlanSection": {
             "editHint": "Toca un día para cambiar el tipo de entrenamiento",
-            "dayLabels": ["L", "M", "X", "J", "V", "S", "D"]
+            "dayLabels": [
+                "L",
+                "M",
+                "X",
+                "J",
+                "V",
+                "S",
+                "D"
+            ]
         },
         "personalRecords": "Records Personales",
         "newPR": "Nuevo PR",
@@ -1566,7 +1643,6 @@
             "basedOn": "Promedio 30 días"
         }
     },
-
     "food": {
         "camera": {
             "title": "Escanear Comida",
@@ -1647,7 +1723,6 @@
             "duplicate": "Duplicar"
         }
     },
-
     "progress": {
         "title": "Progreso",
         "subtitle": "Fotos, medidas y análisis",
@@ -1788,6 +1863,52 @@
             "title": "Tu Historia",
             "started": "Empezaste",
             "lost": "Perdiste"
+        },
+        "photoSelection": {
+            "title": "Seleccionar fotos",
+            "all": "Todas"
+        },
+        "angles": {
+            "front": "Frente",
+            "side": "Perfil",
+            "back": "Espalda",
+            "other": "Otro"
         }
+    },
+    "toast": {
+        "ouraSyncError": "No se pudo sincronizar con Oura. Reintentá desde la pestaña Oura.",
+        "refreshError": "No se pudieron actualizar los datos. Verificá tu conexión.",
+        "socialLoadError": "No se pudieron cargar los datos sociales.",
+        "leaderboardError": "No se pudo cargar el ranking.",
+        "acceptRequestError": "Error al aceptar la solicitud.",
+        "rejectRequestError": "Error al rechazar la solicitud.",
+        "removeFriendError": "Error al eliminar amigo.",
+        "reactionError": "No se pudo enviar la reacción.",
+        "syncExhausted": "No se pudieron sincronizar algunos cambios. Revisá tu conexión.",
+        "queuedOffline": "Sin conexión: se guardará automáticamente cuando vuelva internet.",
+        "deleteError": "No se pudo eliminar. Probá de nuevo.",
+        "barcodeLookupError": "No se encontró el producto del código escaneado.",
+        "foodSearchError": "Error al buscar alimentos. Probá de nuevo."
+    },
+    "meals": {
+        "breakfast": "Desayuno",
+        "lunch": "Almuerzo",
+        "dinner": "Cena"
+    },
+    "profile": {
+        "goals": {
+            "cut": "Déficit",
+            "maintain": "Mantenimiento",
+            "bulk": "Volumen"
+        }
+    },
+    "captionGenerator": {
+        "generating": "Generando…",
+        "generate": "Generar caption",
+        "caption": "Caption",
+        "save": "Guardar",
+        "edit": "Editar",
+        "regenerate": "Regenerar",
+        "placeholder": "Tu caption aparecerá acá…"
     }
 }

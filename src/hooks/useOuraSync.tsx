@@ -202,6 +202,13 @@ export const useOuraSync = ({
                 return { status: 'skipped', reason: 'cooldown' };
             }
 
+            // No token configured: nothing to sync (not an error)
+            const token = await getOuraToken();
+            if (!token) {
+                console.log('[OuraSync] Skipping sync: no Oura token configured');
+                return { status: 'skipped', reason: 'no_token' };
+            }
+
             setIsSyncing(true);
             setSyncStatus('syncing');
 
@@ -308,9 +315,12 @@ export const useOuraSync = ({
                 return { status: 'success' };
             } catch (err: any) {
                 console.error('[OuraSync] Sync Failed:', err);
-                // Log error but do not block UI; surface feedback via toast
                 setSyncStatus('error');
-                toast.error(i18n.t('toast.ouraSyncError'));
+                // Stamp lastSync so the daily auto-sync effect doesn't
+                // retry-loop on persistent failures (rerenders re-trigger it)
+                localStorage.setItem(storageKey, now.toString());
+                // Only toast on user-initiated syncs; auto-sync stays quiet
+                if (force) toast.error(i18n.t('toast.ouraSyncError'));
                 // Do NOT throw, just return error status
                 return { status: 'error', error: err.message };
             } finally {
