@@ -30,6 +30,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         // Step 3: Training & Devices
         trainingDaysPerWeek: 4,
         primaryGoal: 'maintain',
+        goalWeight: '', // vacío = usar la sugerencia (-5kg / +3kg según objetivo)
         hasOuraRing: false, // Multi-user: Oura Ring support
         unitSystem: 'metric' as 'metric' | 'imperial',
     });
@@ -104,12 +105,18 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
             const { weightKg, heightCm } = toMetric(formData);
             const currentWeight = weightKg || 70;
 
-            // Inferir goal_weight basado en primaryGoal
+            // Peso objetivo: lo que ingresó el usuario (en sus unidades), o inferido del objetivo
+            const isImperial = formData.unitSystem === 'imperial';
+            const rawGoalWeight = parseFloat(formData.goalWeight);
             let goalWeight = currentWeight;
-            if (formData.primaryGoal === 'lose') {
-                goalWeight = currentWeight - 5; // objetivo: -5kg
+            if (rawGoalWeight) {
+                goalWeight = isImperial
+                    ? Math.round((rawGoalWeight / 2.20462) * 10) / 10
+                    : rawGoalWeight;
+            } else if (formData.primaryGoal === 'lose') {
+                goalWeight = currentWeight - 5; // sugerencia: -5kg
             } else if (formData.primaryGoal === 'gain') {
-                goalWeight = currentWeight + 3; // objetivo: +3kg
+                goalWeight = currentWeight + 3; // sugerencia: +3kg
             }
 
             // Inferir activity_level basado en trainingDaysPerWeek

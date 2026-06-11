@@ -1466,7 +1466,9 @@
                 "oura": "Oura Ring:",
                 "ouraActive": "✓ Active (token required)",
                 "days": "days"
-            }
+            },
+            "goalWeight": "Goal weight",
+            "goalWeightHint": "Leave empty to use the suggested value"
         },
         "navigation": {
             "back": "Back",

@@ -79,6 +79,35 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
                 </div>
             </div>
 
+            {/* Goal Weight (solo si quiere bajar o subir) */}
+            {(data.primaryGoal === 'lose' || data.primaryGoal === 'gain') && (
+                <div>
+                    <label className="block text-sm text-text-tertiary mb-1.5">
+                        {t('onboarding.step3.goalWeight')} (
+                        {data.unitSystem === 'imperial' ? 'lbs' : 'kg'})
+                    </label>
+                    <input
+                        type="number"
+                        value={data.goalWeight}
+                        onChange={(e) => updateField('goalWeight', e.target.value)}
+                        placeholder={(() => {
+                            const w = parseFloat(data.currentWeight);
+                            if (!w) return '';
+                            const isImperial = data.unitSystem === 'imperial';
+                            const delta =
+                                data.primaryGoal === 'lose'
+                                    ? isImperial ? -11 : -5
+                                    : isImperial ? 6.6 : 3;
+                            return String(Math.round((w + delta) * 10) / 10);
+                        })()}
+                        className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white text-center text-lg"
+                    />
+                    <p className="text-xs text-text-tertiary mt-1">
+                        {t('onboarding.step3.goalWeightHint')}
+                    </p>
+                </div>
+            )}
+
             <div>
                 <label className="block text-sm text-text-tertiary mb-3">
                     {t('onboarding.step3.trainingDays')}
