@@ -567,7 +567,45 @@
             "participants": "participants",
             "join": "Join Challenge",
             "joined": "Joined",
-            "view": "View Details"
+            "view": "View Details",
+            "create": "Create Challenge",
+            "createTitle": "New Challenge",
+            "creating": "Creating...",
+            "created": "Challenge created!",
+            "createError": "Failed to create challenge",
+            "loadError": "Failed to load challenges",
+            "respondError": "Failed to respond to invitation",
+            "titleLabel": "Title",
+            "titlePlaceholder": "E.g. Step week",
+            "metricLabel": "Metric",
+            "metrics": {
+                "steps": "Steps",
+                "protein": "Protein",
+                "workouts": "Workouts",
+                "water": "Water",
+                "logging_streak": "Logging days"
+            },
+            "durationLabel": "Duration",
+            "days_one": "{{count}} day",
+            "days_other": "{{count}} days",
+            "goalLabel": "Goal (optional)",
+            "goalPlaceholder": "E.g. 70000",
+            "goal": "Goal",
+            "inviteLabel": "Invite friends",
+            "noFriendsToInvite": "Add friends to challenge them",
+            "invitations": "Invitations",
+            "active": "Active",
+            "finishedSection": "Finished",
+            "finished": "Finished",
+            "daysLeft_one": "{{count}} day left",
+            "daysLeft_other": "{{count}} days left",
+            "winner": "Winner: {{name}}",
+            "accept": "Accept",
+            "decline": "Decline",
+            "pendingInvites_one": "{{count}} pending invitation",
+            "pendingInvites_other": "{{count}} pending invitations",
+            "empty": "No challenges yet",
+            "emptyDesc": "Create a challenge and compete with friends on steps, protein, workouts and more"
         },
         "groups": {
             "all": "All Friends",
@@ -1046,6 +1084,27 @@
             "steps": "Steps",
             "install": "Install",
             "copyIdHint": "Copy your ID before installing. The shortcut will ask for it during setup."
+        },
+        "appleHealth": {
+            "title": "Apple Health",
+            "subtitle": "Sync steps, weight, workouts and sleep from your iPhone",
+            "lastSync": "Last sync received:",
+            "noSync": "No sync has been received from Apple Health yet.",
+            "endpoint": "Endpoint:",
+            "userId": "Your ID:",
+            "apiKey": "API Key:",
+            "apiKeyMissing": "The API key (VITE_SYNC_API_KEY) is not configured in this environment. Ask the administrator or copy the server's SYNC_API_KEY value.",
+            "howTo": "How to create the iOS Shortcut",
+            "bodyExample": "Example JSON body (POST):",
+            "dedupeNote": "Manual and Oura entries always win: the sync never overwrites an existing entry for the day. Imported workouts are tagged with [apple_health].",
+            "steps": [
+                "Open the Shortcuts app on your iPhone and create a new shortcut.",
+                "Add \"Find Health Samples\" actions: today's steps (sum), latest weight, and optionally today's sleep and workouts.",
+                "Add a \"Get Contents of URL\" action with the endpoint URL above.",
+                "Set it to POST with a JSON body, shaped like the example below, pasting your API key, your ID and the Health variables.",
+                "Run the shortcut once: the response should say \"success\": true.",
+                "In the Automation tab, create a Personal Automation → Time of Day (e.g. 11:30 PM, daily) → Run Shortcut, and turn off \"Ask Before Running\"."
+            ]
         }
     },
     "common": {
@@ -1508,6 +1567,22 @@
             "ingredientsPlaceholderName": "Chorizo Steak",
             "macrosLabel": "Macronutrients",
             "adjustPortion": "Adjust Portion"
+        },
+        "voice": {
+            "button": "Dictate Meal",
+            "listening": "Listening... (tap to stop)",
+            "processing": "Analyzing what you ate...",
+            "useKeyboard": "I'd rather type it",
+            "useMic": "Use microphone",
+            "notSupported": "Your browser doesn't support voice dictation (e.g. iOS Safari). Type what you ate:",
+            "textPlaceholder": "Describe your meal, e.g. 2 eggs and avocado toast",
+            "parseButton": "Analyze",
+            "errorPermission": "Microphone permission denied. Enable it in your browser settings or type your meal.",
+            "errorNoSpeech": "No speech detected. Try again, speaking closer to the microphone.",
+            "errorGeneric": "Error capturing audio. Please try again.",
+            "errorNoFood": "No food detected in what you said. Try describing it again.",
+            "errorParse": "Error analyzing your meal with AI. Please try again.",
+            "retry": "Retry"
         },
         "validation": {
             "fileTooLarge": "Image too large ({{size}}MB). Maximum: 10MB",

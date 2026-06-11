@@ -18,7 +18,9 @@ import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
 import { useFoodAnalysis } from '../../hooks/useFoodAnalysis';
 import { useSmartMealType } from '../../hooks/useSmartMealType';
+import { ParsedMealResult } from '../../services/ai/voiceMealService';
 import { getArgentinaDateString, getCurrentTimeString } from '../../utils/dateUtils';
+import { FoodVoiceInput } from './FoodVoiceInput';
 import { PortionAdjustmentUI } from './PortionAdjustmentUI';
 
 interface FoodItem {
@@ -53,6 +55,10 @@ export const FoodCameraInput: React.FC = () => {
         fiber: 0,
     });
     const [selectedMealType, setSelectedMealType] = useState('');
+
+    // Voice flow: when true, show the same edit view with voice-parsed data
+    const [hasVoiceResult, setHasVoiceResult] = useState(false);
+    const [entrySource, setEntrySource] = useState<'ai-photo' | 'ai-voice'>('ai-photo');
 
     // Portion adjustment phase
     const [showPortionAdjust, setShowPortionAdjust] = useState(false);
@@ -104,11 +110,35 @@ export const FoodCameraInput: React.FC = () => {
             setSelectedMealType(getAutoMealType(fileDate));
 
             // Go directly to edit view (not portion adjustment)
+            setEntrySource('ai-photo');
             setShowPortionAdjust(false);
         }
 
         // Reset file input
         e.target.value = '';
+    };
+
+    /**
+     * Handle voice-parsed meal - feed into the same editable review flow
+     */
+    const handleVoiceParsed = (parsed: ParsedMealResult) => {
+        const macros = {
+            calories: parsed.totals.calories,
+            protein: parsed.totals.protein,
+            carbs: parsed.totals.carbs,
+            fat: parsed.totals.fat,
+            fiber: 0,
+        };
+        setBaseMacros(macros);
+        setEditableMacros(macros);
+        setEditableMeal(parsed.mealName);
+        setEditableItems(
+            parsed.items.map((item) => ({ name: item.name, amount: item.quantity })),
+        );
+        setSelectedMealType(parsed.mealType);
+        setEntrySource('ai-voice');
+        setShowPortionAdjust(false);
+        setHasVoiceResult(true);
     };
 
     /**
@@ -138,7 +168,7 @@ export const FoodCameraInput: React.FC = () => {
                 carbs: editableMacros.carbs || 0,
                 fat: editableMacros.fat || 0,
                 fiber: editableMacros.fiber || 0,
-                source: 'ai-photo',
+                source: entrySource,
             } as any;
 
             // Save to database via TrackerContext
@@ -156,6 +186,7 @@ export const FoodCameraInput: React.FC = () => {
                 fiber: 0,
             });
             setSelectedMealType('');
+            setHasVoiceResult(false);
         } catch (err) {
             console.error('[FoodCameraInput] Error saving food entry:', err);
             alert(t('common.error'));
@@ -183,10 +214,13 @@ export const FoodCameraInput: React.FC = () => {
         setSelectedMealType('');
         setShowPortionAdjust(false);
         setBaseMacros({ calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 });
+        setHasVoiceResult(false);
     };
 
+    const hasResult = Boolean(result) || hasVoiceResult;
+
     // If showing portion adjustment view
-    if (result && showPortionAdjust) {
+    if (hasResult && showPortionAdjust) {
         return (
             <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border">
                 <PortionAdjustmentUI
@@ -204,7 +238,7 @@ export const FoodCameraInput: React.FC = () => {
     }
 
     // If showing results/edit view
-    if (result && !showPortionAdjust) {
+    if (hasResult && !showPortionAdjust) {
         return (
             <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border space-y-4">
                 {/* Header */}
@@ -454,6 +488,9 @@ export const FoodCameraInput: React.FC = () => {
                     <ImageIcon className="w-5 h-5" />
                     {t('food.camera.galleryButton')}
                 </button>
+
+                {/* Voice input - same review flow as camera */}
+                <FoodVoiceInput onParsed={handleVoiceParsed} disabled={isLoading} />
             </div>
 
             <p className="text-xs text-text-tertiary text-center mt-3">

@@ -18,6 +18,7 @@ import {
     parseWeightToKg,
 } from '../../utils/unitUtils';
 import { DietaryPreferences } from '../Settings/DietaryPreferences';
+import { AppleHealthSetup } from '../Settings/AppleHealthSetup';
 import { IOSShortcutQR } from '../Settings/iOSShortcutQR';
 import { NotificationSettings } from '../Settings/NotificationSettings';
 import { OuraTokenSetup } from '../Settings/OuraTokenSetup';
@@ -889,6 +890,9 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     }
                 />
             )}
+
+            {/* Apple Health Integration */}
+            {userId && <AppleHealthSetup userId={userId} />}
 
             {/* Sync Status */}
             <div className="bg-blue-50/50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 border-dashed rounded-2xl p-4 flex items-center justify-between">

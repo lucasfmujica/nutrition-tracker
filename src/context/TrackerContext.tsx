@@ -1,13 +1,4 @@
-import React, {
-    createContext,
-    ReactNode,
-    useCallback,
-    useContext,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+import React, { createContext, ReactNode, useContext, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBiometrics } from '../hooks/useBiometrics';
 import { useDataOperations } from '../hooks/useDataOperations';
@@ -26,12 +17,17 @@ import { useTrackerAnalytics } from '../hooks/useTrackerAnalytics';
 import { useTrackerSync } from '../hooks/useTrackerSync';
 import { useTrackerUIState } from '../hooks/useTrackerUIState';
 import { useWeeklyPlan } from '../hooks/useWeeklyPlan';
-import { useWeeklySnapshot } from '../hooks/useWeeklySnapshot';
 import { useWeightEditing } from '../hooks/useWeightEditing';
 import { useWorkoutEntry } from '../hooks/useWorkoutEntry';
 import { useWorkouts } from '../hooks/useWorkouts';
 import { UnitSystem } from '../types/domain';
-import { Database } from '../types/supabase';
+import { useCloudGate } from './tracker/useCloudGate';
+import { useEntryDomain } from './tracker/useEntryDomain';
+import { useHealthDomains } from './tracker/useHealthDomains';
+import { useIntegrationsDomain } from './tracker/useIntegrationsDomain';
+import { useIntelligenceDomain } from './tracker/useIntelligenceDomain';
+import { useSyncDomain } from './tracker/useSyncDomain';
+import { useUiHelpersDomain } from './tracker/useUiHelpersDomain';
 
 // Define the shape of the Context
 // Note: Many of these types are inferred as 'any' currently because the sub-hooks are not yet migrated to TypeScript.
@@ -77,51 +73,29 @@ interface TrackerProviderProps {
     children: ReactNode;
 }
 
+/**
+ * TrackerProvider — thin composer over the domain hooks in ./tracker/.
+ *
+ * IMPORTANT: the call order of the domain hooks below is load-bearing and
+ * mirrors the original monolithic implementation (cloud gate -> ui state ->
+ * health domains -> sync -> intelligence -> entry -> integrations -> ui
+ * helpers). There are subtle dependencies between sync, the offline Vault and
+ * initial hydration — do not reorder.
+ *
+ * Re-renders: the context value is a single useMemo'd object. We deliberately
+ * did NOT split the provider into multiple contexts (data vs. actions):
+ * several "stable" actions close over fast-changing domain objects
+ * (nutrition, biometrics, uiState), so a split would either change identity
+ * semantics or require consumer changes — both out of scope for this
+ * conservative refactor.
+ */
 export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) => {
     // Service Layer
     const supabase = useSupabase();
     const { i18n } = useTranslation();
 
-    // CRITICAL FIX: Unified useCloud flag with stability during token refresh
-    // Single source of truth for cloud connectivity status
-    const [offlineMode, setOfflineMode] = useState<boolean>(false);
-    const [useCloud, setUseCloud] = useState<boolean>(false);
-    const useCloudRef = useRef<boolean>(false);
-    const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-    // CRITICAL: Debounced useCloud calculation to prevent data loss during token refresh
-    // Token refresh causes isAuthenticated to briefly flip to false (50-100ms window)
-    // Without debouncing, writes during this window would not be queued in The Vault
-    useEffect(() => {
-        const newValue = Boolean(
-            supabase.isAuthenticated && !offlineMode && supabase.isOnline,
-        );
-
-        // If switching to FALSE, debounce for 200ms to avoid transient auth states
-        if (!newValue && useCloudRef.current) {
-            if (debounceTimerRef.current) {
-                clearTimeout(debounceTimerRef.current);
-            }
-            debounceTimerRef.current = setTimeout(() => {
-                useCloudRef.current = newValue;
-                setUseCloud(newValue);
-            }, 200); // 200ms debounce protects against token refresh
-        } else {
-            // If switching to TRUE, apply immediately (no need to delay recovery)
-            if (debounceTimerRef.current) {
-                clearTimeout(debounceTimerRef.current);
-                debounceTimerRef.current = null;
-            }
-            useCloudRef.current = newValue;
-            setUseCloud(newValue);
-        }
-
-        return () => {
-            if (debounceTimerRef.current) {
-                clearTimeout(debounceTimerRef.current);
-            }
-        };
-    }, [supabase.isAuthenticated, offlineMode, supabase.isOnline]);
+    // Unified useCloud flag (debounced against token-refresh flicker)
+    const { offlineMode, setOfflineMode, useCloud } = useCloudGate(supabase);
 
     // 0. Shared state for templates (needed by both sync and template hook)
     const [mealTemplatesData, setMealTemplatesData] = useState<any[]>([]); // TODO: Type with Database['public']['Tables']['meal_templates']['Row'][]
@@ -129,279 +103,76 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
     // 1. UI State (extracted hook)
     const uiState = useTrackerUIState();
 
-    // 2. Core Domains - all use the same useCloud
-    const workouts = useWorkouts(supabase, useCloud);
-    const biometrics = useBiometrics(supabase, useCloud);
-    const weeklyPlanHook = useWeeklyPlan(supabase.user?.id);
-
-    // 3. Modo Escudo (Safety Net)
-    const safetyNet = useSafetyNet(
-        biometrics.profile,
-        biometrics.customTargets,
-        biometrics.saveProfile,
-    );
-
-    // 4. Nutrition with Safety Net integration
-    const nutrition = useNutrition(
-        supabase,
-        useCloud,
-        biometrics.customTargets,
-        undefined,
-        safetyNet.getSafetyNetTargetsForDate,
-        safetyNet.shouldTagAsSafetyNetDay,
-        workouts.workoutLog,
-        weeklyPlanHook.plan, // Pass plan to nutrition
-    );
-
-    // 5. Weight Editing (extracted hook)
-    const weightEditing = useWeightEditing(biometrics);
+    // 2-5. Core health domains (workouts, biometrics, weekly plan, safety
+    // net, nutrition, weight editing)
+    const { workouts, biometrics, weeklyPlanHook, safetyNet, nutrition, weightEditing } =
+        useHealthDomains(supabase, useCloud);
 
     // 6. Sync Orchestrator
-    const trackerSync = useTrackerSync({
+    const trackerSync = useSyncDomain({
         supabase,
         useCloud,
         offlineMode,
         setOfflineMode,
-        // Setters for initial load
-        setProfile: biometrics.setProfile,
-        setCustomTargets: biometrics.setCustomTargets,
-        setWeightHistory: biometrics.setWeightHistory,
-        setFoodLog: nutrition.setFoodLog,
-        setWorkoutLog: workouts.setWorkoutLog,
-        setStepsLog: biometrics.setStepsLog,
-        setOuraLog: biometrics.setOuraLog,
-        setWaterLog: nutrition.setWaterLog,
+        biometrics,
+        nutrition,
+        workouts,
         setMealTemplates: setMealTemplatesData,
-        setSyncStatus: undefined, // Will be populated from trackerSync.setSaveStatus internally
-        // Data for Force Sync
-        foodLog: nutrition.foodLog,
-        workoutLog: workouts.workoutLog,
-        stepsLog: biometrics.stepsLog,
-        ouraLog: biometrics.ouraLog,
-        waterLog: nutrition.waterLog,
-        weightHistory: biometrics.weightHistory,
     });
 
-    // 7. updateConfig closure (must be defined BEFORE analytics)
-    const updateConfigClosure = useCallback(
-        async (newProfile: any, newTargets: any) => {
-            biometrics.setProfile(newProfile);
-            biometrics.setCustomTargets(newTargets);
-            try {
-                if (newProfile !== biometrics.profile)
-                    await biometrics.saveProfile(newProfile);
-                if (newTargets !== biometrics.customTargets)
-                    await biometrics.saveTargets(newTargets);
-            } catch (err) {
-                console.error('[TrackerContext] Error updating config:', err);
-            }
-        },
-        [biometrics],
-    );
-
-    // 8. Analytics & Intelligence (extracted hook - WITH date reactivity)
-    const analytics = useTrackerAnalytics({
-        dashboardDate: uiState.dashboardDate, // ✅ CRITICAL FIX: Date-reactive
+    // 7-9. Analytics, Intelligence & Actions (updateConfig defined inside,
+    // before analytics)
+    const { updateConfig, analytics, actions } = useIntelligenceDomain({
+        uiState,
         biometrics,
         nutrition,
         workouts,
         safetyNet,
-        updateConfig: updateConfigClosure, // ✅ FIX: Pass real function instead of null
-    });
-
-    // 9. Actions (extracted hook)
-    const actions = useTrackerActions({
-        nutrition,
-        biometrics,
-        workouts,
         trackerSync,
     });
 
-    // Override updateConfig in actions (needed for dynamicTargets)
-    const updateConfig = updateConfigClosure;
-
-    // 10. Operations (Legacy hooks support)
-    const dataOperations = useDataOperations({
-        foodLog: nutrition.foodLog,
-        saveFoodLog: nutrition.saveFoodLog,
-        workoutLog: workouts.workoutLog,
-        saveWorkoutLog: workouts.saveWorkoutLog,
-        saveFoodEntry: nutrition.saveFoodEntry,
-        saveWorkoutEntry: workouts.saveWorkoutEntry,
+    // 10-16. Data entry & operations (import/export, food/workout entry,
+    // fast-log, meal templates, global delete)
+    const {
+        dataOperations,
+        exportDoc,
+        foodEntry,
+        quickLog,
+        workoutEntry,
+        mealTemplates,
+        globalDelete,
+    } = useEntryDomain({
         supabase,
         useCloud,
-        showImportFoodModal: uiState.showImportFoodModal,
-        setShowImportFoodModal: uiState.setShowImportFoodModal,
-        showImportWorkoutModal: uiState.showImportWorkoutModal,
-        setShowImportWorkoutModal: uiState.setShowImportWorkoutModal,
-        dashboardDate: uiState.dashboardDate,
-    });
-
-    // 11. Export
-    const exportDoc = useExport(
-        {
-            profile: biometrics.profile,
-            setProfile: biometrics.setProfile,
-            customTargets: biometrics.customTargets,
-            setCustomTargets: biometrics.setCustomTargets,
-            weightHistory: biometrics.weightHistory,
-            saveWeightHistory: biometrics.saveWeightHistory,
-            foodLog: nutrition.foodLog,
-            saveFoodLog: nutrition.saveFoodLog,
-            workoutLog: workouts.workoutLog,
-            saveWorkoutLog: workouts.saveWorkoutLog,
-            stepsLog: biometrics.stepsLog,
-            saveStepsLog: biometrics.saveStepsLog,
-            ouraLog: biometrics.ouraLog,
-            saveOuraLog: biometrics.saveOuraLog,
-            getMostRecentWeight: biometrics.getMostRecentWeight,
-            getTotalsForDate: nutrition.getTotalsForDate,
-            getTargetsForDate: nutrition.getTargetsForDate,
-            getStepsForDate: (date: string) =>
-                biometrics.stepsLog.find((s: any) => s.date === date)?.steps || 0,
-            getWorkoutsForDate: (date: string) =>
-                workouts.workoutLog.filter((entry: any) => entry.date === date),
-        },
-        analytics,
-        analytics.weightAnalytics,
-    );
-
-    // 12. Food Entry
-    const foodEntry = useFoodEntry({
-        foodLog: nutrition.foodLog,
-        saveFoodLog: nutrition.saveFoodLog,
-        saveFoodEntry: nutrition.saveFoodEntry,
-        setSaveStatus: trackerSync.setSaveStatus,
-    });
-
-    // 13. Fast-Log Library
-    const quickLog = useQuickLog(nutrition.foodLog, nutrition.saveFoodEntry);
-
-    // 14. Workout Entry
-    const workoutEntry = useWorkoutEntry({
-        workoutLog: workouts.workoutLog,
-        saveWorkoutLog: workouts.saveWorkoutLog,
-        saveWorkoutEntry: workouts.saveWorkoutEntry,
-    });
-
-    // 15. Meal Templates
-    const mealTemplates = useMealTemplates({
-        mealTemplates: mealTemplatesData,
-        setMealTemplates: setMealTemplatesData,
-        storage: actions.storage,
-        setSaveStatus: trackerSync.setSaveStatus,
-        selectedFoodDate: uiState.selectedFoodDate,
-        saveFoodLog: nutrition.saveFoodLog,
-        foodLog: nutrition.foodLog,
-        saveFoodEntry: nutrition.saveFoodEntry,
-        saveTemplate: supabase.saveTemplate,
-        deleteTemplateDb: supabase.deleteTemplateDb,
-        useCloud,
-    });
-
-    // 16. Global Delete Actions
-    const globalDelete = useGlobalDelete(
+        uiState,
+        trackerSync,
+        biometrics,
         nutrition,
         workouts,
-        biometrics,
+        analytics,
+        actions,
+        mealTemplatesData,
+        setMealTemplatesData,
+    });
+
+    // 17-19. Integrations (Oura, Social, Weekly Snapshot)
+    const { ouraSync, social } = useIntegrationsDomain({
         supabase,
         useCloud,
-    );
-
-    // 17. Oura Sync Service
-    const ouraSync = useOuraSync({
-        saveOuraEntry: biometrics.saveOuraEntry,
-        saveStepsEntry: biometrics.saveStepsEntry,
-        ouraPersonalToken: biometrics.profile?.ouraPersonalToken,
-        profile: biometrics.profile,
-        stepsLog: biometrics.stepsLog,
-        saveProfile: biometrics.saveProfile,
+        biometrics,
+        nutrition,
+        workouts,
     });
 
-    // 18. Social Feature
-    const social = useSocial({
-        supabase: {
-            user: supabase.user,
-            isOnline: supabase.isOnline,
-            isAuthenticated: supabase.isAuthenticated,
-        },
-        useCloud,
-    });
-
-    // 19. Weekly Snapshot Generation (for leaderboards)
-    useWeeklySnapshot({
-        userId: supabase.user?.id,
-        weightHistory: biometrics.weightHistory,
-        workoutLog: workouts.workoutLog,
-        foodLog: nutrition.foodLog,
-        targetCalories: biometrics.profile?.targetCalories || 2000,
-        useCloud,
-    });
-
-    // 20. UI Helpers
-    const changeDate = useCallback(
-        (days: number) => {
-            const targetTab = uiState.activeTab;
-            if (targetTab === 'dashboard') {
-                uiState.setDashboardDate((prev) => actions.changeDate(prev, days));
-            } else if (targetTab === 'comidas') {
-                uiState.setSelectedFoodDate((prev) => actions.changeDate(prev, days));
-            } else if (targetTab === 'entrenos') {
-                uiState.setSelectedWorkoutDate((prev) =>
-                    actions.changeDate(prev, days),
-                );
-            } else if (targetTab === 'pasos') {
-                uiState.setStepsDate((prev) => actions.changeDate(prev, days));
-            }
-        },
-        [uiState, actions],
-    );
-
-    const getWaterDataForDate = useCallback(
-        (date: string) => {
-            const entry = nutrition.getWaterForDate(date);
-            return {
-                ml: entry.ml || 0,
-                glasses: entry.glasses || 0,
-                entries: entry.glasses > 0 ? [entry] : [],
-            };
-        },
-        [nutrition],
-    );
-
-    const addStepsEntry = useCallback(async () => {
-        if (!uiState.newSteps) return;
-        const entry = {
-            id: `s-${uiState.stepsDate}`,
-            date: uiState.stepsDate,
-            steps: parseInt(uiState.newSteps) || 0,
-        };
-        await biometrics.saveStepsEntry(entry);
-        uiState.setNewSteps('');
-    }, [uiState, biometrics]);
-
-    // 21. Unit System
-    const [unitSystem, setUnitSystem] = useState<UnitSystem>(
-        biometrics.profile?.unitSystem || 'metric',
-    );
-
-    // Sync local state with profile changes from cloud/DB
-    useEffect(() => {
-        if (
-            biometrics.profile?.unitSystem &&
-            biometrics.profile.unitSystem !== unitSystem
-        ) {
-            setUnitSystem(biometrics.profile.unitSystem);
-        }
-    }, [biometrics.profile?.unitSystem]);
-
-    const updateUnitSystem = async (system: UnitSystem) => {
-        setUnitSystem(system);
-        if (biometrics.profile) {
-            const newProfile = { ...biometrics.profile, unitSystem: system };
-            await biometrics.saveProfile(newProfile);
-        }
-    };
+    // 20-21. UI Helpers & Unit System
+    const {
+        changeDate,
+        getWaterDataForDate,
+        addStepsEntry,
+        unitSystem,
+        setUnitSystem,
+        updateUnitSystem,
+    } = useUiHelpersDomain({ uiState, actions, biometrics, nutrition });
 
     // Combine everything into value
     const value = useMemo(

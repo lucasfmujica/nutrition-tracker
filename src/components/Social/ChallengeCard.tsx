@@ -1,103 +1,147 @@
-import { ArrowRight, Calendar, Target, Trophy, Users } from 'lucide-react';
+import { Calendar, Check, Crown, Trophy, X } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Challenge } from '../../types/domain';
+import { FriendChallenge } from '../../types/domain';
 import { UserAvatar } from './UserAvatar';
 
 interface ChallengeCardProps {
-    challenge: Challenge;
-    onJoin: (id: string) => void;
-    onViewDetails: (id: string) => void;
+    challenge: FriendChallenge;
+    onRespond: (participantId: string, accept: boolean) => void;
 }
 
+const METRIC_UNITS: Record<string, string> = {
+    steps: '',
+    protein: 'g',
+    workouts: '',
+    water: 'ml',
+    logging_streak: '',
+};
+
+/**
+ * ChallengeCard - One friend challenge with per-participant progress bars,
+ * days remaining, pending invite actions and finished state with winner.
+ */
 export const ChallengeCard: React.FC<ChallengeCardProps> = ({
     challenge,
-    onJoin,
-    onViewDetails,
+    onRespond,
 }) => {
     const { t } = useTranslation();
-    const { title, description, target, unit, participants, bgImage, endDate } =
-        challenge as any; // Using any for rough prototyping if fields missmatch, but adhering to domain
+    const { metric, goalValue, participants, myParticipation } = challenge;
 
-    // Mock progress for the current user (in real app, passed via props or context)
-    const userProgress = 65; // Percentage
+    const accepted = participants
+        .filter((p) => p.status === 'accepted')
+        .sort((a, b) => b.progress - a.progress);
+    const invitedCount = participants.filter(
+        (p) => p.status === 'invited',
+    ).length;
+    const maxProgress = Math.max(
+        goalValue || 0,
+        ...accepted.map((p) => p.progress),
+        1,
+    );
+    const winner =
+        challenge.isFinished && accepted.length > 0 ? accepted[0] : null;
+    const unit = METRIC_UNITS[metric] || '';
+    const isInvited = myParticipation?.status === 'invited';
 
     return (
-        <div
-            onClick={() => onViewDetails(challenge.id)}
-            className="min-w-[280px] w-[280px] bg-surface rounded-2xl shadow-sm border border-border overflow-hidden flex-shrink-0 cursor-pointer hover:shadow-md transition-all group">
-            {/* Image Header */}
-            <div className="h-28 bg-surface-lighter relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-                {bgImage ? (
-                    <img
-                        src={bgImage}
-                        alt={title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                        <Trophy className="text-white/20" size={48} />
-                    </div>
-                )}
-
-                <div className="absolute bottom-3 left-3 z-20">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface/20 backdrop-blur-md text-white text-[10px] font-bold border border-white/20 mb-1">
-                        <Target size={10} />
-                        {target} {unit}
-                    </span>
-                    <h3 className="text-white font-bold text-lg leading-tight shadow-black/50 drop-shadow-md">
-                        {title}
+        <div className="bg-surface rounded-2xl shadow-sm border border-border p-4 space-y-3">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                    <h3 className="font-bold text-text-primary truncate">
+                        {challenge.title}
                     </h3>
+                    <p className="text-xs text-text-tertiary font-medium">
+                        {t(`social.challenges.metrics.${metric}`)}
+                        {goalValue
+                            ? ` · ${t('social.challenges.goal')}: ${goalValue}${unit}`
+                            : ''}
+                    </p>
                 </div>
+                {challenge.isFinished ? (
+                    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 flex-shrink-0">
+                        <Trophy size={12} />
+                        {t('social.challenges.finished')}
+                    </span>
+                ) : (
+                    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 flex-shrink-0">
+                        <Calendar size={12} />
+                        {t('social.challenges.daysLeft', {
+                            count: challenge.daysRemaining,
+                        })}
+                    </span>
+                )}
             </div>
 
-            {/* Content */}
-            <div className="p-4 space-y-4">
-                <div className="flex items-center justify-between text-xs text-text-tertiary">
-                    <div className="flex items-center gap-1">
-                        <Users size={14} />
-                        <span>
-                            {participants.length}{' '}
-                            {t('social.challenges.participants')}
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                        <Calendar size={14} />
-                        <span>{new Date(endDate).toLocaleDateString()}</span>
-                    </div>
+            {/* Winner banner (finished) */}
+            {winner && (
+                <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl px-3 py-2">
+                    <Crown size={16} className="text-amber-500 flex-shrink-0" />
+                    <span className="text-sm font-bold text-text-primary truncate">
+                        {t('social.challenges.winner', { name: winner.name })}
+                    </span>
                 </div>
+            )}
 
-                {/* Participants Avatars */}
-                <div className="flex items-center -space-x-2">
-                    {participants.slice(0, 4).map((p: any, i: number) => (
-                        <div key={i} className="ring-2 ring-white rounded-full">
+            {/* Per-participant progress */}
+            <div className="space-y-2">
+                {accepted.map((p) => {
+                    const pct = Math.min((p.progress / maxProgress) * 100, 100);
+                    return (
+                        <div key={p.id} className="flex items-center gap-2">
                             <UserAvatar
                                 src={p.avatar}
                                 name={p.name}
                                 className="w-7 h-7"
-                                textSize="text-[8px]"
+                                textSize="text-[10px]"
                             />
+                            <div className="flex-1 min-w-0">
+                                <div className="flex justify-between mb-0.5">
+                                    <span className="text-xs font-medium text-text-tertiary truncate">
+                                        {p.name}
+                                    </span>
+                                    <span className="text-xs font-bold text-text-secondary">
+                                        {p.progress}
+                                        {unit}
+                                    </span>
+                                </div>
+                                <div className="w-full bg-progress-track rounded-full h-2 overflow-hidden">
+                                    <div
+                                        className="h-full rounded-full bg-primary transition-all duration-700 ease-out"
+                                        style={{ width: `${pct}%` }}
+                                    />
+                                </div>
+                            </div>
                         </div>
-                    ))}
-                    {participants.length > 4 && (
-                        <div className="w-7 h-7 rounded-full bg-surface-lighter ring-2 ring-white flex items-center justify-center text-[10px] text-text-tertiary font-bold">
-                            +{participants.length - 4}
-                        </div>
-                    )}
-                </div>
-
-                {/* Action / Progress */}
-                {/* If joined, show progress bar. If not, show button */}
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onJoin(challenge.id);
-                    }}
-                    className="w-full py-2 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
-                    {t('social.challenges.join')} <ArrowRight size={16} />
-                </button>
+                    );
+                })}
+                {invitedCount > 0 && !challenge.isFinished && (
+                    <p className="text-[11px] text-text-tertiary font-medium">
+                        {t('social.challenges.pendingInvites', {
+                            count: invitedCount,
+                        })}
+                    </p>
+                )}
             </div>
+
+            {/* Invite actions */}
+            {isInvited && myParticipation && (
+                <div className="flex gap-2 pt-1">
+                    <button
+                        onClick={() => onRespond(myParticipation.id, true)}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-primary text-white rounded-xl font-bold text-sm hover:bg-primary/90 transition-colors active:scale-95">
+                        <Check size={16} />
+                        {t('social.challenges.accept')}
+                    </button>
+                    <button
+                        onClick={() => onRespond(myParticipation.id, false)}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-surface-lighter text-text-secondary rounded-xl font-bold text-sm hover:bg-border transition-colors active:scale-95">
+                        <X size={16} />
+                        {t('social.challenges.decline')}
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

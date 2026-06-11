@@ -573,7 +573,45 @@
             "participants": "participantes",
             "join": "Unirse al Reto",
             "joined": "Unido",
-            "view": "Ver Detalles"
+            "view": "Ver Detalles",
+            "create": "Crear Desafío",
+            "createTitle": "Nuevo Desafío",
+            "creating": "Creando...",
+            "created": "¡Desafío creado!",
+            "createError": "Error al crear el desafío",
+            "loadError": "Error al cargar desafíos",
+            "respondError": "Error al responder la invitación",
+            "titleLabel": "Título",
+            "titlePlaceholder": "Ej: Semana de pasos",
+            "metricLabel": "Métrica",
+            "metrics": {
+                "steps": "Pasos",
+                "protein": "Proteína",
+                "workouts": "Entrenos",
+                "water": "Agua",
+                "logging_streak": "Días registrando"
+            },
+            "durationLabel": "Duración",
+            "days_one": "{{count}} día",
+            "days_other": "{{count}} días",
+            "goalLabel": "Meta (opcional)",
+            "goalPlaceholder": "Ej: 70000",
+            "goal": "Meta",
+            "inviteLabel": "Invitar amigos",
+            "noFriendsToInvite": "Agregá amigos para poder desafiarlos",
+            "invitations": "Invitaciones",
+            "active": "Activos",
+            "finishedSection": "Finalizados",
+            "finished": "Finalizado",
+            "daysLeft_one": "{{count}} día restante",
+            "daysLeft_other": "{{count}} días restantes",
+            "winner": "Ganador: {{name}}",
+            "accept": "Aceptar",
+            "decline": "Rechazar",
+            "pendingInvites_one": "{{count}} invitación pendiente",
+            "pendingInvites_other": "{{count}} invitaciones pendientes",
+            "empty": "Sin desafíos",
+            "emptyDesc": "Creá un desafío y competí con tus amigos en pasos, proteína, entrenos y más"
         },
         "groups": {
             "all": "Todos",
@@ -1053,6 +1091,27 @@
             "steps": "Pasos",
             "install": "Instalar",
             "copyIdHint": "Copiá tu ID antes de instalar. El shortcut te lo pedirá al configurarse."
+        },
+        "appleHealth": {
+            "title": "Apple Health",
+            "subtitle": "Sincronizá pasos, peso, entrenos y sueño desde tu iPhone",
+            "lastSync": "Última sincronización recibida:",
+            "noSync": "Todavía no se recibió ninguna sincronización desde Apple Health.",
+            "endpoint": "Endpoint:",
+            "userId": "Tu ID:",
+            "apiKey": "API Key:",
+            "apiKeyMissing": "La API key (VITE_SYNC_API_KEY) no está configurada en este entorno. Pedísela al administrador o copiá el valor de SYNC_API_KEY del servidor.",
+            "howTo": "Cómo crear el Atajo de iOS",
+            "bodyExample": "Cuerpo JSON de ejemplo (POST):",
+            "dedupeNote": "Las entradas manuales y de Oura siempre tienen prioridad: la sincronización nunca pisa un registro existente del día. Los entrenos importados se marcan con [apple_health].",
+            "steps": [
+                "Abrí la app Atajos en tu iPhone y creá un atajo nuevo.",
+                "Agregá acciones de \"Buscar muestras de salud\" (Find Health Samples): pasos de hoy (suma), último peso, y opcionalmente sueño y entrenos de hoy.",
+                "Agregá la acción \"Obtener contenido de URL\" (Get Contents of URL) con la URL del endpoint de arriba.",
+                "Configurala como POST, tipo de cuerpo JSON, y armá el cuerpo como el ejemplo de abajo, pegando tu API key, tu ID y las variables de Salud.",
+                "Probá el atajo: la respuesta debe decir \"success\": true.",
+                "En la pestaña Automatización, creá una Automatización Personal → Hora del día (ej. 23:30, todos los días) → Ejecutar atajo, y desactivá \"Pedir confirmación\"."
+            ]
         }
     },
     "common": {
@@ -1525,6 +1584,22 @@
             "ingredientsPlaceholderName": "Bife de Chorizo",
             "macrosLabel": "Macronutrientes",
             "adjustPortion": "Ajustar Porción"
+        },
+        "voice": {
+            "button": "Dictar Comida",
+            "listening": "Escuchando... (tocá para parar)",
+            "processing": "Analizando lo que comiste...",
+            "useKeyboard": "Prefiero escribirlo",
+            "useMic": "Usar micrófono",
+            "notSupported": "Tu navegador no soporta dictado por voz (ej. Safari en iOS). Escribí lo que comiste:",
+            "textPlaceholder": "Describí tu comida, ej: 2 huevos y una tostada con palta",
+            "parseButton": "Analizar",
+            "errorPermission": "Permiso de micrófono denegado. Habilitalo en la configuración del navegador o escribí tu comida.",
+            "errorNoSpeech": "No se detectó voz. Intentá de nuevo hablando más cerca del micrófono.",
+            "errorGeneric": "Error al capturar el audio. Intentá de nuevo.",
+            "errorNoFood": "No se detectó comida en lo que dijiste. Intentá describirla de nuevo.",
+            "errorParse": "Error al analizar tu comida con IA. Intentá de nuevo.",
+            "retry": "Reintentar"
         },
         "validation": {
             "fileTooLarge": "Imagen muy grande ({{size}}MB). Máximo: 10MB",

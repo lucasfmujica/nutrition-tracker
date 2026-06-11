@@ -10,6 +10,7 @@ import {
 } from '../../types/domain';
 import { ActivityFeed } from '../Social/ActivityFeed';
 import { AddFriendModal } from '../Social/AddFriendModal';
+import { ChallengesSection } from '../Social/ChallengesSection';
 import { FriendRequestCard } from '../Social/FriendRequestCard';
 import { FriendsList } from '../Social/FriendsList';
 import { LeaderboardCard } from '../Social/LeaderboardCard';
@@ -156,6 +157,9 @@ export const SocialTab: React.FC<SocialTabProps> = ({
                 onMetricChange={onLeaderboardMetricChange}
                 loading={socialLoading}
             />
+
+            {/* Challenges */}
+            <ChallengesSection friends={friends} />
 
             {/* Activity Feed */}
             <ActivityFeed

@@ -308,6 +308,51 @@ export interface ChallengeParticipant {
     rank?: number;
 }
 
+// =====================================================
+// FRIEND CHALLENGES (challenges / challenge_participants tables)
+// =====================================================
+
+export type ChallengeMetric =
+    | 'steps'
+    | 'protein'
+    | 'workouts'
+    | 'water'
+    | 'logging_streak';
+
+export type FriendChallengeStatus = 'active' | 'finished' | 'cancelled';
+
+export type ChallengeParticipantStatus = 'invited' | 'accepted' | 'declined';
+
+export interface FriendChallengeParticipant {
+    id: string;
+    challengeId: string;
+    userId: string;
+    name: string;
+    avatar: string | null;
+    status: ChallengeParticipantStatus;
+    progress: number;
+    joinedAt: string | null;
+}
+
+export interface FriendChallenge {
+    id: string;
+    creatorId: string;
+    title: string;
+    metric: ChallengeMetric;
+    goalValue: number | null;
+    startDate: string;
+    endDate: string;
+    status: FriendChallengeStatus;
+    createdAt: string;
+    participants: FriendChallengeParticipant[];
+    /** Days remaining (0 on/after the last day) */
+    daysRemaining: number;
+    /** True when end_date already passed or status is finished */
+    isFinished: boolean;
+    /** Participation row of the current user (null if not a member) */
+    myParticipation: FriendChallengeParticipant | null;
+}
+
 export interface SocialGroup {
     id: string;
     name: string;

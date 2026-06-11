@@ -14,6 +14,80 @@ export type Database = {
     };
     public: {
         Tables: {
+            challenge_participants: {
+                Row: {
+                    challenge_id: string;
+                    created_at: string;
+                    id: string;
+                    joined_at: string | null;
+                    progress: number;
+                    status: string;
+                    user_id: string;
+                };
+                Insert: {
+                    challenge_id: string;
+                    created_at?: string;
+                    id?: string;
+                    joined_at?: string | null;
+                    progress?: number;
+                    status?: string;
+                    user_id: string;
+                };
+                Update: {
+                    challenge_id?: string;
+                    created_at?: string;
+                    id?: string;
+                    joined_at?: string | null;
+                    progress?: number;
+                    status?: string;
+                    user_id?: string;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: 'challenge_participants_challenge_id_fkey';
+                        columns: ['challenge_id'];
+                        isOneToOne: false;
+                        referencedRelation: 'challenges';
+                        referencedColumns: ['id'];
+                    },
+                ];
+            };
+            challenges: {
+                Row: {
+                    created_at: string;
+                    creator_id: string;
+                    end_date: string;
+                    goal_value: number | null;
+                    id: string;
+                    metric: string;
+                    start_date: string;
+                    status: string;
+                    title: string;
+                };
+                Insert: {
+                    created_at?: string;
+                    creator_id: string;
+                    end_date: string;
+                    goal_value?: number | null;
+                    id?: string;
+                    metric: string;
+                    start_date: string;
+                    status?: string;
+                    title: string;
+                };
+                Update: {
+                    created_at?: string;
+                    creator_id?: string;
+                    end_date?: string;
+                    goal_value?: number | null;
+                    id?: string;
+                    metric?: string;
+                    start_date?: string;
+                    status?: string;
+                    title?: string;
+                };
+                Relationships: [];
+            };
             food_log: {
                 Row: {
                     calories: number;

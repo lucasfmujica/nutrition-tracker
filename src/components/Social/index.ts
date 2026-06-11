@@ -1,6 +1,9 @@
 export { ActivityFeed } from './ActivityFeed';
 export { ActivityItemComponent } from './ActivityItem';
 export { AddFriendModal } from './AddFriendModal';
+export { ChallengeCard } from './ChallengeCard';
+export { ChallengesSection } from './ChallengesSection';
+export { CreateChallengeModal } from './CreateChallengeModal';
 export { EmptyState } from './EmptyState';
 export { FriendCard } from './FriendCard';
 export { FriendRequestCard } from './FriendRequestCard';
