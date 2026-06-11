@@ -121,7 +121,8 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                     onClick={() => handleDeleteExercise(index)}
                                     disabled={disabled}
                                     className="w-7 h-7 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                    title="Eliminar ejercicio">
+                                    title={t('common.delete')}
+                                    aria-label={t('common.delete')}>
                                     <Trash2 className="w-3.5 h-3.5" />
                                 </button>
                             </div>

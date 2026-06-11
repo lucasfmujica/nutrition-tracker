@@ -22,6 +22,7 @@ import {
     formatCorrelationStrength,
     type DataPoint,
 } from '../../utils/analyticsUtils';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 interface CorrelationChartProps {
     dataPoints: DataPoint[];
@@ -36,6 +37,7 @@ export const CorrelationChart: React.FC<CorrelationChartProps> = ({
     yLabel,
     title,
 }) => {
+    const isMobile = useIsMobile();
     const regression = useMemo(() => {
         return calculateLinearRegression(dataPoints);
     }, [dataPoints]);
@@ -111,7 +113,7 @@ export const CorrelationChart: React.FC<CorrelationChartProps> = ({
               : Minus;
 
     return (
-        <div className="bg-surface rounded-2xl p-6 border border-border">
+        <div className="bg-surface rounded-2xl p-4 sm:p-6 border border-border">
             {/* Header */}
             <div className="flex items-start justify-between mb-4">
                 <div>
@@ -144,8 +146,14 @@ export const CorrelationChart: React.FC<CorrelationChartProps> = ({
             </div>
 
             {/* Chart */}
-            <ResponsiveContainer width="100%" height={250}>
-                <ScatterChart margin={{ top: 10, right: 10, bottom: 20, left: 0 }}>
+            <ResponsiveContainer width="100%" height={isMobile ? 210 : 250}>
+                <ScatterChart
+                    margin={{
+                        top: 10,
+                        right: isMobile ? 4 : 10,
+                        bottom: 20,
+                        left: isMobile ? -10 : 0,
+                    }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                     <XAxis
                         type="number"
@@ -155,19 +163,28 @@ export const CorrelationChart: React.FC<CorrelationChartProps> = ({
                             value: xLabel,
                             position: 'insideBottom',
                             offset: -10,
-                            style: { fontSize: 12, fill: '#64748b' },
+                            style: {
+                                fontSize: isMobile ? 10 : 12,
+                                fill: '#64748b',
+                            },
                         }}
-                        tick={{ fontSize: 11, fill: '#64748b' }}
+                        tick={{ fontSize: isMobile ? 9 : 11, fill: '#64748b' }}
+                        tickCount={isMobile ? 5 : undefined}
                         domain={['dataMin - 1', 'dataMax + 1']}
                     />
                     <YAxis
                         type="number"
                         dataKey="y"
                         name={yLabel}
-                        tick={{ fontSize: 11, fill: '#64748b' }}
+                        tick={{ fontSize: isMobile ? 9 : 11, fill: '#64748b' }}
+                        tickCount={isMobile ? 5 : undefined}
+                        width={isMobile ? 32 : 60}
                         domain={['dataMin - 2', 'dataMax + 2']}
                     />
-                    <Tooltip content={<CustomTooltip />} />
+                    <Tooltip
+                        content={<CustomTooltip />}
+                        trigger={isMobile ? 'click' : 'hover'}
+                    />
 
                     {/* Scatter points */}
                     <Scatter

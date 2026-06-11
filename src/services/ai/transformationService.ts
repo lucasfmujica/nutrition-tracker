@@ -3,10 +3,8 @@
  * Sprint 3: Social Sharing & Transformation Posts
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import type { ProgressPhoto } from '../../types/domain';
-
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+import { generateGeminiContent } from './geminiClient';
 
 interface TransformationData {
     beforePhoto: ProgressPhoto;
@@ -95,21 +93,18 @@ export async function generateTransformationCaption(
     } = options;
 
     try {
-        const model = genAI.getGenerativeModel({
-            model: 'gemini-3-flash-preview',
+        // Build prompt with transformation data
+        const prompt = buildPrompt(data, tone, includeEmojis, language);
+
+        const text = await generateGeminiContent({
+            model: 'gemini-3.5-flash',
             systemInstruction: getSystemPrompt(language),
             generationConfig: {
                 responseMimeType: 'application/json',
                 temperature: 0.8, // More creative
             },
+            request: prompt,
         });
-
-        // Build prompt with transformation data
-        const prompt = buildPrompt(data, tone, includeEmojis, language);
-
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text();
 
         const parsed = JSON.parse(text);
 

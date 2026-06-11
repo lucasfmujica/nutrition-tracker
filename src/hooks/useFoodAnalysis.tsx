@@ -6,7 +6,8 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getGeminiVisionModel } from '../services/ai/geminiVision';
+import { toast } from '../context/ToastContext';
+import { analyzeFoodImage } from '../services/ai/geminiVision';
 import { validateImageQuality } from '../utils/imageValidation';
 import { retryWithBackoff } from '../utils/retryWithBackoff';
 import { useScanHistory } from './useScanHistory';
@@ -96,9 +97,6 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
             // Convert file to base64
             const base64Image = await fileToBase64(file);
 
-            // Get model instance with current language
-            const model = getGeminiVisionModel(i18n.language);
-
             // Prepare the image part
             const imagePart = {
                 inlineData: {
@@ -108,25 +106,28 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
             };
 
             // Generate content with retry logic (exponential backoff)
+            // Routed through the server-side proxy so the Gemini key stays private.
             console.log(`[FoodAnalysis ${timestamp}] Sending request to Gemini API...`);
 
             const responseText = await retryWithBackoff(async () => {
-                const response = await model.generateContent({
-                    contents: [
-                        {
-                            role: 'user',
-                            parts: [
-                                {
-                                    text: i18n.language.startsWith('en')
-                                        ? 'Describe the food in this image and calculate macros.'
-                                        : 'Describe la comida en la imagen y calcula sus macros.',
-                                },
-                                imagePart,
-                            ],
-                        },
-                    ],
-                });
-                return response.response.text();
+                return analyzeFoodImage(
+                    {
+                        contents: [
+                            {
+                                role: 'user',
+                                parts: [
+                                    {
+                                        text: i18n.language.startsWith('en')
+                                            ? 'Describe the food in this image and calculate macros.'
+                                            : 'Describe la comida en la imagen y calcula sus macros.',
+                                    },
+                                    imagePart,
+                                ],
+                            },
+                        ],
+                    },
+                    i18n.language,
+                );
             }, 3, 1000);
 
             console.log(`[FoodAnalysis ${timestamp}] ✓ API response received`);
@@ -202,6 +203,7 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
             }
 
             setError(errorMessage);
+            toast.error(errorMessage);
             setIsLoading(false);
             return null;
         }

@@ -4,6 +4,8 @@
  * Provides normalized results for food search and barcode scanning
  */
 
+import { showToast } from '../../context/ToastContext';
+import i18n from '../../i18n/config';
 import { searchOpenFoodFacts, getProductByBarcode } from './openFoodFacts';
 import { searchUSDAFoods } from './usdaFoodData';
 import type { FoodSearchResult, SelectedFood, CalculatedMacros } from './types';
@@ -42,6 +44,12 @@ export const searchFoods = async (query: string): Promise<FoodSearchResult[]> =>
     }
     if (usdaResults.status === 'rejected') {
         console.error('[FoodAPI] USDA search failed:', usdaResults.reason);
+    }
+
+    // Both providers failed → the user would get zero results with no
+    // explanation. Surface explicit feedback instead of failing silently.
+    if (offResults.status === 'rejected' && usdaResults.status === 'rejected') {
+        showToast(i18n.t('toast.foodSearchError'), 'error');
     }
 
     // Merge results with deduplication

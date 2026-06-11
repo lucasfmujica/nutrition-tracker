@@ -1,6 +1,7 @@
 import { FileImage } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAIMeals } from '../../context/AIMealSuggestionsContext';
 import { useTracker } from '../../context/TrackerContext';
 import { useCorrelationAnalytics } from '../../hooks/useCorrelationAnalytics';
 import { useIdealDayPilot } from '../../hooks/useIdealDayPilot';
@@ -110,9 +111,8 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         mealTemplates,
         weeklyPlan,
         performanceForecast,
-        setShowSuggestionModal,
-        getContextualSuggestions,
     } = useTracker() as any;
+    const { setShowSuggestionModal, getContextualSuggestions } = useAIMeals();
 
     // Pattern Recognition Engine
     const baseInsight = usePatternRecognition(

@@ -57,3 +57,24 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+
+// Notification click - focus an existing window or open a new one
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    (async () => {
+      const clientList = await self.clients.matchAll({
+        type: 'window',
+        includeUncontrolled: true,
+      });
+      for (const client of clientList) {
+        if ('focus' in client) {
+          return client.focus();
+        }
+      }
+      if (self.clients.openWindow) {
+        return self.clients.openWindow('/');
+      }
+    })()
+  );
+});

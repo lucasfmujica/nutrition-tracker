@@ -90,8 +90,8 @@ export const formatTime = (timestamp: number | null): string => {
 /**
  * Get current time as HH:mm string in the user's local timezone.
  * Uses the browser's timezone (no hardcoding).
- * For dates we enforce Argentina TZ (SSOT), but meal times should reflect
- * when the user actually ate in their local clock.
+ * For dates we enforce Argentina TZ (SSOT), but meal TIMES intentionally reflect
+ * the user's own clock so the feature works for users in any country.
  */
 export const getCurrentTimeString = (): string => {
     return new Date().toLocaleTimeString('en-GB', {
@@ -102,7 +102,7 @@ export const getCurrentTimeString = (): string => {
 
 /**
  * Get current hour (0-23) in the user's local timezone.
- * Used for smart meal type detection.
+ * Used for smart meal type detection (reflects the user's own clock).
  */
 export const getCurrentHour = (): number => {
     return new Date().getHours();

@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { calculateMacros, searchFoods } from '../../services/foodApi';
 import type { FoodSearchResult } from '../../services/foodApi/types';
+import { useModalA11y } from '../../hooks/useModalA11y';
 import { FoodEntry } from '../../types/domain';
 
 interface FoodFormModalProps {
@@ -45,6 +46,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
     const searchInputRef = useRef<HTMLInputElement>(null);
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const resultsRef = useRef<HTMLDivElement>(null);
+    const modalRef = useModalA11y(isOpen, onClose);
 
     // Reset search state when modal opens/closes
     useEffect(() => {
@@ -176,17 +178,25 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
             className="fixed inset-0 bg-slate-900/40 flex items-start justify-center z-50 p-4 pt-8 pb-24 overflow-y-auto backdrop-blur-sm"
             onClick={handleBackdropClick}>
             <div
-                className="bg-surface rounded-3xl p-4 lg:p-8 w-full max-w-sm lg:max-w-md border border-border shadow-2xl"
+                ref={modalRef}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="food-form-modal-title"
+                tabIndex={-1}
+                className="bg-surface rounded-3xl p-4 lg:p-8 w-full max-w-sm lg:max-w-md border border-border shadow-2xl outline-none"
                 onClick={(e) => e.stopPropagation()}>
                 {/* Header with close button */}
                 <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl lg:text-2xl font-bold text-text-primary">
+                    <h3
+                        id="food-form-modal-title"
+                        className="text-xl lg:text-2xl font-bold text-text-primary">
                         {isEditing
                             ? `✏️ ${t('modals.foodForm.titleEdit')}`
                             : `🍽️ ${t('modals.foodForm.titleAdd')}`}
                     </h3>
                     <button
                         onClick={onClose}
+                        aria-label={t('common.close')}
                         className="w-10 h-10 flex items-center justify-center rounded-xl bg-background hover:bg-surface-lighter text-text-tertiary hover:text-text-secondary transition-colors">
                         ×
                     </button>
@@ -196,7 +206,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                     {/* Search Section (only when not editing) */}
                     {!isEditing && (
                         <div className="relative" ref={resultsRef}>
-                            <label className="block text-xs font-bold text-blue-600 uppercase tracking-wider mb-1.5 ml-1">
+                            <label htmlFor="food-search" className="block text-xs font-bold text-blue-600 uppercase tracking-wider mb-1.5 ml-1">
                                 {t('modals.foods.searchTitle')}
                             </label>
                             <div className="relative">
@@ -205,6 +215,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                     className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary"
                                 />
                                 <input
+                            id="food-search"
                                     ref={searchInputRef}
                                     type="text"
                                     value={searchQuery}
@@ -231,6 +242,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                             setSearchResults([]);
                                             setSelectedSearchFood(null);
                                         }}
+                                        aria-label={t('a11y.clearSearch')}
                                         className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary">
                                         <X size={16} />
                                     </button>
@@ -286,6 +298,7 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                                                 setSelectedSearchFood(null);
                                                 setSearchQuery('');
                                             }}
+                                            aria-label={t('a11y.clearSearch')}
                                             className="text-text-tertiary hover:text-text-secondary">
                                             <X size={14} />
                                         </button>
@@ -366,10 +379,11 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
 
                     {/* Meal Type */}
                     <div>
-                        <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
+                        <label htmlFor="food-meal" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                             {t('modals.foodForm.meal')}
                         </label>
                         <select
+                            id="food-meal"
                             value={food.meal || ''}
                             onChange={(e) =>
                                 onFoodChange({
@@ -396,10 +410,11 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
 
                     {/* Time */}
                     <div>
-                        <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
+                        <label htmlFor="food-time" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                             {t('modals.foodForm.time')}
                         </label>
                         <input
+                            id="food-time"
                             type="time"
                             value={food.time || ''}
                             onChange={(e) =>
@@ -411,10 +426,11 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
 
                     {/* Row 2: Name */}
                     <div>
-                        <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
+                        <label htmlFor="food-name" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                             {t('modals.foodForm.name')} *
                         </label>
                         <input
+                            id="food-name"
                             type="text"
                             value={food.name || ''}
                             onChange={(e) =>
@@ -427,10 +443,11 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
 
                     {/* Row 3: Description */}
                     <div>
-                        <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
+                        <label htmlFor="food-description" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                             {t('modals.foodForm.description')}
                         </label>
                         <textarea
+                            id="food-description"
                             value={food.description || ''}
                             onChange={(e) =>
                                 onFoodChange({
@@ -447,10 +464,11 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                     {/* Row 4: Macros - 3+2 grid */}
                     <div className="grid grid-cols-3 gap-3">
                         <div>
-                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
+                            <label htmlFor="food-calories" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
                                 Cal *
                             </label>
                             <input
+                            id="food-calories"
                                 type="number"
                                 value={food.calories || ''}
                                 onChange={(e) =>
@@ -464,10 +482,11 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
+                            <label htmlFor="food-protein" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
                                 Prot
                             </label>
                             <input
+                            id="food-protein"
                                 type="number"
                                 value={food.protein || ''}
                                 onChange={(e) =>
@@ -481,10 +500,11 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
+                            <label htmlFor="food-carbs" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
                                 Carbs
                             </label>
                             <input
+                            id="food-carbs"
                                 type="number"
                                 value={food.carbs || ''}
                                 onChange={(e) =>
@@ -501,10 +521,11 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
+                            <label htmlFor="food-fat" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
                                 Fat
                             </label>
                             <input
+                            id="food-fat"
                                 type="number"
                                 value={food.fat || ''}
                                 onChange={(e) =>
@@ -518,10 +539,11 @@ export const FoodFormModal: React.FC<FoodFormModalProps> = ({
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
+                            <label htmlFor="food-fiber" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
                                 {t('modals.foodForm.fiber')}
                             </label>
                             <input
+                            id="food-fiber"
                                 type="number"
                                 value={food.fiber || ''}
                                 onChange={(e) =>

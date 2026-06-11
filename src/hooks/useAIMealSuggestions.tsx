@@ -16,20 +16,16 @@ import {
     Workout,
 } from '../types/domain';
 
+import {
+    DIETARY_PREFS_UPDATED_EVENT,
+    REJECTED_MEALS_EXPIRY_DAYS,
+    loadDietaryPreferences,
+    saveDietaryPreferences,
+} from '../utils/dietaryPreferences';
+
 // =====================================================
 // CONSTANTS
 // =====================================================
-
-const STORAGE_KEY = 'lukenfit_ai_chef_preferences';
-const REJECTED_MEALS_EXPIRY_DAYS = 30;
-
-const DEFAULT_PREFERENCES: AIChefPreferences = {
-    dietaryMode: 'standard',
-    prepTime: 'medium',
-    difficulty: 'easy',
-    rejectedMeals: [],
-    rejectedMealsExpiry: 0,
-};
 
 type AIChefTab = 'suggestions' | 'ingredients' | 'config';
 
@@ -57,39 +53,6 @@ const getArgentinaHour = (): number => {
         now.toLocaleString('en-US', { timeZone: 'America/Argentina/Buenos_Aires' })
     );
     return argentinaTime.getHours();
-};
-
-/**
- * Load preferences from localStorage
- */
-const loadPreferences = (): AIChefPreferences => {
-    try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (!stored) return DEFAULT_PREFERENCES;
-
-        const parsed = JSON.parse(stored) as AIChefPreferences;
-
-        // Clear rejected meals if expired
-        if (parsed.rejectedMealsExpiry && Date.now() > parsed.rejectedMealsExpiry) {
-            parsed.rejectedMeals = [];
-            parsed.rejectedMealsExpiry = 0;
-        }
-
-        return { ...DEFAULT_PREFERENCES, ...parsed };
-    } catch {
-        return DEFAULT_PREFERENCES;
-    }
-};
-
-/**
- * Save preferences to localStorage
- */
-const savePreferences = (prefs: AIChefPreferences): void => {
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
-    } catch (error) {
-        console.error('[useAIMealSuggestions] Error saving preferences:', error);
-    }
 };
 
 // =====================================================
@@ -173,7 +136,7 @@ export const useAIMealSuggestions = (
     const [aiChefTab, setAIChefTab] = useState<AIChefTab>('suggestions');
 
     // Preferences state
-    const [preferences, setPreferences] = useState<AIChefPreferences>(loadPreferences);
+    const [preferences, setPreferences] = useState<AIChefPreferences>(loadDietaryPreferences);
 
     // Ingredient mode state
     const [ingredientInput, setIngredientInput] = useState('');
@@ -198,8 +161,21 @@ export const useAIMealSuggestions = (
 
     // Persist preferences when they change
     useEffect(() => {
-        savePreferences(preferences);
+        saveDietaryPreferences(preferences);
     }, [preferences]);
+
+    // Reload preferences when updated elsewhere (e.g. ConfigTab dietary settings)
+    useEffect(() => {
+        const handleUpdate = () => {
+            const fresh = loadDietaryPreferences();
+            setPreferences((prev) =>
+                JSON.stringify(prev) === JSON.stringify(fresh) ? prev : fresh
+            );
+        };
+        window.addEventListener(DIETARY_PREFS_UPDATED_EVENT, handleUpdate);
+        return () =>
+            window.removeEventListener(DIETARY_PREFS_UPDATED_EVENT, handleUpdate);
+    }, []);
 
     // =====================================================
     // PREFERENCES ACTIONS

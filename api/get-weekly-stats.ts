@@ -11,13 +11,22 @@ import type { Database } from '../src/types/supabase';
  * @returns {Object} { workouts, proteinAdherence, weightDelta, weekRange }
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-    // CORS Setup
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // CORS Setup — restrict to the app's own origin(s). No wildcard: this endpoint
+    // returns personal data and must not be readable cross-site.
+    const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+        .split(',')
+        .map((o) => o.trim())
+        .filter(Boolean);
+    const origin = req.headers.origin as string | undefined;
+    if (origin && allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Vary', 'Origin');
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
     res.setHeader(
         'Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
+        'Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
     );
 
     if (req.method === 'OPTIONS') return res.status(200).end();
@@ -41,26 +50,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             process.env.SUPABASE_SERVICE_ROLE_KEY!,
         ) as any;
 
-        // 2. Extract userId (from query for GET, body for POST)
-        const userId =
-            req.method === 'GET' ? (req.query.userId as string) : req.body?.userId;
+        // 2. Authenticate: derive userId from the caller's Supabase JWT.
+        // SECURITY: never trust a userId from the query/body — that was an IDOR
+        // allowing anyone to read any user's stats via the service-role client.
+        const authHeader = (req.headers.authorization as string) || '';
+        const token = authHeader.startsWith('Bearer ')
+            ? authHeader.slice('Bearer '.length).trim()
+            : '';
 
-        if (!userId) {
-            console.warn('[WeeklyStats] Missing userId');
-            return res.status(400).json({ error: 'Bad Request: Missing userId' });
-        }
-
-        // Validate UUID format
-        const uuidRegex =
-            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        if (!uuidRegex.test(userId)) {
-            console.warn('[WeeklyStats] Invalid userId format:', userId);
+        if (!token) {
             return res
-                .status(400)
-                .json({ error: 'Bad Request: Invalid userId format' });
+                .status(401)
+                .json({ error: 'Unauthorized: Missing bearer token' });
         }
 
-        console.log(`[WeeklyStats] Processing request for user: ${userId}`);
+        const {
+            data: { user },
+            error: authError,
+        } = await supabase.auth.getUser(token);
+
+        if (authError || !user?.id) {
+            console.warn('[WeeklyStats] Invalid token');
+            return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+        }
+
+        const userId = user.id;
+        console.log(`[WeeklyStats] Processing request for authenticated user`);
 
         // 3. Calculate Week Boundaries (Monday-Sunday in Argentina TZ)
         const now = new Date();

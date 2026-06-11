@@ -1,5 +1,6 @@
 import { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from '../context/ToastContext';
 import {
     CustomTargets,
     FoodEntry,
@@ -93,7 +94,7 @@ export const useExport = (
             });
         } catch (err) {
             console.error(`[Export ${new Date().toISOString()}] Error exporting backup:`, err);
-            alert(t('errors.exportBackup'));
+            toast.error(t('errors.exportBackup'));
         }
     };
 
@@ -112,10 +113,10 @@ export const useExport = (
             if (data.stepsLog) saveStepsLog(data.stepsLog);
             if (data.ouraLog) saveOuraLog(data.ouraLog);
 
-            alert(`✓ ${t('export.backupRestored')}`);
+            toast.success(t('export.backupRestored'));
         } catch (err) {
             console.error(`[Export ${new Date().toISOString()}] Error importing backup:`, err);
-            alert(t('errors.importBackup'));
+            toast.error(t('errors.importBackup'));
         }
         event.target.value = '';
     };
@@ -132,10 +133,10 @@ export const useExport = (
                 ? `food-journal-${getArgentinaDateString()}.txt`
                 : `diario-alimentacion-${getArgentinaDateString()}.txt`;
             downloadFile(journal, filename);
-            alert(`✓ ${t('export.journalExported')}`);
+            toast.success(t('export.journalExported'));
         } catch (err) {
             console.error(`[Export ${new Date().toISOString()}] Error exporting food journal:`, err);
-            alert(t('errors.exportJournal'));
+            toast.error(t('errors.exportJournal'));
         }
     };
 
@@ -152,10 +153,10 @@ export const useExport = (
                 ? `biometrics-${getArgentinaDateString()}.txt`
                 : `biometricos-${getArgentinaDateString()}.txt`;
             downloadFile(report, filename);
-            alert(`✓ ${t('export.biometricsExported')}`);
+            toast.success(t('export.biometricsExported'));
         } catch (err) {
             console.error(`[Export ${new Date().toISOString()}] Error exporting biometrics:`, err);
-            alert(t('errors.exportBiometrics'));
+            toast.error(t('errors.exportBiometrics'));
         }
     };
 
@@ -180,7 +181,7 @@ export const useExport = (
             navigator.clipboard
                 .writeText(report)
                 .then(() => {
-                    alert(`✓ ${t('export.clipboardCopied')}`);
+                    toast.success(t('export.clipboardCopied'));
                 })
                 .catch(() => {
                     const filename = `export-claude-${today}.md`;
@@ -189,11 +190,11 @@ export const useExport = (
                         filename,
                         'text/markdown;charset=utf-8',
                     );
-                    alert(`📄 ${t('export.fileDownloaded', { filename })}`);
+                    toast.info(t('export.fileDownloaded', { filename }));
                 });
         } catch (err) {
             console.error(`[Export ${new Date().toISOString()}] Error exporting for Claude:`, err);
-            alert(t('errors.exportJournal'));
+            toast.error(t('errors.exportJournal'));
         }
     };
 

@@ -26,7 +26,26 @@ export const useWorkoutEntry = ({
         notes: '',
     });
 
-    const handleEditWorkout = (workout: Workout) => {
+    const resetWorkoutForm = () => {
+        setNewWorkout({
+            date: getArgentinaDateString(),
+            type: 'gym',
+            name: '',
+            duration: '',
+            calories: '',
+            volume: '',
+            exercises: [],
+            notes: '',
+        });
+    };
+
+    const handleEditWorkout = (workout: Workout | null) => {
+        // Passing null cancels the edit (e.g. modal closed) and resets the form
+        if (!workout) {
+            setEditingWorkout(null);
+            resetWorkoutForm();
+            return;
+        }
         setEditingWorkout(workout);
         setNewWorkout({
             date: workout.date,

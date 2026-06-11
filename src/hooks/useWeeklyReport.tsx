@@ -67,11 +67,22 @@ export const useWeeklyReport = () => {
             // Determine API URL based on environment
             const baseUrl = import.meta.env.PROD ? '' : 'http://localhost:3000';
 
+            // Get the current access token to authenticate the request.
+            const {
+                data: { session },
+            } = await supabase.auth.getSession();
+            const accessToken = session?.access_token;
+            if (!accessToken) {
+                setError('Sesión expirada. Iniciá sesión nuevamente.');
+                setIsLoading(false);
+                return null;
+            }
+
             // Wrap fetch in retryWithBackoff for resilience
             const data = await retryWithBackoff(async () => {
-                const response = await fetch(
-                    `${baseUrl}/api/get-weekly-stats?userId=${user.id}`,
-                );
+                const response = await fetch(`${baseUrl}/api/get-weekly-stats`, {
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                });
 
                 if (!response.ok) {
                     const errorData = await response.json();

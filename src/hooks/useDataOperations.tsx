@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { toast } from '../context/ToastContext';
+import i18n from '../i18n/config';
 import { FoodEntry, Workout } from '../types/domain';
 import { addDaysToDate, getArgentinaDateString } from '../utils/dateUtils';
 
@@ -65,6 +67,7 @@ export const useDataOperations = ({
                     console.log('[Sync] Food synced to Supabase:', finalEntry.id);
                 } catch (err) {
                     console.error('[Sync] Failed to sync food:', err);
+                    toast.info(i18n.t('toast.queuedOffline'));
                 }
             }
             return;
@@ -88,6 +91,7 @@ export const useDataOperations = ({
                     await saveFoodEntry(newLog[existingIndex]);
                 } catch (err) {
                     console.error('[Sync] Failed to sync food update:', err);
+                    toast.info(i18n.t('toast.queuedOffline'));
                 }
             }
         } else {
@@ -100,6 +104,7 @@ export const useDataOperations = ({
                     console.log('[Sync] Food synced to Supabase:', finalEntry.id);
                 } catch (err) {
                     console.error('[Sync] Failed to sync food:', err);
+                    toast.info(i18n.t('toast.queuedOffline'));
                 }
             }
         }
@@ -121,6 +126,7 @@ export const useDataOperations = ({
                     console.log('[Sync] Workout synced to Supabase:', finalEntry.id);
                 } catch (err) {
                     console.error('[Sync] Failed to sync workout:', err);
+                    toast.info(i18n.t('toast.queuedOffline'));
                 }
             }
             return;
@@ -143,6 +149,7 @@ export const useDataOperations = ({
                     await saveWorkoutEntry(newLog[existingIndex]);
                 } catch (err) {
                     console.error('[Sync] Failed to sync workout update:', err);
+                    toast.info(i18n.t('toast.queuedOffline'));
                 }
             }
         } else {
@@ -154,6 +161,7 @@ export const useDataOperations = ({
                     console.log('[Sync] Workout synced to Supabase:', finalEntry.id);
                 } catch (err) {
                     console.error('[Sync] Failed to sync workout:', err);
+                    toast.info(i18n.t('toast.queuedOffline'));
                 }
             }
         }

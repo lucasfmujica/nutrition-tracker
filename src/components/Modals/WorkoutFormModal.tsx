@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useModalA11y } from '../../hooks/useModalA11y';
 import { Workout } from '../../types/domain';
 import { ExerciseForm } from '../Workouts/ExerciseForm';
 
@@ -25,6 +26,7 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
     mode = 'add',
 }) => {
     const { t } = useTranslation();
+    const modalRef = useModalA11y(isOpen, onClose);
     if (!isOpen) return null;
 
     const isGymWorkout = workout.type === 'gym';
@@ -42,15 +44,23 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
             className="fixed inset-0 bg-slate-900/40 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
             onClick={onClose}>
             <div
-                className="bg-surface rounded-3xl p-6 lg:p-8 w-full max-w-sm lg:max-w-md border border-border shadow-2xl max-h-[90vh] overflow-y-auto"
+                ref={modalRef}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="workout-form-modal-title"
+                tabIndex={-1}
+                className="bg-surface rounded-3xl p-6 lg:p-8 w-full max-w-sm lg:max-w-md border border-border shadow-2xl max-h-[90vh] overflow-y-auto outline-none"
                 onClick={(e) => e.stopPropagation()}>
                 {/* Header with close button */}
                 <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl lg:text-2xl font-bold text-text-primary">
+                    <h3
+                        id="workout-form-modal-title"
+                        className="text-xl lg:text-2xl font-bold text-text-primary">
                         {headerText}
                     </h3>
                     <button
                         onClick={onClose}
+                        aria-label={t('common.close')}
                         className="w-10 h-10 flex items-center justify-center rounded-xl bg-background hover:bg-surface-lighter text-text-tertiary hover:text-text-secondary transition-colors">
                         ×
                     </button>
@@ -59,10 +69,11 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                 <div className="space-y-4">
                     {/* Row 1: Date */}
                     <div>
-                        <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
+                        <label htmlFor="workout-date" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                             {t('modals.workouts.date')}
                         </label>
                         <input
+                            id="workout-date"
                             type="date"
                             value={workout.date || ''}
                             onChange={(e) =>
@@ -74,10 +85,11 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
 
                     {/* Row 2: Type */}
                     <div>
-                        <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
+                        <label htmlFor="workout-type" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                             {t('modals.workouts.type')}
                         </label>
                         <select
+                            id="workout-type"
                             value={workout.type || 'gym'}
                             onChange={(e) =>
                                 onWorkoutChange({
@@ -95,10 +107,11 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
 
                     {/* Row 3: Name */}
                     <div>
-                        <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
+                        <label htmlFor="workout-name" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                             {t('modals.workouts.name')} *
                         </label>
                         <input
+                            id="workout-name"
                             type="text"
                             value={workout.name || ''}
                             onChange={(e) =>
@@ -112,10 +125,11 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                     {/* Row 4: Stats */}
                     <div className="grid grid-cols-3 gap-3">
                         <div>
-                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
+                            <label htmlFor="workout-duration" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
                                 Min
                             </label>
                             <input
+                            id="workout-duration"
                                 type="number"
                                 value={workout.duration || ''}
                                 onChange={(e) =>
@@ -129,10 +143,11 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
+                            <label htmlFor="workout-calories" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
                                 Kcal
                             </label>
                             <input
+                            id="workout-calories"
                                 type="number"
                                 value={workout.calories || ''}
                                 onChange={(e) =>
@@ -146,10 +161,11 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
+                            <label htmlFor="workout-volume" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1 text-center font-mono">
                                 Vol (kg)
                             </label>
                             <input
+                            id="workout-volume"
                                 type="number"
                                 value={workout.volume || ''}
                                 onChange={(e) =>
@@ -166,10 +182,11 @@ export const WorkoutFormModal: React.FC<WorkoutFormModalProps> = ({
 
                     {/* Row 5: Notes */}
                     <div>
-                        <label className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
+                        <label htmlFor="workout-notes" className="block text-xs font-bold text-text-tertiary uppercase tracking-wider mb-1.5 ml-1">
                             {t('modals.workouts.notes')}
                         </label>
                         <input
+                            id="workout-notes"
                             type="text"
                             value={workout.notes || ''}
                             onChange={(e) =>

@@ -9,10 +9,13 @@ import {
     WeightEntry,
     Workout,
 } from '../types/domain';
+import { toast } from '../context/ToastContext';
+import i18n from '../i18n/config';
 import { retryWithBackoff } from '../utils/retryWithBackoff';
 import {
     clearCache,
     clearPendingWrites,
+    getPendingWrites,
     isCacheStale,
     migrateUserStorage,
     updateCacheMetadata,
@@ -255,6 +258,7 @@ export const useTrackerSync = ({
                     console.log(`[handleRefresh ${new Date().toISOString()}] Data updated successfully`);
                 } else {
                     setSaveStatus('Error al actualizar');
+                    toast.error(i18n.t('toast.refreshError'));
                 }
             } else {
                 console.log(`[handleRefresh ${new Date().toISOString()}] useCloud is false, skipping fetch`);
@@ -262,6 +266,7 @@ export const useTrackerSync = ({
         } catch (err) {
             console.error(`[TrackerSync ${new Date().toISOString()}] Refresh error:`, err);
             setSaveStatus('Error al actualizar');
+            toast.error(i18n.t('toast.refreshError'));
         } finally {
             setIsRefreshing(false);
             setTimeout(() => setSaveStatus(''), 2000);
@@ -276,7 +281,25 @@ export const useTrackerSync = ({
             setIsLoading(false);
 
             await clearCache(userId);
-            await clearPendingWrites(userId); // CRITICAL: Prevent cross-user data corruption
+
+            // CRITICAL: Never destroy unsynced writes on logout. The queue is already
+            // user-scoped, so try to flush it first; only clear it if it actually drained.
+            try {
+                if (supabase.isOnline) {
+                    await processPendingQueue();
+                }
+                const remaining = await getPendingWrites(userId);
+                if (remaining.length === 0) {
+                    await clearPendingWrites(userId);
+                } else {
+                    console.warn(
+                        `[TrackerSync] Logout: keeping ${remaining.length} unsynced write(s) for next login.`,
+                    );
+                }
+            } catch (drainErr) {
+                // If draining fails, preserve the queue rather than lose data.
+                console.error('[TrackerSync] Logout drain failed, preserving queue:', drainErr);
+            }
 
             // Reset state (setters)
             setProfile({

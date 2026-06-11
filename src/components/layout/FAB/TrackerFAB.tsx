@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAIMeals } from '../../../context/AIMealSuggestionsContext';
 import { TrackerContextType, useTracker } from '../../../context/TrackerContext';
 import { FloatingActionButton } from '../../UI/FloatingActionButton';
 
@@ -24,8 +25,8 @@ export const TrackerFAB: React.FC = () => {
         selectedFoodDate,
         selectedWorkoutDate,
         setShowFoodScanModal,
-        setShowSuggestionModal,
-    } = useTracker() as TrackerContextType & { setShowSuggestionModal: (v: boolean) => void };
+    } = useTracker() as TrackerContextType;
+    const { setShowSuggestionModal } = useAIMeals();
 
     if (
         !showFab ||

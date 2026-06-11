@@ -12,6 +12,7 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
+import { getArgentinaDateString } from '../../utils/dateUtils';
 
 /**
  * WeightProjectionChart - "The Runway" Visualization
@@ -87,8 +88,7 @@ const formatDayLabel = (dateStr: string, t: any, i18n: any) => {
 
     try {
         const date = new Date(dateStr + 'T12:00:00');
-        const today = new Date();
-        const isToday = dateStr === today.toISOString().split('T')[0];
+        const isToday = dateStr === getArgentinaDateString();
 
         if (isToday) return t('common.today');
 

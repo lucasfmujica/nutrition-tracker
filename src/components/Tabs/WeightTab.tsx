@@ -1,4 +1,5 @@
-import React from 'react';
+import { Scale } from 'lucide-react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../context/TrackerContext';
 import { useWeightForm } from '../../hooks/ui/useWeightForm';
@@ -9,6 +10,7 @@ import {
     getWeightUnit,
 } from '../../utils/unitUtils';
 import { WeightLineChart } from '../Charts/WeightLineChart';
+import { EmptyState } from '../UI/EmptyState';
 import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
 interface WeightTabProps {
@@ -54,7 +56,8 @@ export const WeightTab: React.FC<WeightTabProps> = ({
     const { weight, setWeight, time, setTime, date, setDate, error, handleSubmit } =
         useWeightForm() as any;
 
-    const { unitSystem } = useTracker();
+    const { unitSystem, isLoading } = useTracker();
+    const weightInputRef = useRef<HTMLInputElement>(null);
 
     const currentWeight =
         getMostRecentWeight(weightHistory)?.weight || profile.currentWeight;
@@ -107,6 +110,7 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                         </div>
                         <div className="flex gap-2 w-full sm:flex-[1.5]">
                             <input
+                                ref={weightInputRef}
                                 type="number"
                                 step={getWeightInputStep(unitSystem)}
                                 value={weight}
@@ -248,6 +252,25 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                     <p className="text-xs text-text-tertiary mt-3 text-center">
                         {t('weight.trendDisclaimer')}
                     </p>
+                </div>
+            )}
+
+            {/* Empty state when no weight entries exist */}
+            {!isLoading && weightHistory.length === 0 && (
+                <div className="bg-surface rounded-2xl border border-border shadow-sm">
+                    <EmptyState
+                        icon={Scale}
+                        title={t('weight.empty.title')}
+                        description={t('weight.empty.description')}
+                        actionLabel={t('weight.empty.cta')}
+                        onAction={() => {
+                            weightInputRef.current?.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center',
+                            });
+                            weightInputRef.current?.focus();
+                        }}
+                    />
                 </div>
             )}
 

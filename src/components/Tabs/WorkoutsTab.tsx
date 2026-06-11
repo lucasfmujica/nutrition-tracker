@@ -12,6 +12,7 @@ import { useEffortAnalytics } from '../../hooks/useEffortAnalytics';
 import { usePersonalRecords } from '../../hooks/usePersonalRecords';
 import { useWorkoutAnalysis } from '../../hooks/useWorkoutAnalysis';
 import { OuraEntry, WeightAnalytics, Workout } from '../../types/domain';
+import { EmptyState } from '../UI/EmptyState';
 import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 import { SwipeableItem } from '../UI/SwipeableItem';
 import { EffortAnalytics, EffortRadar } from '../Workouts/EffortRadar';
@@ -84,6 +85,7 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
         showImportWorkoutModal,
         saveWorkoutEntry,
         setShowWorkoutForm,
+        isLoading,
     } = useTracker();
 
     return (
@@ -167,23 +169,19 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
 
             {/* Workout list or empty state */}
             {workoutsForSelectedDate.length === 0 ? (
-                <div className="bg-surface dark:bg-surface-dark rounded-2xl p-12 text-center border border-border dark:border-border-dark shadow-sm">
-                    <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-                        💪
+                !isLoading && (
+                    <div className="bg-surface dark:bg-surface-dark rounded-2xl border border-border dark:border-border-dark shadow-sm">
+                        <EmptyState
+                            icon={Dumbbell}
+                            title={t('workouts.noWorkouts')}
+                            description={t('workouts.logActivityPrompt')}
+                            actionLabel={t('workouts.noWorkoutsCTA')}
+                            onAction={() =>
+                                setShowWorkoutForm && setShowWorkoutForm(true)
+                            }
+                        />
                     </div>
-                    <h3 className="text-text-primary font-bold text-lg mb-1">
-                        {t('workouts.noWorkouts')}
-                    </h3>
-                    <p className="text-text-tertiary text-sm mb-4">
-                        {t('workouts.logActivityPrompt')}
-                    </p>
-                    <button
-                        onClick={() => setShowWorkoutForm && setShowWorkoutForm(true)}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-600/20 active:scale-95 transition-all">
-                        <Dumbbell size={16} />
-                        <span>{t('workouts.noWorkoutsCTA')}</span>
-                    </button>
-                </div>
+                )
             ) : (
                 <div className="space-y-2">
                     {workoutsForSelectedDate.map((workout) => {
@@ -212,7 +210,8 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                                             <button
                                                 onClick={() => handleEditWorkout(workout)}
                                                 className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-800/40 text-blue-600 dark:text-blue-400 flex items-center justify-center transition-colors active:scale-90"
-                                                title={t('workouts.edit')}>
+                                                title={t('workouts.edit')}
+                                                aria-label={t('workouts.edit')}>
                                                 <Pencil className="w-3.5 h-3.5" />
                                             </button>
                                         </div>

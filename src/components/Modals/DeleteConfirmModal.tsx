@@ -23,8 +23,12 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-surface rounded-2xl p-6 max-w-sm w-full border border-border shadow-2xl">
-                <h3 className="text-lg font-bold text-text-primary mb-2">{t('modals.deleteConfirm.title')}</h3>
+            <div
+                role="alertdialog"
+                aria-modal="true"
+                aria-labelledby="delete-confirm-title"
+                className="bg-surface rounded-2xl p-6 max-w-sm w-full border border-border shadow-2xl">
+                <h3 id="delete-confirm-title" className="text-lg font-bold text-text-primary mb-2">{t('modals.deleteConfirm.title')}</h3>
                 <p className="text-base text-text-secondary mb-4">"{itemName}"</p>
                 <div className="flex gap-2">
                     <button

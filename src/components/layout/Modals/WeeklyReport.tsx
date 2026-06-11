@@ -7,6 +7,11 @@ import {
     WeightEntry,
     Workout,
 } from '../../../types/domain';
+import {
+    addDaysToDate,
+    getArgentinaDateString,
+    getMondayOfWeek,
+} from '../../../utils/dateUtils';
 import { importWithRetry } from '../../../utils/lazyUtils';
 
 interface WeeklyReportProps {
@@ -36,26 +41,20 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
     const [selectedWeek, setSelectedWeek] = useState(0); // 0 = this week, -1 = last week, etc.
 
     const getWeekDates = (weeksAgo = 0) => {
-        const today = new Date();
-        const dayOfWeek = today.getDay();
-        const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-
-        const monday = new Date(today);
-        monday.setDate(today.getDate() + mondayOffset - weeksAgo * 7);
-
-        const sunday = new Date(monday);
-        sunday.setDate(monday.getDate() + 6);
+        // Argentina TZ throughout: toISOString() (UTC) would shift the week by a
+        // day for any log made between 21:00 and midnight ART.
+        const todayStr = getArgentinaDateString();
+        const monday = addDaysToDate(getMondayOfWeek(todayStr), -weeksAgo * 7);
+        const sunday = addDaysToDate(monday, 6);
 
         const dates = [];
         for (let i = 0; i < 7; i++) {
-            const d = new Date(monday);
-            d.setDate(monday.getDate() + i);
-            dates.push(d.toISOString().split('T')[0]);
+            dates.push(addDaysToDate(monday, i));
         }
 
         return {
-            monday: monday.toISOString().split('T')[0],
-            sunday: sunday.toISOString().split('T')[0],
+            monday,
+            sunday,
             dates,
             label:
                 weeksAgo === 0

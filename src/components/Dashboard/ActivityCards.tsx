@@ -15,7 +15,8 @@ interface ActivityCardProps {
 }
 
 const ActivityCard: React.FC<ActivityCardProps> = React.memo(
-    ({ value, target, unit, icon: Icon, color, onAdd, onDecrease, subtext }) => {
+    ({ title, value, target, unit, icon: Icon, color, onAdd, onDecrease, subtext }) => {
+        const { t } = useTranslation();
         const percentage = Math.min((value / target) * 100, 100);
 
         return (
@@ -28,6 +29,7 @@ const ActivityCard: React.FC<ActivityCardProps> = React.memo(
                         {onDecrease && (
                             <button
                                 onClick={onDecrease}
+                                aria-label={`${t('a11y.decrease')} ${title}`}
                                 className="w-8 h-8 flex items-center justify-center rounded-full bg-background text-text-tertiary hover:bg-surface-lighter transition-colors">
                                 <Minus size={16} />
                             </button>
@@ -35,6 +37,7 @@ const ActivityCard: React.FC<ActivityCardProps> = React.memo(
                         {onAdd && (
                             <button
                                 onClick={onAdd}
+                                aria-label={`${t('a11y.increase')} ${title}`}
                                 className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">
                                 <Plus size={18} />
                             </button>

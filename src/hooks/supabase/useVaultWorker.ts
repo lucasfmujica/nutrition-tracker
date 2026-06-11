@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { toast } from '../../context/ToastContext';
+import i18n from '../../i18n/config';
 import {
     cacheData,
     getPendingWrites,
@@ -73,6 +75,36 @@ export const useVaultWorker = ({
             }
 
             let result;
+
+            // DELETE operations only carry an id; route them to the right deleter.
+            if (item.operation === 'delete') {
+                const deleteId = item.data?.id;
+                if (!deleteId) {
+                    console.warn('[Vault] Delete item without id, dropping:', item.id);
+                    return { success: true, id: item.id };
+                }
+                switch (item.table) {
+                    case 'food_log':
+                        result = await supabase.deleteFood(deleteId);
+                        break;
+                    case 'workouts':
+                        result = await supabase.deleteWorkout(deleteId);
+                        break;
+                    case 'weight_history':
+                        result = await supabase.deleteWeight(deleteId);
+                        break;
+                    default:
+                        console.warn(
+                            `[Vault] Unsupported delete table: ${item.table}`,
+                        );
+                        return { success: true, id: item.id };
+                }
+                if (result?.error) {
+                    throw new Error(result.error.message);
+                }
+                return { success: true, id: item.id };
+            }
+
             switch (item.table) {
                 case 'oura_log':
                     result = await supabase.saveOura(item.data);
@@ -135,8 +167,10 @@ export const useVaultWorker = ({
         }
 
         const BATCH_SIZE = 3; // Process 3 items at a time to prevent UI blocking
+        const MAX_RETRY_COUNT = 5; // Mirror of storageUtils limit (items dropped at this count)
         let synced = 0;
         let failed = 0;
+        let exhausted = 0; // Items that just used their final retry
 
         // Process in batches for UI performance
         for (let i = 0; i < queue.length; i += BATCH_SIZE) {
@@ -167,6 +201,11 @@ export const useVaultWorker = ({
                 } else {
                     failedIds.push(batch[idx].id);
                     failed++;
+                    // Detect items that just exhausted their retries (The Vault
+                    // will discard them on the next read) → user must know
+                    if ((batch[idx].retryCount || 0) + 1 >= MAX_RETRY_COUNT) {
+                        exhausted++;
+                    }
                 }
             });
 
@@ -185,6 +224,12 @@ export const useVaultWorker = ({
         const message = `[Vault] Queue processed: ${synced} synced, ${failed} failed`;
         console.log(message);
 
+        // Vault retries are silent by design (auto-retry every 30s); only alert
+        // the user when items have exhausted ALL retries and will be discarded.
+        if (exhausted > 0) {
+            toast.error(i18n.t('toast.syncExhausted'));
+        }
+
         // 🔒 UX IMPROVEMENT: Show sync completion status
         if (setSyncStatus) {
             if (synced > 0 && failed === 0) {
@@ -199,66 +244,88 @@ export const useVaultWorker = ({
         return { success: true, synced, failed };
     }, [useCloud, supabase, processSingleWrite, setSyncStatus]);
 
-    // Auto-trigger pending queue processing when coming back online
+    // CRITICAL: Hold the latest closures in refs so the auto-trigger effect can run
+    // on a STABLE schedule. Previously the effect depended on `processPendingQueue`
+    // and `supabase` (both new identities every render), so the 5s debounce timer was
+    // cancelled and restarted on each render and the queue could never drain.
+    const processPendingQueueRef = useRef(processPendingQueue);
+    processPendingQueueRef.current = processPendingQueue;
+    const supabaseRef = useRef(supabase);
+    supabaseRef.current = supabase;
+
+    const drainAndRefresh = useCallback(async () => {
+        if (isProcessingQueue.current) return;
+        isProcessingQueue.current = true;
+        try {
+            const result = await processPendingQueueRef.current();
+            if (result.synced > 0) {
+                const sb = supabaseRef.current;
+                const userId = sb?.user?.id;
+                const data = await sb.fetchAllData();
+                if (data) {
+                    if (data.profile) setProfile(data.profile);
+                    if (data.targets) setCustomTargets(data.targets);
+                    if (data.weightHistory !== undefined)
+                        setWeightHistory(data.weightHistory);
+                    if (data.foodLog !== undefined) setFoodLog(data.foodLog);
+                    if (data.workouts !== undefined) setWorkoutLog(data.workouts);
+                    if (data.stepsLog !== undefined) setStepsLog(data.stepsLog);
+                    if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);
+                    if (data.waterLog !== undefined) setWaterLog(data.waterLog);
+                    if (data.mealTemplates !== undefined)
+                        setMealTemplates(data.mealTemplates);
+                    await cacheData(data, userId);
+
+                    // SWR PATTERN: Update metadata after Vault sync
+                    const argentinaTimestamp = Date.now();
+                    await Promise.all([
+                        updateCacheMetadata('profile', userId, argentinaTimestamp),
+                        updateCacheMetadata('targets', userId, argentinaTimestamp),
+                        updateCacheMetadata('weight', userId, argentinaTimestamp),
+                        updateCacheMetadata('food', userId, argentinaTimestamp),
+                        updateCacheMetadata('workouts', userId, argentinaTimestamp),
+                        updateCacheMetadata('steps', userId, argentinaTimestamp),
+                        updateCacheMetadata('oura', userId, argentinaTimestamp),
+                        updateCacheMetadata('water', userId, argentinaTimestamp),
+                        updateCacheMetadata('templates', userId, argentinaTimestamp),
+                    ]);
+                }
+            }
+        } catch (err) {
+            console.error('[Vault] drainAndRefresh error:', err);
+        } finally {
+            isProcessingQueue.current = false;
+        }
+    }, [
+        setProfile,
+        setCustomTargets,
+        setWeightHistory,
+        setFoodLog,
+        setWorkoutLog,
+        setStepsLog,
+        setOuraLog,
+        setWaterLog,
+        setMealTemplates,
+    ]);
+
+    // Auto-trigger: debounce 5s on (re)connection, then poll every 30s while online.
+    // Keyed ONLY on connectivity flags so the schedule is stable across renders.
     useEffect(() => {
         if (!isAuthenticated || !isOnline || offlineMode) return;
 
-        // Check if already processing
-        if (isProcessingQueue.current) {
-            return;
-        }
+        const debounceId = setTimeout(() => {
+            void drainAndRefresh();
+        }, 5000); // Wait 5s for a stable connection (prevents network flapping)
 
-        // Debounce: wait 5s for stable connection (prevents network flapping)
-        const timeoutId = setTimeout(async () => {
-            isProcessingQueue.current = true;
-            try {
-                const result = await processPendingQueue();
+        const intervalId = setInterval(() => {
+            void drainAndRefresh();
+        }, 30000); // CLAUDE.md: process The Vault every 30 seconds
 
-                if (result.synced > 0) {
-                    // Delay refresh to allow UI to recover from queue processing
-                    setTimeout(async () => {
-                        const userId = supabase?.user?.id;
-                        const data = await supabase.fetchAllData();
-                        if (data) {
-                            if (data.profile) setProfile(data.profile);
-                            if (data.targets) setCustomTargets(data.targets);
-                            if (data.weightHistory !== undefined)
-                                setWeightHistory(data.weightHistory);
-                            if (data.foodLog !== undefined) setFoodLog(data.foodLog);
-                            if (data.workouts !== undefined)
-                                setWorkoutLog(data.workouts);
-                            if (data.stepsLog !== undefined)
-                                setStepsLog(data.stepsLog);
-                            if (data.ouraLog !== undefined) setOuraLog(data.ouraLog);
-                            if (data.waterLog !== undefined)
-                                setWaterLog(data.waterLog);
-                            if (data.mealTemplates !== undefined)
-                                setMealTemplates(data.mealTemplates);
-                            await cacheData(data, userId);
-
-                            // SWR PATTERN: Update metadata after Vault sync
-                            const argentinaTimestamp = Date.now();
-                            await Promise.all([
-                                updateCacheMetadata('profile', userId, argentinaTimestamp),
-                                updateCacheMetadata('targets', userId, argentinaTimestamp),
-                                updateCacheMetadata('weight', userId, argentinaTimestamp),
-                                updateCacheMetadata('food', userId, argentinaTimestamp),
-                                updateCacheMetadata('workouts', userId, argentinaTimestamp),
-                                updateCacheMetadata('steps', userId, argentinaTimestamp),
-                                updateCacheMetadata('oura', userId, argentinaTimestamp),
-                                updateCacheMetadata('water', userId, argentinaTimestamp),
-                                updateCacheMetadata('templates', userId, argentinaTimestamp),
-                            ]);
-                        }
-                    }, 1000); // 1s delay allows UI to breathe
-                }
-            } finally {
-                isProcessingQueue.current = false;
-            }
-        }, 5000); // Increased from 2s to 5s for connection stability
-
-        return () => clearTimeout(timeoutId);
-    }, [isOnline, isAuthenticated, offlineMode, processPendingQueue, supabase]); // Added missing deps
+        return () => {
+            clearTimeout(debounceId);
+            clearInterval(intervalId);
+        };
+    }, [isOnline, isAuthenticated, offlineMode, drainAndRefresh]);
 
     return {
         processPendingQueue,

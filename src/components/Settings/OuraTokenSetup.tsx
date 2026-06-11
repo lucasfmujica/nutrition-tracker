@@ -8,10 +8,17 @@ import {
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+    isOuraOAuthAvailable,
+    isOuraOAuthConnected,
+    startOuraOAuth,
+} from '../../utils/ouraOAuth';
 
 interface OuraTokenSetupProps {
     hasOuraRing: boolean;
     currentToken?: string;
+    /** Supabase user id — used to look up per-user OAuth tokens */
+    userId?: string;
     onSaveToken: (token: string) => Promise<void>;
     onToggleOura: (enabled: boolean) => Promise<void>;
 }
@@ -19,6 +26,7 @@ interface OuraTokenSetupProps {
 export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
     hasOuraRing,
     currentToken,
+    userId,
     onSaveToken,
     onToggleOura,
 }) => {
@@ -30,6 +38,8 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
         'idle',
     );
 
+    const oauthAvailable = isOuraOAuthAvailable();
+    const oauthConnected = isOuraOAuthConnected(userId);
     const hasToken = !!currentToken;
     const maskedToken = currentToken
         ? `${currentToken.substring(0, 8)}...${currentToken.substring(currentToken.length - 4)}`
@@ -123,6 +133,38 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
                         </div>
                     )}
 
+                    {/* OAuth Connect (recommended) */}
+                    {oauthAvailable && (
+                        <div className="space-y-2">
+                            <button
+                                onClick={() => {
+                                    try {
+                                        startOuraOAuth();
+                                    } catch (err) {
+                                        console.error(
+                                            '[OuraSetup] Error starting OAuth flow:',
+                                            err,
+                                        );
+                                    }
+                                }}
+                                className="w-full py-3 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary/90 active:scale-[0.98]">
+                                <ExternalLink className="w-4 h-4" />
+                                {oauthConnected || hasToken
+                                    ? t('oura.oauth.reconnect')
+                                    : t('oura.oauth.connect')}
+                            </button>
+                            <p className="text-xs text-text-tertiary text-center">
+                                {t('oura.oauth.description')}
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Manual token (advanced fallback) */}
+                    <details className="group">
+                        <summary className="cursor-pointer text-xs font-medium text-text-tertiary hover:text-text-secondary select-none">
+                            {t('oura.oauth.manualAdvanced')}
+                        </summary>
+                        <div className="mt-3 space-y-4">
                     {/* Instructions */}
                     <div className="text-sm text-text-secondary space-y-3">
                         <div className="p-3 bg-background rounded-xl border border-border">
@@ -207,6 +249,8 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
                     <p className="text-xs text-text-tertiary text-center">
                         {t('oura.setup.privacy')}
                     </p>
+                        </div>
+                    </details>
                 </div>
             )}
         </div>

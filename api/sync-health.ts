@@ -1,11 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
+import { timingSafeEqual } from 'crypto';
 import { Database } from '../src/types/supabase';
 
+/** Constant-time string comparison to avoid timing attacks on the API key. */
+function safeKeyEqual(a: string, b: string): boolean {
+    const bufA = Buffer.from(a);
+    const bufB = Buffer.from(b);
+    if (bufA.length !== bufB.length) return false;
+    return timingSafeEqual(bufA, bufB);
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-    // CORS Setup
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // CORS Setup — this endpoint is called server-to-server (iOS Shortcuts), so no
+    // wildcard browser access is needed.
     res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
     res.setHeader(
         'Access-Control-Allow-Headers',
@@ -45,8 +53,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             `[SyncHealth] Request received. apiKey present: ${!!apiKey}, userId: ${userId}, type: ${type}`,
         );
 
-        // 1. Security Check
-        if (!apiKey || apiKey !== process.env.SYNC_API_KEY) {
+        // 1. Security Check (constant-time comparison)
+        const expectedKey = process.env.SYNC_API_KEY;
+        if (!expectedKey) {
+            console.error('[SyncHealth] Missing SYNC_API_KEY');
+            return res.status(500).json({ error: 'Server Misconfiguration' });
+        }
+        if (!apiKey || !safeKeyEqual(String(apiKey), expectedKey)) {
             console.warn('[SyncHealth] Unauthorized access attempt.');
             return res.status(401).json({ error: 'Unauthorized: Invalid API Key' });
         }
@@ -117,19 +130,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         let table: string, payload: any, conflictTarget: string;
 
         if (type === 'weight') {
+            const weight = parseFloat(value);
+            // Reject NaN and implausible values (kg).
+            if (!Number.isFinite(weight) || weight <= 0 || weight > 500) {
+                return res
+                    .status(400)
+                    .json({ error: 'Invalid weight value' });
+            }
             table = 'weight_history';
             payload = {
                 user_id: userId,
                 date: argentinaDate,
-                weight: parseFloat(value),
+                weight,
             };
             conflictTarget = 'user_id, date';
         } else if (type === 'steps') {
+            const steps = parseInt(value, 10);
+            if (!Number.isFinite(steps) || steps < 0 || steps > 200000) {
+                return res.status(400).json({ error: 'Invalid steps value' });
+            }
             table = 'steps_log';
             payload = {
                 user_id: userId,
                 date: argentinaDate,
-                steps: parseInt(value, 10),
+                steps,
                 source: 'ios-health', // Tag as iOS Health source for smart merge
             };
             conflictTarget = 'user_id, date';
@@ -145,9 +169,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         if (error) {
             console.error(`[SyncHealth] Supabase Error (${table}):`, error);
-            return res
-                .status(500)
-                .json({ error: 'Database Error', details: error.message });
+            // Do not leak DB internals to the client.
+            return res.status(500).json({ error: 'Database Error' });
         }
 
         console.log(`[SyncHealth] Success (${table}):`, inserted);
@@ -158,8 +181,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
     } catch (error: any) {
         console.error('[SyncHealth] Internal Critical Error:', error);
-        return res
-            .status(500)
-            .json({ error: 'Internal Server Error', details: error.message });
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
 }

@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
+import { toast } from '../context/ToastContext';
+import i18n from '../i18n/config';
 import { FoodEntry, WeightEntry, Workout } from '../types/domain';
+import { addPendingDelete } from '../utils/storageUtils';
 import { useSupabase } from './useSupabase';
 
 type SupabaseClient = ReturnType<typeof useSupabase>;
@@ -65,9 +68,18 @@ export const useGlobalDelete = (
 
                 if (useCloud) {
                     try {
-                        await supabase.deleteFood(id as string);
+                        const res = await supabase.deleteFood(id as string);
+                        if (res?.error) throw new Error(res.error.message);
                     } catch (err) {
                         console.error(err);
+                        // Queue the delete so it is retried when back online;
+                        // otherwise the row reappears on the next fetch.
+                        toast.info(i18n.t('toast.queuedOffline'));
+                        await addPendingDelete(
+                            'food_log',
+                            id as string,
+                            supabase.user?.id || '',
+                        );
                     }
                 }
 
@@ -90,9 +102,16 @@ export const useGlobalDelete = (
 
                 if (useCloud) {
                     try {
-                        await supabase.deleteWorkout(id as string);
+                        const res = await supabase.deleteWorkout(id as string);
+                        if (res?.error) throw new Error(res.error.message);
                     } catch (err) {
                         console.error(err);
+                        toast.info(i18n.t('toast.queuedOffline'));
+                        await addPendingDelete(
+                            'workouts',
+                            id as string,
+                            supabase.user?.id || '',
+                        );
                     }
                 }
 
@@ -119,9 +138,16 @@ export const useGlobalDelete = (
 
                 if (useCloud && item) {
                     try {
-                        await supabase.deleteWeight(item.id);
+                        const res = await supabase.deleteWeight(item.id);
+                        if (res?.error) throw new Error(res.error.message);
                     } catch (err) {
                         console.error(err);
+                        toast.info(i18n.t('toast.queuedOffline'));
+                        await addPendingDelete(
+                            'weight_history',
+                            item.id as string,
+                            supabase.user?.id || '',
+                        );
                     }
                 }
 
@@ -141,6 +167,7 @@ export const useGlobalDelete = (
             }
         } catch (e) {
             console.error('Delete execution failed:', e);
+            toast.error(i18n.t('toast.deleteError'));
         } finally {
             // ALWAYS close the modal
             setDeleteModal({ show: false, type: '', id: null, name: '' });

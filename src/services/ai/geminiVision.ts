@@ -4,17 +4,25 @@
  * Configured for Argentine cuisine specialization (ES) and US cuisine (EN)
  */
 
-import { GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
+import { generateGeminiContent } from './geminiClient';
 
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+export const VISION_MODEL = 'gemini-3.5-flash';
 
-export const getGeminiVisionModel = (language: string = 'es'): GenerativeModel => {
-    return genAI.getGenerativeModel({
-        model: 'gemini-3-flash-preview',
+/**
+ * Analyze a food image via the server-side Gemini proxy.
+ * @param request - Passed verbatim to generateContent (string, parts, or { contents }).
+ * @param language - 'es' or 'en' (selects the system prompt).
+ * @returns Raw JSON response text from Gemini.
+ */
+export const analyzeFoodImage = (
+    request: unknown,
+    language: string = 'es',
+): Promise<string> => {
+    return generateGeminiContent({
+        model: VISION_MODEL,
         systemInstruction: getSystemPrompt(language),
-        generationConfig: {
-            responseMimeType: 'application/json',
-        },
+        generationConfig: { responseMimeType: 'application/json' },
+        request,
     });
 };
 

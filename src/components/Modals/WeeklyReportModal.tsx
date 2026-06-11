@@ -70,6 +70,7 @@ export const WeeklyReportModal: React.FC<WeeklyReportModalProps> = ({
                 {/* Close Button */}
                 <button
                     onClick={onClose}
+                    aria-label={t('common.close')}
                     className="absolute -top-3 -right-3 z-20 w-10 h-10 bg-surface rounded-full shadow-lg flex items-center justify-center hover:bg-background transition-colors">
                     <X className="w-5 h-5 text-text-tertiary" />
                 </button>

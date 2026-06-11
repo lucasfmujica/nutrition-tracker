@@ -32,6 +32,7 @@ export interface UseFoodEntryReturn {
         food: FoodFormState | ((prev: FoodFormState) => FoodFormState),
     ) => void;
     addManualFood: () => Promise<void>;
+    resetFoodForm: () => void;
 }
 
 export const useFoodEntry = ({
@@ -54,6 +55,21 @@ export const useFoodEntry = ({
         fat: '',
         fiber: '',
     });
+
+    const resetFoodForm = () => {
+        setNewFood({
+            date: getArgentinaDateString(),
+            time: '12:00',
+            meal: 'lunch',
+            name: '',
+            description: '',
+            calories: '',
+            protein: '',
+            carbs: '',
+            fat: '',
+            fiber: '',
+        });
+    };
 
     const addManualFood = async () => {
         // Validate required fields
@@ -114,18 +130,7 @@ export const useFoodEntry = ({
             setTimeout(() => setSaveStatus(''), 2000);
 
             // Reset form
-            setNewFood({
-                date: getArgentinaDateString(),
-                time: '12:00',
-                meal: 'lunch',
-                name: '',
-                description: '',
-                calories: '',
-                protein: '',
-                carbs: '',
-                fat: '',
-                fiber: '',
-            });
+            resetFoodForm();
         } catch (err) {
             console.error('Error adding food:', err);
             setSaveStatus('❌ Error al guardar');
@@ -141,5 +146,6 @@ export const useFoodEntry = ({
         newFood,
         setNewFood,
         addManualFood,
+        resetFoodForm,
     };
 };

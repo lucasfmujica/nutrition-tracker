@@ -2,12 +2,14 @@ import React, { Suspense, useCallback } from 'react';
 import { TrackerFAB } from './components/layout/FAB/TrackerFAB';
 import { TrackerHeader } from './components/layout/Header/TrackerHeader';
 import { ModalsManager } from './components/layout/Modals/ModalsManager';
+import { AIMealSuggestionsProvider } from './context/AIMealSuggestionsContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { lazyWithRetry } from './utils/lazyUtils';
 
 import { AuthShell } from './components/layout/Shell/AuthShell';
 import { Layout } from './components/layout/Shell/Layout';
 import { UndoToast } from './components/shared/UndoToast';
+import { ToastProvider } from './components/UI/Toast';
 import { TutorialOverlay, TutorialProvider } from './components/Tutorial';
 
 // Lazy load heavy tab components with retry logic to handle Vercel deployment chunk mismatches
@@ -357,7 +359,11 @@ const NutritionTracker = () => {
     return (
         <TrackerProvider>
             <ThemeProvider>
-                <NutritionTrackerContent />
+                <AIMealSuggestionsProvider>
+                    <ToastProvider>
+                        <NutritionTrackerContent />
+                    </ToastProvider>
+                </AIMealSuggestionsProvider>
             </ThemeProvider>
         </TrackerProvider>
     );

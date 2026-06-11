@@ -9,6 +9,10 @@ import type {
 } from '../types/domain';
 import { useMealPrepPlan } from './useMealPrepPlan';
 import { format, addDays } from 'date-fns';
+import {
+    getMealsToAvoid,
+    loadDietaryPreferences,
+} from '../utils/dietaryPreferences';
 
 export interface GenerateWeeklyPlanOptions {
     regenerateDays?: number[]; // [0-6] for specific days (0=Monday, 6=Sunday)
@@ -144,7 +148,10 @@ export const useGenerateWeeklyMealPlan = (userId: string, weekStartDate: string)
                     };
                 });
 
-                // 4. Build request
+                // 4. Load dietary preferences (localStorage-backed, shared with AI Chef)
+                const dietaryPrefs = loadDietaryPreferences();
+
+                // 5. Build request
                 const request: WeeklyMealPlanRequest = {
                     userId,
                     weekStartDate,
@@ -158,10 +165,11 @@ export const useGenerateWeeklyMealPlan = (userId: string, weekStartDate: string)
                     activityLevel: profile.activity_level || 'moderate',
                     weeklyWorkouts,
                     preferences: {
-                        dietaryMode: 'standard', // TODO: Add to profile
-                        prepTime: 'medium',
-                        difficulty: 'medium',
-                        rejectedMeals: [], // TODO: Track rejected meals
+                        dietaryMode: dietaryPrefs.dietaryMode,
+                        prepTime: dietaryPrefs.prepTime,
+                        difficulty: dietaryPrefs.difficulty,
+                        rejectedMeals: getMealsToAvoid(dietaryPrefs),
+                        exclusions: dietaryPrefs.allergies || [],
                     },
                     favoriteFoods,
                     language: i18n.language,

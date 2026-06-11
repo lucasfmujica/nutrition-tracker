@@ -1,4 +1,15 @@
 {
+    "a11y": {
+        "openQuickActions": "Abrir acciones rápidas",
+        "closeQuickActions": "Cerrar acciones rápidas",
+        "moreMenu": "Más opciones",
+        "clearSearch": "Limpiar búsqueda",
+        "deleteFavorite": "Eliminar favorito",
+        "openMenu": "Abrir menú",
+        "closeMenu": "Cerrar menú",
+        "increase": "Aumentar",
+        "decrease": "Disminuir"
+    },
     "tabs": {
         "dashboard": "Resumen",
         "meals": "Comidas",

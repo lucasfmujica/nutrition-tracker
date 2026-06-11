@@ -8,6 +8,8 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode';
 import { getProductByBarcode, calculateMacros } from '../services/foodApi';
+import { toast } from '../context/ToastContext';
+import i18n from '../i18n/config';
 import type { FoodSearchResult, CalculatedMacros } from '../services/foodApi/types';
 
 export interface UseBarcodeScaannerReturn {
@@ -114,6 +116,7 @@ export const useBarcodeScanner = (): UseBarcodeScaannerReturn => {
         } catch (err) {
             console.error('[useBarcodeScanner] Lookup error:', err);
             setError('Error al buscar el producto. Intentá de nuevo.');
+            toast.error(i18n.t('toast.barcodeLookupError'));
         } finally {
             setIsLookingUp(false);
         }

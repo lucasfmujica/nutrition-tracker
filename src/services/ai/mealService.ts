@@ -1,9 +1,7 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { AIChefContext, AIChefMealTime } from '../../types/domain';
+import { generateGeminiContent } from './geminiClient';
 
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-
-const MODEL_NAME = 'gemini-3-flash-preview'; // Fast and capable for creative lists
+const MODEL_NAME = 'gemini-3.5-flash'; // Fast and capable for creative lists
 
 interface MealSuggestionParams {
     remainingCalories: number;
@@ -118,6 +116,18 @@ CONTEXTO REGIONAL (Argentina):
     };
     if (context.preferences.dietaryMode !== 'standard') {
         parts.push(`\nRESTRICCIÓN DIETARIA: ${dietaryMap[context.preferences.dietaryMode]}`);
+    }
+
+    // Allergies / hard exclusions
+    if (context.preferences.allergies && context.preferences.allergies.length > 0) {
+        parts.push(`\nALERGIAS / EXCLUSIONES (NUNCA incluir estos ingredientes):
+${context.preferences.allergies.join(', ')}`);
+    }
+
+    // Disliked meals
+    if (context.preferences.dislikedMeals && context.preferences.dislikedMeals.length > 0) {
+        parts.push(`\nCOMIDAS QUE NO LE GUSTAN AL USUARIO (evitar):
+${context.preferences.dislikedMeals.join(', ')}`);
     }
 
     // Prep time preference
@@ -258,6 +268,18 @@ REGIONAL CONTEXT (United States):
         parts.push(`\nDIETARY RESTRICTION: ${dietaryMap[context.preferences.dietaryMode]}`);
     }
 
+    // Allergies / hard exclusions
+    if (context.preferences.allergies && context.preferences.allergies.length > 0) {
+        parts.push(`\nALLERGIES / EXCLUSIONS (NEVER include these ingredients):
+${context.preferences.allergies.join(', ')}`);
+    }
+
+    // Disliked meals
+    if (context.preferences.dislikedMeals && context.preferences.dislikedMeals.length > 0) {
+        parts.push(`\nMEALS THE USER DISLIKES (avoid):
+${context.preferences.dislikedMeals.join(', ')}`);
+    }
+
     // Prep time preference
     const prepTimeMap: Record<string, string> = {
         quick: 'QUICK (<15 min) - Options that don\'t require much preparation',
@@ -333,17 +355,12 @@ export const suggestMeals = async ({
             ? SYSTEM_PROMPT_EN
             : SYSTEM_PROMPT_ES;
 
-        const model = genAI.getGenerativeModel({
+        const text = await generateGeminiContent({
             model: MODEL_NAME,
             systemInstruction,
-            generationConfig: {
-                responseMimeType: 'application/json',
-            },
+            generationConfig: { responseMimeType: 'application/json' },
+            request: prompt,
         });
-
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text();
 
         return JSON.parse(text);
     } catch (error) {
@@ -372,17 +389,12 @@ export const suggestMealsWithContext = async (
             ? buildContextualPromptEN(context)
             : buildContextualPromptES(context);
 
-        const model = genAI.getGenerativeModel({
+        const text = await generateGeminiContent({
             model: MODEL_NAME,
             systemInstruction,
-            generationConfig: {
-                responseMimeType: 'application/json',
-            },
+            generationConfig: { responseMimeType: 'application/json' },
+            request: userPrompt,
         });
-
-        const result = await model.generateContent(userPrompt);
-        const response = await result.response;
-        const text = response.text();
 
         return JSON.parse(text);
     } catch (error) {
@@ -444,17 +456,12 @@ REGLAS:
             ? `Meal: ${suggestion.name}\nDescription: ${suggestion.description}\nIngredients: ${ingredientsList}`
             : `Plato: ${suggestion.name}\nDescripción: ${suggestion.description}\nIngredientes: ${ingredientsList}`;
 
-        const model = genAI.getGenerativeModel({
+        const text = await generateGeminiContent({
             model: MODEL_NAME,
             systemInstruction,
-            generationConfig: {
-                responseMimeType: 'application/json',
-            },
+            generationConfig: { responseMimeType: 'application/json' },
+            request: userPrompt,
         });
-
-        const result = await model.generateContent(userPrompt);
-        const response = await result.response;
-        const text = response.text();
 
         return JSON.parse(text);
     } catch (error) {
@@ -521,6 +528,7 @@ ${favoriteFoods.slice(0, 10).map((f, i) => `${i + 1}. ${f}`).join('\n')}
     prompt += `
 RESTRICCIONES:
 - Evitar: ${preferences.rejectedMeals.length > 0 ? preferences.rejectedMeals.join(', ') : 'Ninguna'}
+- Alergias/exclusiones (NUNCA incluir): ${preferences.exclusions && preferences.exclusions.length > 0 ? preferences.exclusions.join(', ') : 'Ninguna'}
 - Tiempo de preparación: ${preferences.prepTime} (quick=15min, medium=30min, long=45min+)
 - Dificultad: ${preferences.difficulty}
 
@@ -622,6 +630,7 @@ ${favoriteFoods.slice(0, 10).map((f, i) => `${i + 1}. ${f}`).join('\n')}
     prompt += `
 CONSTRAINTS:
 - Avoid: ${preferences.rejectedMeals.length > 0 ? preferences.rejectedMeals.join(', ') : 'None'}
+- Allergies/exclusions (NEVER include): ${preferences.exclusions && preferences.exclusions.length > 0 ? preferences.exclusions.join(', ') : 'None'}
 - Prep time: ${preferences.prepTime} (quick=15min, medium=30min, long=45min+)
 - Difficulty: ${preferences.difficulty}
 
@@ -686,21 +695,16 @@ export const generateWeeklyMealPlan = async (
             ? buildWeeklyPlanPromptES(request)
             : buildWeeklyPlanPromptEN(request);
 
-        const model = genAI.getGenerativeModel({
-            model: MODEL_NAME,
-            systemInstruction: systemPrompt,
-            generationConfig: {
-                responseMimeType: 'application/json',
-            },
-        });
-
         const userPrompt = language === 'es'
             ? `Genera el plan de comidas completo para 7 días siguiendo el formato JSON especificado.`
             : `Generate the complete 7-day meal plan following the specified JSON format.`;
 
-        const result = await model.generateContent(userPrompt);
-        const response = await result.response;
-        const text = response.text();
+        const text = await generateGeminiContent({
+            model: MODEL_NAME,
+            systemInstruction: systemPrompt,
+            generationConfig: { responseMimeType: 'application/json' },
+            request: userPrompt,
+        });
 
         const parsed = JSON.parse(text);
 

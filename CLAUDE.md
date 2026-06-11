@@ -78,25 +78,27 @@ const truth = localData.length > 0 ? localData : cloudData.data;
 
 ---
 
-### 🌎 Timezone Argentina Obligatorio
+### 🌎 Timezone: fechas en Argentina, horas en reloj local
 
-**Todas las fechas deben operar estrictamente en zona horaria de Argentina (America/Argentina/Buenos_Aires).**
+**Las FECHAS (el "día" de cada registro) operan estrictamente en zona horaria de Argentina (America/Argentina/Buenos_Aires).** Esto define a qué día pertenece una comida, un peso, un workout, etc.
 
-- ✅ Usar `getArgentinaDateTime()` de `dateUtils.js` para timestamps
-- ✅ Formatear siempre fechas con `format(date, 'yyyy-MM-dd', { timeZone: 'America/Argentina/Buenos_Aires' })`
-- ✅ Validar fechas antes de guardar: `if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error('Invalid date format')`
-- ❌ **NUNCA** usar `new Date().toISOString()` directamente
-- ❌ **NUNCA** confiar en el timezone del navegador
+- ✅ Usar `getArgentinaDateString()` / `toArgentinaDateString()` de `dateUtils.ts` para el día (YYYY-MM-DD)
+- ✅ Formatear fechas con `timeZone: 'America/Argentina/Buenos_Aires'`
+- ✅ Validar fechas antes de guardar: `if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return` 
+- ❌ **NUNCA** usar `new Date().toISOString().split('T')[0]` para obtener el día (devuelve el día en UTC, se corre entre 21:00 y medianoche ART)
+
+**Las HORAS de comida (`getCurrentTimeString` / `getCurrentHour`) reflejan a propósito el reloj LOCAL del usuario**, no el de Argentina. Así la detección de tipo de comida (desayuno/almuerzo/cena) funciona para usuarios de cualquier país. Esta es una excepción consciente a la regla de fechas.
 
 ```javascript
-// ✅ Correcto
-import { getArgentinaDateTime, formatArgentinaDate } from '@/utils/dateUtils';
-const timestamp = getArgentinaDateTime();
-const dateStr = formatArgentinaDate(new Date());
+// ✅ Correcto: el DÍA siempre en Argentina
+import { getArgentinaDateString } from '@/utils/dateUtils';
+const dateStr = getArgentinaDateString();
 
-// ❌ Incorrecto
-const timestamp = new Date().toISOString(); // ❌ Timezone del navegador
-const dateStr = new Date().toLocaleDateString(); // ❌ Formato ambiguo
+// ✅ Correcto: la HORA en el reloj local del usuario (intencional)
+const timeStr = getCurrentTimeString();
+
+// ❌ Incorrecto: el día en UTC se corre un día cerca de medianoche
+const dateStr = new Date().toISOString().split('T')[0];
 ```
 
 ---

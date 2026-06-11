@@ -3,11 +3,9 @@
  * Parses Gravl workout screenshots into structured JSON data
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { generateGeminiContent } from './geminiClient';
 
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-
-const MODEL_NAME = 'gemini-3-flash-preview'; // Pro for better extraction reasoning
+const MODEL_NAME = 'gemini-3.5-flash'; // Pro for better extraction reasoning
 
 const SYSTEM_PROMPT_ES = `Act as a Fitness Data Parser specialized in the Gravl app.
 I will provide 1 to 3 screenshots of a single gym session.
@@ -123,14 +121,6 @@ export const analyzeWorkoutImages = async (
     language: string = 'es',
 ): Promise<WorkoutParsed> => {
     try {
-        const model = genAI.getGenerativeModel({
-            model: MODEL_NAME,
-            systemInstruction: getSystemPrompt(language),
-            generationConfig: {
-                responseMimeType: 'application/json',
-            },
-        });
-
         const imageParts = await Promise.all(
             imageFiles.map((file) => fileToGenerativePart(file)),
         );
@@ -139,10 +129,12 @@ export const analyzeWorkoutImages = async (
             ? 'Extract workout data from these Gravl screenshots.'
             : 'Extrae los datos de entrenamiento de estas capturas de Gravl.';
 
-        const result = await model.generateContent([promptTest, ...imageParts]);
-
-        const response = await result.response;
-        const text = response.text();
+        const text = await generateGeminiContent({
+            model: MODEL_NAME,
+            systemInstruction: getSystemPrompt(language),
+            generationConfig: { responseMimeType: 'application/json' },
+            request: [promptTest, ...imageParts],
+        });
 
         return JSON.parse(text);
     } catch (error) {

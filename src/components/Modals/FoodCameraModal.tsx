@@ -1,5 +1,6 @@
 import { X } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FoodCameraInput } from '../Food/FoodCameraInput';
 
 interface FoodCameraModalProps {
@@ -11,6 +12,7 @@ export const FoodCameraModal: React.FC<FoodCameraModalProps> = ({
     isOpen,
     onClose,
 }) => {
+    const { t } = useTranslation();
     if (!isOpen) return null;
 
     return (
@@ -19,6 +21,7 @@ export const FoodCameraModal: React.FC<FoodCameraModalProps> = ({
                 {/* Close Button */}
                 <button
                     onClick={onClose}
+                    aria-label={t('common.close')}
                     className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-surface-lighter text-text-secondary hover:bg-surface-lighter transition-colors">
                     <X size={20} />
                 </button>

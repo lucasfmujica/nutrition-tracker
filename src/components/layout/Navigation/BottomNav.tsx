@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAIMeals } from '../../../context/AIMealSuggestionsContext';
 import { useTracker } from '../../../context/TrackerContext';
 
 // =====================================================
@@ -54,8 +55,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         selectedFoodDate,
         selectedWorkoutDate,
         setShowFoodScanModal,
-        setShowSuggestionModal,
     } = useTracker() as any;
+    const { setShowSuggestionModal } = useAIMeals();
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -342,7 +343,13 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                                         setIsMoreMenuOpen(false);
                                     }}
                                     data-tutorial={tab.tutorialId}
-                                    aria-label="Open quick actions"
+                                    aria-label={
+                                        isMenuOpen
+                                            ? t('a11y.closeQuickActions')
+                                            : t('a11y.openQuickActions')
+                                    }
+                                    aria-expanded={isMenuOpen}
+                                    aria-haspopup="menu"
                                     className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 relative -top-7 z-20 shadow-2xl ${
                                         isMenuOpen
                                             ? 'bg-slate-900 text-white rotate-45 scale-110'
@@ -376,6 +383,9 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                                         setIsMoreMenuOpen(!isMoreMenuOpen);
                                         setIsMenuOpen(false);
                                     }}
+                                    aria-label={t('a11y.moreMenu')}
+                                    aria-expanded={isMoreMenuOpen}
+                                    aria-haspopup="menu"
                                     className={`flex flex-col items-center justify-center transition-[color,transform,opacity] duration-200 relative group min-w-[40px] h-full ${
                                         isMoreActive
                                             ? 'text-primary'
@@ -423,6 +433,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                                     setIsMenuOpen(false);
                                 }}
                                 data-tutorial={tab.tutorialId}
+                                aria-label={tab.label}
+                                aria-current={isActive ? 'page' : undefined}
                                 className={`flex flex-col items-center justify-center transition-[color,transform,opacity] duration-200 relative group min-w-[40px] h-full ${
                                     isActive
                                         ? 'text-primary'

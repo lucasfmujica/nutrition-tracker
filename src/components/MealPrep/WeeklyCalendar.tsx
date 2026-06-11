@@ -11,9 +11,11 @@ import {
     ChevronUp,
     Trash2,
     Check,
+    ThumbsDown,
 } from 'lucide-react';
 import { useMealPrepPlan, PlannedMealItem } from '../../hooks/useMealPrepPlan';
 import { AddMealModal } from './AddMealModal';
+import { addRejectedMeal } from '../../utils/dietaryPreferences';
 
 interface WeeklyCalendarProps {
     userId: string;
@@ -91,6 +93,22 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ userId }) => {
         if (confirm(t('common.delete') + '?')) {
             await removeMealFromPlan(mealId);
         }
+    };
+
+    /**
+     * Reject a suggested meal: persist its item names so future AI
+     * generations avoid them, then remove it from the plan.
+     */
+    const handleRejectMeal = async (
+        mealId: string,
+        items: PlannedMealItem[],
+    ) => {
+        if (!confirm(t('mealPrep.rejectMealConfirm'))) return;
+
+        items.forEach((item) => {
+            if (item.name) addRejectedMeal(item.name);
+        });
+        await removeMealFromPlan(mealId);
     };
 
     const isToday = (date: Date) => isSameDay(date, new Date());
@@ -306,6 +324,21 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ userId }) => {
                                                                         </p>
                                                                     )}
                                                                 </div>
+
+                                                                {/* Reject Button (avoid in future AI plans) */}
+                                                                <button
+                                                                    onClick={() =>
+                                                                        handleRejectMeal(
+                                                                            meal.id,
+                                                                            meal.planned_items,
+                                                                        )
+                                                                    }
+                                                                    className="flex-shrink-0 p-2 rounded-lg hover:bg-amber-500/10 transition-colors"
+                                                                    aria-label="Reject meal"
+                                                                    title={t('mealPrep.rejectMeal')}
+                                                                >
+                                                                    <ThumbsDown className="w-4 h-4 text-amber-500" />
+                                                                </button>
 
                                                                 {/* Delete Button */}
                                                                 <button

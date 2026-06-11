@@ -171,7 +171,9 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
             {/* Main FAB - Pulse Engine */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                aria-label={isOpen ? 'Close menu' : 'Open menu'}
+                aria-label={isOpen ? t('a11y.closeMenu') : t('a11y.openMenu')}
+                aria-expanded={isOpen}
+                aria-haspopup="menu"
                 className={`fixed right-8 bottom-28 z-50 w-20 h-20 rounded-full flex items-center justify-center text-white shadow-2xl transition-all duration-500 ring-8 ring-white/80 backdrop-blur-sm active:scale-90 ${
                     isOpen
                         ? 'rotate-45 bg-slate-900 !text-white ring-border'

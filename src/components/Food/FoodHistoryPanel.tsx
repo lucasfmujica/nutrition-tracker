@@ -82,6 +82,7 @@ export const FoodHistoryPanel: React.FC<FoodHistoryPanelProps> = ({
                     </div>
                     <button
                         onClick={onClose}
+                    aria-label={t('common.close')}
                         className="w-8 h-8 flex items-center justify-center rounded-full bg-surface-lighter text-text-tertiary hover:bg-surface-lighter transition-colors">
                         <X size={18} />
                     </button>
@@ -105,6 +106,7 @@ export const FoodHistoryPanel: React.FC<FoodHistoryPanelProps> = ({
                         {searchQuery && (
                             <button
                                 onClick={() => setSearchQuery('')}
+                                aria-label={t('a11y.clearSearch')}
                                 className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full bg-surface-lighter text-text-tertiary hover:bg-surface-lighter">
                                 <X size={14} />
                             </button>

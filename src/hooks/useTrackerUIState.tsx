@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getArgentinaDateString } from '../utils/dateUtils';
 
 // Declare gtag for TypeScript
@@ -52,32 +52,51 @@ export const useTrackerUIState = () => {
     const [showFab, setShowFab] = useState(true);
     const [newSteps, setNewSteps] = useState('');
 
-    return {
-        activeTab,
-        setActiveTab,
-        dashboardDate,
-        setDashboardDate,
-        selectedFoodDate,
-        setSelectedFoodDate,
-        selectedWorkoutDate,
-        setSelectedWorkoutDate,
-        stepsDate,
-        setStepsDate,
-        showImportFoodModal,
-        setShowImportFoodModal,
-        showImportWorkoutModal,
-        setShowImportWorkoutModal,
-        showFoodScanModal,
-        setShowFoodScanModal,
-        showFoodSearchModal,
-        setShowFoodSearchModal,
-        showBarcodeModal,
-        setShowBarcodeModal,
-        showFoodHistoryPanel,
-        setShowFoodHistoryPanel,
-        showFab,
-        setShowFab,
-        newSteps,
-        setNewSteps,
-    };
+    // Memoize so this slice keeps a stable identity unless a UI value actually
+    // changes (setters from useState are already stable).
+    return useMemo(
+        () => ({
+            activeTab,
+            setActiveTab,
+            dashboardDate,
+            setDashboardDate,
+            selectedFoodDate,
+            setSelectedFoodDate,
+            selectedWorkoutDate,
+            setSelectedWorkoutDate,
+            stepsDate,
+            setStepsDate,
+            showImportFoodModal,
+            setShowImportFoodModal,
+            showImportWorkoutModal,
+            setShowImportWorkoutModal,
+            showFoodScanModal,
+            setShowFoodScanModal,
+            showFoodSearchModal,
+            setShowFoodSearchModal,
+            showBarcodeModal,
+            setShowBarcodeModal,
+            showFoodHistoryPanel,
+            setShowFoodHistoryPanel,
+            showFab,
+            setShowFab,
+            newSteps,
+            setNewSteps,
+        }),
+        [
+            activeTab,
+            dashboardDate,
+            selectedFoodDate,
+            selectedWorkoutDate,
+            stepsDate,
+            showImportFoodModal,
+            showImportWorkoutModal,
+            showFoodScanModal,
+            showFoodSearchModal,
+            showBarcodeModal,
+            showFoodHistoryPanel,
+            showFab,
+            newSteps,
+        ],
+    );
 };

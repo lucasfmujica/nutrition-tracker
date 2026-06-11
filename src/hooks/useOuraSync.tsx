@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from '../context/ToastContext';
+import i18n from '../i18n/config';
 import { OuraEntry, Profile, StepsEntry } from '../types/domain';
 import { addDaysToDate, getArgentinaDateString } from '../utils/dateUtils';
 import {
@@ -8,6 +10,14 @@ import {
     mapOuraSleepDetails,
     mergeOuraData,
 } from '../utils/ouraMappers';
+import {
+    consumePendingOuraCallback,
+    exchangeOuraCode,
+    getStoredOuraOAuthTokens,
+    isOuraAccessTokenExpired,
+    refreshOuraTokens,
+    saveOuraOAuthTokens,
+} from '../utils/ouraOAuth';
 import { getCacheKeys } from '../utils/storageUtils';
 import { useSupabase } from './useSupabase';
 
@@ -24,6 +34,8 @@ interface UseOuraSyncParams {
     profile?: Profile | null;
     /** Current steps log for conflict detection */
     stepsLog?: StepsEntry[];
+    /** Persists the profile — used to store the OAuth access token. */
+    saveProfile?: (profile: Profile) => Promise<any>;
 }
 
 interface SyncResult {
@@ -38,6 +50,7 @@ export const useOuraSync = ({
     ouraPersonalToken,
     profile,
     stepsLog = [],
+    saveProfile,
 }: UseOuraSyncParams) => {
     const supabase = useSupabase();
     const [isSyncing, setIsSyncing] = useState(false);
@@ -48,9 +61,48 @@ export const useOuraSync = ({
     // Detect production environment
     const isProduction = import.meta.env.PROD;
 
-    // Per-user token takes priority
-    const getOuraToken = (): string | null => {
-        // Core Logic: Always use personal token if present
+    /** Persists fresh OAuth tokens (access token goes into the profile). */
+    const persistOAuthTokens = async (tokens: {
+        access_token: string;
+        refresh_token: string;
+        expires_in: number;
+    }): Promise<void> => {
+        saveOuraOAuthTokens(supabase.user?.id, tokens);
+        if (saveProfile && profile) {
+            await saveProfile({
+                ...profile,
+                hasOuraRing: true,
+                ouraPersonalToken: tokens.access_token,
+            });
+        }
+    };
+
+    // Per-user token takes priority. Refreshes the OAuth access token when
+    // expired; manual tokens (no stored OAuth record) are returned as-is.
+    const getOuraToken = async (): Promise<string | null> => {
+        const oauthTokens = getStoredOuraOAuthTokens(supabase.user?.id);
+
+        if (oauthTokens) {
+            if (isOuraAccessTokenExpired(oauthTokens)) {
+                try {
+                    console.log(
+                        '[OuraSync] Access token expired, refreshing...',
+                    );
+                    const refreshed = await refreshOuraTokens(
+                        oauthTokens.refreshToken,
+                    );
+                    await persistOAuthTokens(refreshed);
+                    return refreshed.access_token;
+                } catch (err) {
+                    console.error('[OuraSync] Token refresh failed:', err);
+                    // Fall through to whatever token we have (may 401)
+                }
+            } else if (oauthTokens.accessToken) {
+                return oauthTokens.accessToken;
+            }
+        }
+
+        // Core Logic: Always use personal token if present (manual or OAuth)
         if (ouraPersonalToken) return ouraPersonalToken;
 
         // No fallback to system token - users MUST provide their own
@@ -62,7 +114,7 @@ export const useOuraSync = ({
         start: string,
         end: string,
     ): Promise<any> => {
-        const token = getOuraToken();
+        const token = await getOuraToken();
         if (!token)
             throw new Error(
                 'Oura token not configured. Set up your personal token in Settings.',
@@ -256,8 +308,9 @@ export const useOuraSync = ({
                 return { status: 'success' };
             } catch (err: any) {
                 console.error('[OuraSync] Sync Failed:', err);
-                // Silent Failure: Log error but do not block UI
+                // Log error but do not block UI; surface feedback via toast
                 setSyncStatus('error');
+                toast.error(i18n.t('toast.ouraSyncError'));
                 // Do NOT throw, just return error status
                 return { status: 'error', error: err.message };
             } finally {
@@ -266,6 +319,31 @@ export const useOuraSync = ({
         },
         [isSyncing, saveOuraEntry, saveStepsEntry, supabase.user?.id],
     );
+
+    // --- OAUTH CALLBACK HANDLING ---
+    // After Oura redirects back to the app root with ?code&state, exchange the
+    // code for tokens once the profile is loaded (so we can persist the token).
+    useEffect(() => {
+        if (!profile || !saveProfile) return;
+
+        const pending = consumePendingOuraCallback();
+        if (!pending) return;
+
+        (async () => {
+            try {
+                console.log('[OuraSync] Exchanging OAuth code for tokens...');
+                const tokens = await exchangeOuraCode(pending.code);
+                await persistOAuthTokens(tokens);
+                toast.success(i18n.t('oura.oauth.connected'));
+                // Kick off an initial sync with the fresh token
+                syncOuraData(true);
+            } catch (err) {
+                console.error('[OuraSync] OAuth code exchange failed:', err);
+                toast.error(i18n.t('oura.oauth.connectError'));
+            }
+        })();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [!!profile, !!saveProfile]);
 
     // --- AUTO SYNC LOGIC ---
     useEffect(() => {

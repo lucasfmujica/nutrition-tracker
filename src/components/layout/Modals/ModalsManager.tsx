@@ -1,9 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAIMeals } from '../../../context/AIMealSuggestionsContext';
 import { useTracker } from '../../../context/TrackerContext';
 import { useSmartMealType } from '../../../hooks/useSmartMealType';
 import { FoodEntry } from '../../../types/domain';
-import { getCurrentTimeString } from '../../../utils/dateUtils';
+import { getArgentinaDateString, getCurrentTimeString } from '../../../utils/dateUtils';
 import { FoodHistoryPanel } from '../../Food/FoodHistoryPanel';
 import { AIMealSuggestionModal } from '../../Modals/AIMealSuggestionModal';
 import { BarcodeScannerModal } from '../../Modals/BarcodeScannerModal';
@@ -32,6 +33,7 @@ export const ModalsManager: React.FC = () => {
         editingFoodId,
         setEditingFoodId,
         addManualFood,
+        resetFoodForm,
 
         // Workout Form Modal
         showWorkoutForm,
@@ -77,10 +79,6 @@ export const ModalsManager: React.FC = () => {
         setTemplateToSave,
         confirmSaveTemplate,
 
-        // AI Suggestions
-        showSuggestionModal,
-        setShowSuggestionModal,
-
         // Weekly Report
         showWeeklyReport,
         setShowWeeklyReport,
@@ -101,6 +99,7 @@ export const ModalsManager: React.FC = () => {
         saveFoodEntry,
         selectedFoodDate,
     } = useTracker() as any;
+    const { showSuggestionModal, setShowSuggestionModal } = useAIMeals();
 
     const { t } = useTranslation();
     const { getAutoMealType } = useSmartMealType();
@@ -140,7 +139,11 @@ export const ModalsManager: React.FC = () => {
                 isOpen={showFoodForm}
                 onClose={() => {
                     setShowFoodForm(false);
-                    setEditingFoodId(null);
+                    if (editingFoodId) {
+                        // Cancelled edit: clear edit mode and discard prefilled values
+                        setEditingFoodId(null);
+                        resetFoodForm();
+                    }
                 }}
                 food={newFood}
                 onFoodChange={setNewFood}
@@ -185,9 +188,7 @@ export const ModalsManager: React.FC = () => {
                     onSave={async (workoutData: any) => {
                         const newEntry = {
                             ...workoutData,
-                            date:
-                                workoutData.date ||
-                                new Date().toISOString().split('T')[0],
+                            date: workoutData.date || getArgentinaDateString(),
                             source: 'ai-import',
                             reviewed: true,
                             confidence: 1.0,
@@ -227,13 +228,20 @@ export const ModalsManager: React.FC = () => {
 
             {showTemplatesModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start justify-center z-50 p-2 pt-8 overflow-y-auto">
-                    <div className="bg-surface rounded-2xl p-5 w-full max-w-md border border-purple-200 dark:border-purple-800 shadow-2xl">
+                    <div
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="templates-modal-title"
+                        className="bg-surface rounded-2xl p-5 w-full max-w-md border border-purple-200 dark:border-purple-800 shadow-2xl">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg lg:text-xl font-bold text-purple-600 dark:text-purple-400">
+                            <h3
+                                id="templates-modal-title"
+                                className="text-lg lg:text-xl font-bold text-purple-600 dark:text-purple-400">
                                 ⭐ Favoritos
                             </h3>
                             <button
                                 onClick={() => setShowTemplatesModal(false)}
+                                aria-label={t('common.close')}
                                 className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-xl bg-surface-lighter hover:bg-surface-lighter text-text-secondary hover:text-text-primary text-xl lg:text-2xl transition-colors">
                                 ×
                             </button>
@@ -299,6 +307,7 @@ export const ModalsManager: React.FC = () => {
                                                 onClick={() =>
                                                     deleteTemplate(template.id)
                                                 }
+                                                aria-label={`${t('a11y.deleteFavorite')}: ${template.name}`}
                                                 className="text-text-tertiary hover:text-red-500 active:text-red-600 p-1 transition-colors">
                                                 ×
                                             </button>
@@ -320,8 +329,14 @@ export const ModalsManager: React.FC = () => {
 
             {showSaveTemplateModal && templateToSave && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-surface rounded-2xl p-5 w-full max-w-xs border border-purple-200 dark:border-purple-800 shadow-2xl">
-                        <h3 className="text-base font-bold text-purple-600 dark:text-purple-400 mb-3">
+                    <div
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="save-template-modal-title"
+                        className="bg-surface rounded-2xl p-5 w-full max-w-xs border border-purple-200 dark:border-purple-800 shadow-2xl">
+                        <h3
+                            id="save-template-modal-title"
+                            className="text-base font-bold text-purple-600 dark:text-purple-400 mb-3">
                             {templateToSave.items && templateToSave.items.length > 0
                                 ? `⭐ ${t('favorites.saveCombo')}`
                                 : `⭐ ${t('favorites.saveAsFavorite')}`}

@@ -110,6 +110,7 @@ export const SwipeableItem: React.FC<SwipeableItemProps> = ({
                 }}>
                 <button
                     onClick={handleDelete}
+                    aria-label={resolvedDeleteLabel}
                     className="w-full h-full flex items-center justify-center text-white font-bold px-4">
                     {translateX < -60 && (
                         <span className="flex items-center gap-2">
@@ -130,6 +131,7 @@ export const SwipeableItem: React.FC<SwipeableItemProps> = ({
                     }}>
                     <button
                         onClick={handleDuplicate}
+                        aria-label={resolvedDuplicateLabel}
                         className="w-full h-full flex items-center justify-center text-white font-bold px-4">
                         {translateX > 60 && (
                             <span className="flex items-center gap-2">

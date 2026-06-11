@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAIMeals } from '../../context/AIMealSuggestionsContext';
 import { useTracker } from '../../context/TrackerContext';
 import { getCurrentTimeString } from '../../utils/dateUtils';
 import {
@@ -58,6 +59,8 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
         getSuggestionsFromIngredients,
         rejectSuggestion,
         currentMealTime,
+    } = useAIMeals();
+    const {
         // Tracker state
         saveFoodEntry,
         selectedFoodDate,
@@ -100,8 +103,10 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
         return workoutLog?.some((w: any) => w.date === selectedFoodDate) || false;
     }, [workoutLog, selectedFoodDate]);
 
-    // Get effective meal type (respects user override)
+    // Get effective meal type (respects user override). A 'late_night' meal is
+    // logged to the diary as 'dinner' (the diary has no late-night meal type).
     const inferMealType = (): 'breakfast' | 'lunch' | 'snack' | 'dinner' => {
+        if (effectiveMealTime === 'late_night') return 'dinner';
         return effectiveMealTime || 'lunch';
     };
 

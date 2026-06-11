@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+    createContext,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import { useTracker } from './TrackerContext';
 
 type Theme = 'light' | 'dark' | 'system';
@@ -57,18 +63,27 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
         localStorage.setItem('theme', theme);
     }, [theme]);
 
+    // Debounce the Supabase profile write so rapid theme toggles don't rewrite the
+    // entire profile on every click. The theme itself applies instantly via the DOM
+    // class + localStorage (effect above); only the cloud persistence is delayed.
+    const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     const setTheme = (newTheme: Theme) => {
         setThemeState(newTheme);
-        // Persist to Supabase if we have a profile to update
-        if (profile && updateConfig && customTargets) {
-            // We use a small delay or debounce in real apps, but here direct update is fine
-            // provided updateConfig handles it well.
-            // Note: We need to cast profile to any because we just added theme to the type
-            // and types might not be fully propagated in this file's scope yet if strictly checked,
-            // but effectively we just updated domain.ts so it should be fine.
+        if (!profile || !updateConfig || !customTargets) return;
+
+        if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = setTimeout(() => {
             updateConfig({ ...profile, theme: newTheme }, customTargets);
-        }
+        }, 800);
     };
+
+    // Flush/cleanup the pending theme save on unmount.
+    useEffect(() => {
+        return () => {
+            if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+        };
+    }, []);
 
     // Listen for system changes if mode is system
     useEffect(() => {

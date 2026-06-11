@@ -1,6 +1,7 @@
 import { ChefHat, Clock, Dumbbell, Sparkles } from 'lucide-react';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAIMeals } from '../../context/AIMealSuggestionsContext';
 import { useTracker } from '../../context/TrackerContext';
 import { AIChefMealTime } from '../../types/domain';
 
@@ -11,12 +12,12 @@ interface AIChefCardProps {
 export const AIChefCard: React.FC<AIChefCardProps> = ({ onOpen }) => {
     const { t } = useTranslation();
     const {
-        currentMealTime,
         dashboardDate,
         getTotalsForDate,
         getTargetsForDate,
         workoutLog,
     } = useTracker() as any;
+    const { currentMealTime } = useAIMeals();
 
     // Calculate remaining calories
     const remainingCalories = useMemo(() => {
@@ -30,8 +31,9 @@ export const AIChefCard: React.FC<AIChefCardProps> = ({ onOpen }) => {
         return workoutLog?.some((w: any) => w.date === dashboardDate) || false;
     }, [workoutLog, dashboardDate]);
 
-    // Get meal time label
-    const mealTimeLabels: Record<AIChefMealTime, string> = {
+    // Get meal time label. Partial because 'late_night' has no dedicated label;
+    // it falls back to the lunch label at the usage site below.
+    const mealTimeLabels: Partial<Record<AIChefMealTime, string>> = {
         breakfast: t('mealTypes.breakfast'),
         lunch: t('mealTypes.lunch'),
         snack: t('mealTypes.snack'),

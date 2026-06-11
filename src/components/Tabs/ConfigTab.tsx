@@ -17,7 +17,9 @@ import {
     getWeightUnit,
     parseWeightToKg,
 } from '../../utils/unitUtils';
+import { DietaryPreferences } from '../Settings/DietaryPreferences';
 import { IOSShortcutQR } from '../Settings/iOSShortcutQR';
+import { NotificationSettings } from '../Settings/NotificationSettings';
 import { OuraTokenSetup } from '../Settings/OuraTokenSetup';
 
 interface ConfigTabProps {
@@ -761,6 +763,9 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                 </p>
             </div>
 
+            {/* Dietary Preferences (AI meal plan / AI Chef) */}
+            <DietaryPreferences />
+
             {/* Smart Hydration Setting */}
             <div className="bg-surface rounded-3xl p-6 border border-border shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 dark:bg-blue-900/30 rounded-full -mr-12 -mt-12 opacity-50" />
@@ -777,6 +782,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     <label className="relative inline-flex items-center cursor-pointer">
                         <input
                             type="checkbox"
+                            role="switch"
                             checked={profile.smartHydration ?? true}
                             onChange={(e) =>
                                 updateConfig(
@@ -794,10 +800,14 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                 </div>
             </div>
 
+            {/* Notifications */}
+            <NotificationSettings />
+
             {/* Oura Ring Integration */}
             <OuraTokenSetup
                 hasOuraRing={profile.hasOuraRing ?? false}
                 currentToken={profile.ouraPersonalToken}
+                userId={profile.userId}
                 onSaveToken={async (token) => {
                     await updateConfig(
                         { ...profile, ouraPersonalToken: token },
@@ -836,6 +846,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                         </div>
                         <input
                             type="checkbox"
+                            role="switch"
                             checked={profile.stepsAutoSync ?? false}
                             onChange={(e) =>
                                 updateConfig(

@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CustomTargets, FoodEntry, WaterEntry, Workout } from '../types/domain';
 import { getSmartTargets } from '../utils/caloriePeriodization';
 import { getArgentinaDateString } from '../utils/dateUtils';
 import { storage } from '../utils/storage';
-import { addPendingWrite, getCacheKeys } from '../utils/storageUtils';
+import { addPendingDelete, addPendingWrite, getCacheKeys } from '../utils/storageUtils';
 import { useSupabase } from './useSupabase';
 
 type SupabaseClient = ReturnType<typeof useSupabase>;
@@ -121,16 +121,23 @@ export const useNutrition = (
     );
 
     // Persistence
+    // CRITICAL: Skip the initial mount render (foodLog is [] before hydration), so
+    // we never overwrite a good cache with an empty array. But once hydrated, we
+    // DO persist empty arrays — otherwise deleting the last entry never persists
+    // and the entry "resurrects" on reload.
+    const skipFirstPersist = useRef(true);
     useEffect(() => {
-        if (foodLog?.length > 0) {
-            const userId = supabase.user?.id;
-            const keys = userId ? getCacheKeys(userId) : null;
-            const storageKey = keys ? keys.FOOD : 'lucas-food-log-v5';
-
-            storage
-                .set(storageKey, JSON.stringify(foodLog))
-                .catch((err) => console.error('Error auto-saving food log:', err));
+        if (skipFirstPersist.current) {
+            skipFirstPersist.current = false;
+            return;
         }
+        const userId = supabase.user?.id;
+        const keys = userId ? getCacheKeys(userId) : null;
+        const storageKey = keys ? keys.FOOD : 'lucas-food-log-v5';
+
+        storage
+            .set(storageKey, JSON.stringify(foodLog))
+            .catch((err) => console.error('Error auto-saving food log:', err));
     }, [foodLog, supabase.user?.id]);
 
     // Actions
@@ -246,7 +253,23 @@ export const useNutrition = (
 
     const deleteFoodEntry = useCallback(
         async (id: string) => {
-            if (useCloud) await supabase.deleteFood(id);
+            // Optimistic local removal so the entry leaves the UI immediately.
+            setFoodLog((prevLog) => prevLog.filter((e) => e.id !== id));
+
+            if (useCloud) {
+                try {
+                    const result = await supabase.deleteFood(id);
+                    if (result?.error) throw new Error(result.error.message);
+                } catch (err: any) {
+                    console.error('[Nutrition] deleteFoodEntry FAILED:', {
+                        function: 'deleteFoodEntry',
+                        id,
+                        error: err?.message,
+                    });
+                    // Queue the delete so it is retried; otherwise it resurrects on next fetch.
+                    await addPendingDelete('food_log', id, supabase.user?.id || '');
+                }
+            }
         },
         [useCloud, supabase],
     );

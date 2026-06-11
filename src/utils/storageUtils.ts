@@ -375,6 +375,10 @@ class MetadataMutex {
 
 const metadataMutex = new MetadataMutex();
 
+// CRITICAL: Serializes read-modify-write on the pending_writes queue.
+// Without this, a save during Vault processing can overwrite the queue and lose writes.
+const vaultMutex = new MetadataMutex();
+
 /**
  * Update cache metadata after successful Supabase sync
  * Uses Argentina timezone (browser local time already in -03:00)
@@ -454,6 +458,8 @@ export interface PendingWrite {
     userId: string;
     timestamp: string;
     retryCount: number;
+    /** Defaults to 'insert' when absent (backward compat with older queued items). */
+    operation?: 'insert' | 'delete';
 }
 
 /**
@@ -496,79 +502,155 @@ export const addPendingWrite = async (
             return false;
         }
 
-        // 🔒 NEW: Check for duplicate pending write (same table + date + userId)
-        // This prevents queuing the same entry multiple times if user clicks rapidly
-        const keys = getCacheKeys(userId);
-        let queue = await getPendingWrites(userId);
+        // CRITICAL: Deterministic ID prevents duplicates on double-click WITHOUT
+        // collapsing distinct entries. Tables with many rows/day (food_log, workouts)
+        // carry a per-entry data.id; one-row-per-day tables (steps/weight/water/oura)
+        // fall back to the date as their natural key.
+        const entryKey =
+            data.id !== undefined && data.id !== null ? data.id : data.date;
+        const deterministicId = `${table}_${userId}_${entryKey}`;
 
-        const isDuplicate = queue.some(
-            (item) =>
-                item.table === table &&
-                item.data.date === data.date &&
-                item.userId === userId &&
-                // For weight entries, also check weight value to allow multiple weights per day
-                (table !== 'weight_history' || item.data.weight === data.weight),
-        );
+        // CRITICAL: Lock the queue for the full read-modify-write so a concurrent
+        // save (or the Vault worker) cannot overwrite it and lose this write.
+        await vaultMutex.acquire();
+        try {
+            const keys = getCacheKeys(userId);
+            let queue = await getPendingWrites(userId);
 
-        if (isDuplicate) {
-            console.warn(
-                `[Vault] Duplicate pending write detected for ${table} on ${data.date}. Skipping.`,
+            // PROTECTION 1: Remove entries that exceeded max retry count
+            const initialLength = queue.length;
+            queue = queue.filter((item) => (item.retryCount || 0) < MAX_RETRY_COUNT);
+            const discarded = initialLength - queue.length;
+            if (discarded > 0) {
+                console.warn(
+                    `[Vault] Discarded ${discarded} entries that exceeded max retries`,
+                );
+            }
+
+            // PROTECTION 2: Enforce max queue size (FIFO - keep most recent)
+            if (queue.length >= MAX_QUEUE_SIZE) {
+                console.warn(
+                    `[Vault] Queue at max size (${MAX_QUEUE_SIZE}), removing oldest entries`,
+                );
+                queue = queue.slice(-MAX_QUEUE_SIZE + 1);
+            }
+
+            // PROTECTION 3: Deduplication - update existing entry instead of creating duplicate
+            const existingIndex = queue.findIndex(
+                (item) => item.id === deterministicId,
             );
-            return false; // Not an error, just skip silently
+            if (existingIndex >= 0) {
+                queue[existingIndex] = {
+                    ...queue[existingIndex],
+                    operation: 'insert',
+                    data, // Update with latest data
+                    timestamp: new Date().toLocaleString('en-US', {
+                        timeZone: 'America/Argentina/Buenos_Aires',
+                    }),
+                    retryCount: 0, // Reset retry count on update
+                };
+            } else {
+                // Create new pending write entry with Argentina timezone
+                const pendingWrite: PendingWrite = {
+                    id: deterministicId, // Deterministic ID prevents duplicates
+                    table,
+                    operation: 'insert',
+                    data,
+                    userId,
+                    timestamp: new Date().toLocaleString('en-US', {
+                        timeZone: 'America/Argentina/Buenos_Aires',
+                    }), // CRITICAL: Argentina TZ
+                    retryCount: 0,
+                };
+                queue.push(pendingWrite);
+            }
+
+            await storage.set(keys.PENDING_SYNC, JSON.stringify(queue));
+        } finally {
+            vaultMutex.release();
         }
-
-        // PROTECTION 1: Remove entries that exceeded max retry count
-        const initialLength = queue.length;
-        queue = queue.filter((item) => (item.retryCount || 0) < MAX_RETRY_COUNT);
-        const discarded = initialLength - queue.length;
-        if (discarded > 0) {
-            console.warn(
-                `[Vault] Discarded ${discarded} entries that exceeded max retries`,
-            );
-        }
-
-        // PROTECTION 2: Enforce max queue size (FIFO - keep most recent)
-        if (queue.length >= MAX_QUEUE_SIZE) {
-            console.warn(
-                `[Vault] Queue at max size (${MAX_QUEUE_SIZE}), removing oldest entries`,
-            );
-            queue = queue.slice(-MAX_QUEUE_SIZE + 1);
-        }
-
-        // CRITICAL: Deterministic ID to prevent duplicates on double-click
-        const deterministicId = `${table}_${userId}_${data.date}`;
-
-        // PROTECTION 3: Deduplication - update existing entry instead of creating duplicate
-        const existingIndex = queue.findIndex((item) => item.id === deterministicId);
-        if (existingIndex >= 0) {
-            queue[existingIndex] = {
-                ...queue[existingIndex],
-                data, // Update with latest data
-                timestamp: new Date().toLocaleString('en-US', {
-                    timeZone: 'America/Argentina/Buenos_Aires',
-                }),
-                retryCount: 0, // Reset retry count on update
-            };
-        } else {
-            // Create new pending write entry with Argentina timezone
-            const pendingWrite: PendingWrite = {
-                id: deterministicId, // Deterministic ID prevents duplicates
-                table,
-                data,
-                userId,
-                timestamp: new Date().toLocaleString('en-US', {
-                    timeZone: 'America/Argentina/Buenos_Aires',
-                }), // CRITICAL: Argentina TZ
-                retryCount: 0,
-            };
-            queue.push(pendingWrite);
-        }
-
-        await storage.set(keys.PENDING_SYNC, JSON.stringify(queue));
 
         return true;
     } catch (err) {
         console.error('[Vault] Failed to add pending write:', err);
+        return false;
+    }
+};
+
+/**
+ * Queue a failed DELETE so it is retried when back online. Unlike inserts,
+ * deletes only need the row id (no date payload).
+ * @param {string} table - Table name (e.g., 'food_log', 'workouts')
+ * @param {string} id - Row id to delete in Supabase
+ * @param {string} userId - User ID for the user-specific queue
+ * @returns {Promise<boolean>} Success status
+ */
+export const addPendingDelete = async (
+    table: string,
+    id: string,
+    userId: string,
+): Promise<boolean> => {
+    try {
+        if (!userId) {
+            console.error('[Vault] Cannot add pending delete without userId');
+            return false;
+        }
+        if (!id) {
+            console.error('[Vault] Cannot add pending delete without id');
+            return false;
+        }
+
+        const deterministicId = `${table}_${userId}_delete_${id}`;
+
+        await vaultMutex.acquire();
+        try {
+            const keys = getCacheKeys(userId);
+            let queue = await getPendingWrites(userId);
+
+            queue = queue.filter((item) => (item.retryCount || 0) < MAX_RETRY_COUNT);
+            if (queue.length >= MAX_QUEUE_SIZE) {
+                queue = queue.slice(-MAX_QUEUE_SIZE + 1);
+            }
+
+            // If an insert for this same row is still pending, it never reached the
+            // cloud — cancel it out instead of queuing a delete for a non-existent row.
+            const pendingInsertIdx = queue.findIndex(
+                (item) =>
+                    item.table === table &&
+                    (item.operation ?? 'insert') === 'insert' &&
+                    item.data?.id === id,
+            );
+            if (pendingInsertIdx >= 0) {
+                queue.splice(pendingInsertIdx, 1);
+                await storage.set(keys.PENDING_SYNC, JSON.stringify(queue));
+                return true;
+            }
+
+            const existingIndex = queue.findIndex(
+                (item) => item.id === deterministicId,
+            );
+            if (existingIndex < 0) {
+                queue.push({
+                    id: deterministicId,
+                    table,
+                    operation: 'delete',
+                    data: { id },
+                    userId,
+                    timestamp: new Date().toLocaleString('en-US', {
+                        timeZone: 'America/Argentina/Buenos_Aires',
+                    }),
+                    retryCount: 0,
+                });
+            }
+
+            await storage.set(keys.PENDING_SYNC, JSON.stringify(queue));
+        } finally {
+            vaultMutex.release();
+        }
+
+        return true;
+    } catch (err) {
+        console.error('[Vault] Failed to add pending delete:', err);
         return false;
     }
 };
@@ -641,6 +723,7 @@ export const incrementRetryCount = async (id: string, userId?: string): Promise<
  * @returns {Promise<boolean>} Success status
  */
 export const removePendingWritesBatch = async (ids: string[], userId?: string): Promise<boolean> => {
+    await vaultMutex.acquire();
     try {
         const keys = userId ? getCacheKeys(userId) : LEGACY_CACHE_KEYS;
         const queue = await getPendingWrites(userId);
@@ -652,6 +735,8 @@ export const removePendingWritesBatch = async (ids: string[], userId?: string): 
     } catch (err) {
         console.error('[Vault] Failed to batch remove pending writes:', err);
         return false;
+    } finally {
+        vaultMutex.release();
     }
 };
 
@@ -663,6 +748,7 @@ export const removePendingWritesBatch = async (ids: string[], userId?: string): 
  * @returns {Promise<boolean>} Success status
  */
 export const incrementRetryCountsBatch = async (ids: string[], userId?: string): Promise<boolean> => {
+    await vaultMutex.acquire();
     try {
         const keys = userId ? getCacheKeys(userId) : LEGACY_CACHE_KEYS;
         const queue = await getPendingWrites(userId);
@@ -679,6 +765,8 @@ export const incrementRetryCountsBatch = async (ids: string[], userId?: string):
     } catch (err) {
         console.error('[Vault] Failed to batch increment retry counts:', err);
         return false;
+    } finally {
+        vaultMutex.release();
     }
 };
 

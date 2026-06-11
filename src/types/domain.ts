@@ -377,6 +377,8 @@ export interface AIChefPreferences {
     difficulty: Difficulty;
     rejectedMeals: string[]; // Meal names to avoid
     rejectedMealsExpiry: number; // Timestamp when rejected meals list should be cleared (30 days)
+    allergies?: string[]; // Allergies / hard exclusions (free text)
+    dislikedMeals?: string[]; // Meals the user dislikes (free text)
 }
 
 export interface AIChefContext {
@@ -433,6 +435,7 @@ export interface WeeklyMealPlanRequest {
         prepTime: 'quick' | 'medium' | 'long';
         difficulty: 'easy' | 'medium' | 'hard';
         rejectedMeals: string[];
+        exclusions?: string[]; // Allergies / hard exclusions
     };
 
     favoriteFoods?: string[]; // Top 10 from foodLog

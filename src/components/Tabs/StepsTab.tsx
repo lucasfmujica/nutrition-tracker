@@ -1,7 +1,10 @@
+import { Footprints } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useTracker } from '../../context/TrackerContext';
 import { StepsEntry } from '../../types/domain';
 import { SimpleBarChart } from '../Charts/SimpleBarChart';
+import { EmptyState } from '../UI/EmptyState';
 import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
 interface StepsTabProps {
@@ -29,6 +32,7 @@ export const StepsTab: React.FC<StepsTabProps> = ({
     stepGoal,
 }) => {
     const { t } = useTranslation();
+    const { isLoading } = useTracker();
 
     return (
         <div className="w-full space-y-6">
@@ -76,6 +80,16 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                 color="bg-cyan-500"
                 label={t('steps.chartLabel')}
             />
+
+            {!isLoading && stepsLog.length === 0 && (
+                <div className="bg-surface rounded-2xl border border-border shadow-sm">
+                    <EmptyState
+                        icon={Footprints}
+                        title={t('steps.empty.title')}
+                        description={t('steps.empty.description')}
+                    />
+                </div>
+            )}
 
             {stepsLog.length > 0 && (
                 <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">

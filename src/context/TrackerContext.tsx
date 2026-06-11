@@ -1,6 +1,7 @@
 import React, {
     createContext,
     ReactNode,
+    useCallback,
     useContext,
     useEffect,
     useMemo,
@@ -8,7 +9,6 @@ import React, {
     useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAIMealSuggestions } from '../hooks/useAIMealSuggestions';
 import { useBiometrics } from '../hooks/useBiometrics';
 import { useDataOperations } from '../hooks/useDataOperations';
 import { useExport } from '../hooks/useExport';
@@ -51,7 +51,6 @@ export type TrackerContextType = ReturnType<typeof useTrackerSync> &
     ReturnType<typeof useWorkoutEntry> &
     ReturnType<typeof useWorkoutEntry> &
     ReturnType<typeof useMealTemplates> &
-    ReturnType<typeof useAIMealSuggestions> &
     ReturnType<typeof useOuraSync> &
     ReturnType<typeof useQuickLog> &
     ReturnType<typeof useSafetyNet> &
@@ -184,18 +183,21 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
     });
 
     // 7. updateConfig closure (must be defined BEFORE analytics)
-    const updateConfigClosure = async (newProfile: any, newTargets: any) => {
-        biometrics.setProfile(newProfile);
-        biometrics.setCustomTargets(newTargets);
-        try {
-            if (newProfile !== biometrics.profile)
-                await biometrics.saveProfile(newProfile);
-            if (newTargets !== biometrics.customTargets)
-                await biometrics.saveTargets(newTargets);
-        } catch (err) {
-            console.error('[TrackerContext] Error updating config:', err);
-        }
-    };
+    const updateConfigClosure = useCallback(
+        async (newProfile: any, newTargets: any) => {
+            biometrics.setProfile(newProfile);
+            biometrics.setCustomTargets(newTargets);
+            try {
+                if (newProfile !== biometrics.profile)
+                    await biometrics.saveProfile(newProfile);
+                if (newTargets !== biometrics.customTargets)
+                    await biometrics.saveTargets(newTargets);
+            } catch (err) {
+                console.error('[TrackerContext] Error updating config:', err);
+            }
+        },
+        [biometrics],
+    );
 
     // 8. Analytics & Intelligence (extracted hook - WITH date reactivity)
     const analytics = useTrackerAnalytics({
@@ -313,6 +315,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         ouraPersonalToken: biometrics.profile?.ouraPersonalToken,
         profile: biometrics.profile,
         stepsLog: biometrics.stepsLog,
+        saveProfile: biometrics.saveProfile,
     });
 
     // 18. Social Feature
@@ -335,33 +338,38 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         useCloud,
     });
 
-    // 20. AI Meal Suggestions
-    const aiMealSuggestions = useAIMealSuggestions();
+    // 20. UI Helpers
+    const changeDate = useCallback(
+        (days: number) => {
+            const targetTab = uiState.activeTab;
+            if (targetTab === 'dashboard') {
+                uiState.setDashboardDate((prev) => actions.changeDate(prev, days));
+            } else if (targetTab === 'comidas') {
+                uiState.setSelectedFoodDate((prev) => actions.changeDate(prev, days));
+            } else if (targetTab === 'entrenos') {
+                uiState.setSelectedWorkoutDate((prev) =>
+                    actions.changeDate(prev, days),
+                );
+            } else if (targetTab === 'pasos') {
+                uiState.setStepsDate((prev) => actions.changeDate(prev, days));
+            }
+        },
+        [uiState, actions],
+    );
 
-    // 21. UI Helpers
-    const changeDate = (days: number) => {
-        const targetTab = uiState.activeTab;
-        if (targetTab === 'dashboard') {
-            uiState.setDashboardDate((prev) => actions.changeDate(prev, days));
-        } else if (targetTab === 'comidas') {
-            uiState.setSelectedFoodDate((prev) => actions.changeDate(prev, days));
-        } else if (targetTab === 'entrenos') {
-            uiState.setSelectedWorkoutDate((prev) => actions.changeDate(prev, days));
-        } else if (targetTab === 'pasos') {
-            uiState.setStepsDate((prev) => actions.changeDate(prev, days));
-        }
-    };
+    const getWaterDataForDate = useCallback(
+        (date: string) => {
+            const entry = nutrition.getWaterForDate(date);
+            return {
+                ml: entry.ml || 0,
+                glasses: entry.glasses || 0,
+                entries: entry.glasses > 0 ? [entry] : [],
+            };
+        },
+        [nutrition],
+    );
 
-    const getWaterDataForDate = (date: string) => {
-        const entry = nutrition.getWaterForDate(date);
-        return {
-            ml: entry.ml || 0,
-            glasses: entry.glasses || 0,
-            entries: entry.glasses > 0 ? [entry] : [],
-        };
-    };
-
-    const addStepsEntry = async () => {
+    const addStepsEntry = useCallback(async () => {
         if (!uiState.newSteps) return;
         const entry = {
             id: `s-${uiState.stepsDate}`,
@@ -370,7 +378,7 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         };
         await biometrics.saveStepsEntry(entry);
         uiState.setNewSteps('');
-    };
+    }, [uiState, biometrics]);
 
     // 21. Unit System
     const [unitSystem, setUnitSystem] = useState<UnitSystem>(
@@ -441,9 +449,6 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
             // Social Feature
             ...social,
 
-            // AI Meal Suggestions
-            ...aiMealSuggestions,
-
             // UI Helpers
             changeDate,
             getWaterForDate: getWaterDataForDate,
@@ -484,9 +489,9 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
             quickLog,
             safetyNet,
             social,
-            aiMealSuggestions,
             supabase,
             changeDate,
+            getWaterDataForDate,
             addStepsEntry,
             weeklyPlanHook,
             unitSystem,

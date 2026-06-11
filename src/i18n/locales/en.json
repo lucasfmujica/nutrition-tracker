@@ -1,4 +1,15 @@
 {
+    "a11y": {
+        "openQuickActions": "Open quick actions",
+        "closeQuickActions": "Close quick actions",
+        "moreMenu": "More options",
+        "clearSearch": "Clear search",
+        "deleteFavorite": "Delete favorite",
+        "openMenu": "Open menu",
+        "closeMenu": "Close menu",
+        "increase": "Increase",
+        "decrease": "Decrease"
+    },
     "tabs": {
         "dashboard": "Summary",
         "meals": "Meals",

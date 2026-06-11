@@ -8,6 +8,7 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import { WeightEntry } from '../../types/domain';
 
 interface WeightChartCardProps {
@@ -45,6 +46,7 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
     weeklyTrend,
 }) => {
     const { t, i18n } = useTranslation();
+    const isMobile = useIsMobile();
     const isImperial = i18n.language.startsWith('en');
     const unitLabel = isImperial ? 'lbs' : 'kg';
     const weightMultiplier = isImperial ? 2.20462 : 1;
@@ -134,8 +136,8 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
     const displayCurrentWeight = (currentWeight * weightMultiplier).toFixed(1);
 
     return (
-        <div className="bg-surface p-8 rounded-[2.5rem] shadow-xl border border-border mb-6 group transition-all duration-300">
-            <div className="flex justify-between items-start mb-8 gap-4 w-full">
+        <div className="bg-surface p-5 sm:p-8 rounded-[2.5rem] shadow-xl border border-border mb-6 group transition-all duration-300">
+            <div className="flex justify-between items-start mb-6 sm:mb-8 gap-4 w-full">
                 <div className="min-w-0 flex-1">
                     <h3 className="text-text-primary font-bold text-lg truncate w-full">
                         {t('dashboard.weightChart.title')}
@@ -163,7 +165,9 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
             {finalChartData.length > 0 ? (
                 <div className="h-48 w-full min-w-0">
                     <ResponsiveContainer width="100%" height="100%" minHeight={192}>
-                        <AreaChart data={finalChartData}>
+                        <AreaChart
+                            data={finalChartData}
+                            margin={{ top: 5, right: 4, left: 4, bottom: 0 }}>
                             <defs>
                                 <linearGradient
                                     id="colorWeight"
@@ -187,8 +191,13 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                                 dataKey="date"
                                 axisLine={false}
                                 tickLine={false}
-                                tick={{ fontSize: 10, fill: '#9CA3AF' }}
+                                tick={{
+                                    fontSize: isMobile ? 9 : 10,
+                                    fill: '#9CA3AF',
+                                }}
                                 dy={10}
+                                interval="preserveStartEnd"
+                                minTickGap={isMobile ? 24 : 12}
                             />
                             <YAxis
                                 domain={['dataMin - 0.5', 'dataMax + 0.5']}
@@ -196,6 +205,7 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                             />
                             <Tooltip
                                 content={<CustomTooltip />}
+                                trigger={isMobile ? 'click' : 'hover'}
                                 cursor={{
                                     stroke: '#0066EE',
                                     strokeWidth: 1,

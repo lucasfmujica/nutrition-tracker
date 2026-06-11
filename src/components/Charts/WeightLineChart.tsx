@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import {
     Area,
     AreaChart,
@@ -60,6 +61,7 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
     targetWeight,
 }) => {
     const { t } = useTranslation();
+    const isMobile = useIsMobile();
     if (!data || data.length === 0) return null;
 
     // Calculate domain for better visualization
@@ -68,8 +70,8 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
     const maxWeight = Math.max(...weights, targetWeight) + 1;
 
     return (
-        <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm h-[350px] w-full">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div className="bg-surface rounded-2xl p-4 sm:p-6 border border-border shadow-sm w-full">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2 sm:gap-4">
                 <div>
                     <h3 className="text-lg font-bold text-text-primary">
                         {t('charts.weight.title')}
@@ -80,7 +82,7 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                 </div>
 
                 {/* Legend */}
-                <div className="flex gap-4 text-xs">
+                <div className="flex flex-wrap gap-x-3 gap-y-1 sm:gap-4 text-[10px] sm:text-xs">
                     <div className="flex items-center gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
                         <span className="text-text-secondary font-medium">
@@ -108,11 +110,16 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                 </div>
             </div>
 
-            <div className="h-[250px] w-full">
+            <div className="h-[200px] sm:h-[250px] w-full min-w-0">
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart
                         data={data}
-                        margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                        margin={{
+                            top: 10,
+                            right: isMobile ? 4 : 10,
+                            left: isMobile ? -24 : -20,
+                            bottom: 0,
+                        }}>
                         <defs>
                             <linearGradient
                                 id="colorWeight"
@@ -143,9 +150,10 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                             dataKey="dayLabel"
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#9ca3af', fontSize: 11 }}
+                            tick={{ fill: '#9ca3af', fontSize: isMobile ? 9 : 11 }}
                             dy={10}
                             interval="preserveStartEnd"
+                            minTickGap={isMobile ? 24 : 12}
                         />
 
                         <YAxis
@@ -153,10 +161,15 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                             hide={false}
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#9ca3af', fontSize: 11 }}
+                            tick={{ fill: '#9ca3af', fontSize: isMobile ? 9 : 11 }}
+                            tickCount={isMobile ? 4 : 5}
+                            width={isMobile ? 32 : 40}
                         />
 
-                        <Tooltip content={<CustomTooltip />} />
+                        <Tooltip
+                            content={<CustomTooltip />}
+                            trigger={isMobile ? 'click' : 'hover'}
+                        />
 
                         <ReferenceLine
                             y={targetWeight}

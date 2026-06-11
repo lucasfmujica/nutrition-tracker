@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from '../context/ToastContext';
+import i18n from '../i18n/config';
 import { triggerFriendAddedActivity } from '../services/activityTriggerService';
 import {
     ActivityItem,
@@ -170,6 +172,7 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
         } catch (err: any) {
             console.error('[useSocial] refreshSocial failed:', err);
             setSocialError('Error al cargar datos sociales');
+            toast.error(i18n.t('toast.socialLoadError'));
         } finally {
             setSocialLoading(false);
         }
@@ -199,6 +202,7 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
                 setLeaderboard(fetchedLeaderboard);
             } catch (err) {
                 console.error('[useSocial] refreshLeaderboard failed:', err);
+                toast.error(i18n.t('toast.leaderboardError'));
             }
         },
         [useCloud, leaderboardMetric, socialData],
@@ -242,7 +246,8 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
                 if (request) {
                     setFriendRequests((prev) => [...prev, request]);
                 }
-                setSocialError(result.error || 'Error al aceptar solicitud');
+                setSocialError(result.error || i18n.t('toast.acceptRequestError'));
+                toast.error(result.error || i18n.t('toast.acceptRequestError'));
                 return;
             }
 
@@ -293,7 +298,8 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
                 if (request) {
                     setFriendRequests((prev) => [...prev, request]);
                 }
-                setSocialError(result.error || 'Error al rechazar solicitud');
+                setSocialError(result.error || i18n.t('toast.rejectRequestError'));
+                toast.error(result.error || i18n.t('toast.rejectRequestError'));
             }
         },
         [friendRequests, socialData],
@@ -315,7 +321,8 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
                 if (friend) {
                     setFriends((prev) => [...prev, friend]);
                 }
-                setSocialError(result.error || 'Error al eliminar amigo');
+                setSocialError(result.error || i18n.t('toast.removeFriendError'));
+                toast.error(result.error || i18n.t('toast.removeFriendError'));
             }
         },
         [friends, socialData],
@@ -363,6 +370,7 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
                     ),
                 );
                 setSocialError(result.error || 'Error al reaccionar');
+                toast.error(i18n.t('toast.reactionError'));
             }
         },
         [activityFeed, socialData],

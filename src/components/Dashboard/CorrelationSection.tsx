@@ -12,6 +12,7 @@ import {
     YAxis,
     ZAxis,
 } from 'recharts';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 interface CorrelationDataPoint {
     x: number;
@@ -45,6 +46,7 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
     chartId,
 }) => {
     const { t } = useTranslation();
+    const isMobile = useIsMobile();
     // Calculate simple linear regression for the trend line
     const calculateTrendLine = () => {
         if (data.length < 2) return [];
@@ -146,7 +148,7 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
     const interpretation = getInterpretation();
 
     return (
-        <div className="bg-surface/80 backdrop-blur-md rounded-3xl p-6 border border-border shadow-sm min-w-[340px] flex-1 group transition-all hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1">
+        <div className="bg-surface/80 backdrop-blur-md rounded-3xl p-4 sm:p-6 border border-border shadow-sm min-w-0 w-full lg:min-w-[340px] flex-1 group transition-all hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1">
             <div className="mb-6 flex justify-between items-start">
                 <div>
                     <div className="flex items-center gap-2 mb-1">
@@ -180,7 +182,12 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                 {data && data.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
                         <ScatterChart
-                            margin={{ top: 10, right: 30, bottom: 20, left: -20 }}>
+                            margin={{
+                                top: 10,
+                                right: isMobile ? 8 : 30,
+                                bottom: 20,
+                                left: isMobile ? -24 : -20,
+                            }}>
                             <CartesianGrid
                                 strokeDasharray="4 4"
                                 vertical={false}
@@ -197,6 +204,7 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                                 }}
                                 tickLine={false}
                                 axisLine={false}
+                                tickCount={isMobile ? 5 : undefined}
                                 domain={['auto', 'auto']}
                             />
                             <YAxis
@@ -210,10 +218,12 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                                 }}
                                 tickLine={false}
                                 axisLine={false}
+                                tickCount={isMobile ? 4 : undefined}
                                 domain={['auto', 'auto']}
                             />
                             <ZAxis type="number" range={[100, 100]} />
                             <Tooltip
+                                trigger={isMobile ? 'click' : 'hover'}
                                 cursor={{
                                     strokeDasharray: '3 3',
                                     stroke: '#cbd5e1',

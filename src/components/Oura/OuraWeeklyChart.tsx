@@ -11,6 +11,7 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import { OuraEntry } from '../../types/domain';
 import { addDaysToDate, getArgentinaDateString } from '../../utils/dateUtils';
 
@@ -23,6 +24,7 @@ interface OuraWeeklyChartProps {
  */
 export const OuraWeeklyChart: React.FC<OuraWeeklyChartProps> = ({ ouraLog }) => {
     const { t } = useTranslation();
+    const isMobile = useIsMobile();
 
     const chartData = useMemo(() => {
         const today = getArgentinaDateString();
@@ -76,11 +78,16 @@ export const OuraWeeklyChart: React.FC<OuraWeeklyChartProps> = ({ ouraLog }) => 
                 </p>
             </div>
 
-            <div className="h-[300px] w-full mt-4">
+            <div className="h-[240px] sm:h-[300px] w-full min-w-0 mt-4">
                 <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart
                         data={chartData}
-                        margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                        margin={{
+                            top: 10,
+                            right: isMobile ? 4 : 10,
+                            left: isMobile ? -24 : -20,
+                            bottom: 0,
+                        }}>
                         <defs>
                             <linearGradient
                                 id="colorReadiness"
@@ -145,8 +152,14 @@ export const OuraWeeklyChart: React.FC<OuraWeeklyChartProps> = ({ ouraLog }) => 
                             dataKey="name"
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fontSize: 10, fill: '#94A3B8', fontWeight: 500 }}
+                            tick={{
+                                fontSize: isMobile ? 9 : 10,
+                                fill: '#94A3B8',
+                                fontWeight: 500,
+                            }}
                             dy={10}
+                            interval={isMobile ? 1 : 0}
+                            minTickGap={isMobile ? 16 : 5}
                         />
 
                         <YAxis yAxisId="scores" domain={[0, 100]} hide={true} />
@@ -162,18 +175,19 @@ export const OuraWeeklyChart: React.FC<OuraWeeklyChartProps> = ({ ouraLog }) => 
                                 fontWeight: 'bold',
                             }}
                             cursor={{ stroke: '#E2E8F0', strokeWidth: 1 }}
+                            trigger={isMobile ? 'click' : 'hover'}
                         />
 
                         <Legend
                             verticalAlign="top"
-                            align="right"
+                            align={isMobile ? 'center' : 'right'}
                             iconType="circle"
-                            iconSize={8}
+                            iconSize={isMobile ? 6 : 8}
                             wrapperStyle={{
-                                fontSize: '10px',
+                                fontSize: isMobile ? '8px' : '10px',
                                 fontWeight: 'bold',
                                 textTransform: 'uppercase',
-                                paddingBottom: '20px',
+                                paddingBottom: isMobile ? '12px' : '20px',
                             }}
                         />
 

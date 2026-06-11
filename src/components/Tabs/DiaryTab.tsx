@@ -1,6 +1,14 @@
-import { Clock, Drumstick, Plus, ScanBarcode, Search } from 'lucide-react';
+import {
+    Clock,
+    Drumstick,
+    Plus,
+    ScanBarcode,
+    Search,
+    UtensilsCrossed,
+} from 'lucide-react';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAIMeals } from '../../context/AIMealSuggestionsContext';
 import { useTracker } from '../../context/TrackerContext';
 import { useMealTimeStats } from '../../hooks/useMealTimeStats';
 import { useProteinPacing } from '../../hooks/useProteinPacing';
@@ -17,6 +25,7 @@ import { ProteinTimeline } from '../Diary/ProteinTimeline';
 import { WeeklyCalendarNav } from '../Diary/WeeklyCalendarNav';
 import { WeeklyMealPlanView } from '../Diary/WeeklyMealPlanView';
 import { FoodCameraInput } from '../Food/FoodCameraInput';
+import { EmptyState } from '../UI/EmptyState';
 import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
 interface DiaryTabProps {
@@ -80,8 +89,9 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
         setShowFoodHistoryPanel,
         saveFoodEntry,
         openSaveComboModal,
-        getSuggestions,
+        isLoading,
     } = useTracker() as any;
+    const { getSuggestions } = useAIMeals();
 
     const { getAutoMealType } = useSmartMealType();
 
@@ -265,22 +275,17 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
             <FoodCameraInput />
 
             {!hasFoods ? (
-                <div className="bg-surface rounded-2xl p-8 text-center border border-border shadow-sm">
-                    <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span className="text-2xl">🍽️</span>
+                !isLoading && (
+                    <div className="bg-surface rounded-2xl border border-border shadow-sm">
+                        <EmptyState
+                            icon={UtensilsCrossed}
+                            title={t('diary.noFoods.title')}
+                            description={t('diary.noFoods.subtitle')}
+                            actionLabel={t('diary.noFoods.button')}
+                            onAction={() => handleAddFood('breakfast')}
+                        />
                     </div>
-                    <h3 className="text-text-primary font-bold text-lg mb-1">
-                        {t('diary.noFoods.title')}
-                    </h3>
-                    <p className="text-text-tertiary text-sm">
-                        {t('diary.noFoods.subtitle')}
-                    </p>
-                    <button
-                        onClick={() => handleAddFood('breakfast')}
-                        className="mt-6 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-blue-600/20">
-                        {t('diary.noFoods.button')}
-                    </button>
-                </div>
+                )
             ) : (
                 <div className="space-y-4 pb-12">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -334,6 +339,9 @@ export const DiaryTab: React.FC<DiaryTabProps> = ({
                                     currentTargets.protein - currentTotals.protein,
                                 carbs: currentTargets.carbs - currentTotals.carbs,
                                 fat: currentTargets.fat - currentTotals.fat,
+                                fiber:
+                                    (currentTargets.fiber || 0) -
+                                    (currentTotals.fiber || 0),
                             };
                             getSuggestions(remaining);
                         }}
