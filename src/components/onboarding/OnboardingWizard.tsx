@@ -21,7 +21,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         currentWeight: '',
         height: '',
         age: '',
-        gender: 'male',
+        gender: '',
         // Step 2: Goals (auto-calculated)
         calorieGoal: '',
         proteinGoal: '',
@@ -40,14 +40,29 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
+    // Convierte peso (lbs→kg) y altura (in→cm) si el usuario eligió imperial
+    const toMetric = (data: any) => {
+        const rawWeight = parseFloat(data.currentWeight);
+        const rawHeight = parseFloat(data.height);
+        const isImperial = data.unitSystem === 'imperial';
+        return {
+            weightKg: rawWeight
+                ? Math.round((isImperial ? rawWeight / 2.20462 : rawWeight) * 10) / 10
+                : null,
+            heightCm: rawHeight
+                ? Math.round((isImperial ? rawHeight * 2.54 : rawHeight) * 10) / 10
+                : null,
+        };
+    };
+
     const handleCalculateMacros = useCallback((data: any) => {
-        const weight = parseFloat(data.currentWeight) || 70;
-        const height = parseFloat(data.height) || 170;
-        const age = parseFloat(data.age) || 30;
+        const { weightKg, heightCm } = toMetric(data);
+        const age = parseFloat(data.age);
+        if (!weightKg || !heightCm || !age || !data.gender) return null;
 
         return calculateMacros({
-            weight,
-            height,
+            weight: weightKg,
+            height: heightCm,
             age,
             gender: data.gender,
             trainingDaysPerWeek: data.trainingDaysPerWeek || 4,
@@ -55,20 +70,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         });
     }, []);
 
-    // Auto-recalculate on Step 2 entry or when training days/goal change
-    useEffect(() => {
-        if (
-            step === 2 &&
-            formData.currentWeight &&
-            formData.height &&
-            formData.age
-        ) {
-            handleAutoCalculate();
-        }
-    }, [step, formData.primaryGoal, formData.trainingDaysPerWeek]);
-
     const handleAutoCalculate = () => {
         const suggested = handleCalculateMacros(formData);
+        if (!suggested) return;
         setFormData((prev) => ({
             ...prev,
             calorieGoal: suggested.calories.toString(),
@@ -78,10 +82,27 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         }));
     };
 
+    // Llenar macros al entrar al Paso 2 si todavía no hay valores
+    useEffect(() => {
+        if (step === 2 && !formData.calorieGoal) {
+            handleAutoCalculate();
+        }
+    }, [step]);
+
+    // Recalcular cuando cambian objetivo o días de entrenamiento (Paso 3 incluido).
+    // No depende de `step` para no pisar ediciones manuales al navegar.
+    useEffect(() => {
+        if (step >= 2) {
+            handleAutoCalculate();
+        }
+    }, [formData.primaryGoal, formData.trainingDaysPerWeek]);
+
     const handleSubmit = async () => {
         setIsSubmitting(true);
         try {
-            const currentWeight = parseFloat(formData.currentWeight) || 70;
+            // Siempre se persiste en métrico (kg/cm), sin importar el unitSystem elegido
+            const { weightKg, heightCm } = toMetric(formData);
+            const currentWeight = weightKg || 70;
 
             // Inferir goal_weight basado en primaryGoal
             let goalWeight = currentWeight;
@@ -105,7 +126,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                 name: formData.name,
                 current_weight: currentWeight,
                 goal_weight: goalWeight,
-                height: parseFloat(formData.height) || null,
+                height: heightCm,
                 age: parseInt(formData.age) || null,
                 gender: formData.gender,
                 calorie_goal: parseInt(formData.calorieGoal) || 2200,
@@ -132,7 +153,8 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                 formData.name &&
                 formData.currentWeight &&
                 formData.height &&
-                formData.age
+                formData.age &&
+                formData.gender
             );
         if (step === 2) return formData.calorieGoal;
         return true;

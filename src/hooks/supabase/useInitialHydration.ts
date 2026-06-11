@@ -246,18 +246,12 @@ export const useInitialHydration = ({
                     cached.localWeight.length > 0;
                 const hasAnyStaleness = stalenessChecks.some((stale) => stale);
 
-                if (hasCachedData && !hasAnyStaleness) {
-                    resolveLoading('fresh-cache'); // Instant load with fresh cache
-                } else if (hasCachedData && hasAnyStaleness) {
-                    // We have stale cache - set fallback timer to show it if Supabase is too slow
-                    // 🔒 IMPROVED: Increased to 5s to avoid premature stale data on slow connections
-                    // Prevents jarring UI shift when fresh data arrives shortly after fallback
-                    fallbackTimerRef.current = setTimeout(() => {
-                        if (loadingResolved) return; // Already resolved, skip fallback
-
-                        console.warn(
-                            '[Data] Supabase slow (>5s), falling back to stale cache',
-                        );
+                if (hasCachedData) {
+                    // Offline-first: show cached data IMMEDIATELY, even if stale,
+                    // and let the Supabase fetch below refresh it in the background.
+                    // Blocking the splash screen on the network froze iOS PWA cold
+                    // starts (radio half-asleep → fetch hangs → stuck loading).
+                    if (hasAnyStaleness) {
                         if (
                             cached.localProfile &&
                             profileStale &&
@@ -284,11 +278,11 @@ export const useInitialHydration = ({
                             setWaterLog(cached.localWater);
                         if (cached.localTemplates.length && templatesStale)
                             setMealTemplates(cached.localTemplates);
-                        resolveLoading('stale-cache-fallback');
-                        setSaveStatus(
-                            '⚠️ Mostrando datos antiguos - Actualizando en segundo plano...',
-                        );
-                    }, 5000); // 5-second grace period - balances UX and perceived performance
+                        setSaveStatus('⚡ Actualizando en segundo plano...');
+                    }
+                    resolveLoading(
+                        hasAnyStaleness ? 'stale-cache-immediate' : 'fresh-cache',
+                    );
                 }
 
                 // Fetch from Supabase if authenticated and online

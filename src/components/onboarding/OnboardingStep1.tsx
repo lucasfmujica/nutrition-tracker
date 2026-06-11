@@ -114,13 +114,14 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                 </div>
                 <div>
                     <label className="block text-sm text-text-tertiary mb-1.5">
-                        {t('onboarding.step1.height')} *
+                        {t('onboarding.step1.height')} (
+                        {data.unitSystem === 'metric' ? 'cm' : 'in'}) *
                     </label>
                     <input
                         type="number"
                         value={data.height}
                         onChange={(e) => updateField('height', e.target.value)}
-                        placeholder="175"
+                        placeholder={data.unitSystem === 'metric' ? '175' : '69'}
                         className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white text-center text-lg"
                     />
                 </div>
@@ -141,7 +142,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
 
             <div>
                 <label className="block text-sm text-text-tertiary mb-2">
-                    {t('onboarding.step1.gender')}
+                    {t('onboarding.step1.gender')} *
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                     <button

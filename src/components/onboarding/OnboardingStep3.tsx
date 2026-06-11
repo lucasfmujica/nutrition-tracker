@@ -132,7 +132,8 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
                         {t('onboarding.step3.summaryLabels.weight')}
                     </div>
                     <div className="text-white font-medium">
-                        {data.currentWeight || '-'} kg
+                        {data.currentWeight || '-'}{' '}
+                        {data.unitSystem === 'imperial' ? 'lbs' : 'kg'}
                     </div>
                     <div className="text-text-tertiary">
                         {t('onboarding.step3.summaryLabels.calories')}
