@@ -15,8 +15,7 @@ Content-Type: application/json
 
 ```json
 {
-  "apiKey": "<SYNC_API_KEY>",
-  "userId": "<tu user id de Supabase>",
+  "syncToken": "<SYNC_TOKEN>",
   "date": "2026-06-11",
   "metrics": {
     "steps": 8421,
@@ -33,9 +32,9 @@ Content-Type: application/json
 - Cualquier campo de `metrics` puede omitirse.
 - `date` acepta `YYYY-MM-DD` o ISO 8601 (se convierte a día de Argentina). Si falta, se usa hoy.
 - También sigue funcionando el formato legado `{ "type": "weight"|"steps", "value": ..., "date": ... }`.
-- Autenticación: `apiKey` (env `SYNC_API_KEY` en Vercel, comparación constant-time) + `userId`.
-- En el front, la sección **Apple Health** de Config muestra URL, ID y key para copiar
-  (requiere `VITE_SYNC_API_KEY` con el mismo valor que `SYNC_API_KEY` en Vercel).
+- Autenticación: token personal `syncToken`, firmado por el servidor y vinculado al usuario autenticado.
+- En el front, la sección **Apple Health** de Config muestra la URL y el token para copiar.
+  `SYNC_API_KEY` existe solamente en Vercel y nunca se incluye en el bundle del navegador.
 
 ### Reglas de dedupe (la sync nunca pisa datos)
 
@@ -59,11 +58,11 @@ La respuesta es `{ success, date, results: [{ metric, status: synced|skipped|err
 3. Agregá **Obtener contenido de URL** (Get Contents of URL):
    - URL: `https://<tu-dominio>/api/sync-health`
    - Método: **POST**, Cuerpo de la solicitud: **JSON**.
-   - Armá los campos `apiKey`, `userId`, `date` (variable "Fecha actual" en formato ISO) y el diccionario `metrics` con las variables mágicas de los pasos anteriores. Copiá `apiKey` y `userId` desde Config → Apple Health en la app.
+   - Armá los campos `syncToken`, `date` (variable "Fecha actual" en formato ISO) y el diccionario `metrics` con las variables mágicas de los pasos anteriores. Copiá el token desde Config → Apple Health en la app.
 4. Ejecutá el atajo una vez a mano y dale permiso de lectura de Salud. La respuesta debe incluir `"success": true`.
 5. Pestaña **Automatización** → `+` → **Automatización personal** → **Hora del día** (ej. 23:30, todos los días) → **Ejecutar atajo** → elegí "Sync LukenFit" → desactivá **Pedir confirmación**.
 
-> Tip: no existe forma soportada de distribuir un `.shortcut` firmado con variables del usuario; por eso el setup es manual con copy/paste de URL, ID y key.
+> Tip: no existe forma soportada de distribuir un `.shortcut` firmado con variables del usuario; por eso el setup es manual con copy/paste de URL y token.
 
 ## Notas
 

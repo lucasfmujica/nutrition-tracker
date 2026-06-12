@@ -478,6 +478,13 @@
             "title": "Preferencias dietarias",
             "subtitle": "Personalizá las sugerencias y el plan semanal de IA",
             "mode": "Modo dietario",
+            "modes": {
+                "standard": "Estándar",
+                "vegetarian": "Vegetariano",
+                "vegan": "Vegano",
+                "gluten_free": "Sin gluten",
+                "lactose_free": "Sin lactosa"
+            },
             "allergies": "Alergias y exclusiones",
             "allergiesPlaceholder": "Ej: maní, mariscos… (Enter para agregar)",
             "dislikedMeals": "Comidas que no te gustan",
@@ -1162,9 +1169,8 @@
             "lastSync": "Última sincronización recibida:",
             "noSync": "Todavía no se recibió ninguna sincronización desde Apple Health.",
             "endpoint": "Endpoint:",
-            "userId": "Tu ID:",
-            "apiKey": "API Key:",
-            "apiKeyMissing": "La API key (VITE_SYNC_API_KEY) no está configurada en este entorno. Pedísela al administrador o copiá el valor de SYNC_API_KEY del servidor.",
+            "syncToken": "Token de sincronización:",
+            "tokenError": "No se pudo generar el token. Volvé a iniciar sesión e intentá nuevamente.",
             "howTo": "Cómo crear el Atajo de iOS",
             "bodyExample": "Cuerpo JSON de ejemplo (POST):",
             "dedupeNote": "Las entradas manuales y de Oura siempre tienen prioridad: la sincronización nunca pisa un registro existente del día. Los entrenos importados se marcan con [apple_health].",
@@ -1172,7 +1178,7 @@
                 "Abrí la app Atajos en tu iPhone y creá un atajo nuevo.",
                 "Agregá acciones de \"Buscar muestras de salud\" (Find Health Samples): pasos de hoy (suma), último peso, y opcionalmente sueño y entrenos de hoy.",
                 "Agregá la acción \"Obtener contenido de URL\" (Get Contents of URL) con la URL del endpoint de arriba.",
-                "Configurala como POST, tipo de cuerpo JSON, y armá el cuerpo como el ejemplo de abajo, pegando tu API key, tu ID y las variables de Salud.",
+                "Configurala como POST, tipo de cuerpo JSON, y armá el cuerpo como el ejemplo de abajo, pegando tu token de sincronización y las variables de Salud.",
                 "Probá el atajo: la respuesta debe decir \"success\": true.",
                 "En la pestaña Automatización, creá una Automatización Personal → Hora del día (ej. 23:30, todos los días) → Ejecutar atajo, y desactivá \"Pedir confirmación\"."
             ]

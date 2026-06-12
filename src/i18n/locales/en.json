@@ -476,6 +476,13 @@
             "title": "Dietary preferences",
             "subtitle": "Personalize AI suggestions and the weekly plan",
             "mode": "Dietary mode",
+            "modes": {
+                "standard": "Standard",
+                "vegetarian": "Vegetarian",
+                "vegan": "Vegan",
+                "gluten_free": "Gluten-free",
+                "lactose_free": "Lactose-free"
+            },
             "allergies": "Allergies and exclusions",
             "allergiesPlaceholder": "E.g.: peanuts, shellfish… (Enter to add)",
             "dislikedMeals": "Meals you dislike",
@@ -1160,9 +1167,8 @@
             "lastSync": "Last sync received:",
             "noSync": "No sync has been received from Apple Health yet.",
             "endpoint": "Endpoint:",
-            "userId": "Your ID:",
-            "apiKey": "API Key:",
-            "apiKeyMissing": "The API key (VITE_SYNC_API_KEY) is not configured in this environment. Ask the administrator or copy the server's SYNC_API_KEY value.",
+            "syncToken": "Sync token:",
+            "tokenError": "The sync token could not be generated. Sign in again and retry.",
             "howTo": "How to create the iOS Shortcut",
             "bodyExample": "Example JSON body (POST):",
             "dedupeNote": "Manual and Oura entries always win: the sync never overwrites an existing entry for the day. Imported workouts are tagged with [apple_health].",
@@ -1170,7 +1176,7 @@
                 "Open the Shortcuts app on your iPhone and create a new shortcut.",
                 "Add \"Find Health Samples\" actions: today's steps (sum), latest weight, and optionally today's sleep and workouts.",
                 "Add a \"Get Contents of URL\" action with the endpoint URL above.",
-                "Set it to POST with a JSON body, shaped like the example below, pasting your API key, your ID and the Health variables.",
+                "Set it to POST with a JSON body, shaped like the example below, pasting your sync token and the Health variables.",
                 "Run the shortcut once: the response should say \"success\": true.",
                 "In the Automation tab, create a Personal Automation → Time of Day (e.g. 11:30 PM, daily) → Run Shortcut, and turn off \"Ask Before Running\"."
             ]

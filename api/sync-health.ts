@@ -1,14 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { timingSafeEqual } from 'crypto';
-
-/** Constant-time string comparison to avoid timing attacks on the API key. */
-function safeKeyEqual(a: string, b: string): boolean {
-    const bufA = Buffer.from(a);
-    const bufB = Buffer.from(b);
-    if (bufA.length !== bufB.length) return false;
-    return timingSafeEqual(bufA, bufB);
-}
+import { verifyHealthSyncToken } from './health-sync-token';
 
 /**
  * Marker used to tag Apple Health workouts in the `workouts.notes` column,
@@ -102,39 +94,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             process.env.SUPABASE_SERVICE_ROLE_KEY!,
         ) as any;
 
-        // Parse Input. Supported shapes:
-        //  A) Legacy single metric:  { apiKey, userId, type, value, date }
-        //  B) Very old weight shape: { apiKey, userId, data: { weight, date } }
-        //  C) Batch (Apple Health):  { apiKey, userId, date, metrics: { steps, weight, sleep, workouts } }
-        let { apiKey, userId, type, value, date, data, metrics } = req.body ?? {};
-
-        console.log(
-            `[SyncHealth] Request. apiKey present: ${!!apiKey}, userId: ${userId}, type: ${type}, batch: ${!!metrics}`,
-        );
-
-        // 1. Security Check (constant-time comparison)
+        // The per-user capability token is created by /api/sync-health-token after
+        // authenticating the user's Supabase session. Never trust a body userId.
+        let { syncToken, type, value, date, data, metrics } = req.body ?? {};
         const expectedKey = process.env.SYNC_API_KEY;
         if (!expectedKey) {
             console.error('[SyncHealth] Missing SYNC_API_KEY');
             return res.status(500).json({ error: 'Server Misconfiguration' });
         }
-        if (!apiKey || !safeKeyEqual(String(apiKey), expectedKey)) {
+        const tokenPayload = syncToken
+            ? verifyHealthSyncToken(String(syncToken), expectedKey)
+            : null;
+        if (!tokenPayload) {
             console.warn('[SyncHealth] Unauthorized access attempt.');
-            return res.status(401).json({ error: 'Unauthorized: Invalid API Key' });
+            return res.status(401).json({ error: 'Unauthorized: Invalid sync token' });
         }
+        const userId = tokenPayload.sub;
 
-        // 2. Backward-compat normalization (old weight shortcut)
+        // Backward-compatible metric shapes remain supported, but authentication
+        // now always uses syncToken and derives the user from it.
         if (data && data.weight && data.date) {
             type = 'weight';
             value = data.weight;
             date = data.date;
         }
 
-        if (!userId) {
-            return res.status(400).json({ error: 'Bad Request: Missing userId' });
-        }
-
-        // 3. Build the unified metrics object
+        // Build the unified metrics object
         const m: { steps?: any; weight?: any; sleep?: any; workouts?: any[] } =
             {};
 

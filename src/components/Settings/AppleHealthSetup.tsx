@@ -14,9 +14,6 @@ interface AppleHealthSetupProps {
     userId: string;
 }
 
-/** Shared secret exposed to the client so the user can paste it into the Shortcut. */
-const SYNC_KEY: string | undefined = import.meta.env.VITE_SYNC_API_KEY;
-
 const CopyRow: React.FC<{ label: string; value: string; mask?: boolean }> = ({
     label,
     value,
@@ -65,6 +62,8 @@ export const AppleHealthSetup: React.FC<AppleHealthSetupProps> = ({
     const { t } = useTranslation();
     const [showInstructions, setShowInstructions] = useState(false);
     const [lastSync, setLastSync] = useState<string | null>(null);
+    const [syncToken, setSyncToken] = useState<string | null>(null);
+    const [tokenError, setTokenError] = useState(false);
 
     const endpointUrl =
         typeof window !== 'undefined'
@@ -76,18 +75,36 @@ export const AppleHealthSetup: React.FC<AppleHealthSetupProps> = ({
         let cancelled = false;
         (async () => {
             try {
-                const { data, error } = await supabase
-                    .from('steps_log')
-                    .select('date, created_at')
-                    .eq('user_id', userId)
-                    .eq('source', 'ios-health')
-                    .order('date', { ascending: false })
-                    .limit(1);
-                if (error) throw error;
-                if (!cancelled && data && data.length > 0)
-                    setLastSync(data[0].date);
+                setTokenError(false);
+                const {
+                    data: { session },
+                } = await supabase.auth.getSession();
+                const accessToken = session?.access_token;
+                if (!accessToken) throw new Error('Missing session');
+                const response = await fetch('/api/sync-health-token', {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                });
+                if (!response.ok) throw new Error('Token request failed');
+                const body = (await response.json()) as { token?: string };
+                if (!body.token) throw new Error('Missing sync token');
+                if (!cancelled) setSyncToken(body.token);
             } catch (err) {
-                console.error('[AppleHealth] Error fetching last sync:', err);
+                console.error('[AppleHealth] Token load failed:', err);
+                if (!cancelled) setTokenError(true);
+            }
+
+            const { data, error } = await supabase
+                .from('steps_log')
+                .select('date')
+                .eq('user_id', userId)
+                .eq('source', 'ios-health')
+                .order('date', { ascending: false })
+                .limit(1);
+            if (error) {
+                console.warn('[AppleHealth] Last sync lookup failed:', error);
+            } else if (!cancelled && data?.length) {
+                setLastSync(data[0].date);
             }
         })();
         return () => {
@@ -96,8 +113,7 @@ export const AppleHealthSetup: React.FC<AppleHealthSetupProps> = ({
     }, [userId]);
 
     const exampleBody = `{
-  "apiKey": "<API_KEY>",
-  "userId": "${userId}",
+  "syncToken": "<SYNC_TOKEN>",
   "date": "2026-06-11",
   "metrics": {
     "steps": 8421,
@@ -155,20 +171,17 @@ export const AppleHealthSetup: React.FC<AppleHealthSetupProps> = ({
                     label={t('settings.appleHealth.endpoint')}
                     value={endpointUrl}
                 />
-                <CopyRow
-                    label={t('settings.appleHealth.userId')}
-                    value={userId}
-                    mask
-                />
-                {SYNC_KEY ? (
+                {syncToken ? (
                     <CopyRow
-                        label={t('settings.appleHealth.apiKey')}
-                        value={SYNC_KEY}
+                        label={t('settings.appleHealth.syncToken')}
+                        value={syncToken}
                         mask
                     />
                 ) : (
                     <p className="text-xs text-text-tertiary bg-background border border-dashed border-border rounded-xl p-3">
-                        {t('settings.appleHealth.apiKeyMissing')}
+                        {tokenError
+                            ? t('settings.appleHealth.tokenError')
+                            : t('common.loading')}
                     </p>
                 )}
 
