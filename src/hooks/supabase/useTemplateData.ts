@@ -34,15 +34,13 @@ export function useTemplateData(
                 'fetchTemplates',
             );
 
-            if (error || !data) {
-                if (error) console.error('Error fetching templates:', error);
-                return [];
-            }
+            if (error) throw error;
+            if (!data) return [];
 
             return Array.isArray(data) ? data.map(mappers.templateFromDb) : [];
         } catch (err) {
             console.error('fetchTemplates failed:', err);
-            return [];
+            throw err;
         }
     }, [canUseSupabase, user, withTimeout]);
 

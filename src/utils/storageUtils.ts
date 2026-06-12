@@ -411,6 +411,18 @@ export const updateCacheMetadata = async (
     }
 };
 
+export const updateFreshCacheMetadata = async (
+    dataTypes: string[],
+    userId?: string,
+): Promise<void> => {
+    const syncTimestamp = Date.now();
+    await Promise.all(
+        dataTypes.map((dataType) =>
+            updateCacheMetadata(dataType, userId, syncTimestamp),
+        ),
+    );
+};
+
 /**
  * Check if cached data is stale (older than TTL or schema mismatch)
  * CRITICAL: Prevents race condition where stale cache renders before Supabase fetch

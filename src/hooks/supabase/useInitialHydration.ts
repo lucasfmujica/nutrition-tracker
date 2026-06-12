@@ -14,7 +14,8 @@ import {
     cacheData,
     isCacheStale,
     loadCachedData,
-    updateCacheMetadata,
+    migrateUserStorage,
+    updateFreshCacheMetadata,
 } from '../../utils/storageUtils';
 
 export interface UseInitialHydrationParams {
@@ -130,9 +131,6 @@ export const useInitialHydration = ({
 
         // Check for onboarding needs (only when authenticated)
         if (supabase.isAuthenticated) {
-            // One-time cleanup of legacy localStorage keys
-            cleanupLegacyLocalStorage();
-
             const checkOnboarding = async () => {
                 const needsOnboarding = await supabase.checkNeedsOnboarding();
                 if (needsOnboarding) setShowOnboarding(true);
@@ -165,6 +163,12 @@ export const useInitialHydration = ({
             };
 
             try {
+                // Finish the user-scoped migration before reading or deleting any
+                // legacy keys. This prevents hydration cleanup racing the copy.
+                if (userId) {
+                    await migrateUserStorage(userId);
+                }
+
                 // SWR PATTERN: Check staleness before loading cache
                 const stalenessChecks = await Promise.all([
                     isCacheStale('profile', userId),
@@ -350,43 +354,16 @@ export const useInitialHydration = ({
 
                         await cacheData(data, userId);
 
-                        // SWR PATTERN: Update metadata timestamps after successful sync
-                        const argentinaTimestamp = Date.now();
+                        await updateFreshCacheMetadata(
+                            data.freshDataTypes || [],
+                            userId,
+                        );
 
-                        await Promise.all([
-                            updateCacheMetadata(
-                                'profile',
-                                userId,
-                                argentinaTimestamp,
-                            ),
-                            updateCacheMetadata(
-                                'targets',
-                                userId,
-                                argentinaTimestamp,
-                            ),
-                            updateCacheMetadata(
-                                'weight',
-                                userId,
-                                argentinaTimestamp,
-                            ),
-                            updateCacheMetadata('food', userId, argentinaTimestamp),
-                            updateCacheMetadata(
-                                'workouts',
-                                userId,
-                                argentinaTimestamp,
-                            ),
-                            updateCacheMetadata('steps', userId, argentinaTimestamp),
-                            updateCacheMetadata('oura', userId, argentinaTimestamp),
-                            updateCacheMetadata('water', userId, argentinaTimestamp),
-                            updateCacheMetadata(
-                                'templates',
-                                userId,
-                                argentinaTimestamp,
-                            ),
-                        ]);
-
-                        // SWR: Clear stale flag immediately after successful sync
-                        if (setCacheStale) setCacheStale(false);
+                        if (setCacheStale) {
+                            setCacheStale(
+                                (data.freshDataTypes?.length ?? 0) < 9,
+                            );
+                        }
 
                         // Resolve loading with fresh Supabase data
                         resolveLoading('supabase-fresh');
@@ -488,45 +465,4 @@ export const useInitialHydration = ({
 
     // This hook only performs side effects, no return value needed
     return {};
-};
-
-// One-time cleanup of legacy localStorage keys
-const CLEANUP_FLAG = 'migration_cleanup_v1_complete';
-
-const cleanupLegacyLocalStorage = () => {
-    if (typeof window === 'undefined') return;
-    // Only run once per browser
-    if (localStorage.getItem(CLEANUP_FLAG)) return;
-
-    const legacyKeys = [
-        // Old "nutrition_*" keys from v1
-        'nutrition_data_v1',
-        'nutrition_profile',
-        'nutrition_targets',
-        'nutrition_weight',
-        'nutrition_food',
-        'nutrition_workouts',
-        'nutrition_steps',
-        'nutrition_oura',
-        'nutrition_water',
-        // Old "lucas-*-v5" keys from v5
-        'lucas-profile-v5',
-        'lucas-weight-history-v5',
-        'lucas-food-log-v5',
-        'lucas-workout-log-v5',
-        'lucas-steps-log-v5',
-        'lucas-targets-v5',
-        'lucas-oura-log-v5',
-    ];
-
-    let cleaned = 0;
-    legacyKeys.forEach((key) => {
-        if (localStorage.getItem(key)) {
-            localStorage.removeItem(key);
-            cleaned++;
-        }
-    });
-
-    // Mark cleanup as complete
-    localStorage.setItem(CLEANUP_FLAG, 'true');
 };

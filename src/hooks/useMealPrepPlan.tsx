@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import type { Json } from '../types/supabase';
 import { getArgentinaDateString } from '../utils/dateUtils';
 import { addDays, format, startOfWeek } from 'date-fns';
 
@@ -118,7 +119,7 @@ export const useMealPrepPlan = (userId?: string) => {
                     user_id: userId,
                     date,
                     meal_type: mealType,
-                    planned_items: plannedItems,
+                    planned_items: plannedItems as unknown as Json,
                     notes: notes || null,
                     template_id: templateId || null,
                     is_completed: false,
@@ -136,10 +137,13 @@ export const useMealPrepPlan = (userId?: string) => {
                 // Update local state optimistically
                 setWeekPlan((prev) => ({
                     ...prev,
-                    [date]: [...(prev[date] || []), data as MealPrepEntry],
+                    [date]: [
+                        ...(prev[date] || []),
+                        data as unknown as MealPrepEntry,
+                    ],
                 }));
 
-                return data as MealPrepEntry;
+                return data as unknown as MealPrepEntry;
             } catch (err: any) {
                 console.error(`[useMealPrepPlan ${new Date().toISOString()}] Error adding meal:`, err);
                 setError(err.message || t('errors.updateWeeklyPlanDay'));
@@ -214,7 +218,7 @@ export const useMealPrepPlan = (userId?: string) => {
                     const updated = { ...prev };
                     Object.keys(updated).forEach((date) => {
                         updated[date] = updated[date].map((m) =>
-                            m.id === mealId ? (data as MealPrepEntry) : m
+                            m.id === mealId ? (data as unknown as MealPrepEntry) : m
                         );
                     });
                     return updated;
@@ -252,7 +256,7 @@ export const useMealPrepPlan = (userId?: string) => {
                     user_id: userId,
                     date: nextWeekDate,
                     meal_type: meal.meal_type,
-                    planned_items: meal.planned_items,
+                    planned_items: meal.planned_items as unknown as Json,
                     notes: meal.notes,
                     template_id: meal.template_id,
                     is_completed: false, // Reset completion status

@@ -18,7 +18,11 @@ export const EditableWeeklyPlan: React.FC<EditableWeeklyPlanProps> = ({
     setSelectedWorkoutDate,
 }) => {
     const { t } = useTranslation();
-    const { weeklyPlan, updateDayPlan, isLoading } = useTracker();
+    const {
+        weeklyPlan,
+        updateDayPlan,
+        weeklyPlanLoading: isLoading,
+    } = useTracker();
     const plan = weeklyPlan as Record<number, PlannedWorkout | null>;
 
     const [isEditing, setIsEditing] = useState(false);

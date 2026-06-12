@@ -35,15 +35,13 @@ export function useWeightData(
                 'fetchWeightHistory',
             );
 
-            if (error || !data) {
-                if (error) console.error('Error fetching weight history:', error);
-                return [];
-            }
+            if (error) throw error;
+            if (!data) return [];
 
             return Array.isArray(data) ? data.map(mappers.weightFromDb) : [];
         } catch (err) {
             console.error('fetchWeightHistory failed:', err);
-            return [];
+            throw err;
         }
     }, [canUseSupabase, user, withTimeout]);
 

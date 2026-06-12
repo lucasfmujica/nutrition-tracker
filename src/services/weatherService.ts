@@ -16,6 +16,11 @@ const COORDS = {
     NYC: { lat: 40.7128, lon: -74.006, name: 'New York' },
 };
 
+interface WeatherOptions {
+    timezone?: string;
+    unitSystem?: 'metric' | 'imperial';
+}
+
 // Cache configuration
 const CACHE_KEY_PREFIX = 'weather-daily-v1-';
 
@@ -32,12 +37,13 @@ export interface DailyWeather {
  */
 export const getDailyWeather = async (
     date: string, // YYYY-MM-DD
-    language: string = 'es',
+    options: WeatherOptions = {},
 ): Promise<DailyWeather | null> => {
     try {
-        const isEnglish = language.startsWith('en');
-        const location = isEnglish ? COORDS.NYC : COORDS.BA;
-        const unit = isEnglish ? 'F' : 'C';
+        const location = options.timezone?.startsWith('America/New_York')
+            ? COORDS.NYC
+            : COORDS.BA;
+        const unit = options.unitSystem === 'imperial' ? 'F' : 'C';
 
         const cacheKey = `${CACHE_KEY_PREFIX}${location.name}-${date}-${unit}`;
 
@@ -54,7 +60,6 @@ export const getDailyWeather = async (
         // Let's use the standard forecast endpoint which includes some history, or check date.
 
         // Determine if date is today or future (Forecast) or past (Archive/Historical)
-        const today = new Date().toISOString().split('T')[0];
         const targetDate = new Date(date);
         const todayDate = new Date();
         const diffTime = targetDate.getTime() - todayDate.getTime();
@@ -63,7 +68,7 @@ export const getDailyWeather = async (
         // Open-Meteo Forecast endpoint supports up to past_days=92.
         // If older than ~3 months, use archive. For now, assuming recent usage.
 
-        const unitParam = isEnglish ? '&temperature_unit=fahrenheit' : '';
+        const unitParam = unit === 'F' ? '&temperature_unit=fahrenheit' : '';
 
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&daily=temperature_2m_max&start_date=${date}&end_date=${date}&timezone=auto${unitParam}`;
 
@@ -110,11 +115,11 @@ export const getDailyWeather = async (
 };
 
 // Deprecated: kept for backward compatibility if needed, but we should move to getDailyWeather
-export const getCurrentWeather = async (language: string = 'es') => {
-    const isEnglish = language.startsWith('en');
-    const location = isEnglish ? COORDS.NYC : COORDS.BA;
-    const date = new Date().toISOString().split('T')[0];
-    const daily = await getDailyWeather(date, language);
+export const getCurrentWeather = async (options: WeatherOptions = {}) => {
+    const date = new Intl.DateTimeFormat('en-CA', {
+        timeZone: options.timezone || 'America/Argentina/Buenos_Aires',
+    }).format(new Date());
+    const daily = await getDailyWeather(date, options);
 
     if (!daily) return null;
 

@@ -17,9 +17,9 @@ import {
     clearPendingWrites,
     getPendingWrites,
     isCacheStale,
-    migrateUserStorage,
-    updateCacheMetadata,
+    updateFreshCacheMetadata,
 } from '../utils/storageUtils';
+import type { SupabaseDataSnapshot } from './useSupabase';
 import { useInitialHydration } from './supabase/useInitialHydration';
 import { useVaultWorker } from './supabase/useVaultWorker';
 
@@ -94,20 +94,6 @@ export const useTrackerSync = ({
 
     // Get userId for user-specific storage operations
     const userId = supabase.user?.id;
-
-    // MULTI-USER: Migrate legacy storage on first login
-    useEffect(() => {
-        if (userId && supabase.isAuthenticated) {
-            migrateUserStorage(userId).then((migrated) => {
-                if (migrated) {
-                    console.log(
-                        '[Sync] Legacy storage migrated for user:',
-                        userId.substring(0, 8),
-                    );
-                }
-            });
-        }
-    }, [userId, supabase.isAuthenticated]);
 
     // SWR PATTERN: Monitor cache staleness for UI indicator
     // Checks every minute if any critical data is stale
@@ -218,7 +204,7 @@ export const useTrackerSync = ({
         setIsRefreshing(true);
         try {
             if (useCloud) {
-                const data = await retryWithBackoff(
+                const data = await retryWithBackoff<SupabaseDataSnapshot | null>(
                     () => supabase.fetchAllData(),
                     3, // max 3 retries
                     1000 // base delay 1s
@@ -237,24 +223,15 @@ export const useTrackerSync = ({
                     if (data.mealTemplates !== undefined)
                         setMealTemplates(data.mealTemplates);
 
-                    // SWR PATTERN: Update metadata after manual refresh
-                    const argentinaTimestamp = Date.now();
-                    await Promise.all([
-                        updateCacheMetadata('profile', userId, argentinaTimestamp),
-                        updateCacheMetadata('targets', userId, argentinaTimestamp),
-                        updateCacheMetadata('weight', userId, argentinaTimestamp),
-                        updateCacheMetadata('food', userId, argentinaTimestamp),
-                        updateCacheMetadata('workouts', userId, argentinaTimestamp),
-                        updateCacheMetadata('steps', userId, argentinaTimestamp),
-                        updateCacheMetadata('oura', userId, argentinaTimestamp),
-                        updateCacheMetadata('water', userId, argentinaTimestamp),
-                        updateCacheMetadata('templates', userId, argentinaTimestamp),
-                    ]);
+                    await updateFreshCacheMetadata(data.freshDataTypes, userId);
 
-                    // Clear stale flag immediately
-                    setCacheStale(false);
+                    setCacheStale(data.freshDataTypes.length < 9);
 
-                    setSaveStatus('✓ Actualizado');
+                    setSaveStatus(
+                        data.freshDataTypes.length < 9
+                            ? '⚠ Actualización parcial'
+                            : '✓ Actualizado',
+                    );
                     console.log(`[handleRefresh ${new Date().toISOString()}] Data updated successfully`);
                 } else {
                     setSaveStatus('Error al actualizar');

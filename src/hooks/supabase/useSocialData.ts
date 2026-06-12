@@ -20,6 +20,7 @@ import {
     LeaderboardMetric,
     WeeklySummary,
 } from '../../types/domain';
+import { getArgentinaDateString, getMondayOfWeek } from '../../utils/dateUtils';
 import { useSupabaseOperation } from './useSupabaseOperation';
 
 export interface UseSocialDataReturn {
@@ -768,9 +769,5 @@ export function useSocialData(
  * Helper: Get the Monday of the current week as YYYY-MM-DD
  */
 function getWeekStart(): string {
-    const now = new Date();
-    const day = now.getDay();
-    const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
-    const monday = new Date(now.setDate(diff));
-    return monday.toISOString().split('T')[0];
+    return getMondayOfWeek(getArgentinaDateString());
 }

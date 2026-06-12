@@ -173,7 +173,11 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
     );
 
     // Oura Auto-Adjust Engine
-    const ouraAutoAdjustData = useOuraAutoAdjust(ouraLog, dashboardDate);
+    const ouraAutoAdjustData = useOuraAutoAdjust(
+        ouraLog,
+        dashboardDate,
+        getStepsForDate(dashboardDate),
+    );
 
     // Weekly Report Modal State
     const [showWeeklyReport, setShowWeeklyReport] = useState(false);
@@ -218,6 +222,13 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                 calories: periodizedDay.calories,
             };
         }
+        calculatedTargets = {
+            ...calculatedTargets,
+            calories: Math.max(
+                1200,
+                calculatedTargets.calories + ouraAutoAdjustData.ouraCalorieBoost,
+            ),
+        };
 
         return {
             periodizedTargets: calculatedTargets,
@@ -229,6 +240,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         dashboardTargets,
         isSafetyNetActive,
         profile?.tdee,
+        ouraAutoAdjustData.ouraCalorieBoost,
     ]);
 
     return (

@@ -44,15 +44,13 @@ export function useNutritionData(
                 'fetchFoodLog',
             );
 
-            if (error || !data) {
-                if (error) console.error('Error fetching food log:', error);
-                return [];
-            }
+            if (error) throw error;
+            if (!data) return [];
 
             return Array.isArray(data) ? data.map(mappers.foodFromDb) : [];
         } catch (err) {
             console.error('fetchFoodLog failed:', err);
-            return [];
+            throw err;
         }
     }, [canUseSupabase, user, withTimeout]);
 
@@ -143,15 +141,13 @@ export function useNutritionData(
                 'fetchWaterLog',
             );
 
-            if (error || !data) {
-                if (error) console.error('Error fetching water log:', error);
-                return [];
-            }
+            if (error) throw error;
+            if (!data) return [];
 
             return Array.isArray(data) ? data.map(mappers.waterFromDb) : [];
         } catch (err) {
             console.error('fetchWaterLog failed:', err);
-            return [];
+            throw err;
         }
     }, [canUseSupabase, user, withTimeout]);
 

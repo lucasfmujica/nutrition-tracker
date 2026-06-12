@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { getDailyWeather } from '../services/weatherService';
 import { Profile, WaterEntry, Workout } from '../types/domain';
-import { getArgentinaDateString } from '../utils/dateUtils';
 
 // Constants
 const BASELINE_ML = 2500; // Minimum daily target (never reduced)
@@ -86,7 +84,6 @@ export const useHydrationTarget = (
     profile: Profile,
     waterLog: WaterEntry[] = [],
 ): HydrationTarget => {
-    const { i18n } = useTranslation();
     const [weather, setWeather] = useState<DailyWeather | null>(null);
     const [isLoadingWeather, setIsLoadingWeather] = useState(false);
 
@@ -123,7 +120,10 @@ export const useHydrationTarget = (
             try {
                 setIsLoadingWeather(true);
                 // Fetch max temp for the specific date
-                const weatherData = await getDailyWeather(date, i18n.language);
+                const weatherData = await getDailyWeather(date, {
+                    timezone: profile.timezone,
+                    unitSystem: profile.unitSystem,
+                });
                 setWeather(weatherData);
             } catch (error) {
                 console.error('[useHydrationTarget] Error loading weather:', error);
@@ -136,8 +136,9 @@ export const useHydrationTarget = (
         loadWeather();
     }, [
         date,
-        i18n.language,
         isSmartHydrationEnabled,
+        profile.timezone,
+        profile.unitSystem,
         existingEntry?.maxTemp,
         existingEntry?.weatherUnit,
         existingEntry?.weatherLocation,

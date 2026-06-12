@@ -14,6 +14,102 @@ export type Database = {
     };
     public: {
         Tables: {
+            activity_feed: {
+                Row: {
+                    activity_type: string;
+                    created_at: string | null;
+                    id: string;
+                    metadata: Json | null;
+                    user_id: string;
+                };
+                Insert: {
+                    activity_type: string;
+                    created_at?: string | null;
+                    id?: string;
+                    metadata?: Json | null;
+                    user_id: string;
+                };
+                Update: {
+                    activity_type?: string;
+                    created_at?: string | null;
+                    id?: string;
+                    metadata?: Json | null;
+                    user_id?: string;
+                };
+                Relationships: [];
+            };
+            activity_reactions: {
+                Row: {
+                    activity_id: string;
+                    created_at: string;
+                    id: string;
+                    reaction_type: string;
+                    user_id: string;
+                };
+                Insert: {
+                    activity_id: string;
+                    created_at?: string;
+                    id?: string;
+                    reaction_type?: string;
+                    user_id: string;
+                };
+                Update: {
+                    activity_id?: string;
+                    created_at?: string;
+                    id?: string;
+                    reaction_type?: string;
+                    user_id?: string;
+                };
+                Relationships: [];
+            };
+            body_measurements: {
+                Row: {
+                    biceps_left: number | null;
+                    biceps_right: number | null;
+                    body_fat_percent: number | null;
+                    calf_left: number | null;
+                    calf_right: number | null;
+                    chest: number | null;
+                    created_at: string | null;
+                    date: string;
+                    forearm_left: number | null;
+                    forearm_right: number | null;
+                    hips: number | null;
+                    id: string;
+                    neck: number | null;
+                    notes: string | null;
+                    shoulders: number | null;
+                    thigh_left: number | null;
+                    thigh_right: number | null;
+                    updated_at: string | null;
+                    user_id: string;
+                    waist: number | null;
+                };
+                Insert: {
+                    biceps_left?: number | null;
+                    biceps_right?: number | null;
+                    body_fat_percent?: number | null;
+                    calf_left?: number | null;
+                    calf_right?: number | null;
+                    chest?: number | null;
+                    created_at?: string | null;
+                    date: string;
+                    forearm_left?: number | null;
+                    forearm_right?: number | null;
+                    hips?: number | null;
+                    id?: string;
+                    neck?: number | null;
+                    notes?: string | null;
+                    shoulders?: number | null;
+                    thigh_left?: number | null;
+                    thigh_right?: number | null;
+                    updated_at?: string | null;
+                    user_id: string;
+                    waist?: number | null;
+                };
+                Update: Partial<Database['public']['Tables']['body_measurements']['Insert']>;
+                Relationships: [];
+            };
             challenge_participants: {
                 Row: {
                     challenge_id: string;
@@ -99,7 +195,7 @@ export type Database = {
                     fat: number;
                     fiber: number;
                     id: string;
-                    meal: string;
+                    meal: string | null;
                     name: string;
                     protein: number;
                     reviewed: boolean;
@@ -119,7 +215,7 @@ export type Database = {
                     fat?: number;
                     fiber?: number;
                     id?: string;
-                    meal: string;
+                    meal?: string | null;
                     name: string;
                     protein?: number;
                     reviewed?: boolean;
@@ -161,44 +257,47 @@ export type Database = {
             };
             meal_templates: {
                 Row: {
-                    calories: number;
-                    carbs: number;
+                    calories: number | null;
+                    carbs: number | null;
                     created_at: string | null;
                     description: string | null;
-                    fat: number;
-                    fiber: number;
+                    fat: number | null;
+                    fiber: number | null;
                     id: string;
-                    meal: string;
+                    items: Json | null;
+                    meal: string | null;
                     name: string;
-                    protein: number;
+                    protein: number | null;
                     updated_at: string | null;
                     user_id: string;
                 };
                 Insert: {
-                    calories?: number;
-                    carbs?: number;
+                    calories?: number | null;
+                    carbs?: number | null;
                     created_at?: string | null;
                     description?: string | null;
-                    fat?: number;
-                    fiber?: number;
+                    fat?: number | null;
+                    fiber?: number | null;
                     id?: string;
-                    meal: string;
+                    items?: Json | null;
+                    meal?: string | null;
                     name: string;
-                    protein?: number;
+                    protein?: number | null;
                     updated_at?: string | null;
                     user_id: string;
                 };
                 Update: {
-                    calories?: number;
-                    carbs?: number;
+                    calories?: number | null;
+                    carbs?: number | null;
                     created_at?: string | null;
                     description?: string | null;
-                    fat?: number;
-                    fiber?: number;
+                    fat?: number | null;
+                    fiber?: number | null;
                     id?: string;
-                    meal?: string;
+                    items?: Json | null;
+                    meal?: string | null;
                     name?: string;
-                    protein?: number;
+                    protein?: number | null;
                     updated_at?: string | null;
                     user_id?: string;
                 };
@@ -273,32 +372,44 @@ export type Database = {
             };
             profiles: {
                 Row: {
-                    activity_level: string | null;
-                    age: number | null;
+                    activity_level: string;
+                    age: number;
                     avatar_url: string | null;
                     created_at: string | null;
-                    current_weight: number | null;
+                    current_weight: number;
                     display_name: string | null;
-                    goal: string | null;
+                    friend_code: string | null;
+                    gender: string | null;
+                    goal: string;
+                    goal_weight: number | null;
                     has_oura_ring: boolean | null;
-                    height: number | null;
+                    height: number;
                     id: string;
                     ios_shortcuts_configured: boolean | null;
+                    is_public: boolean | null;
+                    language: string;
                     onboarding_completed: boolean | null;
                     oura_personal_token: string | null;
-                    target_calories: number | null;
-                    target_carbs: number | null;
-                    target_fat: number | null;
-                    target_fiber: number | null;
-                    target_protein: number | null;
-                    target_weight: number | null;
-                    step_goal: number | null;
-                    training_day_calories_bonus: number | null;
-                    training_day_carbs: number | null;
-                    tutorial_completed: boolean | null;
-                    unit_system: 'metric' | 'imperial';
-                    language: 'es' | 'en';
+                    primary_goal: string | null;
+                    renpho_last_sync: string | null;
+                    renpho_token: string | null;
+                    renpho_user_id: string | null;
+                    safety_net_days: string[] | null;
                     smart_hydration: boolean;
+                    target_calories: number;
+                    target_carbs: number;
+                    target_fat: number;
+                    target_fiber: number;
+                    target_protein: number;
+                    target_weight: number;
+                    step_goal: number;
+                    steps_auto_sync: boolean;
+                    timezone: string;
+                    training_day_calories_bonus: number;
+                    training_day_carbs: number;
+                    training_days_per_week: number | null;
+                    tutorial_completed: boolean | null;
+                    unit_system: string;
                     updated_at: string | null;
                     user_id: string;
                 };
@@ -309,13 +420,24 @@ export type Database = {
                     created_at?: string | null;
                     current_weight?: number | null;
                     display_name?: string | null;
+                    friend_code?: string | null;
+                    gender?: string | null;
                     goal?: string | null;
+                    goal_weight?: number | null;
                     has_oura_ring?: boolean | null;
                     height?: number | null;
                     id?: string;
                     ios_shortcuts_configured?: boolean | null;
+                    is_public?: boolean | null;
+                    language?: string;
                     onboarding_completed?: boolean | null;
                     oura_personal_token?: string | null;
+                    primary_goal?: string | null;
+                    renpho_last_sync?: string | null;
+                    renpho_token?: string | null;
+                    renpho_user_id?: string | null;
+                    safety_net_days?: string[] | null;
+                    smart_hydration?: boolean;
                     target_calories?: number | null;
                     target_carbs?: number | null;
                     target_fat?: number | null;
@@ -323,12 +445,13 @@ export type Database = {
                     target_protein?: number | null;
                     target_weight?: number | null;
                     step_goal?: number | null;
+                    steps_auto_sync?: boolean;
+                    timezone?: string;
                     training_day_calories_bonus?: number | null;
                     training_day_carbs?: number | null;
+                    training_days_per_week?: number | null;
                     tutorial_completed?: boolean | null;
-                    unit_system?: 'metric' | 'imperial';
-                    language?: 'es' | 'en';
-                    smart_hydration?: boolean;
+                    unit_system?: string;
                     updated_at?: string | null;
                     user_id: string;
                 };
@@ -339,13 +462,24 @@ export type Database = {
                     created_at?: string | null;
                     current_weight?: number | null;
                     display_name?: string | null;
+                    friend_code?: string | null;
+                    gender?: string | null;
                     goal?: string | null;
+                    goal_weight?: number | null;
                     has_oura_ring?: boolean | null;
                     height?: number | null;
                     id?: string;
                     ios_shortcuts_configured?: boolean | null;
+                    is_public?: boolean | null;
+                    language?: string;
                     onboarding_completed?: boolean | null;
                     oura_personal_token?: string | null;
+                    primary_goal?: string | null;
+                    renpho_last_sync?: string | null;
+                    renpho_token?: string | null;
+                    renpho_user_id?: string | null;
+                    safety_net_days?: string[] | null;
+                    smart_hydration?: boolean;
                     target_calories?: number | null;
                     target_carbs?: number | null;
                     target_fat?: number | null;
@@ -353,12 +487,13 @@ export type Database = {
                     target_protein?: number | null;
                     target_weight?: number | null;
                     step_goal?: number | null;
+                    steps_auto_sync?: boolean;
+                    timezone?: string;
                     training_day_calories_bonus?: number | null;
                     training_day_carbs?: number | null;
+                    training_days_per_week?: number | null;
                     tutorial_completed?: boolean | null;
-                    unit_system?: 'metric' | 'imperial';
-                    language?: 'es' | 'en';
-                    smart_hydration?: boolean;
+                    unit_system?: string;
                     updated_at?: string | null;
                     user_id?: string;
                 };
@@ -377,21 +512,27 @@ export type Database = {
                     created_at: string | null;
                     date: string;
                     id: string;
+                    source: string;
                     steps: number;
+                    updated_at: string | null;
                     user_id: string;
                 };
                 Insert: {
                     created_at?: string | null;
                     date: string;
                     id?: string;
-                    steps: number;
+                    source?: string;
+                    steps?: number;
+                    updated_at?: string | null;
                     user_id: string;
                 };
                 Update: {
                     created_at?: string | null;
                     date?: string;
                     id?: string;
+                    source?: string;
                     steps?: number;
+                    updated_at?: string | null;
                     user_id?: string;
                 };
                 Relationships: [
@@ -536,12 +677,200 @@ export type Database = {
                     },
                 ];
             };
+            friendships: {
+                Row: {
+                    accepted_at: string | null;
+                    created_at: string | null;
+                    friend_id: string;
+                    id: string;
+                    status: string;
+                    user_id: string;
+                };
+                Insert: {
+                    accepted_at?: string | null;
+                    created_at?: string | null;
+                    friend_id: string;
+                    id?: string;
+                    status?: string;
+                    user_id: string;
+                };
+                Update: {
+                    accepted_at?: string | null;
+                    created_at?: string | null;
+                    friend_id?: string;
+                    id?: string;
+                    status?: string;
+                    user_id?: string;
+                };
+                Relationships: [];
+            };
+            meal_prep_plan: {
+                Row: {
+                    created_at: string | null;
+                    date: string;
+                    id: string;
+                    is_completed: boolean | null;
+                    meal_type: string;
+                    notes: string | null;
+                    planned_items: Json;
+                    template_id: string | null;
+                    updated_at: string | null;
+                    user_id: string;
+                };
+                Insert: {
+                    created_at?: string | null;
+                    date: string;
+                    id?: string;
+                    is_completed?: boolean | null;
+                    meal_type: string;
+                    notes?: string | null;
+                    planned_items?: Json;
+                    template_id?: string | null;
+                    updated_at?: string | null;
+                    user_id: string;
+                };
+                Update: {
+                    created_at?: string | null;
+                    date?: string;
+                    id?: string;
+                    is_completed?: boolean | null;
+                    meal_type?: string;
+                    notes?: string | null;
+                    planned_items?: Json;
+                    template_id?: string | null;
+                    updated_at?: string | null;
+                    user_id?: string;
+                };
+                Relationships: [];
+            };
+            progress_photos: {
+                Row: {
+                    angle: string | null;
+                    created_at: string | null;
+                    date: string;
+                    id: string;
+                    notes: string | null;
+                    photo_url: string;
+                    thumbnail_url: string | null;
+                    updated_at: string | null;
+                    user_id: string;
+                    weight: number | null;
+                };
+                Insert: {
+                    angle?: string | null;
+                    created_at?: string | null;
+                    date: string;
+                    id?: string;
+                    notes?: string | null;
+                    photo_url: string;
+                    thumbnail_url?: string | null;
+                    updated_at?: string | null;
+                    user_id: string;
+                    weight?: number | null;
+                };
+                Update: Partial<Database['public']['Tables']['progress_photos']['Insert']>;
+                Relationships: [];
+            };
+            weekly_plan: {
+                Row: {
+                    created_at: string | null;
+                    day_of_week: number;
+                    id: string;
+                    intensity: string | null;
+                    updated_at: string | null;
+                    user_id: string;
+                    workout_name: string | null;
+                    workout_type: string;
+                };
+                Insert: {
+                    created_at?: string | null;
+                    day_of_week: number;
+                    id?: string;
+                    intensity?: string | null;
+                    updated_at?: string | null;
+                    user_id: string;
+                    workout_name?: string | null;
+                    workout_type: string;
+                };
+                Update: {
+                    created_at?: string | null;
+                    day_of_week?: number;
+                    id?: string;
+                    intensity?: string | null;
+                    updated_at?: string | null;
+                    user_id?: string;
+                    workout_name?: string | null;
+                    workout_type?: string;
+                };
+                Relationships: [];
+            };
+            weekly_snapshots: {
+                Row: {
+                    avg_deficit: number | null;
+                    consistency_streak: number | null;
+                    created_at: string | null;
+                    id: string;
+                    user_id: string;
+                    week_start: string;
+                    weight_delta: number | null;
+                    workout_count: number | null;
+                };
+                Insert: {
+                    avg_deficit?: number | null;
+                    consistency_streak?: number | null;
+                    created_at?: string | null;
+                    id?: string;
+                    user_id: string;
+                    week_start: string;
+                    weight_delta?: number | null;
+                    workout_count?: number | null;
+                };
+                Update: {
+                    avg_deficit?: number | null;
+                    consistency_streak?: number | null;
+                    created_at?: string | null;
+                    id?: string;
+                    user_id?: string;
+                    week_start?: string;
+                    weight_delta?: number | null;
+                    workout_count?: number | null;
+                };
+                Relationships: [];
+            };
         };
         Views: {
             [_ in never]: never;
         };
         Functions: {
-            [_ in never]: never;
+            find_user_by_friend_code: {
+                Args: { p_friend_code: string };
+                Returns: {
+                    avatar_url: string;
+                    display_name: string;
+                    friend_code: string;
+                    user_id: string;
+                }[];
+            };
+            get_accepted_friends: {
+                Args: { p_user_id: string };
+                Returns: { friend_user_id: string }[];
+            };
+            get_activity_reaction_count: {
+                Args: { p_activity_id: string };
+                Returns: number;
+            };
+            has_user_reacted: {
+                Args: { p_activity_id: string; p_user_id: string };
+                Returns: boolean;
+            };
+            is_challenge_member: {
+                Args: { cid: string };
+                Returns: boolean;
+            };
+            migrate_food_log_times: {
+                Args: { p_new_timezone: string; p_user_id: string };
+                Returns: number;
+            };
         };
         Enums: {
             [_ in never]: never;
@@ -552,19 +881,22 @@ export type Database = {
     };
 };
 
-type PublicSchema = Database['public'];
+type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>;
+type PublicSchema = DatabaseWithoutInternals['public'];
 
 export type Tables<
     PublicTableNameOrOptions extends
         | keyof (PublicSchema['Tables'] & PublicSchema['Views'])
-        | { schema: keyof Database },
-    TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-        ? keyof (Database[PublicTableNameOrOptions['schema']]['Tables'] &
-              Database[PublicTableNameOrOptions['schema']]['Views'])
+        | { schema: keyof DatabaseWithoutInternals },
+    TableName extends PublicTableNameOrOptions extends {
+        schema: keyof DatabaseWithoutInternals;
+    }
+        ? keyof (DatabaseWithoutInternals[PublicTableNameOrOptions['schema']]['Tables'] &
+              DatabaseWithoutInternals[PublicTableNameOrOptions['schema']]['Views'])
         : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-    ? (Database[PublicTableNameOrOptions['schema']]['Tables'] &
-          Database[PublicTableNameOrOptions['schema']]['Views'])[TableName] extends {
+> = PublicTableNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
+    ? (DatabaseWithoutInternals[PublicTableNameOrOptions['schema']]['Tables'] &
+          DatabaseWithoutInternals[PublicTableNameOrOptions['schema']]['Views'])[TableName] extends {
           Row: infer R;
       }
         ? R
@@ -582,12 +914,14 @@ export type Tables<
 export type TablesInsert<
     PublicTableNameOrOptions extends
         | keyof PublicSchema['Tables']
-        | { schema: keyof Database },
-    TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-        ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
+        | { schema: keyof DatabaseWithoutInternals },
+    TableName extends PublicTableNameOrOptions extends {
+        schema: keyof DatabaseWithoutInternals;
+    }
+        ? keyof DatabaseWithoutInternals[PublicTableNameOrOptions['schema']]['Tables']
         : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-    ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
+> = PublicTableNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
+    ? DatabaseWithoutInternals[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
           Insert: infer I;
       }
         ? I
@@ -603,12 +937,14 @@ export type TablesInsert<
 export type TablesUpdate<
     PublicTableNameOrOptions extends
         | keyof PublicSchema['Tables']
-        | { schema: keyof Database },
-    TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-        ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
+        | { schema: keyof DatabaseWithoutInternals },
+    TableName extends PublicTableNameOrOptions extends {
+        schema: keyof DatabaseWithoutInternals;
+    }
+        ? keyof DatabaseWithoutInternals[PublicTableNameOrOptions['schema']]['Tables']
         : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-    ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
+> = PublicTableNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
+    ? DatabaseWithoutInternals[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
           Update: infer U;
       }
         ? U
@@ -624,12 +960,12 @@ export type TablesUpdate<
 export type Enums<
     PublicEnumNameOrOptions extends
         | keyof PublicSchema['Enums']
-        | { schema: keyof Database },
+        | { schema: keyof DatabaseWithoutInternals },
     EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-        ? keyof Database[PublicEnumNameOrOptions['schema']]['Enums']
+        ? keyof DatabaseWithoutInternals[PublicEnumNameOrOptions['schema']]['Enums']
         : never = never,
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? Database[PublicEnumNameOrOptions['schema']]['Enums'][EnumName]
+    ? DatabaseWithoutInternals[PublicEnumNameOrOptions['schema']]['Enums'][EnumName]
     : PublicEnumNameOrOptions extends keyof PublicSchema['Enums']
       ? PublicSchema['Enums'][PublicEnumNameOrOptions]
       : never;
@@ -637,14 +973,14 @@ export type Enums<
 export type CompositeTypes<
     PublicCompositeTypeNameOrOptions extends
         | keyof PublicSchema['CompositeTypes']
-        | { schema: keyof Database },
+        | { schema: keyof DatabaseWithoutInternals },
     CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-        schema: keyof Database;
+        schema: keyof DatabaseWithoutInternals;
     }
-        ? keyof Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+        ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
         : never = never,
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-    ? Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+    ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
     : PublicCompositeTypeNameOrOptions extends keyof PublicSchema['CompositeTypes']
       ? PublicSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
       : never;

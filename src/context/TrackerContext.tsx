@@ -62,6 +62,7 @@ export type TrackerContextType = ReturnType<typeof useTrackerSync> &
         };
         addStepsEntry: () => void;
         weeklyPlan: any; // Add weeklyPlan to context type
+        weeklyPlanLoading: boolean;
         unitSystem: UnitSystem;
         setUnitSystem: (system: UnitSystem) => void;
         updateUnitSystem: (system: UnitSystem) => Promise<void>;
@@ -173,6 +174,10 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
         setUnitSystem,
         updateUnitSystem,
     } = useUiHelpersDomain({ uiState, actions, biometrics, nutrition });
+    const {
+        isLoading: weeklyPlanLoading,
+        ...weeklyPlanActions
+    } = weeklyPlanHook;
 
     // Combine everything into value
     const value = useMemo(
@@ -226,8 +231,9 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
             addStepsEntry,
 
             // Weekly Plan
-            ...weeklyPlanHook,
+            ...weeklyPlanActions,
             weeklyPlan: weeklyPlanHook.plan, // Alias for backward compatibility if needed
+            weeklyPlanLoading,
 
             // Unit System
             unitSystem,
@@ -264,7 +270,8 @@ export const TrackerProvider: React.FC<TrackerProviderProps> = ({ children }) =>
             changeDate,
             getWaterDataForDate,
             addStepsEntry,
-            weeklyPlanHook,
+            weeklyPlanActions,
+            weeklyPlanLoading,
             unitSystem,
             i18n.language,
         ],

@@ -1,22 +1,56 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAIMeals } from '../../../context/AIMealSuggestionsContext';
 import { useTracker } from '../../../context/TrackerContext';
 import { useSmartMealType } from '../../../hooks/useSmartMealType';
 import { FoodEntry } from '../../../types/domain';
 import { getArgentinaDateString, getCurrentTimeString } from '../../../utils/dateUtils';
-import { FoodHistoryPanel } from '../../Food/FoodHistoryPanel';
-import { AIMealSuggestionModal } from '../../Modals/AIMealSuggestionModal';
-import { BarcodeScannerModal } from '../../Modals/BarcodeScannerModal';
+import { lazyWithRetry } from '../../../utils/lazyUtils';
 import { DeleteConfirmModal } from '../../Modals/DeleteConfirmModal';
-import { FoodCameraModal } from '../../Modals/FoodCameraModal';
 import { FoodFormModal } from '../../Modals/FoodFormModal';
-import { FoodSearchModal } from '../../Modals/FoodSearchModal';
 import { ImportModal } from '../../Modals/ImportModal';
-import { MondayBriefingModal } from '../../Modals/MondayBriefingModal';
 import { WorkoutFormModal } from '../../Modals/WorkoutFormModal';
-import { WorkoutScanner } from '../../Workouts/WorkoutScanner';
-import { WeeklyReport } from './WeeklyReport';
+
+const FoodHistoryPanel = lazyWithRetry(() =>
+    import('../../Food/FoodHistoryPanel').then((module) => ({
+        default: module.FoodHistoryPanel,
+    })),
+);
+const AIMealSuggestionModal = lazyWithRetry(() =>
+    import('../../Modals/AIMealSuggestionModal').then((module) => ({
+        default: module.AIMealSuggestionModal,
+    })),
+);
+const BarcodeScannerModal = lazyWithRetry(() =>
+    import('../../Modals/BarcodeScannerModal').then((module) => ({
+        default: module.BarcodeScannerModal,
+    })),
+);
+const FoodCameraModal = lazyWithRetry(() =>
+    import('../../Modals/FoodCameraModal').then((module) => ({
+        default: module.FoodCameraModal,
+    })),
+);
+const FoodSearchModal = lazyWithRetry(() =>
+    import('../../Modals/FoodSearchModal').then((module) => ({
+        default: module.FoodSearchModal,
+    })),
+);
+const MondayBriefingModal = lazyWithRetry(() =>
+    import('../../Modals/MondayBriefingModal').then((module) => ({
+        default: module.MondayBriefingModal,
+    })),
+);
+const WorkoutScanner = lazyWithRetry(() =>
+    import('../../Workouts/WorkoutScanner').then((module) => ({
+        default: module.WorkoutScanner,
+    })),
+);
+const WeeklyReport = lazyWithRetry(() =>
+    import('./WeeklyReport').then((module) => ({
+        default: module.WeeklyReport,
+    })),
+);
 
 export const ModalsManager: React.FC = () => {
     const {
@@ -184,47 +218,65 @@ export const ModalsManager: React.FC = () => {
             />
 
             {showImportWorkoutModal && (
-                <WorkoutScanner
-                    onSave={async (workoutData: any) => {
-                        const newEntry = {
-                            ...workoutData,
-                            date: workoutData.date || getArgentinaDateString(),
-                            source: 'ai-import',
-                            reviewed: true,
-                            confidence: 1.0,
-                        };
-                        await saveWorkoutEntry(newEntry);
-                        setShowImportWorkoutModal(false);
-                    }}
-                    onCancel={() => setShowImportWorkoutModal(false)}
-                />
+                <Suspense fallback={null}>
+                    <WorkoutScanner
+                        onSave={async (workoutData: any) => {
+                            const newEntry = {
+                                ...workoutData,
+                                date: workoutData.date || getArgentinaDateString(),
+                                source: 'ai-import',
+                                reviewed: true,
+                                confidence: 1.0,
+                            };
+                            await saveWorkoutEntry(newEntry);
+                            setShowImportWorkoutModal(false);
+                        }}
+                        onCancel={() => setShowImportWorkoutModal(false)}
+                    />
+                </Suspense>
             )}
 
-            <FoodCameraModal
-                isOpen={showFoodScanModal}
-                onClose={() => setShowFoodScanModal(false)}
-            />
+            {showFoodScanModal && (
+                <Suspense fallback={null}>
+                    <FoodCameraModal
+                        isOpen
+                        onClose={() => setShowFoodScanModal(false)}
+                    />
+                </Suspense>
+            )}
 
-            <FoodSearchModal
-                isOpen={showFoodSearchModal}
-                onClose={() => setShowFoodSearchModal(false)}
-            />
+            {showFoodSearchModal && (
+                <Suspense fallback={null}>
+                    <FoodSearchModal
+                        isOpen
+                        onClose={() => setShowFoodSearchModal(false)}
+                    />
+                </Suspense>
+            )}
 
-            <BarcodeScannerModal
-                isOpen={showBarcodeModal}
-                onClose={() => setShowBarcodeModal(false)}
-                onOpenFoodSearch={() => {
-                    setShowBarcodeModal(false);
-                    setShowFoodSearchModal(true);
-                }}
-            />
+            {showBarcodeModal && (
+                <Suspense fallback={null}>
+                    <BarcodeScannerModal
+                        isOpen
+                        onClose={() => setShowBarcodeModal(false)}
+                        onOpenFoodSearch={() => {
+                            setShowBarcodeModal(false);
+                            setShowFoodSearchModal(true);
+                        }}
+                    />
+                </Suspense>
+            )}
 
-            <FoodHistoryPanel
-                isOpen={showFoodHistoryPanel}
-                onClose={() => setShowFoodHistoryPanel(false)}
-                foodLog={foodLog}
-                onSelectFood={handleSelectFoodFromHistory}
-            />
+            {showFoodHistoryPanel && (
+                <Suspense fallback={null}>
+                    <FoodHistoryPanel
+                        isOpen
+                        onClose={() => setShowFoodHistoryPanel(false)}
+                        foodLog={foodLog}
+                        onSelectFood={handleSelectFoodFromHistory}
+                    />
+                </Suspense>
+            )}
 
             {showTemplatesModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start justify-center z-50 p-2 pt-8 overflow-y-auto">
@@ -443,28 +495,36 @@ export const ModalsManager: React.FC = () => {
             )}
 
             {showWeeklyReport && (
-                <WeeklyReport
-                    foodLog={foodLog}
-                    workoutLog={workoutLog}
-                    weightHistory={weightHistory}
-                    stepsLog={stepsLog}
-                    targets={customTargets}
-                    onClose={() => setShowWeeklyReport(false)}
-                />
+                <Suspense fallback={null}>
+                    <WeeklyReport
+                        foodLog={foodLog}
+                        workoutLog={workoutLog}
+                        weightHistory={weightHistory}
+                        stepsLog={stepsLog}
+                        targets={customTargets}
+                        onClose={() => setShowWeeklyReport(false)}
+                    />
+                </Suspense>
             )}
 
             {showMondayBriefing && briefingData && (
-                <MondayBriefingModal
-                    onAccept={acceptProposedTargets}
-                    onDismiss={markBriefingReviewed}
-                    {...briefingData}
-                />
+                <Suspense fallback={null}>
+                    <MondayBriefingModal
+                        onAccept={acceptProposedTargets}
+                        onDismiss={markBriefingReviewed}
+                        {...briefingData}
+                    />
+                </Suspense>
             )}
 
-            <AIMealSuggestionModal
-                isOpen={showSuggestionModal}
-                onClose={() => setShowSuggestionModal(false)}
-            />
+            {showSuggestionModal && (
+                <Suspense fallback={null}>
+                    <AIMealSuggestionModal
+                        isOpen
+                        onClose={() => setShowSuggestionModal(false)}
+                    />
+                </Suspense>
+            )}
         </>
     );
 };

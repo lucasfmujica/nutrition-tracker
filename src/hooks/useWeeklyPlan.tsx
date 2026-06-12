@@ -27,13 +27,14 @@ export const useWeeklyPlan = (userId?: string) => {
     const fetchPlan = useCallback(async () => {
         // If no user yet, don't do anything (keep loading or previous state)
         if (!userId) {
-            setIsLoading(true);
+            setIsLoading(false);
             return;
         }
 
         try {
             setIsLoading(true);
             setError(null);
+            if (!supabase) throw new Error(t('errors.supabaseNotConfigured'));
 
             const { data, error: fetchError } = await supabase
                 // @ts-ignore

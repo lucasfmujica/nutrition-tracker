@@ -47,15 +47,13 @@ export function useActivityData(
                 'fetchWorkouts',
             );
 
-            if (error || !data) {
-                if (error) console.error('Error fetching workouts:', error);
-                return [];
-            }
+            if (error) throw error;
+            if (!data) return [];
 
             return Array.isArray(data) ? data.map(mappers.workoutFromDb) : [];
         } catch (err) {
             console.error('fetchWorkouts failed:', err);
-            return [];
+            throw err;
         }
     }, [canUseSupabase, user, withTimeout]);
 
@@ -162,15 +160,13 @@ export function useActivityData(
                 'fetchStepsLog',
             );
 
-            if (error || !data) {
-                if (error) console.error('Error fetching steps:', error);
-                return [];
-            }
+            if (error) throw error;
+            if (!data) return [];
 
             return Array.isArray(data) ? data.map(mappers.stepsFromDb) : [];
         } catch (err) {
             console.error('fetchStepsLog failed:', err);
-            return [];
+            throw err;
         }
     }, [canUseSupabase, user, withTimeout]);
 
@@ -240,15 +236,13 @@ export function useActivityData(
                 'fetchOuraLog',
             );
 
-            if (error || !data) {
-                if (error) console.error('Error fetching oura log:', error);
-                return [];
-            }
+            if (error) throw error;
+            if (!data) return [];
 
             return Array.isArray(data) ? data.map(mappers.ouraFromDb) : [];
         } catch (err) {
             console.error('fetchOuraLog failed:', err);
-            return [];
+            throw err;
         }
     }, [canUseSupabase, user, withTimeout]);
 

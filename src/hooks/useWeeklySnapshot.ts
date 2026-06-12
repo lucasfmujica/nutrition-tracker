@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { generateWeeklySnapshot, getWeekStart } from '../services/weeklySnapshotService';
+import { generateWeeklySnapshot } from '../services/weeklySnapshotService';
 import { WeightEntry, Workout, FoodEntry } from '../types/domain';
 
 interface UseWeeklySnapshotProps {
@@ -23,19 +23,12 @@ export function useWeeklySnapshot({
     targetCalories,
     useCloud,
 }: UseWeeklySnapshotProps) {
-    const lastGeneratedWeek = useRef<string | null>(null);
     const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
     const generate = useCallback(async () => {
         if (!userId || !useCloud) return;
 
-        const currentWeek = getWeekStart();
-
-        // Skip if already generated for this week in this session
-        if (lastGeneratedWeek.current === currentWeek) return;
-
         await generateWeeklySnapshot(userId, weightHistory, workoutLog, foodLog, targetCalories);
-        lastGeneratedWeek.current = currentWeek;
     }, [userId, weightHistory, workoutLog, foodLog, targetCalories, useCloud]);
 
     // Generate on mount and when data changes (debounced)
@@ -56,11 +49,10 @@ export function useWeeklySnapshot({
                 clearTimeout(debounceTimer.current);
             }
         };
-    }, [userId, weightHistory.length, workoutLog.length, foodLog.length, useCloud, generate]);
+    }, [userId, useCloud, generate]);
 
     // Force regenerate (for manual refresh)
     const forceGenerate = useCallback(async () => {
-        lastGeneratedWeek.current = null;
         await generate();
     }, [generate]);
 

@@ -41,7 +41,6 @@ export const useBiometrics = (
         trainingDayCarbs: 220,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        safety_net_enabled: false,
         onboardingCompleted: false,
     };
 

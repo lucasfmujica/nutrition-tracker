@@ -31,7 +31,8 @@ export interface OuraAutoAdjustData {
  */
 export const useOuraAutoAdjust = (
     ouraLog: OuraEntry[],
-    selectedDate?: string
+    selectedDate?: string,
+    stepsForDate: number = 0,
 ): OuraAutoAdjustData => {
     const { t } = useTranslation();
 
@@ -52,9 +53,9 @@ export const useOuraAutoAdjust = (
             };
         }
 
-        const readiness = todayOura.readiness_score ?? null;
-        const bodyTemp = todayOura.body_temp ?? null;
-        const steps = todayOura.steps ?? 0;
+        const readiness = todayOura.readinessScore ?? null;
+        const bodyTemp = null;
+        const steps = stepsForDate;
 
         // If readiness is null/undefined, return neutral values
         if (readiness === null) {
@@ -101,5 +102,5 @@ export const useOuraAutoAdjust = (
             bodyTemp,
             stepsFromOura: steps,
         };
-    }, [ouraLog, selectedDate, t]);
+    }, [ouraLog, selectedDate, stepsForDate, t]);
 };

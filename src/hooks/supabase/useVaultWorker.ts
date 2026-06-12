@@ -7,7 +7,7 @@ import {
     incrementRetryCountsBatch,
     PendingWrite,
     removePendingWritesBatch,
-    updateCacheMetadata,
+    updateFreshCacheMetadata,
 } from '../../utils/storageUtils';
 
 export interface UseVaultWorkerParams {
@@ -276,19 +276,10 @@ export const useVaultWorker = ({
                         setMealTemplates(data.mealTemplates);
                     await cacheData(data, userId);
 
-                    // SWR PATTERN: Update metadata after Vault sync
-                    const argentinaTimestamp = Date.now();
-                    await Promise.all([
-                        updateCacheMetadata('profile', userId, argentinaTimestamp),
-                        updateCacheMetadata('targets', userId, argentinaTimestamp),
-                        updateCacheMetadata('weight', userId, argentinaTimestamp),
-                        updateCacheMetadata('food', userId, argentinaTimestamp),
-                        updateCacheMetadata('workouts', userId, argentinaTimestamp),
-                        updateCacheMetadata('steps', userId, argentinaTimestamp),
-                        updateCacheMetadata('oura', userId, argentinaTimestamp),
-                        updateCacheMetadata('water', userId, argentinaTimestamp),
-                        updateCacheMetadata('templates', userId, argentinaTimestamp),
-                    ]);
+                    await updateFreshCacheMetadata(
+                        data.freshDataTypes || [],
+                        userId,
+                    );
                 }
             }
         } catch (err) {

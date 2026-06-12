@@ -8,6 +8,30 @@ import { useSupabaseAuth } from './supabase/useSupabaseAuth';
 import { useSupabaseOperation } from './supabase/useSupabaseOperation';
 import { useTemplateData } from './supabase/useTemplateData';
 import { useWeightData } from './supabase/useWeightData';
+import {
+    CustomTargets,
+    FoodEntry,
+    MealTemplate,
+    OuraEntry,
+    Profile,
+    StepsEntry,
+    WaterEntry,
+    WeightEntry,
+    Workout,
+} from '../types/domain';
+
+export interface SupabaseDataSnapshot {
+    profile?: Profile;
+    targets?: CustomTargets;
+    weightHistory?: WeightEntry[];
+    foodLog?: FoodEntry[];
+    workouts?: Workout[];
+    stepsLog?: StepsEntry[];
+    ouraLog?: OuraEntry[];
+    waterLog?: WaterEntry[];
+    mealTemplates?: MealTemplate[];
+    freshDataTypes: string[];
+}
 
 /**
  * Custom hook for Supabase authentication and data operations
@@ -180,12 +204,12 @@ export function useSupabase() {
                 templateResult,
             ] = results as PromiseSettledResult<any>[];
 
-            // Helper to extract value or return fallback
+            // A rejected source stays undefined so callers retain the previous
+            // state/cache for that table instead of replacing it with [].
             const getValue = <T,>(
                 result: PromiseSettledResult<T>,
-                fallback: T,
                 name: string,
-            ): T => {
+            ): T | undefined => {
                 if (result.status === 'fulfilled') {
                     return result.value;
                 } else {
@@ -193,18 +217,31 @@ export function useSupabase() {
                         `[Supabase] ${name} fetch failed:`,
                         result.reason?.message || result.reason,
                     );
-                    return fallback;
+                    return undefined;
                 }
             };
 
-            const profileData = getValue(profileResult, null, 'Profile');
-            const weightHistory = getValue(weightResult, [], 'Weight History');
-            const foodLog = getValue(foodResult, [], 'Food Log');
-            const workouts = getValue(workoutsResult, [], 'Workouts');
-            const stepsLog = getValue(stepsResult, [], 'Steps Log');
-            const ouraLog = getValue(ouraResult, [], 'Oura Log');
-            const waterLog = getValue(waterResult, [], 'Water Log');
-            const mealTemplates = getValue(templateResult, [], 'Meal Templates');
+            const profileData = getValue(profileResult, 'Profile');
+            const weightHistory = getValue(weightResult, 'Weight History');
+            const foodLog = getValue(foodResult, 'Food Log');
+            const workouts = getValue(workoutsResult, 'Workouts');
+            const stepsLog = getValue(stepsResult, 'Steps Log');
+            const ouraLog = getValue(ouraResult, 'Oura Log');
+            const waterLog = getValue(waterResult, 'Water Log');
+            const mealTemplates = getValue(templateResult, 'Meal Templates');
+            const dataTypeNames = [
+                ['profile', 'targets'],
+                ['weight'],
+                ['food'],
+                ['workouts'],
+                ['steps'],
+                ['oura'],
+                ['water'],
+                ['templates'],
+            ];
+            const freshDataTypes = results.flatMap((result, index) =>
+                result.status === 'fulfilled' ? dataTypeNames[index] : [],
+            );
 
             // Count failures for logging
             const failedCount = results.filter(
@@ -215,8 +252,11 @@ export function useSupabase() {
                     `[Supabase] fetchAllData: ${failedCount}/${results.length} sources failed, but proceeding with partial data`,
                 );
             }
+            if (failedCount === results.length) {
+                throw new Error('No Supabase data source could be refreshed');
+            }
 
-            setSyncStatus('success');
+            setSyncStatus(failedCount > 0 ? 'error' : 'success');
             setLastSyncTime(new Date());
             setTimeout(() => setSyncStatus('idle'), 1500);
 
@@ -230,7 +270,8 @@ export function useSupabase() {
                 ouraLog,
                 waterLog,
                 mealTemplates,
-            };
+                freshDataTypes,
+            } satisfies SupabaseDataSnapshot;
         } catch (err: any) {
             console.error('[Supabase] fetchAllData error:', err);
             setSyncStatus('error');

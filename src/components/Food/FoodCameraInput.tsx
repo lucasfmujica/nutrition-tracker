@@ -224,12 +224,7 @@ export const FoodCameraInput: React.FC = () => {
         return (
             <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border">
                 <PortionAdjustmentUI
-                    baseMacros={{
-                        calories: baseMacros.calories,
-                        protein: baseMacros.protein,
-                        carbs: baseMacros.carbs,
-                        fat: baseMacros.fat,
-                    }}
+                    baseMacros={baseMacros}
                     onConfirm={handlePortionConfirm}
                     onCancel={handleCancel}
                 />

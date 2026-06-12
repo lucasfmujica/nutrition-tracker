@@ -1,5 +1,11 @@
 import { supabase } from '../lib/supabase';
 import { WeightEntry, Workout, FoodEntry } from '../types/domain';
+import {
+    addDaysToDate,
+    getArgentinaDateString,
+    getMondayOfWeek,
+    toArgentinaDateString,
+} from '../utils/dateUtils';
 
 /**
  * Weekly Snapshot Service
@@ -19,11 +25,7 @@ interface WeeklySnapshotData {
  * Get the Monday of the current week as YYYY-MM-DD
  */
 export function getWeekStart(date: Date = new Date()): string {
-    const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
-    const monday = new Date(d.setDate(diff));
-    return monday.toISOString().split('T')[0];
+    return getMondayOfWeek(toArgentinaDateString(date));
 }
 
 /**
@@ -31,9 +33,7 @@ export function getWeekStart(date: Date = new Date()): string {
  */
 export function getPreviousWeekEnd(date: Date = new Date()): string {
     const weekStart = getWeekStart(date);
-    const monday = new Date(weekStart);
-    monday.setDate(monday.getDate() - 1);
-    return monday.toISOString().split('T')[0];
+    return addDaysToDate(weekStart, -1);
 }
 
 /**
@@ -46,25 +46,17 @@ export function calculateWeightDelta(
 ): number | null {
     if (weightHistory.length < 2) return null;
 
-    const weekStartDate = new Date(weekStart);
-    const weekEndDate = new Date(weekStart);
-    weekEndDate.setDate(weekEndDate.getDate() + 6); // Sunday
-
-    const previousWeekEnd = new Date(weekStart);
-    previousWeekEnd.setDate(previousWeekEnd.getDate() - 1);
+    const weekEnd = addDaysToDate(weekStart, 6);
+    const previousWeekStart = addDaysToDate(weekStart, -7);
 
     // Find weight closest to end of this week
     const thisWeekWeights = weightHistory.filter((w) => {
-        const date = new Date(w.date);
-        return date >= weekStartDate && date <= weekEndDate;
+        return w.date >= weekStart && w.date <= weekEnd;
     });
 
     // Find weight from previous week
     const previousWeekWeights = weightHistory.filter((w) => {
-        const date = new Date(w.date);
-        const prevWeekStart = new Date(weekStart);
-        prevWeekStart.setDate(prevWeekStart.getDate() - 7);
-        return date >= prevWeekStart && date < weekStartDate;
+        return w.date >= previousWeekStart && w.date < weekStart;
     });
 
     if (thisWeekWeights.length === 0 || previousWeekWeights.length === 0) {
@@ -88,13 +80,10 @@ export function countWeeklyWorkouts(
     workoutLog: Workout[],
     weekStart: string
 ): number {
-    const weekStartDate = new Date(weekStart);
-    const weekEndDate = new Date(weekStart);
-    weekEndDate.setDate(weekEndDate.getDate() + 6);
+    const weekEnd = addDaysToDate(weekStart, 6);
 
     return workoutLog.filter((w) => {
-        const date = new Date(w.date);
-        return date >= weekStartDate && date <= weekEndDate;
+        return w.date >= weekStart && w.date <= weekEnd;
     }).length;
 }
 
@@ -122,21 +111,17 @@ export function calculateConsistencyStreak(
 
     // Count consecutive days from today
     let streak = 0;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = getArgentinaDateString();
 
     for (let i = 0; i < 365; i++) {
-        const checkDate = new Date(today);
-        checkDate.setDate(checkDate.getDate() - i);
-        const dateStr = checkDate.toISOString().split('T')[0];
+        const dateStr = addDaysToDate(today, -i);
 
         if (activityDates.has(dateStr)) {
             streak++;
         } else if (i > 0) {
             // Allow one day gap for flexibility (streak continues if skipped 1 day)
-            const prevDate = new Date(today);
-            prevDate.setDate(prevDate.getDate() - i + 1);
-            if (!activityDates.has(prevDate.toISOString().split('T')[0])) {
+            const previousDate = addDaysToDate(today, -i + 1);
+            if (!activityDates.has(previousDate)) {
                 break;
             }
         } else {
@@ -159,16 +144,13 @@ export function calculateAvgDeficit(
 ): number {
     if (foodLog.length === 0 || !targetCalories) return 0;
 
-    const weekStartDate = new Date(weekStart);
-    const weekEndDate = new Date(weekStart);
-    weekEndDate.setDate(weekEndDate.getDate() + 6); // Sunday
+    const weekEnd = addDaysToDate(weekStart, 6);
 
     // Group foods by date and sum calories
     const dailyTotals: Record<string, number> = {};
 
     foodLog.forEach((food) => {
-        const date = new Date(food.date);
-        if (date >= weekStartDate && date <= weekEndDate) {
+        if (food.date >= weekStart && food.date <= weekEnd) {
             if (!dailyTotals[food.date]) {
                 dailyTotals[food.date] = 0;
             }

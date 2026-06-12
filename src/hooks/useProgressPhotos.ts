@@ -161,6 +161,11 @@ export const useProgressPhotos = ({
             options?: { date?: string; angle?: PhotoAngle; notes?: string; weight?: number }
         ): Promise<ProgressPhoto | null> => {
             if (!userId) return null;
+            const client = supabase;
+            if (!client) {
+                setError('Supabase no está configurado');
+                return null;
+            }
 
             // Validate file size
             if (file.size > MAX_IMAGE_SIZE) {
@@ -185,7 +190,7 @@ export const useProgressPhotos = ({
                 const thumbPath = `${userId}/${date}/${timestamp}_thumb.${fileExt}`;
 
                 // Upload main photo
-                const { error: uploadError } = await supabase.storage
+                const { error: uploadError } = await client.storage
                     .from(STORAGE_BUCKET)
                     .upload(photoPath, compressedBlob, {
                         contentType: 'image/jpeg',
@@ -195,7 +200,7 @@ export const useProgressPhotos = ({
                 if (uploadError) throw uploadError;
 
                 // Upload thumbnail
-                await supabase.storage
+                await client.storage
                     .from(STORAGE_BUCKET)
                     .upload(thumbPath, thumbnailBlob, {
                         contentType: 'image/jpeg',
@@ -203,16 +208,16 @@ export const useProgressPhotos = ({
                     });
 
                 // Get public URLs
-                const { data: photoUrlData } = supabase.storage
+                const { data: photoUrlData } = client.storage
                     .from(STORAGE_BUCKET)
                     .getPublicUrl(photoPath);
 
-                const { data: thumbUrlData } = supabase.storage
+                const { data: thumbUrlData } = client.storage
                     .from(STORAGE_BUCKET)
                     .getPublicUrl(thumbPath);
 
                 // Save metadata to database
-                const { data: insertedData, error: insertError } = await (supabase as any)
+                const { data: insertedData, error: insertError } = await (client as any)
                     .from('progress_photos')
                     .insert({
                         user_id: userId,
@@ -251,6 +256,8 @@ export const useProgressPhotos = ({
     const deletePhoto = useCallback(
         async (id: string): Promise<boolean> => {
             if (!userId) return false;
+            const client = supabase;
+            if (!client) return false;
 
             try {
                 // Get photo info first to delete from storage
@@ -258,7 +265,7 @@ export const useProgressPhotos = ({
                 if (!photo) return false;
 
                 // Delete from database
-                const { error: deleteError } = await (supabase as any)
+                const { error: deleteError } = await (client as any)
                     .from('progress_photos')
                     .delete()
                     .eq('id', id)
@@ -271,9 +278,9 @@ export const useProgressPhotos = ({
                     const photoPath = photo.photoUrl.split('/').slice(-3).join('/');
                     const thumbPath = photo.thumbnailUrl?.split('/').slice(-3).join('/');
 
-                    await supabase.storage.from(STORAGE_BUCKET).remove([photoPath]);
+                    await client.storage.from(STORAGE_BUCKET).remove([photoPath]);
                     if (thumbPath) {
-                        await supabase.storage.from(STORAGE_BUCKET).remove([thumbPath]);
+                        await client.storage.from(STORAGE_BUCKET).remove([thumbPath]);
                     }
                 } catch (storageErr) {
                     console.warn('[useProgressPhotos] Storage cleanup error:', storageErr);

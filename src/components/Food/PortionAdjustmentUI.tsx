@@ -2,14 +2,17 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Minus, Plus } from 'lucide-react';
 
+interface MacroSummary {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber: number;
+}
+
 interface PortionAdjustmentUIProps {
-    baseMacros: {
-        calories: number;
-        protein: number;
-        carbs: number;
-        fat: number;
-    };
-    onConfirm: (multiplier: number, adjustedMacros: typeof baseMacros) => void;
+    baseMacros: MacroSummary;
+    onConfirm: (multiplier: number, adjustedMacros: MacroSummary) => void;
     onCancel?: () => void;
 }
 
@@ -46,6 +49,7 @@ export const PortionAdjustmentUI: React.FC<PortionAdjustmentUIProps> = ({
         protein: Math.round(baseMacros.protein * multiplier),
         carbs: Math.round(baseMacros.carbs * multiplier),
         fat: Math.round(baseMacros.fat * multiplier),
+        fiber: Math.round(baseMacros.fiber * multiplier),
     };
 
     const handlePresetClick = (preset: number) => {
