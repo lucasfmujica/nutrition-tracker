@@ -2,6 +2,23 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 
+const MAX_REQUEST_BYTES = 12 * 1024 * 1024;
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_REQUESTS = 20;
+const requestWindows = new Map<string, { startedAt: number; count: number }>();
+
+const consumeRateLimit = (userId: string): boolean => {
+    const now = Date.now();
+    const current = requestWindows.get(userId);
+    if (!current || now - current.startedAt >= RATE_LIMIT_WINDOW_MS) {
+        requestWindows.set(userId, { startedAt: now, count: 1 });
+        return true;
+    }
+    if (current.count >= RATE_LIMIT_REQUESTS) return false;
+    current.count += 1;
+    return true;
+};
+
 /**
  * Gemini Proxy
  *
@@ -68,20 +85,62 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (authError || !user?.id) {
             return res.status(401).json({ error: 'Unauthorized: Invalid token' });
         }
+        if (!consumeRateLimit(user.id)) {
+            res.setHeader('Retry-After', '60');
+            return res.status(429).json({ error: 'Too many AI requests' });
+        }
 
         const { model, systemInstruction, generationConfig, request } = req.body || {};
         if (!model || typeof model !== 'string') {
             return res.status(400).json({ error: 'Bad Request: Missing model' });
         }
+        const allowedModels = new Set(
+            (process.env.ALLOWED_GEMINI_MODELS || 'gemini-3.5-flash')
+                .split(',')
+                .map((value) => value.trim())
+                .filter(Boolean),
+        );
+        if (!allowedModels.has(model)) {
+            return res.status(400).json({ error: 'Bad Request: Unsupported model' });
+        }
         if (request === undefined || request === null) {
             return res.status(400).json({ error: 'Bad Request: Missing request' });
         }
+        if (
+            systemInstruction !== undefined &&
+            typeof systemInstruction !== 'string'
+        ) {
+            return res
+                .status(400)
+                .json({ error: 'Bad Request: Invalid system instruction' });
+        }
+
+        const requestBytes = Buffer.byteLength(JSON.stringify(req.body), 'utf8');
+        if (requestBytes > MAX_REQUEST_BYTES) {
+            return res.status(413).json({ error: 'AI request is too large' });
+        }
+
+        const safeGenerationConfig =
+            generationConfig &&
+            typeof generationConfig === 'object' &&
+            !Array.isArray(generationConfig)
+                ? {
+                      ...generationConfig,
+                      maxOutputTokens: Math.min(
+                          Math.max(
+                              Number(generationConfig.maxOutputTokens) || 2048,
+                              1,
+                          ),
+                          4096,
+                      ),
+                  }
+                : { maxOutputTokens: 2048 };
 
         const genAI = new GoogleGenerativeAI(geminiKey);
         const generativeModel = genAI.getGenerativeModel({
             model,
             ...(systemInstruction ? { systemInstruction } : {}),
-            ...(generationConfig ? { generationConfig } : {}),
+            generationConfig: safeGenerationConfig,
         });
 
         const result = await generativeModel.generateContent(request);

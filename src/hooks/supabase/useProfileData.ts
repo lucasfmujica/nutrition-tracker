@@ -61,6 +61,10 @@ export function useProfileData(
                 'fetchProfile',
             );
 
+            if (error) {
+                throw error;
+            }
+
             if (!data) {
                 // Profile doesn't exist, create it using the auth helper
                 if (ensureProfileExists) {
@@ -88,11 +92,6 @@ export function useProfileData(
                 return null;
             }
 
-            if (error) {
-                console.error('Error fetching profile:', error);
-                return null;
-            }
-
             const profile = mappers.profileFromDb(data);
             const targets = mappers.targetsFromDb(data);
 
@@ -105,14 +104,6 @@ export function useProfileData(
                     );
                     // Update profile timezone
                     await supabase!.from('profiles').update({ timezone: browserTz }).eq('user_id', user.id);
-                    // Migrate historical food_log times
-                    const { data: migrated } = await supabase!.rpc('migrate_food_log_times', {
-                        p_user_id: user.id,
-                        p_new_timezone: browserTz,
-                    });
-                    console.log(
-                        `[ProfileData ${new Date().toISOString()}] Migrated ${migrated} food_log times to ${browserTz}`,
-                    );
                     profile.timezone = browserTz;
                 }
             } catch (tzErr) {
@@ -122,7 +113,7 @@ export function useProfileData(
             return { profile, targets };
         } catch (err) {
             console.error('fetchProfile failed:', err);
-            return null;
+            throw err;
         }
     }, [canUseSupabase, user, ensureProfileExists, withTimeout]);
 
