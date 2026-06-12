@@ -1,15 +1,25 @@
-import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import App from './App';
+import {
+    createHealthSyncToken,
+    verifyHealthSyncToken,
+} from '../api/health-sync-token';
+import { addDaysToDate, getMondayOfWeek } from './utils/dateUtils';
 
-describe('App', () => {
-    it('renders without crashing', () => {
-        // Just a basic smoke test to ensure the app mounts
-        // We'll need to wrap App in providers if it isn't already self-contained or if we test deeper
-        // Given App uses contexts, we might need to mock them or wrap them here.
-        // For now, let's try rendering. If it fails due to missing providers, we'll fix it.
-        // Actually, App usually contains the providers. Let's start with a simple assertion.
+describe('health sync tokens', () => {
+    const userId = '123e4567-e89b-42d3-a456-426614174000';
+    const secret = 'test-secret';
 
-        expect(true).toBe(true);
+    it('accepts a valid token and rejects tampering', () => {
+        const token = createHealthSyncToken(userId, secret);
+        expect(verifyHealthSyncToken(token, secret)).toEqual({ v: 1, sub: userId });
+        expect(verifyHealthSyncToken(`${token}x`, secret)).toBeNull();
+        expect(verifyHealthSyncToken(token, 'wrong-secret')).toBeNull();
+    });
+});
+
+describe('date helpers', () => {
+    it('handles week boundaries without UTC day drift', () => {
+        expect(getMondayOfWeek('2026-01-04')).toBe('2025-12-29');
+        expect(addDaysToDate('2025-12-31', 1)).toBe('2026-01-01');
     });
 });
