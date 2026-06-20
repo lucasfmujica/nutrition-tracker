@@ -20,7 +20,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { checkRateLimit } from './_rateLimit';
+import { checkRateLimit } from './rateLimit';
 
 const OURA_API_BASE = 'https://api.ouraring.com/v2/usercollection';
 

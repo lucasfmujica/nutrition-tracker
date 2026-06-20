@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { verifyHealthSyncToken } from './health-sync-token';
-import { checkRateLimit } from './_rateLimit';
+import { checkRateLimit } from './rateLimit';
 
 /**
  * Marker used to tag Apple Health workouts in the `workouts.notes` column,
@@ -177,7 +177,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             }
         }
 
-        // Rate limit per user (durable; helper provided by ./_rateLimit).
+        // Rate limit per user (durable; helper provided by ./rateLimit).
         const rl = await checkRateLimit(`sync-health:${userId}`, 30, 60);
         if (!rl.allowed) {
             res.setHeader('Retry-After', String(rl.retryAfter));

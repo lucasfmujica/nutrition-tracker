@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import type { Database } from '../src/types/supabase';
-import { checkRateLimit } from './_rateLimit';
+import { checkRateLimit } from './rateLimit';
 
 /**
  * Weekly Stats API - Social Accountability Reports
