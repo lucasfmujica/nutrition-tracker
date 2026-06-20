@@ -146,6 +146,7 @@ export const useWeightProjection = (
     const adherenceData = useMemo(() => {
         const today = getArgentinaDateString();
         const startFrom = addDaysToDate(today, -1); // Exclude today to avoid partial data noise
+        const safetyNetDays = profile?.safety_net_days || [];
 
         let caloriesOkCount = 0;
         let proteinOkCount = 0;
@@ -162,14 +163,13 @@ export const useWeightProjection = (
                 dayTarget?.protein || customTargets?.protein || 160;
 
             // 2. Nutrition check
-            // CRITICAL: Filter out safety net days
-            const dayFoods =
-                foodLog?.filter(
-                    (f) =>
-                        f.date === date &&
-                        !f.is_safety_net_day && // ✅ TYPE SAFE: property is now in FoodEntry
-                        f.sourceId !== 'safety-net',
-                ) || [];
+            // CRITICAL: Filter out safety net days (SSOT: profile.safety_net_days)
+            const dayFoods = safetyNetDays.includes(date)
+                ? []
+                : foodLog?.filter(
+                      (f) =>
+                          f.date === date && f.sourceId !== 'safety-net',
+                  ) || [];
 
             if (dayFoods.length > 0) {
                 const totals = dayFoods.reduce(
@@ -234,6 +234,7 @@ export const useWeightProjection = (
         customTargets,
         STEP_GOAL,
         profile?.goal,
+        profile?.safety_net_days,
         getTargetsForDate,
     ]);
 

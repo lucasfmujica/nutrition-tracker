@@ -171,6 +171,7 @@ export const useWeightAnalytics = (
 
         let adherentDays = 0;
         let totalDays = 0;
+        const safetyNetDays = profile?.safety_net_days || [];
 
         weekDays.forEach((date) => {
             // Don't count future days OR today (avoid partial data noise)
@@ -186,13 +187,14 @@ export const useWeightAnalytics = (
             const proteinTarget = dayTarget.protein;
 
             // Get all food entries for this date
-            // Safety Net: Filter out days marked as safety net days from adherence check
-            const dayEntries = foodLog.filter(
-                (entry) =>
-                    entry.date === date &&
-                    !entry.is_safety_net_day && // ✅ TYPE SAFE: property is now in FoodEntry
-                    entry.sourceId !== 'safety-net',
-            );
+            // Safety Net: skip days flagged in profile.safety_net_days (SSOT)
+            const dayEntries = safetyNetDays.includes(date)
+                ? []
+                : foodLog.filter(
+                      (entry) =>
+                          entry.date === date &&
+                          entry.sourceId !== 'safety-net',
+                  );
 
             // If no entries (or only safety net entries), skip
             if (dayEntries.length === 0) {
@@ -232,7 +234,13 @@ export const useWeightAnalytics = (
             totalDays > 0 ? (adherentDays / totalDays) * 100 : 0;
 
         return Math.round(adherencePercentage);
-    }, [foodLog, customTargets, profile?.goal, getTargetsForDate]);
+    }, [
+        foodLog,
+        customTargets,
+        profile?.goal,
+        profile?.safety_net_days,
+        getTargetsForDate,
+    ]);
 
     return {
         currentTrend, // kg/week (negative = losing, positive = gaining, null = no data)

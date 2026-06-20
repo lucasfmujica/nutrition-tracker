@@ -155,9 +155,11 @@ export const mappers = {
             source_id: entry.sourceId || null,
         };
 
-        // NOTE: `is_safety_net_day` column is not yet present in the generated
-        // Supabase types, so we set it via cast to avoid breaking typecheck.
-        (dbEntry as any).is_safety_net_day = entry.is_safety_net_day ?? false;
+        // NOTE: there is NO `is_safety_net_day` column on `food_log`. The source
+        // of truth for safety-net days is `profiles.safety_net_days` (array of
+        // YYYY-MM-DD). Consumers derive the per-entry flag from that array, so we
+        // must NOT send this field here — PostgREST rejects unknown columns and
+        // the insert/upsert would fail.
 
         if (entry.id && !entry.id.toString().startsWith('f-')) {
             dbEntry.id = entry.id;
@@ -183,7 +185,8 @@ export const mappers = {
         reviewed: dbEntry.reviewed,
         confidence: Number(dbEntry.confidence ?? 1),
         sourceId: dbEntry.source_id,
-        is_safety_net_day: (dbEntry as any).is_safety_net_day ?? false,
+        // `is_safety_net_day` is derived at consumption from
+        // `profiles.safety_net_days`; there is no such column on `food_log`.
     }),
 
     // Workout: localStorage -> Supabase
