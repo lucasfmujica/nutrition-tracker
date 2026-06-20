@@ -1,5 +1,6 @@
 import { AIChefContext, AIChefMealTime } from '../../types/domain';
 import { generateGeminiContent } from './geminiClient';
+import { parseLLMJson } from './parseLLMJson';
 
 const MODEL_NAME = 'gemini-3.5-flash'; // Fast and capable for creative lists
 
@@ -362,7 +363,7 @@ export const suggestMeals = async ({
             request: prompt,
         });
 
-        return JSON.parse(text);
+        return parseLLMJson<MealSuggestion[]>(text);
     } catch (error) {
         console.error('Error getting meal suggestions:', error);
         throw new Error('Failed to generate meal suggestions.');
@@ -396,7 +397,21 @@ export const suggestMealsWithContext = async (
             request: userPrompt,
         });
 
-        return JSON.parse(text);
+        const parsed = parseLLMJson<MealSuggestion[] | { meals?: MealSuggestion[] }>(text);
+
+        // The model may return either a bare array or { meals: [...] }.
+        const suggestions = Array.isArray(parsed)
+            ? parsed
+            : Array.isArray(parsed?.meals)
+              ? parsed.meals
+              : null;
+
+        if (!suggestions) {
+            console.error('[mealService] Unexpected suggestions shape:', parsed);
+            throw new Error('Failed to generate meal suggestions.');
+        }
+
+        return suggestions;
     } catch (error) {
         console.error('[mealService] Error getting contextual meal suggestions:', error);
         throw new Error('Failed to generate meal suggestions.');
@@ -463,7 +478,7 @@ REGLAS:
             request: userPrompt,
         });
 
-        return JSON.parse(text);
+        return parseLLMJson<RecipeDetail>(text);
     } catch (error) {
         console.error('[mealService] Error generating recipe instructions:', error);
         throw new Error('Failed to generate recipe instructions.');
@@ -706,7 +721,7 @@ export const generateWeeklyMealPlan = async (
             request: userPrompt,
         });
 
-        const parsed = JSON.parse(text);
+        const parsed = parseLLMJson<WeeklyMealPlanResponse>(text);
 
         console.log(`[mealService ${timestamp}] ✓ Weekly meal plan generated successfully`);
 

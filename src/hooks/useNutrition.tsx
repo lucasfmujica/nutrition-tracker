@@ -4,6 +4,7 @@ import { getSmartTargets } from '../utils/caloriePeriodization';
 import { getArgentinaDateString } from '../utils/dateUtils';
 import { storage } from '../utils/storage';
 import { addPendingDelete, addPendingWrite, getCacheKeys } from '../utils/storageUtils';
+import { isRetryableError } from './supabase/useSupabaseOperation';
 import { useSupabase } from './useSupabase';
 
 type SupabaseClient = ReturnType<typeof useSupabase>;
@@ -253,8 +254,13 @@ export const useNutrition = (
 
     const deleteFoodEntry = useCallback(
         async (id: string) => {
-            // Optimistic local removal so the entry leaves the UI immediately.
-            setFoodLog((prevLog) => prevLog.filter((e) => e.id !== id));
+            // Capture the entry being removed so we can roll back the optimistic
+            // update if the delete fails with a non-retryable (permanent) error.
+            let removedEntry: FoodEntry | undefined;
+            setFoodLog((prevLog) => {
+                removedEntry = prevLog.find((e) => e.id === id);
+                return prevLog.filter((e) => e.id !== id);
+            });
 
             if (useCloud) {
                 try {
@@ -266,8 +272,26 @@ export const useNutrition = (
                         id,
                         error: err?.message,
                     });
-                    // Queue the delete so it is retried; otherwise it resurrects on next fetch.
-                    await addPendingDelete('food_log', id, supabase.user?.id || '');
+
+                    if (isRetryableError(err)) {
+                        // Transient (network/timeout/5xx): queue the delete so it
+                        // is retried; otherwise it resurrects on the next fetch.
+                        await addPendingDelete(
+                            'food_log',
+                            id,
+                            supabase.user?.id || '',
+                        );
+                    } else if (removedEntry) {
+                        // Permanent error (e.g. 4xx/validation): retrying won't
+                        // help, so roll back the optimistic removal to keep the
+                        // UI consistent with the server (SSOT).
+                        const entryToRestore = removedEntry;
+                        setFoodLog((prevLog) =>
+                            prevLog.some((e) => e.id === entryToRestore.id)
+                                ? prevLog
+                                : [...prevLog, entryToRestore],
+                        );
+                    }
                 }
             }
         },

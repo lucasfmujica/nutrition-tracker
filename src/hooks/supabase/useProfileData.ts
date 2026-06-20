@@ -95,16 +95,32 @@ export function useProfileData(
             const profile = mappers.profileFromDb(data);
             const targets = mappers.targetsFromDb(data);
 
-            // Auto-detect browser timezone and sync if different
+            // Auto-detect browser timezone and sync if different.
+            // Fire-and-forget so the read path is never blocked by the write.
+            // Crucially, we only mutate `profile.timezone` in memory AFTER the
+            // server confirms the write — otherwise a failed update would leave
+            // the in-memory value diverged from the SSOT (Supabase Cloud).
             try {
                 const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
                 if (browserTz && profile.timezone !== browserTz) {
                     console.log(
                         `[ProfileData ${new Date().toISOString()}] Timezone changed: ${profile.timezone} → ${browserTz}`,
                     );
-                    // Update profile timezone
-                    await supabase!.from('profiles').update({ timezone: browserTz }).eq('user_id', user.id);
-                    profile.timezone = browserTz;
+                    void supabase!
+                        .from('profiles')
+                        .update({ timezone: browserTz })
+                        .eq('user_id', user.id)
+                        .then(({ error: tzUpdateError }) => {
+                            if (tzUpdateError) {
+                                console.error(
+                                    '[ProfileData] Timezone update failed (non-blocking):',
+                                    tzUpdateError,
+                                );
+                                return;
+                            }
+                            // Only reflect locally once the server confirmed it.
+                            profile.timezone = browserTz;
+                        });
                 }
             } catch (tzErr) {
                 console.error('[ProfileData] Timezone sync failed (non-blocking):', tzErr);

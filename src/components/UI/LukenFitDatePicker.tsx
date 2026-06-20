@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
     addDaysToDate,
     getArgentinaDateString,
-    getArgentinaDay,
+    getArgentinaDayFromString,
 } from '../../utils/dateUtils';
 
 /**
@@ -79,12 +79,12 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
         const year = parseInt(viewDate.split('-')[0]);
         const month = parseInt(viewDate.split('-')[1]) - 1; // 0-indexed
 
-        const firstDayOfMonth = new Date(year, month, 1);
+        const firstDayStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
         const lastDayOfMonth = new Date(year, month + 1, 0);
 
         const daysInMonth = lastDayOfMonth.getDate();
 
-        let startDay = getArgentinaDay(firstDayOfMonth);
+        let startDay = getArgentinaDayFromString(firstDayStr);
         startDay = startDay === 0 ? 6 : startDay - 1;
 
         const days: (string | null)[] = [];

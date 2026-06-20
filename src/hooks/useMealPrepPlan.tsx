@@ -2,8 +2,17 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import type { Json } from '../types/supabase';
-import { getArgentinaDateString } from '../utils/dateUtils';
-import { addDays, format, startOfWeek } from 'date-fns';
+import { getArgentinaDateString, getMondayOfWeek } from '../utils/dateUtils';
+import { addDays, format } from 'date-fns';
+
+/**
+ * Monday of the current week in Argentina TZ, as a noon-anchored Date.
+ * Anchoring at noon keeps `format(date, 'yyyy-MM-dd')` stable across browser
+ * timezones (avoids the UTC-midnight off-by-one), while still returning a Date
+ * for consumers that navigate weeks with date-fns `addDays`.
+ */
+const getArgentinaWeekStart = (): Date =>
+    new Date(getMondayOfWeek(getArgentinaDateString()) + 'T12:00:00');
 
 export interface PlannedMealItem {
     name: string;
@@ -46,8 +55,8 @@ export const useMealPrepPlan = (userId?: string) => {
     const [weekPlan, setWeekPlan] = useState<WeekPlan>({});
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [currentWeekStart, setCurrentWeekStart] = useState<Date>(() =>
-        startOfWeek(new Date(), { weekStartsOn: 1 }) // Monday
+    const [currentWeekStart, setCurrentWeekStart] = useState<Date>(
+        getArgentinaWeekStart // Monday in Argentina TZ
     );
 
     /**
@@ -297,7 +306,7 @@ export const useMealPrepPlan = (userId?: string) => {
      * Go back to current week
      */
     const goToCurrentWeek = useCallback(() => {
-        setCurrentWeekStart(startOfWeek(new Date(), { weekStartsOn: 1 }));
+        setCurrentWeekStart(getArgentinaWeekStart());
     }, []);
 
     // Fetch plan when user or week changes

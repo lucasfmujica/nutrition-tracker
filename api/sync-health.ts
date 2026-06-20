@@ -8,6 +8,9 @@ import { verifyHealthSyncToken } from './health-sync-token';
  */
 const APPLE_HEALTH_MARKER = '[apple_health]';
 
+/** Reject oversized payloads before doing any DB work (matches gemini-proxy). */
+const MAX_REQUEST_BYTES = 1 * 1024 * 1024;
+
 /**
  * Converts an incoming date (YYYY-MM-DD or ISO 8601) to a YYYY-MM-DD string
  * in Argentina time. Throws on invalid input.
@@ -75,6 +78,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(405).json({ error: 'Method Not Allowed' });
 
     try {
+        // Reject oversized bodies up front to bound memory / DB work.
+        const requestBytes = Buffer.byteLength(
+            JSON.stringify(req.body ?? {}),
+            'utf8',
+        );
+        if (requestBytes > MAX_REQUEST_BYTES) {
+            return res.status(413).json({ error: 'Request body is too large' });
+        }
+
         // 0. Environment Check (Critical for Vercel)
         if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
             console.error('[SyncHealth] Missing SUPABASE_SERVICE_ROLE_KEY');
@@ -123,8 +135,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const m: { steps?: any; weight?: any; sleep?: any; workouts?: any[] } =
             {};
 
-        if (metrics && typeof metrics === 'object') {
-            // Batch mode (Apple Health shortcut)
+        if (metrics && typeof metrics === 'object' && !Array.isArray(metrics)) {
+            // Batch mode (Apple Health shortcut). Must be a plain object, not an array.
             if (metrics.steps !== undefined && metrics.steps !== '')
                 m.steps = metrics.steps;
             if (metrics.weight !== undefined && metrics.weight !== '')

@@ -11,9 +11,19 @@ describe('health sync tokens', () => {
 
     it('accepts a valid token and rejects tampering', () => {
         const token = createHealthSyncToken(userId, secret);
-        expect(verifyHealthSyncToken(token, secret)).toEqual({ v: 1, sub: userId });
+        const verified = verifyHealthSyncToken(token, secret);
+        expect(verified).toMatchObject({ v: 2, sub: userId });
+        expect(verified).toHaveProperty('iat');
+        expect(verified).toHaveProperty('exp');
         expect(verifyHealthSyncToken(`${token}x`, secret)).toBeNull();
         expect(verifyHealthSyncToken(token, 'wrong-secret')).toBeNull();
+    });
+
+    it('rejects an expired token', () => {
+        // Issued ~181 days ago (TTL is 180 days) → already expired.
+        const issuedAt = Date.now() - 181 * 24 * 60 * 60 * 1000;
+        const token = createHealthSyncToken(userId, secret, issuedAt);
+        expect(verifyHealthSyncToken(token, secret)).toBeNull();
     });
 });
 

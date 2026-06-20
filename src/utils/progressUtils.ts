@@ -45,8 +45,8 @@ export function calculatePhotoStats(
     const weightChange = (afterPhoto.weight || 0) - (beforePhoto.weight || 0);
     const beforeDate = parseISO(beforePhoto.date);
     const afterDate = parseISO(afterPhoto.date);
-    const daysDuration = Math.abs(
-        Math.floor((afterDate.getTime() - beforeDate.getTime()) / (1000 * 60 * 60 * 24))
+    const daysDuration = Math.floor(
+        Math.abs(afterDate.getTime() - beforeDate.getTime()) / (1000 * 60 * 60 * 24)
     );
 
     return {

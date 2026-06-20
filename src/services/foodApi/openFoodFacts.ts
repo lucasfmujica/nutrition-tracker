@@ -119,6 +119,7 @@ export const searchOpenFoodFacts = async (
         });
 
         const response = await fetch(`${OFF_SEARCH_URL}?${params}`, {
+            signal: AbortSignal.timeout(8000),
             headers: {
                 'User-Agent': OFF_USER_AGENT,
             },
@@ -144,6 +145,7 @@ export const searchOpenFoodFacts = async (
             });
 
             const globalResponse = await fetch(`${OFF_SEARCH_URL}?${globalParams}`, {
+                signal: AbortSignal.timeout(8000),
                 headers: {
                     'User-Agent': OFF_USER_AGENT,
                 },
@@ -187,6 +189,7 @@ export const getProductByBarcode = async (
 
     try {
         const response = await fetch(`${OFF_PRODUCT_URL}/${cleanBarcode}.json`, {
+            signal: AbortSignal.timeout(8000),
             headers: {
                 'User-Agent': OFF_USER_AGENT,
             },

@@ -4,7 +4,7 @@ import {
     proposeTargetAdjustments,
 } from '../services/targetAdjustmentService';
 import { CustomTargets, Profile, WeightAnalytics } from '../types/domain';
-import { getArgentinaDateString, getArgentinaDay } from '../utils/dateUtils';
+import { getArgentinaDateString, getArgentinaDayFromString } from '../utils/dateUtils';
 import { getCacheKeys } from '../utils/storageUtils';
 import { useSupabase } from './useSupabase';
 
@@ -46,7 +46,7 @@ export const useDynamicTargets = (
         const checkBriefing = () => {
             // 1. Is it Monday?
             const today = getArgentinaDateString(); // YYYY-MM-DD
-            const dayOfWeek = getArgentinaDay(new Date(today)); // 0=Sun, 1=Mon...
+            const dayOfWeek = getArgentinaDayFromString(today); // 0=Sun, 1=Mon...
 
             // Development Override: Uncomment to force test
             // const isMonday = true;

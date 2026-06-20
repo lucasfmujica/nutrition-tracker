@@ -33,6 +33,13 @@ export const getArgentinaDay = (date: Date = new Date()): number => {
     return days[dayName];
 };
 
+/**
+ * Get day of week (0=Sun, 6=Sat) for a YYYY-MM-DD string, interpreted in Argentina TZ.
+ * Anchors the date at noon to avoid the UTC-midnight off-by-one that `new Date(dateStr)` causes.
+ */
+export const getArgentinaDayFromString = (dateStr: string): number =>
+    getArgentinaDay(new Date(dateStr + 'T12:00:00'));
+
 // Helper to add/subtract days from a date string (returns YYYY-MM-DD in Argentina TZ)
 export const addDaysToDate = (dateStr: string, days: number): string => {
     const date = new Date(dateStr + 'T12:00:00');

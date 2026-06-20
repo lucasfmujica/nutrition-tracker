@@ -70,7 +70,7 @@ export const analyzeWeeklyPerformance = (
         };
     }
 
-    const { min: idealMin } = calculateIdealRateOfLoss(currentWeight);
+    const { min: idealMin, max: idealMax } = calculateIdealRateOfLoss(currentWeight);
     // idealMin is e.g. -0.4 (slower loss), idealMax is -0.8 (faster loss)
     // currentTrend is e.g. -0.3 (slow), -0.6 (good), -1.6 (fast)
 
@@ -84,11 +84,17 @@ export const analyzeWeeklyPerformance = (
     }
 
     // 2. Too Fast (Safety Hazard)
-    // Checks absolute KG loss > 1.5kg OR exceeding percentage significantly
-    if (currentTrend < -ADJUSTMENT_CONSTANTS.FAST_LOSS_THRESHOLD_KG) {
+    // Checks absolute KG loss > 1.5kg OR exceeding the proportional ~1%/week
+    // cap (idealMax is the more-negative bound, e.g. -0.85). A trend below
+    // idealMax means the user is losing faster than 1% of body weight per week,
+    // which matters for lighter users who never reach the fixed 1.5kg threshold.
+    if (
+        currentTrend < -ADJUSTMENT_CONSTANTS.FAST_LOSS_THRESHOLD_KG ||
+        currentTrend < idealMax
+    ) {
         return {
             status: 'fast',
-            message: 'Perdida muy rápida (>1.5kg/sem). Riesgo de perder músculo.',
+            message: 'Pérdida muy rápida (>1%/sem). Riesgo de perder músculo.',
             severity: 'danger',
         };
     }

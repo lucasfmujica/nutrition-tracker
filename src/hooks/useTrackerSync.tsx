@@ -13,6 +13,7 @@ import { toast } from '../context/ToastContext';
 import i18n from '../i18n/config';
 import { retryWithBackoff } from '../utils/retryWithBackoff';
 import {
+    cacheData,
     clearCache,
     clearPendingWrites,
     getPendingWrites,
@@ -210,9 +211,14 @@ export const useTrackerSync = ({
                     1000 // base delay 1s
                 );
                 if (data) {
-                    // Supabase is source of truth - always sync (even empty arrays)
-                    if (data.profile) setProfile(data.profile);
-                    if (data.targets) setCustomTargets(data.targets);
+                    // Supabase is source of truth - always sync (even empty arrays).
+                    // GUARD: only adopt profile/targets when onboarding is completed,
+                    // mirroring useInitialHydration — otherwise a refresh mid-onboarding
+                    // would clobber the in-progress profile with DB defaults.
+                    if (data.profile && data.profile.onboardingCompleted)
+                        setProfile(data.profile);
+                    if (data.targets && data.profile?.onboardingCompleted)
+                        setCustomTargets(data.targets);
                     if (data.weightHistory !== undefined)
                         setWeightHistory(data.weightHistory);
                     if (data.foodLog !== undefined) setFoodLog(data.foodLog);
@@ -222,6 +228,11 @@ export const useTrackerSync = ({
                     if (data.waterLog !== undefined) setWaterLog(data.waterLog);
                     if (data.mealTemplates !== undefined)
                         setMealTemplates(data.mealTemplates);
+
+                    // CRITICAL: Mirror fresh cloud data into the cache BEFORE marking
+                    // metadata fresh. Otherwise the cache content stays stale while
+                    // metadata claims it's fresh, so the next hydration serves old data.
+                    await cacheData(data, userId);
 
                     await updateFreshCacheMetadata(data.freshDataTypes, userId);
 

@@ -95,16 +95,26 @@ const normalizeUSDAFood = (food: USDAFood): FoodSearchResult | null => {
 
     const { servingSize, servingSizeGrams } = parseUSDAServingSize(food);
 
+    // Branded foods report nutrients PER SERVING (food.servingSize), whereas
+    // Foundation/SR Legacy/Survey report PER 100g. Normalize Branded to per-100g
+    // so all sources share the same basis (FoodSearchResult is per-100g).
+    const isBrandedPerServing =
+        food.dataType === 'Branded' &&
+        typeof food.servingSize === 'number' &&
+        food.servingSize > 0 &&
+        food.servingSizeUnit?.toLowerCase() === 'g';
+    const factor = isBrandedPerServing ? 100 / (food.servingSize as number) : 1;
+
     return {
         id: `usda_${food.fdcId}`,
         source: 'usda',
         name: food.description,
         brand: food.brandName || food.brandOwner,
-        calories: Math.round(calories),
-        protein: Math.round(getNutrientValue(food.foodNutrients, NUTRIENT_IDS.PROTEIN) * 10) / 10,
-        carbs: Math.round(getNutrientValue(food.foodNutrients, NUTRIENT_IDS.CARBS) * 10) / 10,
-        fat: Math.round(getNutrientValue(food.foodNutrients, NUTRIENT_IDS.FAT) * 10) / 10,
-        fiber: Math.round(getNutrientValue(food.foodNutrients, NUTRIENT_IDS.FIBER) * 10) / 10,
+        calories: Math.round(calories * factor),
+        protein: Math.round(getNutrientValue(food.foodNutrients, NUTRIENT_IDS.PROTEIN) * factor * 10) / 10,
+        carbs: Math.round(getNutrientValue(food.foodNutrients, NUTRIENT_IDS.CARBS) * factor * 10) / 10,
+        fat: Math.round(getNutrientValue(food.foodNutrients, NUTRIENT_IDS.FAT) * factor * 10) / 10,
+        fiber: Math.round(getNutrientValue(food.foodNutrients, NUTRIENT_IDS.FIBER) * factor * 10) / 10,
         servingSize,
         servingSizeGrams,
     };
@@ -133,6 +143,7 @@ export const searchUSDAFoods = async (
     try {
         const response = await fetch(`${USDA_BASE_URL}/foods/search?api_key=${apiKey}`, {
             method: 'POST',
+            signal: AbortSignal.timeout(8000),
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -190,6 +201,7 @@ export const getUSDAFoodById = async (
         const response = await fetch(
             `${USDA_BASE_URL}/food/${fdcId}?api_key=${apiKey}`,
             {
+                signal: AbortSignal.timeout(8000),
                 headers: {
                     'Content-Type': 'application/json',
                 },

@@ -133,9 +133,8 @@ export const useDataOperations = ({
         }
 
         const existingIndex = workoutLog.findIndex(
-            (w) => w.id === entry.sourceId, // Note: original used sourceId but it might be ID
+            (w) => w.sourceId === entry.sourceId,
         );
-        // Correcting identifying existing by ID or some unique prop
         if (existingIndex >= 0) {
             const newLog = [...workoutLog];
             newLog[existingIndex] = {
@@ -169,17 +168,31 @@ export const useDataOperations = ({
 
     // Confirm/review an entry
     const confirmFood = (id: string) => {
+        const updated = foodLog.find((f) => f.id === id);
         const newLog = foodLog.map((f) =>
             f.id === id ? { ...f, reviewed: true } : f,
         );
         saveFoodLog(newLog);
+        // Persist the reviewed flag to Supabase (was only updated locally before)
+        if (updated) {
+            saveFoodEntry({ ...updated, reviewed: true }).catch((err) =>
+                console.error('[Sync] Failed to persist confirmFood:', err),
+            );
+        }
     };
 
     const confirmWorkout = (id: string) => {
+        const updated = workoutLog.find((w) => w.id === id);
         const newLog = workoutLog.map((w) =>
             w.id === id ? { ...w, reviewed: true } : w,
         );
         saveWorkoutLog(newLog);
+        // Persist the reviewed flag to Supabase (was only updated locally before)
+        if (updated) {
+            saveWorkoutEntry({ ...updated, reviewed: true }).catch((err) =>
+                console.error('[Sync] Failed to persist confirmWorkout:', err),
+            );
+        }
     };
 
     // Copy meals from yesterday

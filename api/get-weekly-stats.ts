@@ -13,6 +13,11 @@ import type { Database } from '../src/types/supabase';
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     // CORS Setup — restrict to the app's own origin(s). No wildcard: this endpoint
     // returns personal data and must not be readable cross-site.
+    if (!process.env.ALLOWED_ORIGINS) {
+        console.error(
+            '[WeeklyStats] ALLOWED_ORIGINS is not set — CORS will reject all browser origins.',
+        );
+    }
     const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
         .split(',')
         .map((o) => o.trim())
@@ -382,9 +387,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         return res.status(200).json(response);
     } catch (error: any) {
-        console.error('[WeeklyStats] Internal Error:', error);
-        return res
-            .status(500)
-            .json({ error: 'Internal Server Error', details: error.message });
+        // Log the detail server-side only; don't leak internals to the client.
+        console.error('[WeeklyStats] Internal Error:', error?.message || error);
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
 }

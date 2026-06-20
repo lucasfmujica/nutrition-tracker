@@ -102,15 +102,16 @@ export function calculateConsistencyStreak(
     workoutLog.forEach((w) => activityDates.add(w.date));
     weightHistory.forEach((w) => activityDates.add(w.date));
 
-    // Sort dates descending
-    const sortedDates = Array.from(activityDates).sort(
-        (a, b) => new Date(b).getTime() - new Date(a).getTime()
-    );
+    if (activityDates.size === 0) return 0;
 
-    if (sortedDates.length === 0) return 0;
-
-    // Count consecutive days from today
+    // Count ONLY consecutive days from today backwards.
+    // - A day with activity increments the streak.
+    // - The first day without activity breaks the loop, EXCEPT:
+    //   * Today (i === 0) may legitimately have no record yet (day in
+    //     progress), so it doesn't break the streak.
+    //   * We allow at most ONE total gap as grace; a second real gap breaks.
     let streak = 0;
+    let gapsUsed = 0;
     const today = getArgentinaDateString();
 
     for (let i = 0; i < 365; i++) {
@@ -118,16 +119,22 @@ export function calculateConsistencyStreak(
 
         if (activityDates.has(dateStr)) {
             streak++;
-        } else if (i > 0) {
-            // Allow one day gap for flexibility (streak continues if skipped 1 day)
-            const previousDate = addDaysToDate(today, -i + 1);
-            if (!activityDates.has(previousDate)) {
-                break;
-            }
-        } else {
-            // Today not logged, but check if yesterday was
             continue;
         }
+
+        // No activity on this day.
+        if (i === 0) {
+            // Today not logged yet — valid, keep scanning previous days.
+            continue;
+        }
+
+        // A real gap on a past day: tolerate exactly one, then break.
+        if (gapsUsed < 1) {
+            gapsUsed++;
+            continue;
+        }
+
+        break;
     }
 
     return streak;

@@ -56,9 +56,18 @@ export const mappers = {
         userId: dbProfile.user_id,
         name: dbProfile.display_name,
         avatar: dbProfile.avatar_url,
-        height: Number(dbProfile.height),
-        currentWeight: Number(dbProfile.current_weight),
-        targetWeight: Number(dbProfile.target_weight),
+        // Domain requires non-null numbers. Guard against null/undefined DB
+        // values so a missing column never becomes NaN (Number(undefined)) and
+        // null→0 coercion is explicit rather than silent.
+        height: dbProfile.height == null ? 0 : Number(dbProfile.height),
+        currentWeight:
+            dbProfile.current_weight == null
+                ? 0
+                : Number(dbProfile.current_weight),
+        targetWeight:
+            dbProfile.target_weight == null
+                ? 0
+                : Number(dbProfile.target_weight),
         stepGoal: 8000,
         age: dbProfile.age,
         activityLevel: dbProfile.activity_level as any,
@@ -146,6 +155,10 @@ export const mappers = {
             source_id: entry.sourceId || null,
         };
 
+        // NOTE: `is_safety_net_day` column is not yet present in the generated
+        // Supabase types, so we set it via cast to avoid breaking typecheck.
+        (dbEntry as any).is_safety_net_day = entry.is_safety_net_day ?? false;
+
         if (entry.id && !entry.id.toString().startsWith('f-')) {
             dbEntry.id = entry.id;
         }
@@ -168,8 +181,9 @@ export const mappers = {
         fiber: Number(dbEntry.fiber ?? 0),
         source: dbEntry.source as any,
         reviewed: dbEntry.reviewed,
-        confidence: Number(dbEntry.confidence),
+        confidence: Number(dbEntry.confidence ?? 1),
         sourceId: dbEntry.source_id,
+        is_safety_net_day: (dbEntry as any).is_safety_net_day ?? false,
     }),
 
     // Workout: localStorage -> Supabase

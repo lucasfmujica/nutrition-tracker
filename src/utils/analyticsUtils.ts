@@ -63,7 +63,13 @@ export function calculateLinearRegression(
         const predicted = slope * p.x + intercept;
         return sum + Math.pow(p.y - predicted, 2);
     }, 0);
-    const rSquared = 1 - ssResidual / ssTotal;
+    // Guard: when Y is constant, ssTotal is 0 and the ratio is NaN/-Infinity.
+    let rSquared: number;
+    if (Math.abs(ssTotal) < 1e-9) {
+        rSquared = 0;
+    } else {
+        rSquared = 1 - ssResidual / ssTotal;
+    }
 
     return {
         slope,
@@ -116,9 +122,14 @@ export function predictMeasurement(
         const predicted = regression.slope * p.x + regression.intercept;
         return p.y - predicted;
     });
-    const standardError = Math.sqrt(
-        residuals.reduce((sum, r) => sum + r * r, 0) / (n - 2),
-    );
+    // Guard: standard error needs (n - 2) degrees of freedom. With n < 3 the
+    // divisor is <= 0, producing Infinity/NaN — fall back to a zero-width band.
+    const standardError =
+        n < 3
+            ? 0
+            : Math.sqrt(
+                  residuals.reduce((sum, r) => sum + r * r, 0) / (n - 2),
+              );
 
     // 95% confidence interval (±1.96 standard errors)
     const margin = 1.96 * standardError;
@@ -164,8 +175,9 @@ export function getConfidenceInterval(
     // 95% confidence interval
     const margin = 1.96 * standardError;
 
+    // Symmetric offsets around the predicted value (width = 2 * margin).
     return {
-        lower: margin,
+        lower: -margin,
         upper: margin,
     };
 }

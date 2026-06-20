@@ -5,6 +5,7 @@ import {
     cacheData,
     getPendingWrites,
     incrementRetryCountsBatch,
+    isPendingWriteDue,
     PendingWrite,
     removePendingWritesBatch,
     updateFreshCacheMetadata,
@@ -156,8 +157,25 @@ export const useVaultWorker = ({
         }
 
         const userId = supabase?.user?.id;
-        const queue = await getPendingWrites(userId);
+        // CRITICAL: Without a confirmed user (e.g. during the token-refresh window)
+        // getPendingWrites(undefined) would read the WRONG (legacy) queue. Never
+        // process anything until we know whose queue it is.
+        if (!userId) {
+            return { success: true, synced: 0, failed: 0 };
+        }
+
+        const fullQueue = await getPendingWrites(userId);
+        if (fullQueue.length === 0) {
+            return { success: true, synced: 0, failed: 0 };
+        }
+
+        // Per-item exponential backoff (CLAUDE.md: 0s → 30s → 60s → 120s).
+        // Skip items still inside their backoff window since the last attempt.
+        const now = Date.now();
+        const queue = fullQueue.filter((item) => isPendingWriteDue(item, now));
+
         if (queue.length === 0) {
+            // Everything in the queue is still inside its backoff window.
             return { success: true, synced: 0, failed: 0 };
         }
 
@@ -299,27 +317,55 @@ export const useVaultWorker = ({
         setMealTemplates,
     ]);
 
+    // CRITICAL: Like processPendingQueueRef, hold the latest drainAndRefresh in a ref
+    // so the scheduler effect can depend ONLY on the connectivity primitives. Otherwise
+    // drainAndRefresh's identity (which changes whenever the domain setters change)
+    // would tear down and rebuild the 30s setInterval on every render — so the poll
+    // could be cancelled before it ever fires and the queue would never drain.
+    const drainRef = useRef(drainAndRefresh);
+    drainRef.current = drainAndRefresh;
+
     // Auto-trigger: debounce 5s on (re)connection, then poll every 30s while online.
     // Keyed ONLY on connectivity flags so the schedule is stable across renders.
     useEffect(() => {
         if (!isAuthenticated || !isOnline || offlineMode) return;
 
         const debounceId = setTimeout(() => {
-            void drainAndRefresh();
+            void drainRef.current();
         }, 5000); // Wait 5s for a stable connection (prevents network flapping)
 
         const intervalId = setInterval(() => {
-            void drainAndRefresh();
+            void drainRef.current();
         }, 30000); // CLAUDE.md: process The Vault every 30 seconds
 
         return () => {
             clearTimeout(debounceId);
             clearInterval(intervalId);
         };
-    }, [isOnline, isAuthenticated, offlineMode, drainAndRefresh]);
+    }, [isOnline, isAuthenticated, offlineMode]);
+
+    // Public entry point: respects the same concurrency guard as the scheduler so a
+    // manual drain (e.g. on logout/refresh) can't run in parallel with drainAndRefresh
+    // and double-process / overwrite the queue.
+    const guardedProcessPendingQueue = useCallback(async () => {
+        if (isProcessingQueue.current) {
+            return { success: false, synced: 0, failed: 0 };
+        }
+        isProcessingQueue.current = true;
+        try {
+            return await processPendingQueueRef.current();
+        } finally {
+            isProcessingQueue.current = false;
+        }
+    }, []);
 
     return {
-        processPendingQueue,
-        isProcessingQueue: isProcessingQueue.current,
+        processPendingQueue: guardedProcessPendingQueue,
+        // isProcessingQueue is a ref (not reactive). Expose its CURRENT value via a
+        // getter so callers always read the live flag instead of a stale snapshot
+        // captured at render time.
+        get isProcessingQueue() {
+            return isProcessingQueue.current;
+        },
     };
 };

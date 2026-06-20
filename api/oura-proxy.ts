@@ -6,13 +6,20 @@
  * Usage:
  * GET /api/oura-proxy?endpoint=daily_sleep&start_date=2026-01-10&end_date=2026-01-17
  *
- * Environment Variables Required:
- * - VITE_OURA_TOKEN: Your Oura API personal access token
+ * Auth: the client passes its per-user Oura access token in the Authorization
+ * header (Bearer <oura_token>). That header carries the Oura PAT, NOT a Supabase
+ * JWT — so this proxy cannot additionally verify a Supabase session without a
+ * second header / breaking the existing client flow (src/hooks/useOuraSync.tsx).
+ * The endpoint is therefore guarded by: a valid Oura token requirement, an
+ * endpoint allowlist, date validation, and CORS restricted to ALLOWED_ORIGINS.
  */
 
 import { VercelRequest, VercelResponse } from '@vercel/node';
 
 const OURA_API_BASE = 'https://api.ouraring.com/v2/usercollection';
+
+/** Strict YYYY-MM-DD date format expected by the Oura API. */
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 // Allowed Oura endpoints for security
 const ALLOWED_ENDPOINTS = [
@@ -23,6 +30,26 @@ const ALLOWED_ENDPOINTS = [
 ];
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+    // CORS — restrict to the app's own origin(s); no wildcard.
+    if (!process.env.ALLOWED_ORIGINS) {
+        console.error(
+            '[Oura Proxy] ALLOWED_ORIGINS is not set — CORS will reject all browser origins.',
+        );
+    }
+    const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+        .split(',')
+        .map((o) => o.trim())
+        .filter(Boolean);
+    const origin = req.headers.origin as string | undefined;
+    if (origin && allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Vary', 'Origin');
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+
+    if (req.method === 'OPTIONS') return res.status(200).end();
     // Only allow GET requests
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -41,6 +68,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!ALLOWED_ENDPOINTS.includes(endpoint as string)) {
         return res.status(400).json({
             error: `Invalid endpoint. Allowed: ${ALLOWED_ENDPOINTS.join(', ')}`,
+        });
+    }
+
+    // Validate date format before interpolating into the upstream URL.
+    if (
+        !DATE_REGEX.test(start_date as string) ||
+        !DATE_REGEX.test(end_date as string)
+    ) {
+        return res.status(400).json({
+            error: 'Invalid date format. Use YYYY-MM-DD for start_date and end_date.',
         });
     }
 
@@ -87,26 +124,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
             return res.status(response.status).json({
                 error: `Oura API error: ${response.status} ${response.statusText}`,
-                details: errorText,
             });
         }
 
         // Parse response from Oura
         const data = await response.json();
 
-        // Set CORS headers to allow frontend access
-        res.setHeader('Access-Control-Allow-Origin', '*'); // Or restrict to your domain
-        res.setHeader('Access-Control-Allow-Methods', 'GET');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
+        // CORS headers were already set at the top of the handler (origin-scoped).
         // Return the Oura API response
         return res.status(200).json(data);
     } catch (error: any) {
-        console.error('[Oura Proxy] Fetch Error:', error);
+        console.error('[Oura Proxy] Fetch Error:', error?.message || error);
 
         return res.status(500).json({
             error: 'Failed to fetch data from Oura API',
-            message: error.message,
         });
     }
 }

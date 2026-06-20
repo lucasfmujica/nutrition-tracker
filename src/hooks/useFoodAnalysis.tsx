@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from '../context/ToastContext';
 import { analyzeFoodImage } from '../services/ai/geminiVision';
+import { parseLLMJson } from '../services/ai/parseLLMJson';
 import { validateImageQuality } from '../utils/imageValidation';
 import { retryWithBackoff } from '../utils/retryWithBackoff';
 import { useScanHistory } from './useScanHistory';
@@ -97,10 +98,16 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
             // Convert file to base64
             const base64Image = await fileToBase64(file);
 
+            // Remove the data:image/...;base64, prefix and validate.
+            const base64Data = (base64Image as string).split(',')[1];
+            if (!base64Data) {
+                throw new Error('Imagen inválida');
+            }
+
             // Prepare the image part
             const imagePart = {
                 inlineData: {
-                    data: (base64Image as string).split(',')[1], // Remove data:image/...;base64, prefix
+                    data: base64Data,
                     mimeType: file.type,
                 },
             };
@@ -133,7 +140,7 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
             console.log(`[FoodAnalysis ${timestamp}] ✓ API response received`);
 
             // Parse JSON response
-            const parsedResult = JSON.parse(responseText) as FoodAnalysisResult;
+            const parsedResult = parseLLMJson<FoodAnalysisResult>(responseText);
 
             // Handle case where no meal is detected
             if (!parsedResult.meal_detected) {
@@ -145,7 +152,7 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
             }
 
             // Validate response essentials
-            if (!parsedResult.items || !parsedResult.total_macros) {
+            if (!Array.isArray(parsedResult.items) || !parsedResult.total_macros) {
                 throw new Error(
                     i18n.language.startsWith('en')
                         ? 'AI could not calculate macros correctly. Please try again.'
@@ -153,10 +160,23 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
                 );
             }
 
-            // Ensure fiber exists (default to 0 if missing)
-            if (!parsedResult.total_macros.fiber) {
-                parsedResult.total_macros.fiber = 0;
-            }
+            // Sanitize nutritional values: coerce to safe non-negative numbers.
+            parsedResult.items = parsedResult.items.map((item) => ({
+                ...item,
+                calories: toNumber(item.calories),
+                protein: toNumber(item.protein),
+                carbs: toNumber(item.carbs),
+                fat: toNumber(item.fat),
+                fiber: toNumber(item.fiber),
+            }));
+
+            parsedResult.total_macros = {
+                calories: toNumber(parsedResult.total_macros.calories),
+                protein: toNumber(parsedResult.total_macros.protein),
+                carbs: toNumber(parsedResult.total_macros.carbs),
+                fat: toNumber(parsedResult.total_macros.fat),
+                fiber: toNumber(parsedResult.total_macros.fiber),
+            };
 
             // Save successful scan to history
             try {
@@ -224,6 +244,15 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
         error,
         resetResult,
     };
+};
+
+/**
+ * Helper: Coerce an unknown value into a safe non-negative number.
+ * Returns 0 for non-finite or negative inputs (mirrors voiceMealService).
+ */
+const toNumber = (v: unknown): number => {
+    const n = Number(v);
+    return Number.isFinite(n) && n >= 0 ? n : 0;
 };
 
 /**

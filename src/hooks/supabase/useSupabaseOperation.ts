@@ -3,7 +3,7 @@ import React, { Dispatch, SetStateAction, useCallback, useState } from 'react';
 /**
  * Classifies errors to determine if retry is appropriate
  */
-const isRetryableError = (error: any): boolean => {
+export const isRetryableError = (error: any): boolean => {
     if (!error) return false;
 
     const message = (error.message || '').toLowerCase();

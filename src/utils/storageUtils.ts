@@ -470,9 +470,48 @@ export interface PendingWrite {
     userId: string;
     timestamp: string;
     retryCount: number;
+    /**
+     * Epoch ms (Date.now()) of the last sync attempt. Used by the Vault worker to
+     * compute per-item exponential backoff (30s → 60s → 120s). Absent on items
+     * queued before this field existed → treated as immediately eligible.
+     */
+    lastAttemptAt?: number;
     /** Defaults to 'insert' when absent (backward compat with older queued items). */
     operation?: 'insert' | 'delete';
 }
+
+/**
+ * Result of addPendingWrite. The NEW write is ALWAYS queued (never dropped);
+ * `overflow` signals that older entries had to be evicted to respect
+ * MAX_QUEUE_SIZE so the caller can warn the user (Zero Silent Failures).
+ */
+export interface AddPendingWriteResult {
+    success: boolean;
+    overflow: boolean;
+    discarded: number;
+}
+
+/**
+ * Per-item exponential backoff for The Vault (CLAUDE.md spec: 0s → 30s → 60s → 120s).
+ * Returns true when the item is eligible to be retried now. Items keep their
+ * `lastAttemptAt` stamped by incrementRetryCount(sBatch); a fresh/never-tried item
+ * (retryCount 0 or no stamp) is always eligible.
+ *   retryCount 1 → wait 30s, 2 → 60s, 3+ → 120s (capped).
+ * @param item - Pending write to evaluate
+ * @param now - Reference timestamp (epoch ms), defaults to Date.now()
+ * @returns {boolean} True if the item's backoff window has elapsed
+ */
+export const isPendingWriteDue = (
+    item: PendingWrite,
+    now: number = Date.now(),
+): boolean => {
+    const retries = item.retryCount || 0;
+    if (retries === 0 || !item.lastAttemptAt) return true; // First try: immediate
+    const BASE_DELAY_MS = 30000;
+    const MAX_DELAY_MS = 120000;
+    const delay = Math.min(BASE_DELAY_MS * 2 ** (retries - 1), MAX_DELAY_MS);
+    return now - item.lastAttemptAt >= delay;
+};
 
 /**
  * Add a failed write to the pending sync queue
@@ -486,12 +525,12 @@ export const addPendingWrite = async (
     table: string,
     data: any,
     userId: string,
-): Promise<boolean> => {
+): Promise<AddPendingWriteResult> => {
     try {
         // CRITICAL: Validate inputs to prevent data corruption
         if (!userId) {
             console.error('[Vault] Cannot add pending write without userId');
-            return false;
+            return { success: false, overflow: false, discarded: 0 };
         }
 
         // 🔒 IMPROVED: Comprehensive date validation
@@ -500,7 +539,7 @@ export const addPendingWrite = async (
                 '[Vault] Invalid date format (expected YYYY-MM-DD):',
                 data.date,
             );
-            return false;
+            return { success: false, overflow: false, discarded: 0 };
         }
 
         // 🔒 NEW: Prevent future dates (Argentina timezone)
@@ -511,7 +550,7 @@ export const addPendingWrite = async (
             console.error(
                 `[Vault] Cannot queue future date. Got: ${data.date}, Today (Argentina): ${todayArgentina}`,
             );
-            return false;
+            return { success: false, overflow: false, discarded: 0 };
         }
 
         // CRITICAL: Deterministic ID prevents duplicates on double-click WITHOUT
@@ -524,6 +563,7 @@ export const addPendingWrite = async (
 
         // CRITICAL: Lock the queue for the full read-modify-write so a concurrent
         // save (or the Vault worker) cannot overwrite it and lose this write.
+        let overflowEvicted = 0; // Oldest writes evicted only because queue was full
         await vaultMutex.acquire();
         try {
             const keys = getCacheKeys(userId);
@@ -539,12 +579,17 @@ export const addPendingWrite = async (
                 );
             }
 
-            // PROTECTION 2: Enforce max queue size (FIFO - keep most recent)
+            // PROTECTION 2: Enforce max queue size (FIFO - keep most recent).
+            // The NEW write always gets in; only OLD writes are evicted. We surface
+            // this to the caller (overflow) so the user is warned — silently losing
+            // a queued write violates "NUNCA perder datos del usuario".
             if (queue.length >= MAX_QUEUE_SIZE) {
+                const kept = queue.slice(-MAX_QUEUE_SIZE + 1);
+                overflowEvicted = queue.length - kept.length;
                 console.warn(
-                    `[Vault] Queue at max size (${MAX_QUEUE_SIZE}), removing oldest entries`,
+                    `[Vault] Queue at max size (${MAX_QUEUE_SIZE}), evicting ${overflowEvicted} oldest entr${overflowEvicted === 1 ? 'y' : 'ies'}`,
                 );
-                queue = queue.slice(-MAX_QUEUE_SIZE + 1);
+                queue = kept;
             }
 
             // PROTECTION 3: Deduplication - update existing entry instead of creating duplicate
@@ -560,6 +605,7 @@ export const addPendingWrite = async (
                         timeZone: 'America/Argentina/Buenos_Aires',
                     }),
                     retryCount: 0, // Reset retry count on update
+                    lastAttemptAt: undefined, // Fresh data → eligible immediately
                 };
             } else {
                 // Create new pending write entry with Argentina timezone
@@ -582,10 +628,29 @@ export const addPendingWrite = async (
             vaultMutex.release();
         }
 
-        return true;
+        // Zero Silent Failures: the new write was saved, but evicting older queued
+        // writes means data the user expected to sync is gone. Warn explicitly.
+        // (Lazy import keeps this pure util free of a hard React/context dependency.)
+        if (overflowEvicted > 0) {
+            try {
+                const [{ toast }, { default: i18n }] = await Promise.all([
+                    import('../context/ToastContext'),
+                    import('../i18n/config'),
+                ]);
+                toast.error(i18n.t('toast.vaultOverflow'));
+            } catch (notifyErr) {
+                console.error('[Vault] Failed to surface overflow warning:', notifyErr);
+            }
+        }
+
+        return {
+            success: true,
+            overflow: overflowEvicted > 0,
+            discarded: overflowEvicted,
+        };
     } catch (err) {
         console.error('[Vault] Failed to add pending write:', err);
-        return false;
+        return { success: false, overflow: false, discarded: 0 };
     }
 };
 
@@ -717,6 +782,7 @@ export const incrementRetryCount = async (id: string, userId?: string): Promise<
 
         if (item) {
             item.retryCount = (item.retryCount || 0) + 1;
+            item.lastAttemptAt = Date.now();
             await storage.set(keys.PENDING_SYNC, JSON.stringify(queue));
             return true;
         }
@@ -765,10 +831,14 @@ export const incrementRetryCountsBatch = async (ids: string[], userId?: string):
         const keys = userId ? getCacheKeys(userId) : LEGACY_CACHE_KEYS;
         const queue = await getPendingWrites(userId);
         const idsSet = new Set(ids);
+        const now = Date.now();
 
         queue.forEach((item) => {
             if (idsSet.has(item.id)) {
                 item.retryCount = (item.retryCount || 0) + 1;
+                // Stamp the attempt so the Vault worker can apply per-item
+                // exponential backoff (30s → 60s → 120s) before the next try.
+                item.lastAttemptAt = now;
             }
         });
 

@@ -5,6 +5,7 @@
 
 import type { ProgressPhoto } from '../../types/domain';
 import { generateGeminiContent } from './geminiClient';
+import { parseLLMJson } from './parseLLMJson';
 
 interface TransformationData {
     beforePhoto: ProgressPhoto;
@@ -106,17 +107,31 @@ export async function generateTransformationCaption(
             request: prompt,
         });
 
-        const parsed = JSON.parse(text);
+        const parsed = parseLLMJson<{
+            caption?: unknown;
+            hashtags?: unknown;
+            tone?: unknown;
+        }>(text);
 
-        // Truncate caption if needed
-        if (parsed.caption.length > maxLength) {
-            parsed.caption = parsed.caption.substring(0, maxLength - 3) + '...';
+        // Validate caption is a usable string; fall back if not.
+        if (typeof parsed.caption !== 'string' || !parsed.caption.trim()) {
+            throw new Error('AI response missing a valid caption');
+        }
+
+        let caption = parsed.caption;
+
+        // Truncate caption if needed (emoji-safe: split by code points to avoid
+        // breaking surrogate pairs).
+        if (caption.length > maxLength) {
+            caption = [...caption].slice(0, maxLength - 3).join('') + '...';
         }
 
         return {
-            caption: parsed.caption,
-            hashtags: parsed.hashtags || [],
-            tone: parsed.tone || tone,
+            caption,
+            hashtags: Array.isArray(parsed.hashtags)
+                ? (parsed.hashtags as string[])
+                : [],
+            tone: typeof parsed.tone === 'string' ? parsed.tone : tone,
         };
     } catch (error) {
         console.error('Error generating transformation caption:', error);

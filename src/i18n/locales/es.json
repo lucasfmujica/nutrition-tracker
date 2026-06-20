@@ -1893,6 +1893,7 @@
         "removeFriendError": "Error al eliminar amigo.",
         "reactionError": "No se pudo enviar la reacción.",
         "syncExhausted": "No se pudieron sincronizar algunos cambios. Revisá tu conexión.",
+        "vaultOverflow": "La cola de cambios pendientes está llena. Se descartaron algunos cambios viejos sin sincronizar. Reconectate para sincronizar.",
         "queuedOffline": "Sin conexión: se guardará automáticamente cuando vuelva internet.",
         "deleteError": "No se pudo eliminar. Probá de nuevo.",
         "barcodeLookupError": "No se encontró el producto del código escaneado.",

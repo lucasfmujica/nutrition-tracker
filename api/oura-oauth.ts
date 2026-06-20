@@ -28,6 +28,7 @@
  *   - Token endpoint:     https://api.ouraring.com/oauth/token
  */
 
+import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 
 const OURA_TOKEN_URL = 'https://api.ouraring.com/oauth/token';
@@ -47,6 +48,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(500).json({
             error: 'Oura OAuth is not configured on the server (missing OURA_CLIENT_ID / OURA_CLIENT_SECRET).',
         });
+    }
+
+    // SECURITY: this endpoint uses the server's secret Oura OAuth credentials,
+    // so it must not be an open proxy. Require a valid Supabase JWT before
+    // exchanging/refreshing any token (same pattern as gemini-proxy).
+    if (!process.env.VITE_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        console.error('[Oura OAuth] Missing Supabase env');
+        return res.status(500).json({ error: 'Server Misconfiguration' });
+    }
+    const authHeader = (req.headers.authorization as string) || '';
+    const accessToken = authHeader.startsWith('Bearer ')
+        ? authHeader.slice('Bearer '.length).trim()
+        : '';
+    if (!accessToken) {
+        return res.status(401).json({ error: 'Unauthorized: Missing token' });
+    }
+    const supabase = createClient(
+        process.env.VITE_SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY,
+    );
+    const {
+        data: { user },
+        error: authError,
+    } = await supabase.auth.getUser(accessToken);
+    if (authError || !user?.id) {
+        return res.status(401).json({ error: 'Unauthorized: Invalid token' });
     }
 
     const { grant_type, code, redirect_uri, refresh_token } = req.body ?? {};
@@ -88,13 +115,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const data = await response.json().catch(() => null);
 
         if (!response.ok) {
+            // Log provider details server-side only; don't leak them to the client.
             console.error(
                 `[Oura OAuth] Token endpoint error (${grant_type}): ${response.status}`,
                 data,
             );
             return res.status(response.status).json({
                 error: `Oura token endpoint error: ${response.status}`,
-                details: data,
             });
         }
 
@@ -106,10 +133,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             token_type: data.token_type,
         });
     } catch (error: any) {
-        console.error('[Oura OAuth] Fetch error:', error);
+        // Log the underlying error server-side; return a generic message.
+        console.error('[Oura OAuth] Fetch error:', error?.message || error);
         return res.status(500).json({
             error: 'Failed to reach Oura token endpoint',
-            message: error.message,
         });
     }
 }

@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { FoodEntry, OuraEntry, Workout } from '../types/domain';
+import { addDaysToDate } from '../utils/dateUtils';
 
 interface MealTimingInsights {
     avgFirstMealTime: string; // "07:45"
@@ -47,10 +48,8 @@ export const useMealTimingAnalytics = (
     referenceDate: string,
 ): MealTimingInsights => {
     return useMemo(() => {
-        // Filter to last 30 days relative to referenceDate
-        const refDate = new Date(referenceDate);
-        const thirtyDaysAgo = new Date(refDate.getTime() - 30 * 24 * 60 * 60 * 1000);
-        const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0];
+        // Filter to last 30 days relative to referenceDate (Argentina TZ)
+        const thirtyDaysAgoStr = addDaysToDate(referenceDate, -30);
 
         // Filter range: [referenceDate - 30 days, referenceDate]
         // This ensures we don't show future data if the user goes back in time,

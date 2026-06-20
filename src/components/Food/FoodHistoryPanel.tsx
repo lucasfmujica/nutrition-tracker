@@ -54,7 +54,7 @@ export const FoodHistoryPanel: React.FC<FoodHistoryPanelProps> = ({
 
     const formatLastSeen = (date: string) => {
         try {
-            const foodDate = new Date(date);
+            const foodDate = new Date(date + 'T12:00:00');
             const dateLocale = i18n.language === 'es' ? es : enUS;
             return formatDistanceToNow(foodDate, {
                 addSuffix: true,

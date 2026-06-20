@@ -9,6 +9,7 @@ import {
     WeightProjection,
 } from '../types/domain';
 import { addDaysToDate, getArgentinaDateString } from '../utils/dateUtils';
+import { calculateLinearRegression, DataPoint } from '../utils/analyticsUtils';
 
 /**
  * useWeightProjection - Predictive Weight Engine for LukenFit
@@ -53,8 +54,14 @@ export const useWeightProjection = (
     }, [weightHistory, profileWeight]);
 
     /**
-     * Calculate 14-day Realist Trend (R)
-     * Formula: R = (W_today - W_14d_ago) / days_span * 7 (kg/week)
+     * Calculate 30-day Realist Trend (R) via least-squares linear regression.
+     *
+     * Instead of using only the first and last point (which is highly
+     * sensitive to outliers / measurement noise), we fit a regression line
+     * over ALL weight entries in the trailing 30-day window. The slope is in
+     * kg/day, which we convert to kg/week (× 7).
+     *
+     * Formula: R = slope(kg/day) * 7 (kg/week)
      */
     const realistTrend = useMemo(() => {
         if (!weightHistory || weightHistory.length < 2) {
@@ -77,34 +84,49 @@ export const useWeightProjection = (
         const sorted = [...recentEntries].sort((a, b) =>
             a.date.localeCompare(b.date),
         );
-        const oldest = sorted[0];
-        const newest = sorted[sorted.length - 1];
 
-        // Calculate days between
-        const oldestDate = new Date(oldest.date + 'T12:00:00');
-        const newestDate = new Date(newest.date + 'T12:00:00');
-
-        if (isNaN(oldestDate.getTime()) || isNaN(newestDate.getTime())) {
+        // Anchor x at the oldest entry so x = days elapsed since the window start.
+        const oldestDate = new Date(sorted[0].date + 'T12:00:00');
+        if (isNaN(oldestDate.getTime())) {
             console.warn('Invalid dates in weight history for trend calculation');
             return null;
         }
 
-        const daysDiff = Math.abs(
-            (newestDate.getTime() - oldestDate.getTime()) / (1000 * 60 * 60 * 24),
-        );
+        // Build regression points (x = days since oldest, y = weight in kg).
+        const dataPoints: DataPoint[] = [];
+        for (const entry of sorted) {
+            const entryDate = new Date(entry.date + 'T12:00:00');
+            const weight = Number(String(entry.weight).replace(',', '.'));
 
-        if (daysDiff === 0) return 0;
+            if (isNaN(entryDate.getTime()) || isNaN(weight)) {
+                console.warn('Invalid weight entry for trend calculation', entry);
+                continue;
+            }
 
-        const w1 = Number(String(newest.weight).replace(',', '.'));
-        const w2 = Number(String(oldest.weight).replace(',', '.'));
+            const daysSinceStart =
+                (entryDate.getTime() - oldestDate.getTime()) /
+                (1000 * 60 * 60 * 24);
 
-        if (isNaN(w1) || isNaN(w2)) {
-            console.warn('Invalid weight values for trend calculation', { w1, w2 });
+            dataPoints.push({ x: daysSinceStart, y: weight, date: entry.date });
+        }
+
+        if (dataPoints.length < 2) {
             return null;
         }
 
-        const weightDiff = w1 - w2;
-        const ratePerWeek = (weightDiff / daysDiff) * 7;
+        // Guard: if all points fall on the same day, span is zero -> no trend.
+        const daysDiff =
+            dataPoints[dataPoints.length - 1].x - dataPoints[0].x;
+        if (daysDiff === 0) return 0;
+
+        const regression = calculateLinearRegression(dataPoints);
+        if (!regression) {
+            // Returns null when all x are identical (handled above) — be safe.
+            return 0;
+        }
+
+        // slope is kg/day -> convert to kg/week.
+        const ratePerWeek = regression.slope * 7;
 
         // Final guard against infinity or NaN
         if (!isFinite(ratePerWeek) || isNaN(ratePerWeek)) {

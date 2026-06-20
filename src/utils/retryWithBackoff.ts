@@ -14,6 +14,40 @@
  *   1000
  * );
  */
+/**
+ * Determine whether an error should NOT be retried.
+ *
+ * Non-recoverable client errors (4xx other than 429 Too Many Requests) are
+ * permanent for the same request, so retrying only wastes time. 429, network
+ * errors and 5xx responses remain retryable.
+ *
+ * @param error - The error thrown by the retried function.
+ * @returns true if the error is a non-retryable 4xx (excluding 429).
+ */
+function isNonRetryable4xx(error: unknown): boolean {
+    if (!error || typeof error !== 'object') return false;
+
+    // Status may live on `.status` or `.code` depending on the source.
+    const withStatus = error as { status?: unknown; code?: unknown; message?: unknown };
+    let status =
+        typeof withStatus.status === 'number'
+            ? withStatus.status
+            : typeof withStatus.code === 'number'
+              ? withStatus.code
+              : undefined;
+
+    // Fallback: try to detect an HTTP status code embedded in the message.
+    if (status === undefined && typeof withStatus.message === 'string') {
+        const match = withStatus.message.match(/\b(4\d{2}|5\d{2})\b/);
+        if (match) status = parseInt(match[1], 10);
+    }
+
+    if (status === undefined) return false;
+
+    // Retry 429 (rate limit); do not retry other 4xx (e.g. 400/401/403/404).
+    return status >= 400 && status < 500 && status !== 429;
+}
+
 export async function retryWithBackoff<T>(
     fn: () => Promise<T>,
     maxRetries = 3,
@@ -36,6 +70,15 @@ export async function retryWithBackoff<T>(
         } catch (error) {
             lastError = error as Error;
             const timestamp = new Date().toISOString();
+
+            // Do not retry non-recoverable client errors (4xx except 429).
+            if (isNonRetryable4xx(error)) {
+                console.error(
+                    `[RetryWithBackoff ${timestamp}] ✗ Non-retryable error, aborting:`,
+                    lastError.message || lastError
+                );
+                throw lastError;
+            }
 
             // If this was the last attempt, throw the error
             if (attempt === maxRetries) {

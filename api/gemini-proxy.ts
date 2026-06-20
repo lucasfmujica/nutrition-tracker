@@ -32,6 +32,11 @@ const consumeRateLimit = (userId: string): boolean => {
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     // CORS — restrict to the app's own origin(s).
+    if (!process.env.ALLOWED_ORIGINS) {
+        console.error(
+            '[GeminiProxy] ALLOWED_ORIGINS is not set — CORS will reject all browser origins.',
+        );
+    }
     const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
         .split(',')
         .map((o) => o.trim())

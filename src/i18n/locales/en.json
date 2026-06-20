@@ -1884,6 +1884,7 @@
         "removeFriendError": "Error removing friend.",
         "reactionError": "Could not send the reaction.",
         "syncExhausted": "Some changes could not be synced. Check your connection.",
+        "vaultOverflow": "The pending changes queue is full. Some older unsynced changes were dropped. Reconnect to sync.",
         "queuedOffline": "Offline: it will be saved automatically when you are back online.",
         "deleteError": "Could not delete. Try again.",
         "barcodeLookupError": "Product not found for the scanned barcode.",

@@ -4,6 +4,7 @@
  */
 
 import { generateGeminiContent } from './geminiClient';
+import { parseLLMJson } from './parseLLMJson';
 
 const MODEL_NAME = 'gemini-3.5-flash'; // Pro for better extraction reasoning
 
@@ -98,6 +99,10 @@ async function fileToGenerativePart(
         reader.onloadend = () => {
             const result = reader.result as string;
             const base64Data = result.split(',')[1];
+            if (!base64Data) {
+                reject(new Error('Imagen inválida'));
+                return;
+            }
             resolve({
                 inlineData: {
                     data: base64Data,
@@ -136,7 +141,7 @@ export const analyzeWorkoutImages = async (
             request: [promptTest, ...imageParts],
         });
 
-        return JSON.parse(text);
+        return parseLLMJson<WorkoutParsed>(text);
     } catch (error) {
         console.error('Error analyzing workout images:', error);
         throw new Error('Failed to analyze workout images. Please try again.');

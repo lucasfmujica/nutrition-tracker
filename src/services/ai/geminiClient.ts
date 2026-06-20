@@ -44,6 +44,7 @@ export async function generateGeminiContent(
 
     const res = await fetch(`${baseUrl}/api/gemini-proxy`, {
         method: 'POST',
+        signal: AbortSignal.timeout(10000),
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
@@ -59,7 +60,11 @@ export async function generateGeminiContent(
         } catch {
             // ignore parse errors, use default message
         }
-        throw new Error(message);
+        // Attach the HTTP status so callers (e.g. retryWithBackoff) can decide
+        // whether the error is retryable (429/5xx) or not (other 4xx).
+        const error = new Error(message) as Error & { status?: number };
+        error.status = res.status;
+        throw error;
     }
 
     const { text } = await res.json();

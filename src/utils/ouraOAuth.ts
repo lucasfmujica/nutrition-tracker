@@ -16,6 +16,8 @@
  * the serverless OURA_CLIENT_ID).
  */
 
+import { supabase } from '../lib/supabase';
+
 const AUTHORIZE_URL = 'https://cloud.ouraring.com/oauth/authorize';
 const STATE_STORAGE_KEY = 'oura_oauth_state';
 const TOKENS_STORAGE_PREFIX = 'oura_oauth_tokens';
@@ -111,9 +113,25 @@ export const cleanOAuthParamsFromUrl = (): void => {
 const callTokenEndpoint = async (
     body: Record<string, string>,
 ): Promise<OuraTokenResponse> => {
+    // The serverless endpoint now requires a valid Supabase JWT (it uses the
+    // server's secret Oura credentials and must not be an open proxy).
+    if (!supabase) {
+        throw new Error('Supabase no está configurado.');
+    }
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+    const accessToken = session?.access_token;
+    if (!accessToken) {
+        throw new Error('No hay sesión activa para vincular Oura.');
+    }
+
     const response = await fetch('/api/oura-oauth', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+        },
         body: JSON.stringify(body),
     });
 
