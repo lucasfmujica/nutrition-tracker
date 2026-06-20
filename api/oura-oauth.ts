@@ -30,6 +30,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
+import { checkRateLimit } from './_rateLimit';
 
 const OURA_TOKEN_URL = 'https://api.ouraring.com/oauth/token';
 
@@ -74,6 +75,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     } = await supabase.auth.getUser(accessToken);
     if (authError || !user?.id) {
         return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+    }
+
+    // Rate limit per authenticated user; fall back to the caller IP if for some
+    // reason no userId is available at this point.
+    const rateLimitKey = user.id
+        ? `oura-oauth:${user.id}`
+        : `oura-oauth:ip:${(req.headers['x-forwarded-for'] as string) || 'unknown'}`;
+    const rl = await checkRateLimit(rateLimitKey, 15, 60);
+    if (!rl.allowed) {
+        res.setHeader('Retry-After', String(rl.retryAfter));
+        return res.status(429).json({ error: 'Too Many Requests' });
     }
 
     const { grant_type, code, redirect_uri, refresh_token } = req.body ?? {};

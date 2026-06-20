@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from '../context/ToastContext';
+import { supabase as supabaseClient } from '../lib/supabase';
 import i18n from '../i18n/config';
 import { OuraEntry, Profile, StepsEntry } from '../types/domain';
 import { addDaysToDate, getArgentinaDateString } from '../utils/dateUtils';
@@ -125,12 +126,25 @@ export const useOuraSync = ({
             // Production: Use serverless proxy to bypass CORS
             const proxyUrl = `/api/oura-proxy?endpoint=${endpoint}&start_date=${start}&end_date=${end}`;
 
+            // The proxy now requires a valid Supabase JWT (X-Supabase-Auth) in
+            // addition to the Oura token (Authorization). Abort with a clear
+            // error rather than sending an empty/invalid auth header.
+            const {
+                data: { session },
+            } = (await supabaseClient?.auth.getSession()) ?? { data: { session: null } };
+            if (!session?.access_token) {
+                throw new Error(
+                    'No active Supabase session. Please sign in again to sync Oura data.',
+                );
+            }
+
             try {
                 console.log(`[OuraSync] Using proxy: ${endpoint}`);
                 const response = await fetch(proxyUrl, {
                     method: 'GET',
                     headers: {
                         Authorization: `Bearer ${token}`,
+                        'X-Supabase-Auth': `Bearer ${session.access_token}`,
                         'Content-Type': 'application/json',
                     },
                 });

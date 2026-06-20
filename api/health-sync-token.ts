@@ -6,12 +6,14 @@ interface HealthSyncTokenPayloadV1 {
     sub: string;
 }
 
-/** Current token shape: includes issued-at and expiry (epoch seconds). */
+/** Current token shape: includes issued-at, expiry (epoch seconds) and the
+ *  user's token version (tv) at issuance time, used for revocation. */
 interface HealthSyncTokenPayloadV2 {
     v: 2;
     sub: string;
     iat: number;
     exp: number;
+    tv: number;
 }
 
 type HealthSyncTokenPayload =
@@ -32,19 +34,26 @@ const sign = (payload: string, secret: string): string =>
 
 /**
  * Issues a signed, time-limited capability token (v2) for the given user.
- * @param userId  Supabase user id (UUID).
- * @param secret  Server-side signing secret (SYNC_API_KEY).
- * @param nowMs   Issuance time in ms (defaults to Date.now()); allows callers
- *                to pin the timestamp for testing/determinism.
+ * @param userId        Supabase user id (UUID).
+ * @param secret        Server-side signing secret (SYNC_API_KEY).
+ * @param nowMs         Issuance time in ms (defaults to Date.now()); allows
+ *                      callers to pin the timestamp for testing/determinism.
+ * @param tokenVersion  The user's current `health_token_version`. Embedded as
+ *                      `tv` so the verifier can reject revoked tokens (any token
+ *                      whose tv != the user's current version is invalid).
  */
 export const createHealthSyncToken = (
     userId: string,
     secret: string,
     nowMs: number = Date.now(),
+    tokenVersion: number = 0,
 ): string => {
     const iat = Math.floor(nowMs / 1000);
     const exp = iat + TOKEN_TTL_SECONDS;
-    const payload = encode(JSON.stringify({ v: 2, sub: userId, iat, exp }));
+    const tv = Number.isFinite(tokenVersion) ? tokenVersion : 0;
+    const payload = encode(
+        JSON.stringify({ v: 2, sub: userId, iat, exp, tv }),
+    );
     return `${payload}.${sign(payload, secret)}`;
 };
 
@@ -75,11 +84,12 @@ export const verifyHealthSyncToken = (
             return null;
         }
 
-        // v2: enforce expiry.
+        // v2: enforce expiry and require a numeric token version (tv).
         if (parsed.v === 2) {
             if (
                 typeof parsed.iat !== 'number' ||
-                typeof parsed.exp !== 'number'
+                typeof parsed.exp !== 'number' ||
+                typeof parsed.tv !== 'number'
             ) {
                 return null;
             }

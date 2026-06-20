@@ -6,15 +6,21 @@
  * Usage:
  * GET /api/oura-proxy?endpoint=daily_sleep&start_date=2026-01-10&end_date=2026-01-17
  *
- * Auth: the client passes its per-user Oura access token in the Authorization
- * header (Bearer <oura_token>). That header carries the Oura PAT, NOT a Supabase
- * JWT — so this proxy cannot additionally verify a Supabase session without a
- * second header / breaking the existing client flow (src/hooks/useOuraSync.tsx).
- * The endpoint is therefore guarded by: a valid Oura token requirement, an
- * endpoint allowlist, date validation, and CORS restricted to ALLOWED_ORIGINS.
+ * Auth: requires TWO credentials, in two separate headers:
+ *   - Authorization: Bearer <oura_token>  — the per-user Oura PAT, forwarded
+ *     upstream to the Oura API.
+ *   - X-Supabase-Auth: Bearer <jwt>        — the caller's Supabase JWT, which
+ *     this proxy validates server-side (createClient + auth.getUser) so the
+ *     endpoint can't be abused by anonymous third parties to hammer Oura.
+ * The two credentials live in two headers because Authorization already carries
+ * the Oura PAT (the client flow is src/hooks/useOuraSync.tsx).
+ * The endpoint is further guarded by: per-user rate limiting, an endpoint
+ * allowlist, date validation, and CORS restricted to ALLOWED_ORIGINS.
  */
 
+import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
+import { checkRateLimit } from './_rateLimit';
 
 const OURA_API_BASE = 'https://api.ouraring.com/v2/usercollection';
 
@@ -47,12 +53,49 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         res.setHeader('Access-Control-Allow-Credentials', 'true');
     }
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'Authorization, Content-Type, X-Supabase-Auth',
+    );
 
     if (req.method === 'OPTIONS') return res.status(200).end();
     // Only allow GET requests
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    // Authenticate the caller via their Supabase JWT BEFORE touching the Oura
+    // token or making any upstream request. The JWT travels in X-Supabase-Auth
+    // because Authorization already carries the Oura PAT.
+    if (!process.env.VITE_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        console.error('[Oura Proxy] Missing Supabase env');
+        return res.status(500).json({ error: 'Server Misconfiguration' });
+    }
+
+    const supabaseAuthHeader = (req.headers['x-supabase-auth'] as string) || '';
+    const jwt = supabaseAuthHeader.startsWith('Bearer ')
+        ? supabaseAuthHeader.slice('Bearer '.length).trim()
+        : supabaseAuthHeader.trim();
+    if (!jwt) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const supabase = createClient(
+        process.env.VITE_SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY,
+    );
+    const {
+        data: { user },
+        error: authError,
+    } = await supabase.auth.getUser(jwt);
+    if (authError || !user?.id) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const rl = await checkRateLimit(`oura-proxy:${user.id}`, 60, 60);
+    if (!rl.allowed) {
+        res.setHeader('Retry-After', String(rl.retryAfter));
+        return res.status(429).json({ error: 'Too Many Requests' });
     }
 
     const { endpoint, start_date, end_date } = req.query;

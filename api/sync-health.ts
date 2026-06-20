@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { verifyHealthSyncToken } from './health-sync-token';
+import { checkRateLimit } from './_rateLimit';
 
 /**
  * Marker used to tag Apple Health workouts in the `workouts.notes` column,
@@ -122,6 +123,66 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             return res.status(401).json({ error: 'Unauthorized: Invalid sync token' });
         }
         const userId = tokenPayload.sub;
+
+        if (tokenPayload.v === 1) {
+            // Legacy v1 tokens have no expiry and no version, so they cannot be
+            // revoked. They are a replay risk and only accepted as a temporary
+            // migration bridge. OPERATOR NOTE: re-provision every user's iOS
+            // Shortcut (which fetches a fresh v2 token via /api/sync-health-token),
+            // then set ALLOW_LEGACY_V1_TOKENS=false (or leave it unset) to close
+            // the v1 replay window permanently.
+            if (process.env.ALLOW_LEGACY_V1_TOKENS !== 'true') {
+                console.warn(
+                    '[SyncHealth] Rejected legacy v1 token (ALLOW_LEGACY_V1_TOKENS not enabled).',
+                );
+                return res
+                    .status(401)
+                    .json({ error: 'Unauthorized: Legacy token revoked. Re-provision your Shortcut.' });
+            }
+            console.warn(
+                `[SyncHealth] Accepting legacy v1 token for ${userId} (ALLOW_LEGACY_V1_TOKENS=true).`,
+            );
+        } else {
+            // v2: enforce token-version revocation. The user's current
+            // health_token_version must match the tv embedded at issuance.
+            // Tolerant to the migration not being applied: if the column is
+            // missing the lookup errors out and we treat the version as 0
+            // (fail-open ONLY for an absent column, never for a real mismatch).
+            let currentVersion: number | null = null;
+            try {
+                const { data: profile, error: verErr } = await supabase
+                    .from('profiles')
+                    .select('health_token_version')
+                    .eq('user_id', userId)
+                    .maybeSingle();
+                if (verErr) throw verErr;
+                currentVersion = Number(profile?.health_token_version ?? 0);
+            } catch (versionError) {
+                // Likely the column does not exist yet (migration unapplied) or
+                // an infra hiccup. Do not block a v2 token carrying tv=0.
+                console.warn(
+                    '[SyncHealth] health_token_version lookup failed; treating as 0:',
+                    versionError,
+                );
+                currentVersion = null;
+            }
+
+            if (currentVersion !== null && tokenPayload.tv !== currentVersion) {
+                console.warn(
+                    `[SyncHealth] Rejected revoked token for ${userId}: tv=${tokenPayload.tv} != current=${currentVersion}.`,
+                );
+                return res
+                    .status(401)
+                    .json({ error: 'Unauthorized: Token revoked' });
+            }
+        }
+
+        // Rate limit per user (durable; helper provided by ./_rateLimit).
+        const rl = await checkRateLimit(`sync-health:${userId}`, 30, 60);
+        if (!rl.allowed) {
+            res.setHeader('Retry-After', String(rl.retryAfter));
+            return res.status(429).json({ error: 'Too Many Requests' });
+        }
 
         // Backward-compatible metric shapes remain supported, but authentication
         // now always uses syncToken and derives the user from it.

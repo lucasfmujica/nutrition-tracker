@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import type { Database } from '../src/types/supabase';
+import { checkRateLimit } from './_rateLimit';
 
 /**
  * Weekly Stats API - Social Accountability Reports
@@ -81,6 +82,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         const userId = user.id;
         console.log(`[WeeklyStats] Processing request for authenticated user`);
+
+        const rl = await checkRateLimit(`weekly-stats:${userId}`, 30, 60);
+        if (!rl.allowed) {
+            res.setHeader('Retry-After', String(rl.retryAfter));
+            return res.status(429).json({ error: 'Too Many Requests' });
+        }
 
         // 3. Calculate Week Boundaries (Monday-Sunday in Argentina TZ)
         const now = new Date();

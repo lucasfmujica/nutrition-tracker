@@ -1,23 +1,9 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
+import { checkRateLimit } from './_rateLimit';
 
 const MAX_REQUEST_BYTES = 12 * 1024 * 1024;
-const RATE_LIMIT_WINDOW_MS = 60_000;
-const RATE_LIMIT_REQUESTS = 20;
-const requestWindows = new Map<string, { startedAt: number; count: number }>();
-
-const consumeRateLimit = (userId: string): boolean => {
-    const now = Date.now();
-    const current = requestWindows.get(userId);
-    if (!current || now - current.startedAt >= RATE_LIMIT_WINDOW_MS) {
-        requestWindows.set(userId, { startedAt: now, count: 1 });
-        return true;
-    }
-    if (current.count >= RATE_LIMIT_REQUESTS) return false;
-    current.count += 1;
-    return true;
-};
 
 /**
  * Gemini Proxy
@@ -90,8 +76,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (authError || !user?.id) {
             return res.status(401).json({ error: 'Unauthorized: Invalid token' });
         }
-        if (!consumeRateLimit(user.id)) {
-            res.setHeader('Retry-After', '60');
+        const rl = await checkRateLimit(`gemini:${user.id}`, 20, 60);
+        if (!rl.allowed) {
+            res.setHeader('Retry-After', String(rl.retryAfter));
             return res.status(429).json({ error: 'Too many AI requests' });
         }
 
