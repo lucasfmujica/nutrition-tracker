@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifyHealthSyncToken } from './health-sync-token';
-import { checkRateLimit } from './rateLimit';
+import { verifyHealthSyncToken } from './health-sync-token.js';
+import { checkRateLimit } from './rateLimit.js';
 
 /**
  * Marker used to tag Apple Health workouts in the `workouts.notes` column,

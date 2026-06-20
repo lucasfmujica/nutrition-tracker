@@ -30,7 +30,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { checkRateLimit } from './rateLimit';
+import { checkRateLimit } from './rateLimit.js';
 
 const OURA_TOKEN_URL = 'https://api.ouraring.com/oauth/token';
 

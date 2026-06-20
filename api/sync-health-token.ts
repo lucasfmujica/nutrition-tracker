@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { createHealthSyncToken } from './health-sync-token';
+import { createHealthSyncToken } from './health-sync-token.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader('Cache-Control', 'no-store');

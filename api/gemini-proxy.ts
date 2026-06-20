@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { checkRateLimit } from './rateLimit';
+import { checkRateLimit } from './rateLimit.js';
 
 const MAX_REQUEST_BYTES = 12 * 1024 * 1024;
 
