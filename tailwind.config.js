@@ -12,17 +12,48 @@ export default {
           DEFAULT: 'var(--color-primary)',
           dark: 'var(--color-primary-dark)',
           light: 'var(--color-primary-light)',
+          soft: 'var(--color-primary-soft)',
         },
         accent: {
           DEFAULT: 'var(--color-accent)',
           blue: 'var(--color-accent-blue)',
         },
-        protein: 'var(--color-protein)',
-        carbs: 'var(--color-carbs)',
-        fat: 'var(--color-fat)',
+        protein: {
+          DEFAULT: 'var(--color-protein)',
+          soft: 'var(--color-protein-soft)',
+        },
+        carbs: {
+          DEFAULT: 'var(--color-carbs)',
+          soft: 'var(--color-carbs-soft)',
+        },
+        fat: {
+          DEFAULT: 'var(--color-fat)',
+          soft: 'var(--color-fat-soft)',
+        },
+        success: {
+          DEFAULT: 'var(--color-success)',
+          soft: 'var(--color-success-soft)',
+        },
+        warning: {
+          DEFAULT: 'var(--color-warning)',
+          soft: 'var(--color-warning-soft)',
+        },
+        danger: {
+          DEFAULT: 'var(--color-danger)',
+          soft: 'var(--color-danger-soft)',
+        },
+        info: {
+          DEFAULT: 'var(--color-info)',
+          soft: 'var(--color-info-soft)',
+        },
+        oura: {
+          DEFAULT: 'var(--color-oura)',
+          soft: 'var(--color-oura-soft)',
+        },
         surface: {
           DEFAULT: 'var(--color-surface)',
           lighter: 'var(--color-surface-lighter)',
+          elevated: 'var(--color-surface-elevated)',
         },
         background: 'var(--color-background)',
         // Text colors for dark mode support
@@ -41,8 +72,23 @@ export default {
       fontFamily: {
         satoshi: ['Satoshi', 'sans-serif'],
       },
+      fontSize: {
+        // Type scale — use these over raw text-* sizes for app chrome & metrics
+        'display': ['2rem', { lineHeight: '2.25rem', letterSpacing: '-0.03em', fontWeight: '900' }],
+        'title': ['1.375rem', { lineHeight: '1.75rem', letterSpacing: '-0.02em', fontWeight: '900' }],
+        'heading': ['1.0625rem', { lineHeight: '1.5rem', letterSpacing: '-0.01em', fontWeight: '700' }],
+        'body-md': ['0.9375rem', { lineHeight: '1.375rem' }],
+        'caption': ['0.75rem', { lineHeight: '1rem', fontWeight: '500' }],
+        'overline': ['0.6875rem', { lineHeight: '0.875rem', letterSpacing: '0.08em', fontWeight: '700' }],
+      },
+      borderRadius: {
+        'card': '20px',
+        'control': '12px',
+      },
       boxShadow: {
         'card': 'var(--shadow-card)',
+        'float': 'var(--shadow-float)',
+        'glow': 'var(--shadow-glow)',
         'neon': 'var(--shadow-neon)',
       },
       backgroundImage: {

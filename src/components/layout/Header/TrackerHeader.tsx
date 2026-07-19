@@ -23,7 +23,7 @@ export const TrackerHeader: React.FC = () => {
     const { t, i18n } = useTranslation();
 
     return (
-        <header className="bg-surface/90 backdrop-blur-md border-b border-border px-4 lg:px-8 py-4 lg:py-5 sticky top-0 z-30 shadow-sm">
+        <header className="bg-surface/90 backdrop-blur-md border-b border-border px-4 lg:px-8 pt-[calc(env(safe-area-inset-top)+1rem)] pb-4 lg:pt-5 lg:pb-5 sticky top-0 z-30 shadow-sm">
             <div className="w-full flex items-center justify-between gap-4">
                 <div className="min-w-0 flex-1 flex items-center gap-4">
                     <div className="relative lg:hidden">
@@ -37,11 +37,17 @@ export const TrackerHeader: React.FC = () => {
                                     y2="100%">
                                     <stop
                                         offset="0%"
-                                        style={{ stopColor: '#2563EB' }}
+                                        style={{
+                                            stopColor:
+                                                'var(--brand-gradient-from)',
+                                        }}
                                     />
                                     <stop
                                         offset="100%"
-                                        style={{ stopColor: '#0891B2' }}
+                                        style={{
+                                            stopColor:
+                                                'var(--brand-gradient-to)',
+                                        }}
                                     />
                                 </linearGradient>
                             </defs>
@@ -49,7 +55,7 @@ export const TrackerHeader: React.FC = () => {
                                 cx="16"
                                 cy="16"
                                 r="15"
-                                fill="#F8FAFC"
+                                fill="var(--color-surface)"
                                 stroke="url(#headerGrad)"
                                 strokeWidth="1.5"
                             />
@@ -64,24 +70,24 @@ export const TrackerHeader: React.FC = () => {
                             />
                         </svg>
                         {isTrainingDay(dashboardDate) && (
-                            <div className="absolute -top-1 -right-1 bg-amber-400 text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+                            <div className="absolute -top-1 -right-1 bg-warning text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-surface shadow-sm">
                                 🏋️
                             </div>
                         )}
                     </div>
                     <div className="min-w-0">
                         <h1 className="hidden sm:block lg:hidden text-2xl font-black text-text-primary tracking-tighter">
-                            LUKEN<span className="text-blue-600">FIT</span>
+                            LUKEN<span className="text-primary">FIT</span>
                         </h1>
 
                         {/* Desktop Info Block */}
                         <div className="hidden lg:flex flex-col items-start gap-2">
-                            <div className="text-sm font-bold text-text-primary capitalize bg-background px-3 py-1 rounded-lg border border-border flex items-center gap-2">
+                            <div className="text-sm font-bold text-text-primary capitalize bg-background px-3 py-1 rounded-control border border-border flex items-center gap-2">
                                 {new Date().getHours() >= 6 &&
                                 new Date().getHours() < 20 ? (
-                                    <Sun size={14} className="text-amber-500" />
+                                    <Sun size={14} className="text-warning" />
                                 ) : (
-                                    <Moon size={14} className="text-indigo-500" />
+                                    <Moon size={14} className="text-oura" />
                                 )}
                                 {new Date(
                                     dashboardDate + 'T00:00:00',
@@ -106,7 +112,7 @@ export const TrackerHeader: React.FC = () => {
                                 <span className="text-text-tertiary">•</span>
                                 <span>
                                     {t('charts.weight.goal')}:{' '}
-                                    <span className="text-blue-600 font-bold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
+                                    <span className="text-primary font-bold bg-primary-soft px-1.5 py-0.5 rounded border border-primary/20">
                                         {profile.targetWeight}kg
                                     </span>
                                 </span>
@@ -121,7 +127,7 @@ export const TrackerHeader: React.FC = () => {
                                 kg
                             </span>
                             <span className="text-text-tertiary">→</span>
-                            <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+                            <span className="bg-primary-soft text-primary px-2 py-0.5 rounded-full">
                                 {profile.targetWeight}kg
                             </span>
                         </p>
@@ -138,7 +144,7 @@ export const TrackerHeader: React.FC = () => {
                                     cacheStale={cacheStale}
                                 />
                             ) : (
-                                <span className="text-xs font-bold bg-amber-50 text-amber-600 px-3 py-1.5 rounded-full border border-amber-100">
+                                <span className="text-xs font-bold bg-warning-soft text-warning px-3 py-1.5 rounded-full border border-warning/20">
                                     📴 {t('auth.offline.title')}
                                 </span>
                             )}
@@ -152,10 +158,10 @@ export const TrackerHeader: React.FC = () => {
                                     setIsLocalSyncing(false);
                                 }}
                                 disabled={isLocalSyncing}
-                                className={`w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-2xl bg-surface hover:bg-background border border-border text-text-tertiary hover:text-blue-600 transition-all shadow-sm active:scale-90 ${isLocalSyncing ? 'cursor-not-allowed opacity-80' : ''}`}
+                                className={`w-11 h-11 flex items-center justify-center rounded-control bg-surface hover:bg-background border border-border text-text-tertiary hover:text-primary transition-all shadow-sm active:scale-90 ${isLocalSyncing ? 'cursor-not-allowed opacity-80' : ''}`}
                                 title={t('dashboard.summary.syncStatus') || 'Sync'}>
                                 <svg
-                                    className={`w-5 h-5 ${isLocalSyncing ? 'animate-spin text-blue-600' : ''}`}
+                                    className={`w-5 h-5 ${isLocalSyncing ? 'animate-spin text-primary' : ''}`}
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24">
@@ -174,13 +180,13 @@ export const TrackerHeader: React.FC = () => {
                                     e.stopPropagation();
                                     setActiveTab('config');
                                 }}
-                                className="lg:hidden w-10 h-10 flex items-center justify-center rounded-2xl bg-surface hover:bg-background border border-border text-text-tertiary hover:text-blue-600 transition-all shadow-sm active:scale-90"
+                                className="lg:hidden w-11 h-11 flex items-center justify-center rounded-control bg-surface hover:bg-background border border-border text-text-tertiary hover:text-primary transition-all shadow-sm active:scale-90"
                                 title={t('navigation.config')}>
                                 {profile?.avatar && profile.avatar.length > 4 ? (
                                     <img
                                         src={profile.avatar}
                                         alt="Profile"
-                                        className="w-full h-full object-cover rounded-2xl"
+                                        className="w-full h-full object-cover rounded-control"
                                     />
                                 ) : (
                                     <span className="text-lg">
@@ -195,7 +201,7 @@ export const TrackerHeader: React.FC = () => {
                                     e.stopPropagation();
                                     handleLogout();
                                 }}
-                                className="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-2xl bg-surface hover:bg-red-50 border border-border text-text-tertiary hover:text-red-600 transition-all shadow-sm active:scale-90"
+                                className="w-11 h-11 flex items-center justify-center rounded-control bg-surface hover:bg-danger-soft border border-border text-text-tertiary hover:text-danger transition-all shadow-sm active:scale-90"
                                 title={t('common.close')}>
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -218,7 +224,7 @@ export const TrackerHeader: React.FC = () => {
                                 setShowAuth(true);
                                 setOfflineMode(false);
                             }}
-                            className="text-sm font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-5 py-2.5 rounded-2xl border border-blue-100 shadow-sm transition-all active:scale-95">
+                            className="text-sm font-bold text-primary bg-primary-soft hover:bg-primary/20 px-5 py-2.5 rounded-control border border-primary/20 shadow-sm transition-all active:scale-95 min-h-[44px]">
                             {t('auth.login.title')}
                         </button>
                     )}

@@ -9,18 +9,44 @@
     --color-primary: #0066ee;
     --color-primary-dark: #0044bb;
     --color-primary-light: #f0f7ff;
+    --color-primary-soft: #eef5ff;
     --color-accent: #059669; /* Emerald 600 for better text contrast */
     --color-accent-blue: #0284c7; /* Sky 600 */
+
+    /* Brand gradient (logo, splash, hero accents) */
+    --brand-gradient-from: #0066ee;
+    --brand-gradient-to: #06b6d4;
+    --brand-gradient: linear-gradient(
+        135deg,
+        var(--brand-gradient-from) 0%,
+        var(--brand-gradient-to) 100%
+    );
 
     /* Macro Colors - Adjusted for text accessibility */
     --color-protein: #16a34a; /* Green 600 */
     --color-carbs: #d97706; /* Amber 600 */
     --color-fat: #ea580c; /* Orange 600 */
+    --color-protein-soft: #f0fdf4;
+    --color-carbs-soft: #fffbeb;
+    --color-fat-soft: #fff7ed;
+
+    /* Semantic Colors */
+    --color-success: #059669; /* Emerald 600 */
+    --color-success-soft: #ecfdf5;
+    --color-warning: #d97706; /* Amber 600 */
+    --color-warning-soft: #fffbeb;
+    --color-danger: #dc2626; /* Red 600 */
+    --color-danger-soft: #fef2f2;
+    --color-info: #0284c7; /* Sky 600 */
+    --color-info-soft: #f0f9ff;
+    --color-oura: #7c3aed; /* Violet 600 - Oura brand identity */
+    --color-oura-soft: #f5f3ff;
 
     /* Neutral Colors (Light Mode) */
     --color-background: #f8fafc;
     --color-surface: #ffffff;
     --color-surface-lighter: #f1f5f9; /* Slate 100 - for hover states */
+    --color-surface-elevated: #ffffff; /* Sheets, modals, nav */
     --color-text-primary: #0f172a;
     --color-text-secondary: #475569;
     --color-text-tertiary: #94a3b8;
@@ -38,22 +64,9 @@
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
     --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.04);
+    --shadow-float: 0 12px 32px rgba(15, 23, 42, 0.14);
+    --shadow-glow: 0 8px 24px rgba(0, 102, 238, 0.28);
     --shadow-neon: 0 0 15px rgba(0, 191, 112, 0.2);
-}
-
-/* Dark Mode Overrides (Optional/Future) */
-@media (prefers-color-scheme: dark) {
-    /* :root {
-    --color-background: #111827;
-    --color-surface: #1F2937;
-    --color-text-primary: #F9FAFB;
-    --color-text-secondary: #D1D5DB;
-    --color-border: #374151;
-  } */
-}
-
-@media (prefers-color-scheme: dark) {
-    /* Auto-applied by system if using 'system' theme */
 }
 
 /* Explicit class-based dark mode */
@@ -62,26 +75,55 @@
     --color-primary: #3b82f6; /* Lighter blue for dark mode */
     --color-primary-dark: #60a5fa;
     --color-primary-light: #1e3a8a;
+    --color-primary-soft: rgba(59, 130, 246, 0.14);
+    --color-accent: #34d399; /* Emerald 400 - readable on dark */
+    --color-accent-blue: #38bdf8; /* Sky 400 */
 
-    /* Neutral Colors (Dark Mode) */
-    --color-background: #0f172a; /* Slate 900 */
-    --color-surface: #1e293b; /* Slate 800 */
-    --color-surface-lighter: #334155; /* Slate 700 */
+    --brand-gradient-from: #3b82f6;
+    --brand-gradient-to: #22d3ee;
 
-    --color-text-primary: #f1f5f9; /* Slate 100 */
-    --color-text-secondary: #94a3b8; /* Slate 400 */
-    --color-text-tertiary: #64748b; /* Slate 500 */
+    /* Macro Colors (Dark Mode - lifted for contrast) */
+    --color-protein: #4ade80; /* Green 400 */
+    --color-carbs: #fbbf24; /* Amber 400 */
+    --color-fat: #fb923c; /* Orange 400 */
+    --color-protein-soft: rgba(74, 222, 128, 0.12);
+    --color-carbs-soft: rgba(251, 191, 36, 0.12);
+    --color-fat-soft: rgba(251, 146, 60, 0.12);
 
-    --color-border: #334155; /* Slate 700 */
-    --color-progress-track: #334155; /* Slate 700 - progress bar background */
-    --color-muted: #475569; /* Slate 600 - for disabled/muted elements */
+    /* Semantic Colors (Dark Mode) */
+    --color-success: #34d399; /* Emerald 400 */
+    --color-success-soft: rgba(52, 211, 153, 0.12);
+    --color-warning: #fbbf24; /* Amber 400 */
+    --color-warning-soft: rgba(251, 191, 36, 0.12);
+    --color-danger: #f87171; /* Red 400 */
+    --color-danger-soft: rgba(248, 113, 113, 0.12);
+    --color-info: #38bdf8; /* Sky 400 */
+    --color-info-soft: rgba(56, 189, 248, 0.12);
+    --color-oura: #a78bfa; /* Violet 400 */
+    --color-oura-soft: rgba(167, 139, 250, 0.12);
+
+    /* Neutral Colors (Dark Mode - desaturated near-black stack) */
+    --color-background: #0b0f19;
+    --color-surface: #111726;
+    --color-surface-lighter: #1b2336;
+    --color-surface-elevated: #161e30;
+
+    --color-text-primary: #f2f5fa;
+    --color-text-secondary: #9aa7bd;
+    --color-text-tertiary: #64718c;
+
+    --color-border: #232d44;
+    --color-progress-track: #232d44;
+    --color-muted: #3a4560;
 
     /* Dark Mode Glass */
-    --glass-bg: rgba(30, 41, 59, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-bg: rgba(17, 23, 38, 0.72);
+    --glass-border: rgba(255, 255, 255, 0.08);
 
-    /* Dark Mode Shadows */
-    --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.4);
+    /* Dark Mode Shadows - mostly glow + depth on near-black */
+    --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.45);
+    --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.55);
+    --shadow-glow: 0 8px 24px rgba(59, 130, 246, 0.35);
     --shadow-neon: 0 0 20px rgba(0, 191, 112, 0.3);
 }
 
@@ -171,10 +213,16 @@ h4,
 }
 
 /* Safe area & Layout Utils */
+.pt-safe {
+    padding-top: env(safe-area-inset-top);
+}
+.pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+}
 .safe-bottom {
     padding-bottom: calc(
-        env(safe-area-inset-bottom) + 80px
-    ); /* Nav height + margin */
+        env(safe-area-inset-bottom) + 96px
+    ); /* Floating nav height + offset */
 }
 
 /* Animations */
@@ -231,7 +279,7 @@ h4,
 
 /* Splash Screen Utility Classes */
 .splash-logo {
-    background: linear-gradient(135deg, #4f46e5 0%, #10b981 100%);
+    background: var(--brand-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -272,3 +320,4 @@ select,
 textarea {
     font-size: 16px !important; /* Prevent iOS zoom */
 }
+

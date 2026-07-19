@@ -54,11 +54,17 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ message = null }) 
                                     y2="100%">
                                     <stop
                                         offset="0%"
-                                        style={{ stopColor: '#2563EB' }}
+                                        style={{
+                                            stopColor:
+                                                'var(--brand-gradient-from)',
+                                        }}
                                     />
                                     <stop
                                         offset="100%"
-                                        style={{ stopColor: '#0891B2' }}
+                                        style={{
+                                            stopColor:
+                                                'var(--brand-gradient-to)',
+                                        }}
                                     />
                                 </linearGradient>
                             </defs>
@@ -66,7 +72,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ message = null }) 
                                 cx="16"
                                 cy="16"
                                 r="15"
-                                fill="#F8FAFC"
+                                fill="var(--color-surface)"
                                 stroke="url(#loadingGrad)"
                                 strokeWidth="1.5"
                             />
@@ -82,13 +88,16 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ message = null }) 
                         </svg>
                     </div>
                     <h1 className="text-4xl font-black text-text-primary tracking-tighter">
-                        LUKEN<span className="text-blue-600">FIT</span>
+                        LUKEN<span className="text-primary">FIT</span>
                     </h1>
                 </div>
 
                 {/* Loading Bar */}
                 <div className="w-64 mx-auto mb-6 h-1.5 bg-surface-lighter rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-blue-600 to-cyan-500 splash-loading-bar rounded-full" />
+                    <div
+                        className="h-full splash-loading-bar rounded-full"
+                        style={{ background: 'var(--brand-gradient)' }}
+                    />
                 </div>
 
                 {/* Dynamic Message */}

@@ -32,7 +32,9 @@ export const Layout: React.FC<LayoutProps> = ({
 
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col min-h-screen relative w-full">
-                <main className="flex-1 w-full pb-24 lg:pb-8">{children}</main>
+                <main className="flex-1 w-full pb-[calc(7rem+env(safe-area-inset-bottom))] lg:pb-8">
+                    {children}
+                </main>
 
                 {/* Floating Bottom Navigation (Mobile Only) */}
                 {showNav && (

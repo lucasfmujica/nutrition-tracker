@@ -1,5 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '../UI/Button';
+import { ModalShell } from '../UI/ModalShell';
 
 interface DeleteConfirmModalProps {
     isOpen: boolean;
@@ -19,30 +21,27 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
 }) => {
     const { t } = useTranslation();
 
-    if (!isOpen) return null;
-
     return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div
-                role="alertdialog"
-                aria-modal="true"
-                aria-labelledby="delete-confirm-title"
-                className="bg-surface rounded-2xl p-6 max-w-sm w-full border border-border shadow-2xl">
-                <h3 id="delete-confirm-title" className="text-lg font-bold text-text-primary mb-2">{t('modals.deleteConfirm.title')}</h3>
-                <p className="text-base text-text-secondary mb-4">"{itemName}"</p>
+        <ModalShell
+            open={isOpen}
+            onClose={onCancel}
+            title={t('modals.deleteConfirm.title')}
+            size="sm"
+            role="alertdialog"
+            footer={
                 <div className="flex gap-2">
-                    <button
-                        onClick={onCancel}
-                        className="flex-1 bg-surface-lighter hover:bg-surface-lighter text-text-secondary py-2.5 rounded-xl text-base font-medium transition-colors">
+                    <Button
+                        variant="secondary"
+                        fullWidth
+                        onClick={onCancel}>
                         {t('modals.deleteConfirm.cancel')}
-                    </button>
-                    <button
-                        onClick={onConfirm}
-                        className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-base font-bold transition-colors">
+                    </Button>
+                    <Button variant="danger" fullWidth onClick={onConfirm}>
                         {t('modals.deleteConfirm.confirm')}
-                    </button>
+                    </Button>
                 </div>
-            </div>
-        </div>
+            }>
+            <p className="text-body-md text-text-secondary">"{itemName}"</p>
+        </ModalShell>
     );
 };

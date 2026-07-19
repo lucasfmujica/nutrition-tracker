@@ -78,10 +78,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                 y1="0%"
                                 x2="100%"
                                 y2="100%">
-                                <stop offset="0%" style={{ stopColor: '#2563EB' }} />
+                                <stop
+                                    offset="0%"
+                                    style={{
+                                        stopColor: 'var(--brand-gradient-from)',
+                                    }}
+                                />
                                 <stop
                                     offset="100%"
-                                    style={{ stopColor: '#0891B2' }}
+                                    style={{
+                                        stopColor: 'var(--brand-gradient-to)',
+                                    }}
                                 />
                             </linearGradient>
                         </defs>
@@ -89,7 +96,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             cx="16"
                             cy="16"
                             r="15"
-                            fill="#F8FAFC"
+                            fill="var(--color-surface)"
                             stroke="url(#sidebarGrad)"
                             strokeWidth="1.5"
                         />
@@ -105,7 +112,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     </svg>
                 </div>
                 <h1 className="text-2xl font-black text-text-primary tracking-tighter">
-                    LUKEN<span className="text-blue-600">FIT</span>
+                    LUKEN<span className="text-primary">FIT</span>
                 </h1>
             </div>
 
@@ -120,22 +127,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             key={item.id}
                             onClick={() => setActiveTab(item.id)}
                             data-tutorial={item.tutorialId}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative ${
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-control transition-all duration-300 group relative ${
                                 isActive
-                                    ? 'bg-gradient-to-r from-blue-600/10 to-cyan-500/10 text-blue-700 shadow-sm font-bold'
-                                    : 'text-text-tertiary hover:bg-background hover:text-blue-600 hover:translate-x-1'
+                                    ? 'bg-primary-soft text-primary shadow-sm font-bold'
+                                    : 'text-text-tertiary hover:bg-background hover:text-primary hover:translate-x-1'
                             }`}>
                             <div className="relative">
                                 <Icon
                                     size={20}
                                     className={`transition-colors ${
                                         isActive
-                                            ? 'text-blue-600'
+                                            ? 'text-primary'
                                             : 'text-text-tertiary group-hover:text-text-secondary'
                                     }`}
                                 />
                                 {showBadge && (
-                                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center shadow-lg">
+                                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-danger rounded-full flex items-center justify-center shadow-float">
                                         <span className="text-[8px] font-black text-white">
                                             {pendingRequestCount > 9
                                                 ? '9+'
@@ -153,15 +160,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div className="p-6 border-t border-border">
                 <div
                     onClick={() => setActiveTab('config')}
-                    className="flex items-center gap-3 p-3 bg-background rounded-xl cursor-pointer hover:bg-surface-lighter transition-colors active:scale-95">
+                    className="flex items-center gap-3 p-3 bg-background rounded-control cursor-pointer hover:bg-surface-lighter transition-colors active:scale-95">
                     {profile?.avatar && profile.avatar.length > 4 ? (
                         <img
                             src={profile.avatar}
                             alt="Profile"
-                            className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
+                            className="w-10 h-10 rounded-full object-cover border-2 border-surface shadow-sm"
                         />
                     ) : (
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                        <div
+                            className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm"
+                            style={{ background: 'var(--brand-gradient)' }}>
                             {profile?.avatar ||
                                 profile?.name?.substring(0, 1).toUpperCase() ||
                                 'U'}
