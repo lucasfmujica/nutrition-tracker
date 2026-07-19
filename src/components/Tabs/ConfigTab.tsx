@@ -93,13 +93,19 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                 very_active: 7,
             } as const;
 
-            const trainingDays = 2; // Force 'Lightly Active' (1.375x) for Rest Day baseline. Training bonus is added separately.
+            // Use the user's real training frequency so this recalculation stays
+            // consistent with the onboarding calculation. Fall back to the stored
+            // activityLevel, then to a moderate default, if it isn't set.
+            const trainingDays =
+                profile.trainingDaysPerWeek ??
+                activityToDays[profile.activityLevel] ??
+                4;
 
             const macros = calculateMacros({
                 weight: profile.currentWeight,
                 height: profile.height,
                 age: profile.age,
-                gender: profile.gender || 'male', // Default to male if not set
+                gender: profile.gender || 'male', // Now populated from DB; fallback only for legacy profiles
                 trainingDaysPerWeek: trainingDays,
                 primaryGoal: goalMap[profile.goal],
             });

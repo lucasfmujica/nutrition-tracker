@@ -65,7 +65,7 @@ CREATE TABLE food_log (
   fat DECIMAL(6,2) NOT NULL DEFAULT 0,
   fiber DECIMAL(6,2) NOT NULL DEFAULT 0,
   -- AI tracking fields
-  source TEXT NOT NULL DEFAULT 'manual' CHECK (source IN ('manual', 'ai-photo', 'ai-text', 'barcode', 'recipe')),
+  source TEXT NOT NULL DEFAULT 'manual' CHECK (source IN ('manual', 'ai-photo', 'ai-text', 'ai-voice', 'barcode', 'recipe', 'template')),
   reviewed BOOLEAN NOT NULL DEFAULT true,
   confidence DECIMAL(3,2) DEFAULT 1.0,
   source_id TEXT,

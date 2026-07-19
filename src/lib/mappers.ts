@@ -37,6 +37,9 @@ export const mappers = {
         age: profile.age,
         activity_level: profile.activityLevel,
         goal: profile.goal,
+        // Macro-calculation inputs (needed so ConfigTab recalculation matches onboarding)
+        gender: profile.gender,
+        training_days_per_week: profile.trainingDaysPerWeek,
         safety_net_days: profile.safety_net_days || [],
         // Multi-user support fields
         has_oura_ring: profile.hasOuraRing,
@@ -92,6 +95,9 @@ export const mappers = {
         language: dbProfile.language as 'es' | 'en',
         stepsAutoSync: (dbProfile as any).steps_auto_sync ?? false,
         timezone: (dbProfile as any).timezone ?? 'America/Argentina/Buenos_Aires',
+        // Macro-calculation inputs (so ConfigTab recalculation uses real values, not hardcoded defaults)
+        gender: (dbProfile.gender as 'male' | 'female') ?? undefined,
+        trainingDaysPerWeek: dbProfile.training_days_per_week ?? undefined,
     }),
 
     // Targets: localStorage -> Supabase (stored in profiles table)

@@ -81,7 +81,7 @@ export interface FoodEntry {
     carbs: number;
     fat: number;
     fiber: number;
-    source: 'manual' | 'ai-photo' | 'ai-text' | 'barcode' | 'recipe' | 'template';
+    source: 'manual' | 'ai-photo' | 'ai-text' | 'ai-voice' | 'barcode' | 'recipe' | 'template';
     reviewed: boolean;
     confidence: number;
     sourceId: string | null;
