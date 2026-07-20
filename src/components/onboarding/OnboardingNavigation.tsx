@@ -43,7 +43,7 @@ export const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
                         disabled={!canProceed}
                         className={`flex-1 py-3 rounded-xl font-bold transition-all ${
                             canProceed
-                                ? 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white'
+                                ? 'bg-primary hover:bg-primary-dark text-white'
                                 : 'bg-gray-700 text-text-tertiary cursor-not-allowed'
                         }`}>
                         {t('onboarding.navigation.next')} →
@@ -52,7 +52,7 @@ export const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
                     <button
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className="flex-1 py-3 rounded-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white transition-all">
+                        className="flex-1 py-3 rounded-xl font-bold bg-success hover:opacity-90 text-white transition-all">
                         {isSubmitting
                             ? `⏳ ${t('onboarding.navigation.saving')}`
                             : `✓ ${t('onboarding.navigation.start')}`}

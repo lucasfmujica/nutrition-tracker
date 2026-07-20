@@ -149,7 +149,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                         onClick={() => updateField('gender', 'male')}
                         className={`py-3 rounded-xl font-medium transition-all ${
                             data.gender === 'male'
-                                ? 'bg-blue-600 text-white'
+                                ? 'bg-primary text-white'
                                 : 'bg-gray-700/50 text-text-tertiary hover:bg-gray-600/50'
                         }`}>
                         👨 {t('onboarding.step1.male')}
@@ -158,7 +158,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                         onClick={() => updateField('gender', 'female')}
                         className={`py-3 rounded-xl font-medium transition-all ${
                             data.gender === 'female'
-                                ? 'bg-pink-600 text-white'
+                                ? 'bg-danger text-white'
                                 : 'bg-gray-700/50 text-text-tertiary hover:bg-gray-600/50'
                         }`}>
                         👩 {t('onboarding.step1.female')}

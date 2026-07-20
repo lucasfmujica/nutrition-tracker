@@ -35,12 +35,12 @@ export const ImportModal: React.FC<ImportModalProps> = ({
 
     const colorClasses = {
         blue: {
-            ring: 'focus:ring-blue-500/20 focus:border-blue-500',
-            button: 'bg-blue-600 hover:bg-blue-500 shadow-blue-500/20',
+            ring: 'focus:ring-primary/20 focus:border-primary',
+            button: 'bg-primary hover:bg-primary shadow-blue-500/20',
         },
         amber: {
-            ring: 'focus:ring-amber-500/20 focus:border-amber-500',
-            button: 'bg-amber-600 hover:bg-amber-500 shadow-amber-500/20',
+            ring: 'focus:ring-warning/20 focus:border-warning',
+            button: 'bg-warning hover:opacity-90 shadow-float',
         },
     };
 
@@ -65,7 +65,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                     className={`w-full bg-background border border-border rounded-2xl px-4 py-4 text-text-primary text-sm font-mono h-48 resize-none ${colors.ring} outline-none transition-all`}
                 />
                 {error && (
-                    <div className="bg-red-50 text-red-500 text-xs p-3 rounded-xl mt-3 flex items-center gap-2">
+                    <div className="bg-danger-soft text-danger text-xs p-3 rounded-xl mt-3 flex items-center gap-2">
                         <span>⚠️</span> {error}
                     </div>
                 )}

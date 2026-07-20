@@ -138,7 +138,7 @@ export const getWeeklyCoachInsight = (data: CoachInsightData): CoachInsight => {
             message: adherencePraise,
             icon: '🏆',
             type: 'success',
-            gradient: 'from-amber-50 to-yellow-50',
+            gradient: 'from-warning-soft to-warning-soft',
         };
     }
 
@@ -153,7 +153,7 @@ export const getWeeklyCoachInsight = (data: CoachInsightData): CoachInsight => {
             message: `Tu cuerpo necesita recuperación. Tus últimos ${entries} días muestran un promedio de sueño de ${avgScore}/100, y has entrenado ${workoutAnalysis.gymCount + workoutAnalysis.tennisCount} veces esta semana. Considera un día de descanso activo o una sesión más ligera para optimizar tu rendimiento. 🌙`,
             icon: '😴',
             type: 'warning',
-            gradient: 'from-purple-50 to-indigo-50',
+            gradient: 'from-oura-soft to-oura-soft',
         };
     }
 
@@ -169,7 +169,7 @@ export const getWeeklyCoachInsight = (data: CoachInsightData): CoachInsight => {
                 message: `¡Progreso excelente! Estás perdiendo ${Math.abs(currentTrend).toFixed(2)} kg/semana. A este ritmo, alcanzarás los ${TARGET_WEIGHT}kg en aproximadamente ${weeksToGoal} semanas. Tu consistencia está dando frutos. 📉✨`,
                 icon: '🔥',
                 type: 'success',
-                gradient: 'from-green-50 to-emerald-50',
+                gradient: 'from-success-soft to-success-soft',
             };
         }
 
@@ -179,7 +179,7 @@ export const getWeeklyCoachInsight = (data: CoachInsightData): CoachInsight => {
                 message: `Detecté una tendencia al alza de +${currentTrend.toFixed(2)} kg/semana. Revisa tu adherencia calórica y asegúrate de mantener el déficit. Pequeños ajustes pueden marcar una gran diferencia. 💡`,
                 icon: '📊',
                 type: 'caution',
-                gradient: 'from-orange-50 to-amber-50',
+                gradient: 'from-fat-soft to-warning-soft',
             };
         }
 
@@ -189,7 +189,7 @@ export const getWeeklyCoachInsight = (data: CoachInsightData): CoachInsight => {
                 message: `Tu peso está estable (${currentTrend.toFixed(2)} kg/semana). Esto es normal en algunas semanas. Mantén tu rutina y los resultados vendrán. La consistencia es clave. 🎯`,
                 icon: '⚖️',
                 type: 'info',
-                gradient: 'from-blue-50 to-cyan-50',
+                gradient: 'from-primary-soft to-info-soft',
             };
         }
     }
@@ -200,7 +200,7 @@ export const getWeeklyCoachInsight = (data: CoachInsightData): CoachInsight => {
             message: `Adherencia del ${weeklyAdherence}% esta semana. Vas muy bien. Cada día de adherencia te acerca más a tu objetivo de ${TARGET_WEIGHT}kg. ¡Sigue así! 💪`,
             icon: '✅',
             type: 'success',
-            gradient: 'from-teal-50 to-green-50',
+            gradient: 'from-success-soft to-success-soft',
         };
     }
 
@@ -211,7 +211,7 @@ export const getWeeklyCoachInsight = (data: CoachInsightData): CoachInsight => {
             message: `¡${totalWorkouts} entrenamientos esta semana! Estás mostrando una excelente constancia. Asegúrate de que tu nutrición esté alineada para maximizar estos esfuerzos. 🏋️‍♂️`,
             icon: '💪',
             type: 'success',
-            gradient: 'from-amber-50 to-orange-50',
+            gradient: 'from-warning-soft to-fat-soft',
         };
     }
 
@@ -224,7 +224,7 @@ export const getWeeklyCoachInsight = (data: CoachInsightData): CoachInsight => {
             message: `Semana del ${weekStart}: Cada paso cuenta. Mantén el enfoque en tu objetivo de ${TARGET_WEIGHT}kg. La constancia diaria es lo que genera transformaciones reales. 🌟`,
             icon: '🎯',
             type: 'info',
-            gradient: 'from-blue-50 to-purple-50',
+            gradient: 'from-primary-soft to-oura-soft',
         };
     }
 
@@ -233,6 +233,6 @@ export const getWeeklyCoachInsight = (data: CoachInsightData): CoachInsight => {
         message: `Semana del ${weekStart}: Registra tus entrenamientos y comidas para que pueda analizar tu progreso y darte insights personalizados. ¡Empecemos! 📝`,
         icon: '🚀',
         type: 'info',
-        gradient: 'from-gray-50 to-slate-50',
+        gradient: 'from-surface-lighter to-surface-lighter',
     };
 };

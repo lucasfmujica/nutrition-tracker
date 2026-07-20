@@ -65,7 +65,7 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
                             onClick={() => updateField('primaryGoal', goalValue)}
                             className={`p-3 rounded-xl text-center transition-all ${
                                 data.primaryGoal === goalValue
-                                    ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white'
+                                    ? 'bg-gradient-to-br from-primary to-accent-blue text-white'
                                     : 'bg-gray-700/50 text-text-tertiary hover:bg-gray-600/50'
                             }`}>
                             <span className="text-xl block mb-1">
@@ -119,7 +119,7 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
                             onClick={() => updateField('trainingDaysPerWeek', day)}
                             className={`w-10 h-10 rounded-xl font-bold transition-all ${
                                 data.trainingDaysPerWeek === day
-                                    ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white'
+                                    ? 'bg-gradient-to-br from-primary to-accent-blue text-white'
                                     : 'bg-gray-700/50 text-text-tertiary hover:bg-gray-600/50'
                             }`}>
                             {day}
@@ -137,7 +137,7 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
                         onChange={(e) =>
                             updateField('hasOuraRing', e.target.checked)
                         }
-                        className="w-5 h-5 rounded border-border0 text-blue-500 focus:ring-blue-500 bg-gray-700"
+                        className="w-5 h-5 rounded border-border0 text-primary focus:ring-primary bg-gray-700"
                     />
                     <div className="flex-1">
                         <span className="text-white font-medium">
@@ -195,7 +195,7 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
                             <div className="text-text-tertiary">
                                 {t('onboarding.step3.summaryLabels.oura')}
                             </div>
-                            <div className="text-green-400 font-medium">
+                            <div className="text-success font-medium">
                                 {t('onboarding.step3.summaryLabels.ouraActive')}
                             </div>
                         </>

@@ -123,7 +123,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                         {/* File Upload Area */}
                         <div
                             onClick={() => fileInputRef.current?.click()}
-                            className="border-2 border-dashed border-border rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:border-blue-300 hover:bg-blue-50/30 transition-all group">
+                            className="border-2 border-dashed border-border rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:border-primary/20 hover:bg-primary-soft transition-all group">
                             <input
                                 type="file"
                                 multiple
@@ -132,7 +132,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                                 ref={fileInputRef}
                                 onChange={handleFileChange}
                             />
-                            <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <div className="w-16 h-16 bg-primary-soft text-primary rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <Upload size={24} />
                             </div>
                             <p className="font-bold text-text-primary">
@@ -162,7 +162,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                                             />
                                             <button
                                                 onClick={() => removeFile(i)}
-                                                className="absolute top-1 right-1 w-5 h-5 bg-black/50 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-500 transition-colors">
+                                                className="absolute top-1 right-1 w-5 h-5 bg-black/50 text-white rounded-full flex items-center justify-center text-xs hover:bg-danger transition-colors">
                                                 ×
                                             </button>
                                         </div>
@@ -175,7 +175,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                         <button
                             onClick={handleAnalyze}
                             disabled={selectedFiles.length === 0 || isAnalyzing}
-                            className="w-full bg-gradient-to-br from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95 flex items-center justify-center gap-2">
+                            className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-card shadow-glow disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95 flex items-center justify-center gap-2">
                             {isAnalyzing ? (
                                 <>
                                     <Loader2 className="animate-spin" size={20} />
@@ -192,9 +192,9 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                 ) : (
                     <div className="flex flex-col flex-1 min-h-0 overflow-y-auto">
                         {/* Review Banner */}
-                        <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 mb-4 flex items-start gap-3">
-                            <div className="text-amber-600 dark:text-amber-400 mt-0.5">⚠️</div>
-                            <div className="text-sm text-amber-800 dark:text-amber-200">
+                        <div className="bg-warning-soft rounded-xl p-4 mb-4 flex items-start gap-3">
+                            <div className="text-warning mt-0.5">⚠️</div>
+                            <div className="text-sm text-warning">
                                 <p className="font-bold mb-1">
                                     {t('workouts.scanner.review')}
                                 </p>
@@ -203,7 +203,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                         </div>
 
                         {jsonError && (
-                            <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm p-3 rounded-xl mb-4 font-medium">
+                            <div className="bg-danger-soft text-danger text-sm p-3 rounded-xl mb-4 font-medium">
                                 {jsonError}
                             </div>
                         )}
@@ -220,7 +220,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                                         type="text"
                                         value={parsedWorkout?.name || ''}
                                         onChange={(e) => updateField('name', e.target.value)}
-                                        className="w-full px-3 py-2 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                        className="w-full px-3 py-2 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-primary/30 outline-none"
                                     />
                                 </div>
 
@@ -233,7 +233,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                                             type="number"
                                             value={parsedWorkout?.duration || 0}
                                             onChange={(e) => updateField('duration', parseInt(e.target.value) || 0)}
-                                            className="w-full px-3 py-2 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                            className="w-full px-3 py-2 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-primary/30 outline-none"
                                         />
                                     </div>
                                     <div>
@@ -244,7 +244,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                                             type="number"
                                             value={parsedWorkout?.calories || 0}
                                             onChange={(e) => updateField('calories', parseInt(e.target.value) || 0)}
-                                            className="w-full px-3 py-2 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                            className="w-full px-3 py-2 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-primary/30 outline-none"
                                         />
                                     </div>
                                 </div>
@@ -257,7 +257,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                                         type="number"
                                         value={parsedWorkout?.volume || 0}
                                         onChange={(e) => updateField('volume', parseInt(e.target.value) || 0)}
-                                        className="w-full px-3 py-2 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                        className="w-full px-3 py-2 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-primary/30 outline-none"
                                     />
                                 </div>
                             </div>
@@ -272,7 +272,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                                         <div key={idx} className="bg-background dark:bg-surface-lighter rounded-xl p-3 relative">
                                             <button
                                                 onClick={() => deleteExercise(idx)}
-                                                className="absolute top-2 right-2 w-6 h-6 bg-red-50 dark:bg-red-900/30 text-red-500 dark:text-red-400 rounded-full flex items-center justify-center text-xs hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors">
+                                                className="absolute top-2 right-2 w-6 h-6 bg-danger-soft text-danger rounded-full flex items-center justify-center text-xs hover:bg-danger-soft transition-colors">
                                                 <X size={12} />
                                             </button>
                                             <div className="space-y-2 pr-8">
@@ -281,7 +281,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                                                     value={exercise.name}
                                                     onChange={(e) => updateExercise(idx, 'name', e.target.value)}
                                                     placeholder={t('workouts.scanner.exerciseName')}
-                                                    className="w-full px-2 py-1.5 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-sm font-medium focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                                    className="w-full px-2 py-1.5 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-sm font-medium focus:ring-2 focus:ring-primary/30 outline-none"
                                                 />
                                                 <div className="grid grid-cols-3 gap-2">
                                                     <input
@@ -289,21 +289,21 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                                                         value={exercise.sets}
                                                         onChange={(e) => updateExercise(idx, 'sets', e.target.value)}
                                                         placeholder="Sets"
-                                                        className="px-2 py-1.5 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-xs text-center focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                                        className="px-2 py-1.5 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-xs text-center focus:ring-2 focus:ring-primary/30 outline-none"
                                                     />
                                                     <input
                                                         type="text"
                                                         value={exercise.reps}
                                                         onChange={(e) => updateExercise(idx, 'reps', e.target.value)}
                                                         placeholder="Reps"
-                                                        className="px-2 py-1.5 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-xs text-center focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                                        className="px-2 py-1.5 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-xs text-center focus:ring-2 focus:ring-primary/30 outline-none"
                                                     />
                                                     <input
                                                         type="text"
                                                         value={exercise.weight}
                                                         onChange={(e) => updateExercise(idx, 'weight', e.target.value)}
                                                         placeholder="Weight"
-                                                        className="px-2 py-1.5 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-xs text-center focus:ring-2 focus:ring-blue-500/30 outline-none"
+                                                        className="px-2 py-1.5 bg-surface dark:bg-surface border border-border rounded-lg text-text-primary text-xs text-center focus:ring-2 focus:ring-primary/30 outline-none"
                                                     />
                                                 </div>
                                             </div>
@@ -322,7 +322,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
                             </button>
                             <button
                                 onClick={handleSave}
-                                className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-green-500/20 transition-all active:scale-95">
+                                className="flex-1 bg-success hover:bg-success text-white font-bold py-3.5 rounded-xl shadow-lg shadow-green-500/20 transition-all active:scale-95">
                                 {t('workouts.scanner.save')}
                             </button>
                         </div>

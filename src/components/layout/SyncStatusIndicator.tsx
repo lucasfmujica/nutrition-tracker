@@ -36,8 +36,8 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
             case 'syncing':
                 return {
                     Icon: RefreshCw,
-                    color: 'text-yellow-500',
-                    bgColor: 'bg-yellow-50',
+                    color: 'text-warning',
+                    bgColor: 'bg-warning-soft',
                     label: 'Sincronizando...',
                     animate: true,
                     visible: true,
@@ -45,8 +45,8 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
             case 'error':
                 return {
                     Icon: CloudOff,
-                    color: 'text-red-500',
-                    bgColor: 'bg-red-50',
+                    color: 'text-danger',
+                    bgColor: 'bg-danger-soft',
                     label: syncError || 'Error de sincronización',
                     animate: false,
                     visible: true,
@@ -56,8 +56,8 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
             default:
                 return {
                     Icon: Cloud,
-                    color: 'text-green-500',
-                    bgColor: 'bg-green-50',
+                    color: 'text-success',
+                    bgColor: 'bg-success-soft',
                     label: relativeTime || 'Sincronizado',
                     animate: false,
                     visible: false,

@@ -121,16 +121,16 @@ export const usePerformanceForecast = (
         let status = 'Normal';
         let forecastCode = 'steady';
         let icon = 'cloud-sun';
-        let gradient = 'from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40';
-        let textColor = 'text-blue-700 dark:text-blue-300';
+        let gradient = 'from-primary-soft to-primary-soft';
+        let textColor = 'text-primary';
 
         // PEAK: Both metrics trending up significantly (>3%)
         if (readinessTrendPct > 3 && sleepTrendPct > 2) {
             status = 'Peak';
             icon = 'sun';
             forecastCode = 'peak';
-            gradient = 'from-amber-50 to-orange-100 dark:from-amber-950/40 dark:to-orange-950/40';
-            textColor = 'text-amber-700 dark:text-amber-300';
+            gradient = 'from-warning-soft to-fat-soft';
+            textColor = 'text-warning';
         }
         // GOOD: Readiness stable/up, decent sleep
         else if (
@@ -141,16 +141,16 @@ export const usePerformanceForecast = (
             status = 'Good';
             icon = 'cloud-sun';
             forecastCode = 'good';
-            gradient = 'from-green-50 to-emerald-50 dark:from-green-950/40 dark:to-emerald-950/40';
-            textColor = 'text-green-700 dark:text-green-300';
+            gradient = 'from-success-soft to-success-soft';
+            textColor = 'text-success';
         }
         // CAUTION: Declining trends but not critical
         else if (readinessTrendPct < -3 || sleepTrendPct < -5) {
             status = 'Caution';
             icon = 'cloud';
             forecastCode = 'caution';
-            gradient = 'from-yellow-50 to-amber-50 dark:from-yellow-950/40 dark:to-amber-950/40';
-            textColor = 'text-yellow-700 dark:text-yellow-300';
+            gradient = 'from-warning-soft to-warning-soft';
+            textColor = 'text-warning';
         }
         // RECOVERY: Both metrics clearly declining
         else if (readinessTrendPct < -5 && sleepTrendPct < -3) {
@@ -165,16 +165,16 @@ export const usePerformanceForecast = (
             status = 'Rest Priority';
             icon = 'battery-charging';
             forecastCode = 'rest_volume';
-            gradient = 'from-purple-50 to-pink-50 dark:from-purple-950/40 dark:to-pink-950/40';
-            textColor = 'text-purple-700 dark:text-purple-300';
+            gradient = 'from-oura-soft to-oura-soft';
+            textColor = 'text-oura';
         }
         // LOW SLEEP: Today's sleep was particularly poor
         else if (todaySleep < 60) {
             status = 'Sleep Focus';
             icon = 'moon';
             forecastCode = 'sleep_focus';
-            gradient = 'from-indigo-50 to-purple-50 dark:from-indigo-950/40 dark:to-purple-950/40';
-            textColor = 'text-indigo-700 dark:text-indigo-300';
+            gradient = 'from-oura-soft to-oura-soft';
+            textColor = 'text-oura';
         }
 
         return {

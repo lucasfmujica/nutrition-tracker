@@ -109,7 +109,7 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
             {/* Transformation Card - Exportable */}
             <div
                 ref={cardRef}
-                className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 border-2 border-oura/20">
+                className="bg-oura-soft rounded-card p-6 border-2 border-oura/20">
                 {/* Header */}
                 <div className="text-center mb-4">
                     <h2 className="text-2xl font-bold text-text-primary mb-1">

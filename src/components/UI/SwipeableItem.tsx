@@ -103,7 +103,7 @@ export const SwipeableItem: React.FC<SwipeableItemProps> = ({
         <div className="relative overflow-hidden rounded-lg">
             {/* Delete background (left swipe) */}
             <div
-                className="absolute inset-y-0 right-0 flex items-center bg-red-600 transition-all rounded-r-2xl"
+                className="absolute inset-y-0 right-0 flex items-center bg-danger transition-all rounded-r-2xl"
                 style={{
                     width: translateX < 0 ? Math.abs(translateX) + 'px' : '0px',
                     opacity: translateX < 0 ? 1 : 0,
@@ -124,7 +124,7 @@ export const SwipeableItem: React.FC<SwipeableItemProps> = ({
             {/* Duplicate background (right swipe) */}
             {onDuplicate && (
                 <div
-                    className="absolute inset-y-0 left-0 flex items-center bg-gradient-to-r from-blue-500 to-indigo-600 transition-all rounded-l-2xl"
+                    className="absolute inset-y-0 left-0 flex items-center bg-gradient-to-r from-primary to-primary-dark transition-all rounded-l-2xl"
                     style={{
                         width: translateX > 0 ? translateX + 'px' : '0px',
                         opacity: translateX > 0 ? 1 : 0,

@@ -17,7 +17,7 @@ export const TrackerNavigation: React.FC = () => {
                         onClick={() => setActiveTab(tab)}
                         className={`px-4 py-3 text-sm font-bold transition-all ${
                             activeTab === tab
-                                ? 'text-blue-600 border-b-2 border-blue-600'
+                                ? 'text-primary border-b-2 border-primary'
                                 : 'text-text-tertiary hover:text-text-primary hover:bg-background'
                         }`}>
                         {tab === 'oura'

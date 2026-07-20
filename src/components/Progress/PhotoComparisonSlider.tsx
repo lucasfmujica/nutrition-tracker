@@ -178,7 +178,7 @@ export const PhotoComparisonSlider: React.FC<PhotoComparisonSliderProps> = ({
 
             {/* Stats Summary */}
             <div className="grid grid-cols-2 gap-3 mt-4">
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-3 border border-success/20">
+                <div className="bg-success-soft rounded-control p-3 border border-success/20">
                     <p className="text-xs text-success font-medium">
                         {t('progress.comparison.weightChange')}
                     </p>
@@ -193,7 +193,7 @@ export const PhotoComparisonSlider: React.FC<PhotoComparisonSliderProps> = ({
                         </p>
                     )}
                 </div>
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-3 border border-primary/20">
+                <div className="bg-primary-soft rounded-control p-3 border border-primary/20">
                     <p className="text-xs text-primary font-medium">
                         {t('progress.comparison.time')}
                     </p>

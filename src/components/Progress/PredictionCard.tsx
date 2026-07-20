@@ -114,7 +114,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
                         </p>
                     </div>
                     <div className="flex-1 mx-3">
-                        <div className="h-2 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-200 rounded-full" />
+                        <div className="h-2 bg-gradient-to-r from-oura/30 via-oura to-oura/30 rounded-full" />
                     </div>
                     <div className="text-right">
                         <p className="text-xs text-text-tertiary">Máximo</p>

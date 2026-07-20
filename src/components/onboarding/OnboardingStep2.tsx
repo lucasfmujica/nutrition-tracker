@@ -34,14 +34,14 @@ export const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
                 </p>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/20 rounded-xl p-4">
+            <div className="bg-gradient-to-br from-primary/10 to-info/10 border border-primary/20 rounded-xl p-4">
                 <div className="flex justify-between items-center mb-3">
                     <span className="text-sm text-text-tertiary">
                         {t('onboarding.step2.title')}
                     </span>
                     <button
                         onClick={handleAutoCalculate}
-                        className="text-xs text-blue-400 hover:text-blue-300">
+                        className="text-xs text-primary hover:opacity-80">
                         🔄 {t('onboarding.step2.autoCalculate')}
                     </button>
                 </div>

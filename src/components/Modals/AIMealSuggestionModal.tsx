@@ -189,14 +189,14 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-surface rounded-3xl w-full max-w-md border border-purple-200 dark:border-purple-800 shadow-2xl relative overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="bg-surface rounded-3xl w-full max-w-md border border-oura/20 shadow-2xl relative overflow-hidden max-h-[90vh] flex flex-col">
                 {/* Background Decor */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-bl-full -mr-8 -mt-8 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-oura/10 rounded-bl-full -mr-8 -mt-8 pointer-events-none" />
 
                 {/* Header */}
                 <div className="flex justify-between items-center p-6 pb-4 relative">
                     <div className="flex items-center gap-2">
-                        <div className="p-2 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl text-white shadow-lg shadow-purple-500/20">
+                        <div className="p-2 bg-oura rounded-control text-white shadow-float">
                             <ChefHat size={20} />
                         </div>
                         <div>
@@ -224,7 +224,7 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                             onClick={() => setAIChefTab(tab.id)}
                             className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all ${
                                 aiChefTab === tab.id
-                                    ? 'bg-purple-600 text-white'
+                                    ? 'bg-oura text-white'
                                     : 'bg-background dark:bg-surface-lighter text-text-tertiary hover:text-text-secondary'
                             }`}>
                             {tab.icon}
@@ -257,7 +257,7 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                                 <div className="py-12 flex flex-col items-center justify-center text-center">
                                     <Loader2
                                         size={40}
-                                        className="text-purple-600 animate-spin mb-4"
+                                        className="text-oura animate-spin mb-4"
                                     />
                                     <p className="text-text-primary font-bold mb-1">
                                         {t('modals.aiSuggestion.loading')}
@@ -268,10 +268,10 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                                 </div>
                             ) : error ? (
                                 <div className="py-8 text-center">
-                                    <p className="text-red-500 font-medium mb-2">{error}</p>
+                                    <p className="text-danger font-medium mb-2">{error}</p>
                                     <button
                                         onClick={handleRegenerate}
-                                        className="text-sm font-bold text-purple-600 hover:text-purple-700 underline">
+                                        className="text-sm font-bold text-oura hover:text-oura underline">
                                         {t('aiChef.tryAgain')}
                                     </button>
                                 </div>
@@ -279,14 +279,14 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                                 <div className="py-12 text-center">
                                     <ChefHat
                                         size={48}
-                                        className="text-purple-300 dark:text-purple-700 mx-auto mb-4"
+                                        className="text-oura mx-auto mb-4"
                                     />
                                     <p className="text-text-secondary font-medium mb-4">
                                         {t('aiChef.noSuggestions')}
                                     </p>
                                     <button
                                         onClick={handleRegenerate}
-                                        className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-bold text-sm hover:from-purple-700 hover:to-indigo-700 transition-all flex items-center gap-2 mx-auto">
+                                        className="px-6 py-3 bg-gradient-to-r from-oura to-oura text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all flex items-center gap-2 mx-auto">
                                         <Sparkles size={16} />
                                         {t('aiChef.generateSuggestions')}
                                     </button>
@@ -306,7 +306,7 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
                                     <button
                                         onClick={handleRegenerate}
                                         disabled={loading}
-                                        className="w-full py-3 mt-4 bg-background dark:bg-surface-lighter text-text-secondary rounded-xl font-bold text-sm hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all flex items-center justify-center gap-2">
+                                        className="w-full py-3 mt-4 bg-background dark:bg-surface-lighter text-text-secondary rounded-xl font-bold text-sm hover:bg-oura-soft transition-all flex items-center justify-center gap-2">
                                         <RefreshCw size={16} />
                                         {t('aiChef.regenerate')}
                                     </button>

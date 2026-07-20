@@ -181,7 +181,7 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
     // 🚨 Show error screen if loading timed out
     if (loadingTimedOut) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
+            <div className="min-h-screen bg-background flex items-center justify-center p-4">
                 <div className="max-w-md w-full bg-surface/10 backdrop-blur-lg rounded-2xl p-8 text-center">
                     <div className="text-6xl mb-4">⚠️</div>
                     <h1 className="text-2xl font-bold text-white mb-4">
@@ -193,7 +193,7 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
                     <div className="space-y-3">
                         <button
                             onClick={handleRetry}
-                            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                            className="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-control transition-colors">
                             🔄 {t('common.errorState.retry')}
                         </button>
                         <button
@@ -202,7 +202,7 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
                                 indexedDB.deleteDatabase('nutrition-tracker');
                                 window.location.reload();
                             }}
-                            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                            className="w-full bg-danger hover:opacity-90 text-white font-semibold py-3 px-6 rounded-control transition-colors">
                             🗑️ {t('common.errorState.clearDataRetry')}
                         </button>
                     </div>

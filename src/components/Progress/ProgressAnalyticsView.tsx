@@ -128,7 +128,7 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="bg-gradient-to-br from-purple-50 dark:from-purple-900/30 to-blue-50 dark:to-blue-900/30 rounded-2xl p-6 border border-oura/20">
+            <div className="bg-oura-soft rounded-card p-6 border border-oura/20">
                 <div className="flex items-start gap-3">
                     <div className="p-2 bg-surface rounded-lg shadow-sm">
                         <TrendingUp size={24} className="text-oura" />

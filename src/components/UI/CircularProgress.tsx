@@ -67,7 +67,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center leading-tight">
                     <span
-                        className={`${fontSize} font-bold ${isOver ? 'text-red-400' : 'text-white'}`}>
+                        className={`${fontSize} font-bold ${isOver ? 'text-danger' : 'text-white'}`}>
                         {current}
                     </span>
                     <span className={`${subFontSize} text-text-tertiary`}>/{target}</span>

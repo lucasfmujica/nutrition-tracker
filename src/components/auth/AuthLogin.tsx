@@ -42,13 +42,13 @@ export const AuthLogin: React.FC<AuthLoginProps> = ({
             </div>
 
             {error && (
-                <div className="bg-red-50 border border-red-100 rounded-xl p-4 mb-6">
-                    <p className="text-red-600 text-sm font-medium">{error}</p>
+                <div className="bg-danger-soft border border-danger/20 rounded-xl p-4 mb-6">
+                    <p className="text-danger text-sm font-medium">{error}</p>
                 </div>
             )}
             {message && (
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6">
-                    <p className="text-blue-600 text-sm font-medium">{message}</p>
+                <div className="bg-primary-soft border border-primary/20 rounded-xl p-4 mb-6">
+                    <p className="text-primary text-sm font-medium">{message}</p>
                 </div>
             )}
 
@@ -61,7 +61,7 @@ export const AuthLogin: React.FC<AuthLoginProps> = ({
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-3.5 bg-background border border-border rounded-xl text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
+                        className="w-full px-4 py-3.5 bg-background border border-border rounded-xl text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                         placeholder="tu@email.com"
                         required
                     />
@@ -75,7 +75,7 @@ export const AuthLogin: React.FC<AuthLoginProps> = ({
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-4 py-3.5 bg-background border border-border rounded-xl text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
+                        className="w-full px-4 py-3.5 bg-background border border-border rounded-xl text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                         placeholder="••••••••"
                         required
                     />
@@ -84,7 +84,7 @@ export const AuthLogin: React.FC<AuthLoginProps> = ({
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-blue-500/25 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                    className="w-full py-4 bg-gradient-to-r from-primary to-accent-blue text-white font-bold rounded-xl hover:shadow-lg hover:shadow-blue-500/25 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                     {loading ? (
                         <span className="flex items-center justify-center gap-2">
                             <svg
@@ -154,7 +154,7 @@ export const AuthLogin: React.FC<AuthLoginProps> = ({
                     onClick={() => {
                         setMode('reset');
                     }}
-                    className="text-text-tertiary hover:text-blue-600 text-sm font-medium transition-colors">
+                    className="text-text-tertiary hover:text-primary text-sm font-medium transition-colors">
                     {t('auth.login.forgotPassword')}
                 </button>
                 <div className="text-text-secondary text-sm bg-background p-3 rounded-xl border border-border">
@@ -163,7 +163,7 @@ export const AuthLogin: React.FC<AuthLoginProps> = ({
                         onClick={() => {
                             setMode('signup');
                         }}
-                        className="text-blue-600 hover:text-blue-700 font-bold transition-colors ml-1">
+                        className="text-primary hover:text-primary font-bold transition-colors ml-1">
                         {t('auth.login.signUp')}
                     </button>
                 </div>

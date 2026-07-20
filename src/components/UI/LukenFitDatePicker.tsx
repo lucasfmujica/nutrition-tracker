@@ -124,7 +124,7 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                 {/* Previous Day */}
                 <button
                     onClick={handlePrevDay}
-                    className="w-10 h-10 flex items-center justify-center rounded-xl text-text-tertiary hover:text-blue-600 hover:bg-blue-50 transition-all active:scale-95 flex-shrink-0"
+                    className="w-10 h-10 flex items-center justify-center rounded-xl text-text-tertiary hover:text-primary hover:bg-primary-soft transition-all active:scale-95 flex-shrink-0"
                     aria-label={t('common.prev')}>
                     <ChevronLeft className="w-5 h-5" />
                 </button>
@@ -136,8 +136,8 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                     <span
                         className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
                             isToday
-                                ? 'text-blue-600'
-                                : 'text-text-tertiary group-hover:text-blue-500'
+                                ? 'text-primary'
+                                : 'text-text-tertiary group-hover:text-primary'
                         }`}>
                         {isToday
                             ? t('common.today')
@@ -145,8 +145,8 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                               ? t('common.yesterday')
                               : displayLabel}
                     </span>
-                    <div className="flex items-center justify-center gap-1.5 text-text-primary font-bold text-lg leading-none mt-0.5 group-hover:text-blue-600 transition-colors w-full">
-                        <CalendarIcon className="w-4 h-4 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                    <div className="flex items-center justify-center gap-1.5 text-text-primary font-bold text-lg leading-none mt-0.5 group-hover:text-primary transition-colors w-full">
+                        <CalendarIcon className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                         <span className="truncate">{mainText}</span>
                     </div>
                 </button>
@@ -158,7 +158,7 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                     className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all active:scale-95 flex-shrink-0 ${
                         isNextDisabled
                             ? 'text-text-tertiary cursor-not-allowed'
-                            : 'text-text-tertiary hover:text-blue-600 hover:bg-blue-50'
+                            : 'text-text-tertiary hover:text-primary hover:bg-primary-soft'
                     }`}
                     aria-label={t('common.next')}>
                     <ChevronRight className="w-5 h-5" />
@@ -186,7 +186,7 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                                 </h3>
                                 <button
                                     onClick={() => handleCalendarSelect(today)}
-                                    className="text-xs font-bold text-blue-500 hover:text-blue-600 transition-colors mt-0.5">
+                                    className="text-xs font-bold text-primary hover:text-primary transition-colors mt-0.5">
                                     {t('diary.calendar.goToToday')}
                                 </button>
                             </div>
@@ -240,12 +240,12 @@ export const LukenFitDatePicker: React.FC<LukenFitDatePickerProps> = ({
                       w-8 h-8 rounded-full text-sm font-medium transition-all flex items-center justify-center relative
                       ${
                           isSelected
-                              ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105'
+                              ? 'bg-primary text-white shadow-lg shadow-blue-500/30 scale-105'
                               : isFuture
                                 ? 'text-text-tertiary cursor-not-allowed font-normal'
                                 : 'text-text-secondary hover:bg-background active:bg-surface-lighter'
                       }
-                      ${isCurrentToday && !isSelected ? 'text-blue-600 font-bold ring-1 ring-blue-100 bg-blue-50/50' : ''}
+                      ${isCurrentToday && !isSelected ? 'text-primary font-bold ring-1 ring-primary/20 bg-primary-soft' : ''}
                     `}>
                                         {dayNum}
                                     </button>

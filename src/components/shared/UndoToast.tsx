@@ -21,7 +21,7 @@ export const UndoToast: React.FC<UndoToastProps> = ({
                     if (undoAction.restore) undoAction.restore();
                     if (setUndoAction) setUndoAction(null);
                 }}
-                className="text-blue-400 font-bold text-sm active:text-cyan-300">
+                className="text-primary font-bold text-sm active:text-accent-blue">
                 DESHACER
             </button>
         </div>

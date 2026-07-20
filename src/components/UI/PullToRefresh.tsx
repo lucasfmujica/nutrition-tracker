@@ -62,7 +62,7 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
                     style={{ height: isRefreshing ? 50 : pullDistance }}>
                     {isRefreshing ? (
                         <svg
-                            className="animate-spin h-5 w-5 text-blue-400"
+                            className="animate-spin h-5 w-5 text-primary"
                             viewBox="0 0 24 24">
                             <circle
                                 className="opacity-25"
@@ -81,7 +81,7 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
                         </svg>
                     ) : (
                         <span
-                            className={`text-sm ${pullDistance >= PULL_THRESHOLD ? 'text-blue-400' : 'text-text-tertiary'}`}>
+                            className={`text-sm ${pullDistance >= PULL_THRESHOLD ? 'text-primary' : 'text-text-tertiary'}`}>
                             {pullDistance >= PULL_THRESHOLD
                                 ? '↑ Soltar para actualizar'
                                 : '↓ Arrastra para actualizar'}

@@ -48,13 +48,13 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
     const getStatusIcon = () => {
         switch (status) {
             case 'onTrack':
-                return <CheckCircle className="w-8 h-8 text-green-500" />;
+                return <CheckCircle className="w-8 h-8 text-success" />;
             case 'fast':
-                return <TrendingDown className="w-8 h-8 text-red-500" />;
+                return <TrendingDown className="w-8 h-8 text-danger" />;
             case 'slow':
-                return <Activity className="w-8 h-8 text-amber-500" />;
+                return <Activity className="w-8 h-8 text-warning" />;
             case 'gaining':
-                return <TrendingUp className="w-8 h-8 text-amber-500" />;
+                return <TrendingUp className="w-8 h-8 text-warning" />;
             default:
                 return <Activity className="w-8 h-8 text-text-tertiary" />;
         }
@@ -63,11 +63,11 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
     const getStatusColor = () => {
         switch (severity) {
             case 'success':
-                return 'bg-green-500/10 border-green-200 text-green-700';
+                return 'bg-success/10 border-success/20 text-success';
             case 'warning':
-                return 'bg-amber-500/10 border-amber-200 text-amber-700';
+                return 'bg-warning/10 border-warning/20 text-warning';
             case 'danger':
-                return 'bg-red-500/10 border-red-200 text-red-700';
+                return 'bg-danger/10 border-danger/20 text-danger';
             default:
                 return 'bg-surface-lighter border-border text-text-secondary';
         }
@@ -84,11 +84,11 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
             {/* Modal Card */}
             <div className="relative w-full max-w-md bg-surface rounded-t-3xl sm:rounded-3xl shadow-2xl pointer-events-auto overflow-hidden flex flex-col max-h-[90vh] animate-slide-up sm:animate-fade-in-up transition-all duration-300">
                 {/* Header */}
-                <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 text-white text-center pb-12">
+                <div className="bg-gradient-to-r from-oura to-oura p-6 text-white text-center pb-12">
                     <h2 className="text-2xl font-bold mb-1">
                         {t('modals.mondayBriefing.title')}
                     </h2>
-                    <p className="text-purple-100 text-sm">
+                    <p className="text-white/80 text-sm">
                         {t('modals.mondayBriefing.subtitle')}
                     </p>
                     <button
@@ -123,7 +123,7 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                                 {t('modals.mondayBriefing.currentTempo')}
                             </span>
                             <span
-                                className={`text-lg font-bold ${currentTrend < 0 ? 'text-green-600' : 'text-amber-600'}`}>
+                                className={`text-lg font-bold ${currentTrend < 0 ? 'text-success' : 'text-warning'}`}>
                                 {currentTrend ? `${currentTrend.toFixed(2)}` : '0'}{' '}
                                 <span className="text-xs text-text-tertiary">kg/sem</span>
                             </span>
@@ -133,7 +133,7 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                                 {t('modals.mondayBriefing.adherence')}
                             </span>
                             <span
-                                className={`text-lg font-bold ${weeklyAdherence > 80 ? 'text-green-600' : 'text-amber-600'}`}>
+                                className={`text-lg font-bold ${weeklyAdherence > 80 ? 'text-success' : 'text-warning'}`}>
                                 {weeklyAdherence}%
                             </span>
                         </div>
@@ -146,12 +146,12 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                                 <h4 className="font-bold text-text-primary">
                                     {t('modals.mondayBriefing.proposal')}
                                 </h4>
-                                <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-lg font-medium">
+                                <span className="text-xs bg-oura-soft text-oura px-2 py-1 rounded-lg font-medium">
                                     Auto-Pilot
                                 </span>
                             </div>
 
-                            <div className="bg-purple-50 rounded-xl p-4 border border-purple-100 mb-3">
+                            <div className="bg-oura-soft rounded-xl p-4 border border-oura/20 mb-3">
                                 <div className="flex items-center justify-between">
                                     {/* Old */}
                                     <div className="text-center opacity-60">
@@ -166,17 +166,17 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                                         </span>
                                     </div>
 
-                                    <ArrowRight className="text-purple-400" />
+                                    <ArrowRight className="text-oura" />
 
                                     {/* New */}
                                     <div className="text-center">
-                                        <span className="block text-xs text-purple-600 uppercase font-bold">
+                                        <span className="block text-xs text-oura uppercase font-bold">
                                             Nuevo
                                         </span>
-                                        <span className="block text-2xl font-bold text-purple-600">
+                                        <span className="block text-2xl font-bold text-oura">
                                             {newCalories}
                                         </span>
-                                        <span className="text-xs text-purple-400">
+                                        <span className="text-xs text-oura">
                                             kcal
                                         </span>
                                     </div>
@@ -184,16 +184,16 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                             </div>
 
                             <p className="text-sm text-text-secondary bg-background p-3 rounded-lg border border-border flex gap-2">
-                                <Activity className="w-4 h-4 text-purple-500 mt-0.5 shrink-0" />
+                                <Activity className="w-4 h-4 text-oura mt-0.5 shrink-0" />
                                 {reasoning}
                             </p>
                         </div>
                     ) : (
-                        <div className="mb-6 bg-green-50 p-4 rounded-xl border border-green-100 text-center">
-                            <p className="text-green-800 font-medium mb-1">
+                        <div className="mb-6 bg-success-soft p-4 rounded-xl border border-success/20 text-center">
+                            <p className="text-success font-medium mb-1">
                                 {t('modals.mondayBriefing.noChanges')}
                             </p>
-                            <p className="text-sm text-green-600">
+                            <p className="text-sm text-success">
                                 {t('modals.mondayBriefing.noChangesDesc')}
                             </p>
                         </div>
@@ -204,7 +204,7 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
                         {actionType !== 'maintain' && (
                             <button
                                 onClick={onAccept}
-                                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-purple-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                className="w-full bg-gradient-to-r from-oura to-oura text-white py-3.5 rounded-xl font-bold shadow-lg shadow-purple-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                                 <Target className="w-5 h-5" />
                                 {t('modals.mondayBriefing.accept')}
                             </button>

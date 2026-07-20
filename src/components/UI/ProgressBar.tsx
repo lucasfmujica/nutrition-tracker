@@ -27,14 +27,14 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
                     {label}
                 </span>
                 <span
-                    className={`text-xs lg:text-sm font-bold ${isOver ? 'text-red-400' : 'text-text-tertiary'}`}>
+                    className={`text-xs lg:text-sm font-bold ${isOver ? 'text-danger' : 'text-text-tertiary'}`}>
                     {current}/{target}
                     {unit}
                 </span>
             </div>
             <div className="w-full bg-progress-track rounded-full h-2 lg:h-2.5 overflow-hidden">
                 <div
-                    className={`h-full rounded-full transition-all duration-700 ease-out ${isOver ? 'bg-red-500' : color}`}
+                    className={`h-full rounded-full transition-all duration-700 ease-out ${isOver ? 'bg-danger' : color}`}
                     style={{
                         width: `${percentage}%`,
                         boxShadow:

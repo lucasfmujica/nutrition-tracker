@@ -161,7 +161,7 @@ export const AuthUI: React.FC<AuthUIProps> = ({
                 />
             </svg>
             <h1 className="text-2xl font-black text-text-primary tracking-tighter">
-                LUKEN<span className="text-blue-600">FIT</span>
+                LUKEN<span className="text-primary">FIT</span>
             </h1>
         </div>
     );
@@ -182,8 +182,8 @@ export const AuthUI: React.FC<AuthUIProps> = ({
                         </p>
                     </div>
 
-                    <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 mb-6">
-                        <p className="text-amber-700 text-sm">
+                    <div className="bg-warning-soft border border-warning/20 rounded-xl p-4 mb-6">
+                        <p className="text-warning text-sm">
                             {t('auth.offline.warning')}
                         </p>
                     </div>

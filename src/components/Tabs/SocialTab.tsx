@@ -106,19 +106,19 @@ export const SocialTab: React.FC<SocialTabProps> = ({
 
             {/* Friend Requests Section */}
             {friendRequests.length > 0 && (
-                <div className="bg-rose-50/50 rounded-2xl border border-rose-100 overflow-hidden transition-all duration-300">
+                <div className="bg-danger-soft rounded-card border border-danger/20 overflow-hidden transition-all duration-300">
                     <button
                         onClick={() => setRequestsExpanded(!requestsExpanded)}
-                        className="w-full flex items-center justify-between p-4 hover:bg-rose-50 transition-colors">
+                        className="w-full flex items-center justify-between p-4 hover:bg-danger/10 transition-colors">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-surface flex items-center justify-center shadow-sm text-rose-500">
+                            <div className="w-10 h-10 rounded-xl bg-surface flex items-center justify-center shadow-sm text-danger">
                                 <UserPlus size={20} />
                             </div>
                             <div className="text-left">
                                 <h3 className="font-bold text-text-primary">
                                     {t('social.friends.requests')}
                                 </h3>
-                                <p className="text-xs text-rose-600 font-medium">
+                                <p className="text-xs text-danger font-medium">
                                     {friendRequests.length}{' '}
                                     {t('social.friends.pending', {
                                         count: friendRequests.length,

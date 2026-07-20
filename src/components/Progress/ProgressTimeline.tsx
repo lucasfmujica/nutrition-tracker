@@ -149,7 +149,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
 
             {/* Context Card */}
             {selectedPhoto && (
-                <div className="mt-5 bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-4 border border-primary/20">
+                <div className="mt-5 bg-primary-soft rounded-control p-4 border border-primary/20">
                     <div className="flex items-start justify-between mb-3">
                         <div>
                             <p className="text-sm text-text-tertiary font-medium">

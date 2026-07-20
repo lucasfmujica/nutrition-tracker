@@ -209,7 +209,7 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                         <button
                             onClick={exportAsImage}
                             disabled={isExporting}
-                            className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-medium text-sm flex items-center gap-2 disabled:opacity-50 shadow-lg transition-all">
+                            className="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-control font-medium text-sm flex items-center gap-2 disabled:opacity-50 shadow-lg transition-all">
                             {isExporting ? '⏳' : '📷'}{' '}
                             {isExporting
                                 ? t('modals.weeklyReport.downloading')
@@ -229,7 +229,7 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                         className="px-3 py-1.5 bg-surface/10 hover:bg-surface/20 text-white rounded-lg text-sm transition-all">
                         ← {t('common.prev')}
                     </button>
-                    <span className="px-4 py-1.5 bg-blue-500 text-white rounded-lg text-sm font-medium shadow-lg">
+                    <span className="px-4 py-1.5 bg-primary text-white rounded-lg text-sm font-medium shadow-lg">
                         {currentWeek.label}
                     </span>
                     <button
@@ -245,7 +245,7 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                     className="bg-surface rounded-2xl p-5 border border-border shadow-2xl space-y-5">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
+                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary flex items-center justify-center shadow-lg">
                                 <span className="text-2xl">💪</span>
                             </div>
                             <div>
@@ -258,7 +258,7 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                             </div>
                         </div>
                         <div className="text-right">
-                            <div className="text-2xl font-bold text-blue-500">
+                            <div className="text-2xl font-bold text-primary">
                                 {thisWeekStats.summary.calOkDays}/7
                             </div>
                             <p className="text-xs text-text-tertiary">
@@ -268,13 +268,13 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <div className="bg-blue-50 rounded-xl p-3 text-center border border-blue-100">
-                            <div className="text-2xl font-bold text-blue-600">
+                        <div className="bg-primary-soft rounded-xl p-3 text-center border border-primary/20">
+                            <div className="text-2xl font-bold text-primary">
                                 {thisWeekStats.summary.avgCalories}
                             </div>
                             <div className="text-xs text-text-secondary">kcal/día</div>
                             <div
-                                className={`text-xs mt-1 font-medium ${parseFloat(calChange) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                className={`text-xs mt-1 font-medium ${parseFloat(calChange) >= 0 ? 'text-success' : 'text-danger'}`}>
                                 {parseFloat(calChange) > 0
                                     ? '↑'
                                     : parseFloat(calChange) < 0
@@ -283,13 +283,13 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                                 {Math.abs(parseFloat(calChange))}%
                             </div>
                         </div>
-                        <div className="bg-cyan-50 rounded-xl p-3 text-center border border-cyan-100">
-                            <div className="text-2xl font-bold text-cyan-600">
+                        <div className="bg-info-soft rounded-xl p-3 text-center border border-info/20">
+                            <div className="text-2xl font-bold text-info">
                                 {thisWeekStats.summary.avgProtein}g
                             </div>
                             <div className="text-xs text-text-secondary">proteína/día</div>
                             <div
-                                className={`text-xs mt-1 font-medium ${parseFloat(protChange) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                className={`text-xs mt-1 font-medium ${parseFloat(protChange) >= 0 ? 'text-success' : 'text-danger'}`}>
                                 {parseFloat(protChange) > 0
                                     ? '↑'
                                     : parseFloat(protChange) < 0
@@ -298,8 +298,8 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                                 {Math.abs(parseFloat(protChange))}%
                             </div>
                         </div>
-                        <div className="bg-amber-50 rounded-xl p-3 text-center border border-amber-100">
-                            <div className="text-2xl font-bold text-amber-600">
+                        <div className="bg-warning-soft rounded-xl p-3 text-center border border-warning/20">
+                            <div className="text-2xl font-bold text-warning">
                                 {thisWeekStats.summary.totalWorkouts}
                             </div>
                             <div className="text-xs text-text-secondary">
@@ -309,8 +309,8 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                                 {thisWeekStats.summary.totalWorkoutMins} min
                             </div>
                         </div>
-                        <div className="bg-purple-50 rounded-xl p-3 text-center border border-purple-100">
-                            <div className="text-2xl font-bold text-purple-600">
+                        <div className="bg-oura-soft rounded-xl p-3 text-center border border-oura/20">
+                            <div className="text-2xl font-bold text-oura">
                                 {Math.round(thisWeekStats.summary.avgSteps / 1000)}k
                             </div>
                             <div className="text-xs text-text-secondary">pasos/día</div>
@@ -349,11 +349,11 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                                             <div
                                                 className={`absolute bottom-0 w-full rounded-t transition-all ${
                                                     isOk
-                                                        ? 'bg-green-500'
+                                                        ? 'bg-success'
                                                         : isOver
-                                                          ? 'bg-red-500'
+                                                          ? 'bg-danger'
                                                           : day.calories > 0
-                                                            ? 'bg-blue-500'
+                                                            ? 'bg-primary'
                                                             : 'bg-muted'
                                                 }`}
                                                 style={{ height: `${height}%` }}
@@ -400,9 +400,9 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                                             <div
                                                 className={`absolute bottom-0 w-full rounded-t transition-all ${
                                                     isOk
-                                                        ? 'bg-cyan-500'
+                                                        ? 'bg-info'
                                                         : day.protein > 0
-                                                          ? 'bg-cyan-300'
+                                                          ? 'bg-accent-blue'
                                                           : 'bg-muted'
                                                 }`}
                                                 style={{ height: `${height}%` }}
@@ -424,7 +424,7 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
+                        <div className="bg-success-soft border border-success/20 rounded-xl p-4">
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="text-lg">✅</span>
                                 <span className="text-sm font-medium text-text-primary">
@@ -432,21 +432,21 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                                 </span>
                             </div>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-3xl font-bold text-green-600">
+                                <span className="text-3xl font-bold text-success">
                                     {thisWeekStats.summary.calOkDays}
                                 </span>
                                 <span className="text-text-secondary">/7 días</span>
                             </div>
                             <div className="mt-2 h-2 bg-surface-lighter rounded-full overflow-hidden">
                                 <div
-                                    className="h-full bg-green-500 rounded-full transition-all"
+                                    className="h-full bg-success rounded-full transition-all"
                                     style={{
                                         width: `${(thisWeekStats.summary.calOkDays / 7) * 100}%`,
                                     }}
                                 />
                             </div>
                         </div>
-                        <div className="bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-200 rounded-xl p-4">
+                        <div className="bg-info-soft border border-info/20 rounded-xl p-4">
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="text-lg">💪</span>
                                 <span className="text-sm font-medium text-text-primary">
@@ -454,14 +454,14 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
                                 </span>
                             </div>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-3xl font-bold text-cyan-600">
+                                <span className="text-3xl font-bold text-info">
                                     {thisWeekStats.summary.protOkDays}
                                 </span>
                                 <span className="text-text-secondary">/7 días</span>
                             </div>
                             <div className="mt-2 h-2 bg-surface-lighter rounded-full overflow-hidden">
                                 <div
-                                    className="h-full bg-cyan-500 rounded-full transition-all"
+                                    className="h-full bg-info rounded-full transition-all"
                                     style={{
                                         width: `${(thisWeekStats.summary.protOkDays / 7) * 100}%`,
                                     }}
@@ -472,10 +472,10 @@ export const WeeklyReport: React.FC<WeeklyReportProps> = ({
 
                     {thisWeekStats.summary.bestDay &&
                         thisWeekStats.summary.bestDay.calories > 0 && (
-                            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4">
+                            <div className="bg-warning-soft border border-warning/20 rounded-xl p-4">
                                 <div className="flex items-center gap-2 mb-1">
                                     <span className="text-lg">🏆</span>
-                                    <span className="text-sm font-medium text-amber-700">
+                                    <span className="text-sm font-medium text-warning">
                                         Mejor día de la semana
                                     </span>
                                 </div>

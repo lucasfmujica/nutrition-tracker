@@ -83,7 +83,7 @@ export const WeeklyReportModal: React.FC<WeeklyReportModalProps> = ({
                             className="bg-surface rounded-3xl flex items-center justify-center shadow-2xl"
                             style={{ width: '22rem', height: '28rem' }}>
                             <div className="text-center">
-                                <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
+                                <Loader2 className="w-12 h-12 text-primary animate-spin mx-auto mb-4" />
                                 <p className="text-text-tertiary">
                                     {t('modals.weeklyReport.generatingStatus')}
                                 </p>
@@ -97,8 +97,8 @@ export const WeeklyReportModal: React.FC<WeeklyReportModalProps> = ({
                             className="bg-surface rounded-3xl flex items-center justify-center shadow-2xl"
                             style={{ width: '22rem', height: '28rem' }}>
                             <div className="text-center px-8">
-                                <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <X className="w-8 h-8 text-red-500" />
+                                <div className="w-16 h-16 bg-danger-soft rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <X className="w-8 h-8 text-danger" />
                                 </div>
                                 <p className="text-text-primary font-medium mb-2">
                                     {t('modals.weeklyReport.errorTitle')}
@@ -132,7 +132,7 @@ export const WeeklyReportModal: React.FC<WeeklyReportModalProps> = ({
                                 onClick={handleDownload}
                                 disabled={isDownloading}
                                 style={{ width: '24rem' }}
-                                className="py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-bold shadow-lg shadow-purple-300/40 hover:shadow-xl transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2">
+                                className="py-4 bg-gradient-to-r from-primary to-oura text-white rounded-card font-bold shadow-float hover:shadow-glow transition-all active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2">
                                 {isDownloading ? (
                                     <>
                                         <Loader2 className="w-5 h-5 animate-spin" />

@@ -58,8 +58,8 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
             label: t('aiChef.title').toUpperCase(),
             sublabel: t('aiChef.fabSublabel').toUpperCase(),
             onClick: onAIChef,
-            color: 'text-purple-600',
-            bg: 'bg-gradient-to-br from-purple-500/20 to-indigo-500/20',
+            color: 'text-oura',
+            bg: 'bg-oura-soft',
         },
         {
             icon: <Utensils size={24} />,
@@ -82,8 +82,8 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
             label: (t('common.favorites') || 'FAVORITOS').toUpperCase(),
             sublabel: 'PLANTILLAS RÁPIDAS',
             onClick: onQuickAdd,
-            color: 'text-purple-500',
-            bg: 'bg-purple-500/10',
+            color: 'text-oura',
+            bg: 'bg-oura/10',
         },
         {
             icon: <Drumstick size={20} />,

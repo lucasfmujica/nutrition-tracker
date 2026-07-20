@@ -141,7 +141,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-border">
                     <h2 className="text-lg font-bold text-text-primary flex items-center gap-2">
-                        <Barcode size={20} className="text-blue-600" />
+                        <Barcode size={20} className="text-primary" />
                         {t('modals.barcode.title')}
                     </h2>
                     <button
@@ -163,14 +163,14 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                             {isScanning && !scannedBarcode && (
                                 <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
                                     {/* Scan line animation */}
-                                    <div className="absolute left-4 right-4 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-pulse" />
+                                    <div className="absolute left-4 right-4 h-0.5 bg-gradient-to-r from-transparent via-accent-blue to-transparent animate-pulse" />
 
                                     {/* Corner markers */}
                                     <div className="absolute inset-8 border-2 border-white/30 rounded-lg">
-                                        <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-cyan-400 rounded-tl-lg" />
-                                        <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-cyan-400 rounded-tr-lg" />
-                                        <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-cyan-400 rounded-bl-lg" />
-                                        <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-cyan-400 rounded-br-lg" />
+                                        <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-accent-blue rounded-tl-lg" />
+                                        <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-accent-blue rounded-tr-lg" />
+                                        <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-accent-blue rounded-bl-lg" />
+                                        <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-accent-blue rounded-br-lg" />
                                     </div>
                                 </div>
                             )}
@@ -209,7 +209,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-white p-6 text-center">
                                     <AlertCircle
                                         size={40}
-                                        className="text-red-400 mb-3"
+                                        className="text-danger mb-3"
                                     />
                                     <p className="text-sm">{error}</p>
                                     <button
@@ -234,8 +234,8 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                 {/* Not Found State */}
                 {notFound && (
                     <div className="p-6 text-center">
-                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
-                            <AlertCircle size={32} className="text-amber-600" />
+                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-warning-soft flex items-center justify-center">
+                            <AlertCircle size={32} className="text-warning" />
                         </div>
                         <h3 className="font-bold text-text-primary mb-2">
                             {t('modals.barcode.notFound')}
@@ -260,7 +260,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                         onClose();
                                         onOpenFoodSearch();
                                     }}
-                                    className="w-full py-3 rounded-2xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium flex items-center justify-center gap-2 transition-colors">
+                                    className="w-full py-3 rounded-2xl bg-primary-soft hover:bg-primary-soft text-primary font-medium flex items-center justify-center gap-2 transition-colors">
                                     <Search size={18} />
                                     {t('modals.barcode.searchByName')}
                                 </button>
@@ -273,7 +273,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                 {product && calculatedMacros && (
                     <div className="p-4 space-y-4">
                         {/* Product Card */}
-                        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-4 border border-emerald-100">
+                        <div className="bg-success-soft rounded-card p-4 border border-success/20">
                             <div className="flex gap-3">
                                 {product.imageUrl && (
                                     <img
@@ -288,7 +288,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                     />
                                 )}
                                 <div className="flex-1 min-w-0">
-                                    <span className="inline-block px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-800 text-[10px] font-bold uppercase tracking-wider mb-1">
+                                    <span className="inline-block px-2 py-0.5 rounded-full bg-success/20 text-success text-[10px] font-bold uppercase tracking-wider mb-1">
                                         {t('modals.barcode.found')}
                                     </span>
                                     <h3 className="font-bold text-text-primary truncate">
@@ -320,7 +320,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                             ),
                                         )
                                     }
-                                    className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-center font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
+                                    className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary text-center font-bold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
                                 />
                             </div>
                             <div>
@@ -335,7 +335,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                                 e.target.value as 'g' | 'serving',
                                             )
                                         }
-                                        className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer">
+                                        className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary font-bold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none appearance-none cursor-pointer">
                                         <option value="g">
                                             {t('modals.foods.grams')}
                                         </option>
@@ -366,7 +366,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                                             e.target.value as FoodEntry['meal'],
                                         )
                                     }
-                                    className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary font-bold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none appearance-none cursor-pointer">
+                                    className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-text-primary font-bold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none appearance-none cursor-pointer">
                                     <option value="breakfast">
                                         {t('mealTypes.breakfast')}
                                     </option>
@@ -443,7 +443,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
                         <button
                             onClick={handleSave}
                             disabled={isSaving || amount <= 0}
-                            className="w-full bg-gradient-to-br from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:from-slate-300 disabled:to-slate-400 py-4 rounded-2xl text-white font-bold shadow-lg shadow-emerald-500/20 transition-all active:scale-[0.98] disabled:shadow-none flex items-center justify-center gap-2">
+                            className="w-full bg-success hover:opacity-90 disabled:opacity-50 py-4 rounded-card text-white font-bold shadow-float transition-all active:scale-[0.98] disabled:shadow-none flex items-center justify-center gap-2">
                             {isSaving ? (
                                 <>
                                     <Loader2 size={18} className="animate-spin" />
@@ -472,7 +472,7 @@ const MacroValue: React.FC<{
             {label}
         </p>
         <p
-            className={`text-lg font-bold ${highlight ? 'text-orange-600' : 'text-text-primary'}`}>
+            className={`text-lg font-bold ${highlight ? 'text-fat' : 'text-text-primary'}`}>
             {value}
             {suffix && (
                 <span className="text-xs font-normal text-text-tertiary">{suffix}</span>

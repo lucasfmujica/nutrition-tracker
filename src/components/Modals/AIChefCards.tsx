@@ -97,31 +97,31 @@ export const AIChefContextBanner: React.FC<ContextBannerProps> = ({
 
     return (
         <div className="mb-4">
-            <div className="flex items-center gap-2 px-3 py-2 bg-purple-50 dark:bg-purple-900/30 rounded-xl flex-wrap">
+            <div className="flex items-center gap-2 px-3 py-2 bg-oura-soft rounded-xl flex-wrap">
                 <button
                     onClick={() => setShowSelector(!showSelector)}
-                    className="flex items-center gap-1 text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors"
+                    className="flex items-center gap-1 text-oura hover:opacity-80 transition-colors"
                 >
                     <Clock size={14} />
-                    <span className="text-xs font-medium text-purple-700 dark:text-purple-300">
+                    <span className="text-xs font-medium text-oura">
                         {mealTimeLabels[mealTime]}
                     </span>
                     <ChevronDown size={12} className={`transition-transform ${showSelector ? 'rotate-180' : ''}`} />
                 </button>
                 {isTrainingDay && (
                     <>
-                        <span className="text-purple-300 dark:text-purple-600">•</span>
-                        <Dumbbell size={14} className="text-purple-600 dark:text-purple-400" />
-                        <span className="text-xs font-medium text-purple-700 dark:text-purple-300">
+                        <span className="text-oura dark:text-oura">•</span>
+                        <Dumbbell size={14} className="text-oura" />
+                        <span className="text-xs font-medium text-oura">
                             {t('aiChef.trainingDay')}
                         </span>
                     </>
                 )}
-                <span className="text-purple-300 dark:text-purple-600">•</span>
-                <span className="text-xs font-bold text-purple-700 dark:text-purple-300">
+                <span className="text-oura dark:text-oura">•</span>
+                <span className="text-xs font-bold text-oura">
                     {Math.round(mealBudgetCalories)} kcal
                 </span>
-                <span className="text-[10px] text-purple-400 dark:text-purple-500">
+                <span className="text-[10px] text-oura dark:text-oura">
                     ({Math.round(remainingCalories)} {dailyLabel})
                 </span>
             </div>
@@ -137,8 +137,8 @@ export const AIChefContextBanner: React.FC<ContextBannerProps> = ({
                             }}
                             className={`px-2 py-2 rounded-lg text-[10px] font-bold transition-all ${
                                 mealTime === option
-                                    ? 'bg-purple-600 text-white'
-                                    : 'bg-background dark:bg-surface-lighter text-text-tertiary hover:bg-purple-100 dark:hover:bg-purple-900/30'
+                                    ? 'bg-oura text-white'
+                                    : 'bg-background dark:bg-surface-lighter text-text-tertiary hover:bg-oura-soft'
                             }`}
                         >
                             {mealTimeLabels[option]}
@@ -172,17 +172,17 @@ export const AIChefSuggestionCard: React.FC<SuggestionCardProps> = ({
     const needsExpansion = suggestion.description && suggestion.description.length > 100;
 
     return (
-        <div className="group relative bg-surface border border-border hover:border-purple-200 dark:hover:border-purple-700 rounded-2xl p-4 transition-all hover:shadow-lg hover:shadow-purple-500/5">
+        <div className="group relative bg-surface border border-border hover:border-oura/30 rounded-card p-4 transition-all hover:shadow-card">
             <button
                 onClick={(e) => { e.stopPropagation(); onReject(); }}
-                className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full bg-surface-lighter text-text-tertiary hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-500 transition-colors z-10"
+                className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full bg-surface-lighter text-text-tertiary hover:bg-danger-soft hover:text-danger transition-colors z-10"
                 aria-label={t('aiChef.reject')}>
                 <X size={14} />
             </button>
 
             <button onClick={onViewRecipe} className="w-full text-left">
                 <div className="flex justify-between items-start mb-2 pr-8">
-                    <h4 className="font-bold text-text-primary group-hover:text-purple-700 dark:group-hover:text-purple-400 transition-colors">
+                    <h4 className="font-bold text-text-primary group-hover:text-oura dark:group-hover:text-oura transition-colors">
                         {suggestion.name}
                     </h4>
                 </div>
@@ -195,13 +195,13 @@ export const AIChefSuggestionCard: React.FC<SuggestionCardProps> = ({
                     <div className="px-2 py-1 bg-gray-900 dark:bg-gray-800 rounded-lg text-[10px] font-bold text-white">
                         {suggestion.macros.calories} kcal
                     </div>
-                    <div className="px-2 py-1 bg-green-50 dark:bg-green-900/30 rounded-lg text-[10px] font-bold text-green-700 dark:text-green-400">
+                    <div className="px-2 py-1 bg-success-soft rounded-lg text-[10px] font-bold text-success dark:text-success">
                         {suggestion.macros.protein}g P
                     </div>
-                    <div className="px-2 py-1 bg-amber-50 dark:bg-amber-900/30 rounded-lg text-[10px] font-bold text-amber-700 dark:text-amber-400">
+                    <div className="px-2 py-1 bg-warning-soft rounded-lg text-[10px] font-bold text-warning dark:text-warning">
                         {suggestion.macros.carbs}g C
                     </div>
-                    <div className="px-2 py-1 bg-orange-50 dark:bg-orange-900/30 rounded-lg text-[10px] font-bold text-orange-700 dark:text-orange-400">
+                    <div className="px-2 py-1 bg-fat-soft rounded-lg text-[10px] font-bold text-fat dark:text-fat">
                         {suggestion.macros.fat}g F
                     </div>
                 </div>
@@ -223,7 +223,7 @@ export const AIChefSuggestionCard: React.FC<SuggestionCardProps> = ({
             {needsExpansion && (
                 <button
                     onClick={() => setExpanded(!expanded)}
-                    className="flex items-center gap-1 mb-3 text-[10px] font-bold text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300"
+                    className="flex items-center gap-1 mb-3 text-[10px] font-bold text-oura hover:opacity-80"
                 >
                     {expanded ? <><ChevronUp size={12} />{t('aiChef.showLess')}</> : <><ChevronDown size={12} />{t('aiChef.showMore')}</>}
                 </button>
@@ -231,7 +231,7 @@ export const AIChefSuggestionCard: React.FC<SuggestionCardProps> = ({
 
             <button
                 onClick={onAdd}
-                className="w-full py-2.5 rounded-xl bg-background dark:bg-surface-lighter text-text-secondary font-bold text-xs group-hover:bg-purple-600 group-hover:text-white transition-all flex items-center justify-center gap-2">
+                className="w-full py-2.5 rounded-xl bg-background dark:bg-surface-lighter text-text-secondary font-bold text-xs group-hover:bg-oura group-hover:text-white transition-all flex items-center justify-center gap-2">
                 <Plus size={14} />
                 {t('modals.aiSuggestion.addToDiary')}
             </button>
@@ -264,7 +264,7 @@ export const AIChefRecipeDetail: React.FC<RecipeDetailProps> = ({
         <div className="space-y-4">
             <button
                 onClick={onBack}
-                className="flex items-center gap-1 text-sm font-bold text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors"
+                className="flex items-center gap-1 text-sm font-bold text-oura hover:opacity-80 transition-colors"
             >
                 <ArrowLeft size={16} />
                 {t('aiChef.recipe.back')}
@@ -277,9 +277,9 @@ export const AIChefRecipeDetail: React.FC<RecipeDetailProps> = ({
 
             <div className="flex gap-2 flex-wrap">
                 <div className="px-2 py-1 bg-gray-900 dark:bg-gray-800 rounded-lg text-[10px] font-bold text-white">{suggestion.macros.calories} kcal</div>
-                <div className="px-2 py-1 bg-green-50 dark:bg-green-900/30 rounded-lg text-[10px] font-bold text-green-700 dark:text-green-400">{suggestion.macros.protein}g P</div>
-                <div className="px-2 py-1 bg-amber-50 dark:bg-amber-900/30 rounded-lg text-[10px] font-bold text-amber-700 dark:text-amber-400">{suggestion.macros.carbs}g C</div>
-                <div className="px-2 py-1 bg-orange-50 dark:bg-orange-900/30 rounded-lg text-[10px] font-bold text-orange-700 dark:text-orange-400">{suggestion.macros.fat}g F</div>
+                <div className="px-2 py-1 bg-success-soft rounded-lg text-[10px] font-bold text-success dark:text-success">{suggestion.macros.protein}g P</div>
+                <div className="px-2 py-1 bg-warning-soft rounded-lg text-[10px] font-bold text-warning dark:text-warning">{suggestion.macros.carbs}g C</div>
+                <div className="px-2 py-1 bg-fat-soft rounded-lg text-[10px] font-bold text-fat dark:text-fat">{suggestion.macros.fat}g F</div>
             </div>
 
             <div>
@@ -298,21 +298,21 @@ export const AIChefRecipeDetail: React.FC<RecipeDetailProps> = ({
                 <h5 className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">{t('aiChef.recipe.instructions')}</h5>
                 {loading ? (
                     <div className="py-8 flex flex-col items-center justify-center">
-                        <Loader2 size={28} className="text-purple-600 animate-spin mb-3" />
+                        <Loader2 size={28} className="text-oura animate-spin mb-3" />
                         <p className="text-xs text-text-tertiary">{t('aiChef.recipe.loading')}</p>
                     </div>
                 ) : recipe ? (
                     <div className="space-y-2">
                         {recipe.steps.map((step, idx) => (
                             <div key={idx} className="flex gap-3 items-start px-3 py-2 bg-background dark:bg-surface-lighter rounded-lg">
-                                <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded-full text-[10px] font-bold">{idx + 1}</span>
+                                <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-oura-soft text-oura rounded-full text-[10px] font-bold">{idx + 1}</span>
                                 <p className="text-xs text-text-primary leading-relaxed">{step}</p>
                             </div>
                         ))}
                         {recipe.tips && (
-                            <div className="px-3 py-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                                <p className="text-[10px] font-bold text-amber-700 dark:text-amber-400 uppercase mb-1">{t('aiChef.recipe.tips')}</p>
-                                <p className="text-xs text-amber-800 dark:text-amber-300">{recipe.tips}</p>
+                            <div className="px-3 py-2 bg-warning-soft rounded-lg border border-warning/20">
+                                <p className="text-[10px] font-bold text-warning dark:text-warning uppercase mb-1">{t('aiChef.recipe.tips')}</p>
+                                <p className="text-xs text-warning">{recipe.tips}</p>
                             </div>
                         )}
                     </div>
@@ -321,7 +321,7 @@ export const AIChefRecipeDetail: React.FC<RecipeDetailProps> = ({
 
             <button
                 onClick={onAdd}
-                className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-bold text-sm hover:from-purple-700 hover:to-indigo-700 transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 bg-gradient-to-r from-oura to-oura text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all flex items-center justify-center gap-2"
             >
                 <Plus size={16} />
                 {t('modals.aiSuggestion.addToDiary')}

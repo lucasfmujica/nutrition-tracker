@@ -40,7 +40,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
     // Fallback gradient with initials
     return (
         <div
-            className={`${className} rounded-full bg-gradient-to-tr from-primary/80 to-cyan-400 flex items-center justify-center text-white font-bold shadow-sm ${textSize}`}>
+            className={`${className} rounded-full bg-gradient-to-tr from-primary to-accent-blue flex items-center justify-center text-white font-bold shadow-sm ${textSize}`}>
             {name ? name.charAt(0).toUpperCase() : '?'}
         </div>
     );

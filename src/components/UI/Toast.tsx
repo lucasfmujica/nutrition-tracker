@@ -21,18 +21,18 @@ const VARIANT_CONFIG: Record<
 > = {
     success: {
         Icon: CheckCircle2,
-        iconColor: 'text-emerald-500',
-        barColor: 'bg-emerald-500',
+        iconColor: 'text-success',
+        barColor: 'bg-success',
     },
     error: {
         Icon: AlertCircle,
-        iconColor: 'text-red-500',
-        barColor: 'bg-red-500',
+        iconColor: 'text-danger',
+        barColor: 'bg-danger',
     },
     info: {
         Icon: Info,
-        iconColor: 'text-blue-500',
-        barColor: 'bg-blue-500',
+        iconColor: 'text-primary',
+        barColor: 'bg-primary',
     },
 };
 

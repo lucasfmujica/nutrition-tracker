@@ -107,7 +107,7 @@ export const CaptionGenerator: React.FC<CaptionGeneratorProps> = ({
                 <button
                     onClick={handleGenerate}
                     disabled={isGenerating}
-                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 rounded-xl font-bold hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50">
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-oura to-primary text-white py-4 rounded-control font-bold hover:opacity-90 transition-all disabled:opacity-50">
                     {isGenerating ? (
                         <>
                             <Loader2 size={20} className="animate-spin" />

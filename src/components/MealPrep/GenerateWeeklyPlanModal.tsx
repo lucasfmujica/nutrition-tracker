@@ -90,7 +90,7 @@ export const GenerateWeeklyPlanModal: React.FC<GenerateWeeklyPlanModalProps> = (
                 )}
 
                 {/* Header */}
-                <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-6">
+                <div className="bg-oura px-6 py-6">
                     <div className="flex items-center gap-3">
                         <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
                             <Sparkles className="w-6 h-6 text-white" />
@@ -231,7 +231,7 @@ export const GenerateWeeklyPlanModal: React.FC<GenerateWeeklyPlanModalProps> = (
                         </button>
                         <button
                             onClick={onGenerate}
-                            className="flex-1 py-3 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-all flex items-center justify-center gap-2 shadow-lg">
+                            className="flex-1 py-3 px-4 bg-oura hover:opacity-90 text-white font-bold rounded-control transition-all flex items-center justify-center gap-2 shadow-float">
                             <Sparkles className="w-4 h-4" />
                             {error
                                 ? t('common.retry') || 'Retry'

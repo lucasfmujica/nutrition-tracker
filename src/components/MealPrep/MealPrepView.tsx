@@ -170,7 +170,7 @@ export const MealPrepView: React.FC<MealPrepViewProps> = ({ userId }) => {
                 <button
                     onClick={() => setShowGenerateModal(true)}
                     disabled={isGenerating}
-                    className="w-full mb-6 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-2xl font-bold shadow-lg hover:from-purple-700 hover:to-indigo-700 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]">
+                    className="w-full mb-6 py-4 bg-oura hover:opacity-90 text-white rounded-card font-bold shadow-float transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]">
                     <Sparkles className="w-5 h-5" />
                     {t('mealPrep.generateWeeklyPlan')}
                 </button>
