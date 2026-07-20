@@ -55,9 +55,9 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
     // Score color helper
     const getScoreColor = (score: number | null): string => {
         if (!score) return 'text-text-tertiary';
-        if (score >= 85) return 'text-green-600';
-        if (score >= 70) return 'text-yellow-600';
-        return 'text-red-600';
+        if (score >= 85) return 'text-success';
+        if (score >= 70) return 'text-warning';
+        return 'text-danger';
     };
 
     // Metric color helper
@@ -65,21 +65,21 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
         if (!value) return 'text-text-tertiary';
         if (type === 'hrv') {
             // Higher HRV is better
-            if (value >= 60) return 'text-green-600';
-            if (value >= 40) return 'text-yellow-600';
-            return 'text-red-600';
+            if (value >= 60) return 'text-success';
+            if (value >= 40) return 'text-warning';
+            return 'text-danger';
         } else {
             // Lower RHR is better
-            if (value <= 60) return 'text-green-600';
-            if (value <= 75) return 'text-yellow-600';
-            return 'text-red-600';
+            if (value <= 60) return 'text-success';
+            if (value <= 75) return 'text-warning';
+            return 'text-danger';
         }
     };
 
     return (
         <div className="bg-surface rounded-2xl p-4 md:p-6 border border-border shadow-sm">
             <h2 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
-                <span className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-xs">
+                <span className="w-8 h-8 rounded-control bg-oura-soft text-oura flex items-center justify-center text-xs">
                     📊
                 </span>
                 {t('oura.weeklyView.title')}
@@ -93,22 +93,22 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
                             <th className="text-left py-2 px-2 font-bold text-text-tertiary uppercase tracking-wider">
                                 {t('oura.weeklyView.date')}
                             </th>
-                            <th className="text-center py-2 px-2 font-bold text-purple-600 uppercase tracking-wider">
+                            <th className="text-center py-2 px-2 font-bold text-oura uppercase tracking-wider">
                                 {t('oura.metrics.readiness')}
                             </th>
-                            <th className="text-center py-2 px-2 font-bold text-blue-600 uppercase tracking-wider">
+                            <th className="text-center py-2 px-2 font-bold text-primary uppercase tracking-wider">
                                 {t('oura.metrics.sleep')}
                             </th>
-                            <th className="text-center py-2 px-2 font-bold text-green-600 uppercase tracking-wider">
+                            <th className="text-center py-2 px-2 font-bold text-success uppercase tracking-wider">
                                 {t('oura.metrics.activity')}
                             </th>
-                            <th className="text-center py-2 px-2 font-bold text-orange-600 uppercase tracking-wider">
+                            <th className="text-center py-2 px-2 font-bold text-fat uppercase tracking-wider">
                                 {t('oura.metrics.hrv')}
                             </th>
-                            <th className="text-center py-2 px-2 font-bold text-red-600 uppercase tracking-wider">
+                            <th className="text-center py-2 px-2 font-bold text-danger uppercase tracking-wider">
                                 {t('oura.metrics.restingHR')}
                             </th>
-                            <th className="text-center py-2 px-2 font-bold text-cyan-600 uppercase tracking-wider">
+                            <th className="text-center py-2 px-2 font-bold text-info uppercase tracking-wider">
                                 {t('oura.metrics.steps')}
                             </th>
                         </tr>
@@ -123,7 +123,7 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
                                 <tr
                                     key={date}
                                     className={`border-b border-border last:border-0 hover:bg-background transition-colors ${
-                                        isToday ? 'bg-purple-50/30' : ''
+                                        isToday ? 'bg-oura-soft' : ''
                                     }`}>
                                     <td className="py-3 px-2">
                                         <div className="flex items-center gap-2">
@@ -131,7 +131,7 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
                                                 {formatDateShort(date)}
                                             </span>
                                             {isToday && (
-                                                <span className="px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 text-[9px] font-bold">
+                                                <span className="px-1.5 py-0.5 rounded bg-oura-soft text-oura text-[9px] font-bold">
                                                     {t('common.today')}
                                                 </span>
                                             )}
@@ -157,7 +157,7 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
                                         className={`text-center py-3 px-2 font-bold ${getMetricColor(oura?.restingHr || null, 'rhr')}`}>
                                         {oura?.restingHr || '-'}
                                     </td>
-                                    <td className="text-center py-3 px-2 font-bold text-cyan-600">
+                                    <td className="text-center py-3 px-2 font-bold text-info">
                                         {steps ? steps.toLocaleString() : '-'}
                                     </td>
                                 </tr>
@@ -179,7 +179,7 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
                             key={date}
                             className={`p-4 rounded-xl border ${
                                 isToday
-                                    ? 'bg-purple-50 border-purple-200'
+                                    ? 'bg-oura-soft border-oura/30'
                                     : 'bg-background border-border'
                             }`}>
                             {/* Date Header */}
@@ -188,7 +188,7 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
                                     {formatDateShort(date)}
                                 </span>
                                 {isToday && (
-                                    <span className="px-2 py-0.5 rounded bg-purple-600 text-white text-[10px] font-bold">
+                                    <span className="px-2 py-0.5 rounded bg-oura text-white text-[10px] font-bold">
                                         {t('common.today')}
                                     </span>
                                 )}
@@ -198,7 +198,7 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
                             <div className="grid grid-cols-3 gap-2">
                                 {/* Readiness */}
                                 <div className="text-center">
-                                    <div className="text-[10px] text-purple-600 font-bold uppercase mb-1">
+                                    <div className="text-[10px] text-oura font-bold uppercase mb-1">
                                         {t('oura.metrics.readiness')}
                                     </div>
                                     <div
@@ -209,7 +209,7 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
 
                                 {/* Sleep */}
                                 <div className="text-center">
-                                    <div className="text-[10px] text-blue-600 font-bold uppercase mb-1">
+                                    <div className="text-[10px] text-primary font-bold uppercase mb-1">
                                         {t('oura.metrics.sleep')}
                                     </div>
                                     <div
@@ -220,7 +220,7 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
 
                                 {/* Activity */}
                                 <div className="text-center">
-                                    <div className="text-[10px] text-green-600 font-bold uppercase mb-1">
+                                    <div className="text-[10px] text-success font-bold uppercase mb-1">
                                         {t('oura.metrics.activity')}
                                     </div>
                                     <div
@@ -231,7 +231,7 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
 
                                 {/* HRV */}
                                 <div className="text-center">
-                                    <div className="text-[10px] text-orange-600 font-bold uppercase mb-1">
+                                    <div className="text-[10px] text-fat font-bold uppercase mb-1">
                                         {t('oura.metrics.hrv')}
                                     </div>
                                     <div
@@ -242,7 +242,7 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
 
                                 {/* RHR */}
                                 <div className="text-center">
-                                    <div className="text-[10px] text-red-600 font-bold uppercase mb-1">
+                                    <div className="text-[10px] text-danger font-bold uppercase mb-1">
                                         {t('oura.metrics.restingHR')}
                                     </div>
                                     <div
@@ -253,10 +253,10 @@ export const OuraWeeklyView: React.FC<OuraWeeklyViewProps> = ({
 
                                 {/* Steps */}
                                 <div className="text-center">
-                                    <div className="text-[10px] text-cyan-600 font-bold uppercase mb-1">
+                                    <div className="text-[10px] text-info font-bold uppercase mb-1">
                                         {t('oura.metrics.steps')}
                                     </div>
-                                    <div className="text-sm font-bold text-cyan-600">
+                                    <div className="text-sm font-bold text-info">
                                         {steps ? steps.toLocaleString() : '-'}
                                     </div>
                                 </div>

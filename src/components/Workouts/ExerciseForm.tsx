@@ -76,7 +76,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                             type="button"
                             onClick={handleQuickAdd}
                             disabled={disabled}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-bold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-soft hover:bg-primary/20 text-primary text-xs font-bold rounded-control transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             title={t('workouts.exercise.quickAdd')}>
                             <Copy className="w-3.5 h-3.5" />
                             {t('workouts.exercise.quickAdd')}
@@ -86,7 +86,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                         type="button"
                         onClick={handleAddExercise}
                         disabled={disabled}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-600 text-xs font-bold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-warning-soft hover:bg-warning/20 text-warning text-xs font-bold rounded-control transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                         <Plus className="w-3.5 h-3.5" />
                         {t('workouts.exercise.add')}
                     </button>
@@ -120,7 +120,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                     type="button"
                                     onClick={() => handleDeleteExercise(index)}
                                     disabled={disabled}
-                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-7 h-7 flex items-center justify-center rounded-control bg-danger-soft hover:bg-danger/20 text-danger transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                     title={t('common.delete')}
                                     aria-label={t('common.delete')}>
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -140,7 +140,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                     }
                                     disabled={disabled}
                                     placeholder="Ej: Press Banca, Sentadillas"
-                                    className="w-full bg-surface border border-border rounded-xl px-3 py-2.5 text-text-primary text-sm font-medium placeholder:text-text-tertiary focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full bg-surface border border-border rounded-control px-3 py-2.5 text-text-primary text-sm font-medium placeholder:text-text-tertiary focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 />
                             </div>
 
@@ -162,7 +162,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                         disabled={disabled}
                                         placeholder="4"
                                         min="1"
-                                        className="w-full bg-surface border border-border rounded-xl px-2 py-2 text-text-primary text-sm font-bold text-center focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-full bg-surface border border-border rounded-control px-2 py-2 text-text-primary text-sm font-bold text-center focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                     />
                                 </div>
 
@@ -183,7 +183,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                         disabled={disabled}
                                         placeholder="8"
                                         min="1"
-                                        className="w-full bg-surface border border-border rounded-xl px-2 py-2 text-text-primary text-sm font-bold text-center focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-full bg-surface border border-border rounded-control px-2 py-2 text-text-primary text-sm font-bold text-center focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                     />
                                 </div>
 
@@ -205,7 +205,7 @@ export const ExerciseForm: React.FC<ExerciseFormProps> = ({
                                         placeholder="80"
                                         min="0"
                                         step="0.5"
-                                        className="w-full bg-surface border border-border rounded-xl px-2 py-2 text-text-primary text-sm font-bold text-center focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-full bg-surface border border-border rounded-control px-2 py-2 text-text-primary text-sm font-bold text-center focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                     />
                                 </div>
                             </div>

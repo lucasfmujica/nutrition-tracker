@@ -68,7 +68,7 @@ export const OuraWeeklyChart: React.FC<OuraWeeklyChartProps> = ({ ouraLog }) => 
         <div className="bg-surface rounded-2xl p-4 md:p-6 border border-border shadow-sm space-y-4">
             <div>
                 <h2 className="text-sm font-bold text-text-primary flex items-center gap-2">
-                    <span className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                    <span className="w-8 h-8 rounded-control bg-oura-soft text-oura flex items-center justify-center text-xs">
                         📈
                     </span>
                     {t('oura.weeklyChart.title')}

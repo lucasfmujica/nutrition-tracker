@@ -145,11 +145,11 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
                     <div className="grid grid-cols-2 gap-2">
                         <div className="flex items-center gap-1.5">
                             <span className="text-xs">💍</span>
-                            <span className="text-xs text-blue-800">
+                            <span className="text-xs text-text-secondary">
                                 <strong>{t('workouts.effort.readiness')}</strong>{' '}
                                 {metrics.readiness}%
                                 {isOuraStale && (
-                                    <span className="text-orange-600">
+                                    <span className="text-warning">
                                         {' '}
                                         ({metrics.ouraDate})
                                     </span>
@@ -158,11 +158,11 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
                         </div>
                         <div className="flex items-center gap-1.5">
                             <span className="text-xs">😴</span>
-                            <span className="text-xs text-blue-800">
+                            <span className="text-xs text-text-secondary">
                                 <strong>{t('workouts.effort.sleep')}</strong>{' '}
                                 {metrics.sleepScore}%
                                 {isOuraStale && (
-                                    <span className="text-orange-600">
+                                    <span className="text-warning">
                                         {' '}
                                         ({metrics.ouraDate})
                                     </span>
@@ -171,14 +171,14 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
                         </div>
                         <div className="flex items-center gap-1.5">
                             <span className="text-xs">🏋️</span>
-                            <span className="text-xs text-blue-800">
+                            <span className="text-xs text-text-secondary">
                                 <strong>{t('workouts.effort.volumeRatio')}</strong>{' '}
                                 {metrics.volumeRatio}
                             </span>
                         </div>
                         <div className="flex items-center gap-1.5">
                             <span className="text-xs">⚖️</span>
-                            <span className="text-xs text-blue-800">
+                            <span className="text-xs text-text-secondary">
                                 <strong>{t('workouts.effort.trend')}</strong>{' '}
                                 {metrics.trend
                                     ? `${metrics.trend.toFixed(2)} kg/${t('weight.perWeek', 'sem')}`
@@ -186,7 +186,7 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
                             </span>
                         </div>
                     </div>
-                    <p className="text-[10px] text-blue-700 mt-2 italic">
+                    <p className="text-[10px] text-text-tertiary mt-2 italic">
                         {t('workouts.effort.insight.highReadiness')}{' '}
                         {t('workouts.effort.insight.lowReadiness')}
                     </p>
@@ -195,13 +195,13 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
 
             <div className="relative h-4 bg-surface-lighter rounded-full mb-4 w-full overflow-hidden">
                 <div className="absolute inset-0 flex opacity-20">
-                    <div className="w-1/3 bg-blue-500" />
-                    <div className="w-1/3 bg-green-500" />
-                    <div className="w-1/3 bg-orange-500" />
+                    <div className="w-1/3 bg-primary" />
+                    <div className="w-1/3 bg-success" />
+                    <div className="w-1/3 bg-fat" />
                 </div>
 
                 <div
-                    className={`absolute top-0 bottom-0 w-2 ${barColor} shadow-lg transition-all duration-500 ease-out rounded-full border border-white transform -translate-x-1/2`}
+                    className={`absolute top-0 bottom-0 w-2 ${barColor} shadow-lg transition-all duration-500 ease-out rounded-full border border-surface transform -translate-x-1/2`}
                     style={{ left: `${position}%` }}
                 />
             </div>
