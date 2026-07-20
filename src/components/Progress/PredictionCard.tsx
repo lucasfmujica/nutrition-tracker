@@ -40,9 +40,9 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
 
     const trendColor =
         trend === 'increasing'
-            ? 'text-orange-500 bg-orange-50'
+            ? 'text-fat bg-fat-soft'
             : trend === 'decreasing'
-              ? 'text-green-500 bg-green-50'
+              ? 'text-success bg-success-soft'
               : 'text-text-tertiary bg-background';
 
     const trendLabel =
@@ -77,18 +77,18 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({
             </div>
 
             {/* Predicted Value */}
-            <div className="bg-purple-50 rounded-xl p-4 mb-4">
-                <p className="text-xs text-purple-600 font-bold mb-1">Predicción</p>
-                <p className="text-3xl font-bold text-purple-600 mb-2">
+            <div className="bg-oura-soft rounded-xl p-4 mb-4">
+                <p className="text-xs text-oura font-bold mb-1">Predicción</p>
+                <p className="text-3xl font-bold text-oura mb-2">
                     {predictedValue.toFixed(1)} {unit}
                 </p>
                 <div className="flex items-center gap-2">
                     <span
                         className={`text-sm font-bold ${
                             change > 0
-                                ? 'text-orange-600'
+                                ? 'text-fat'
                                 : change < 0
-                                  ? 'text-green-600'
+                                  ? 'text-success'
                                   : 'text-text-secondary'
                         }`}>
                         {change > 0 ? '+' : ''}

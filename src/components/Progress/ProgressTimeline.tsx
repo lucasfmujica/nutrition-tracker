@@ -68,8 +68,8 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
         <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm">
             {/* Header */}
             <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                    <Calendar size={20} className="text-blue-500" />
+                <div className="w-10 h-10 rounded-xl bg-primary-soft flex items-center justify-center">
+                    <Calendar size={20} className="text-primary" />
                 </div>
                 <h3 className="font-bold text-lg">{t('progress.timeline.title')}</h3>
             </div>
@@ -83,7 +83,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                             onClick={() => scrollToMonth(month)}
                             className={`px-4 py-2 rounded-lg font-bold text-sm whitespace-nowrap transition-all ${
                                 activeMonth === month
-                                    ? 'bg-blue-500 text-white shadow-md'
+                                    ? 'bg-primary text-white shadow-md'
                                     : 'bg-surface-lighter text-text-secondary hover:bg-surface-lighter'
                             }`}>
                             {format(parseISO(`${month}-01`), 'MMM yyyy', {
@@ -117,8 +117,8 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                                         onClick={() => handlePhotoClick(photo)}
                                         className={`relative flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden transition-all duration-200 ${
                                             isSelected
-                                                ? 'ring-4 ring-blue-500 scale-105 shadow-lg'
-                                                : 'hover:ring-2 hover:ring-blue-300 shadow-sm'
+                                                ? 'ring-4 ring-primary scale-105 shadow-lg'
+                                                : 'hover:ring-2 hover:ring-primary/40 shadow-sm'
                                         }`}>
                                         <img
                                             src={
@@ -149,7 +149,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
 
             {/* Context Card */}
             {selectedPhoto && (
-                <div className="mt-5 bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-4 border border-blue-100">
+                <div className="mt-5 bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-4 border border-primary/20">
                     <div className="flex items-start justify-between mb-3">
                         <div>
                             <p className="text-sm text-text-tertiary font-medium">

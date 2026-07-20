@@ -132,7 +132,7 @@ export const CaptionGenerator: React.FC<CaptionGeneratorProps> = ({
                         <div className="flex gap-2">
                             <button
                                 onClick={() => setIsEditing(!isEditing)}
-                                className="text-xs text-purple-600 font-bold hover:text-purple-700">
+                                className="text-xs text-oura font-bold hover:opacity-80">
                                 {isEditing
                                     ? t('captionGenerator.save')
                                     : t('captionGenerator.edit')}
@@ -154,7 +154,7 @@ export const CaptionGenerator: React.FC<CaptionGeneratorProps> = ({
                         <textarea
                             value={caption}
                             onChange={(e) => handleCaptionChange(e.target.value)}
-                            className="w-full p-3 border border-border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            className="w-full p-3 border border-border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-oura"
                             rows={3}
                             placeholder={t('captionGenerator.placeholder')}
                         />
@@ -171,7 +171,7 @@ export const CaptionGenerator: React.FC<CaptionGeneratorProps> = ({
                                 {hashtags.map((tag, index) => (
                                     <span
                                         key={index}
-                                        className="px-2 py-1 bg-purple-50 text-purple-600 rounded-lg text-xs font-bold">
+                                        className="px-2 py-1 bg-oura-soft text-oura rounded-lg text-xs font-bold">
                                         {tag}
                                     </span>
                                 ))}

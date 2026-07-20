@@ -41,7 +41,7 @@ const CopyRow: React.FC<{ label: string; value: string; mask?: boolean }> = ({
                 className="p-1.5 hover:bg-surface-lighter rounded-lg transition-colors"
                 title={label}>
                 {copied ? (
-                    <Check className="w-4 h-4 text-green-600" />
+                    <Check className="w-4 h-4 text-success" />
                 ) : (
                     <Copy className="w-4 h-4 text-text-tertiary" />
                 )}
@@ -153,7 +153,7 @@ export const AppleHealthSetup: React.FC<AppleHealthSetupProps> = ({
             <div className="p-4 space-y-3">
                 {/* Last sync status */}
                 <div className="flex items-center gap-2 text-xs p-3 rounded-xl bg-background border border-border">
-                    <Activity className="w-4 h-4 text-rose-500 shrink-0" />
+                    <Activity className="w-4 h-4 text-danger shrink-0" />
                     {lastSync ? (
                         <span className="text-text-secondary">
                             {t('settings.appleHealth.lastSync')}{' '}
@@ -204,7 +204,7 @@ export const AppleHealthSetup: React.FC<AppleHealthSetupProps> = ({
                         <ol className="space-y-2 text-xs text-text-secondary list-none">
                             {steps.map((step, i) => (
                                 <li key={i} className="flex gap-2">
-                                    <span className="w-5 h-5 shrink-0 rounded-full bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold text-[10px]">
+                                    <span className="w-5 h-5 shrink-0 rounded-full bg-danger-soft text-danger flex items-center justify-center font-bold text-[10px]">
                                         {i + 1}
                                     </span>
                                     <span>{step}</span>
@@ -219,7 +219,7 @@ export const AppleHealthSetup: React.FC<AppleHealthSetupProps> = ({
                                 {exampleBody}
                             </pre>
                         </div>
-                        <p className="text-xs text-text-tertiary bg-blue-50 dark:bg-blue-900/30 p-3 rounded-xl">
+                        <p className="text-xs text-text-tertiary bg-primary-soft p-3 rounded-xl">
                             {t('settings.appleHealth.dedupeNote')}
                         </p>
                     </div>

@@ -65,7 +65,7 @@ export const CorrelationChart: React.FC<CorrelationChartProps> = ({
                 <p className="text-sm font-bold text-text-primary">
                     {xLabel}: {data.x.toFixed(1)} kg
                 </p>
-                <p className="text-sm font-bold text-purple-600">
+                <p className="text-sm font-bold text-oura">
                     {yLabel}: {data.y.toFixed(1)}
                 </p>
             </div>
@@ -129,9 +129,9 @@ export const CorrelationChart: React.FC<CorrelationChartProps> = ({
                                 size: 16,
                                 className:
                                     regression.slope > 0.1
-                                        ? 'text-orange-500'
+                                        ? 'text-fat'
                                         : regression.slope < -0.1
-                                          ? 'text-green-500'
+                                          ? 'text-success'
                                           : 'text-text-tertiary',
                             })}
                             <span className="text-sm font-bold text-text-primary">

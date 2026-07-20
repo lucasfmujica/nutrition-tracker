@@ -38,10 +38,10 @@ export const WorkoutDetailModal: React.FC<WorkoutDetailModalProps> = ({
                 <div className="p-6 pb-4 border-b border-border flex items-start justify-between bg-background/50">
                     <div>
                         <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                            <div className="w-8 h-8 rounded-full bg-oura-soft flex items-center justify-center text-oura">
                                 <Dumbbell size={16} />
                             </div>
-                            <span className="text-xs font-bold text-purple-600 px-2 py-0.5 rounded-full bg-purple-100/50 uppercase tracking-wider">
+                            <span className="text-xs font-bold text-oura px-2 py-0.5 rounded-full bg-oura-soft uppercase tracking-wider">
                                 {workout.type || 'Workout'}
                             </span>
                         </div>
@@ -70,7 +70,7 @@ export const WorkoutDetailModal: React.FC<WorkoutDetailModalProps> = ({
                         </span>
                     </div>
                     <div className="flex-1 p-4 flex flex-col items-center justify-center text-center">
-                        <div className="text-orange-400 mb-1">
+                        <div className="text-fat mb-1">
                             <Flame size={16} />
                         </div>
                         <span className="text-lg font-bold text-text-primary">
@@ -81,7 +81,7 @@ export const WorkoutDetailModal: React.FC<WorkoutDetailModalProps> = ({
                         </span>
                     </div>
                     <div className="flex-1 p-4 flex flex-col items-center justify-center text-center">
-                        <div className="text-blue-400 mb-1">
+                        <div className="text-primary mb-1">
                             <Calendar size={16} />
                         </div>
                         <span className="text-sm font-bold text-text-primary">

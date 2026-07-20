@@ -38,12 +38,12 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
     return (
         <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm relative overflow-hidden">
             {/* Premium decorative gradient */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-50 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-warning-soft rounded-full blur-3xl -mr-16 -mt-16 opacity-50 pointer-events-none"></div>
 
             {/* Header */}
             <div className="flex items-center gap-3 mb-5 relative z-10">
-                <div className="w-10 h-10 rounded-xl bg-amber-100/50 flex items-center justify-center border border-amber-100">
-                    <Trophy size={20} className="text-amber-500" />
+                <div className="w-10 h-10 rounded-xl bg-warning-soft flex items-center justify-center border border-warning/20">
+                    <Trophy size={20} className="text-warning" />
                 </div>
                 <div>
                     <h2 className="font-bold text-text-primary text-lg">

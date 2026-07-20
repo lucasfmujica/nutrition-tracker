@@ -109,7 +109,7 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
             {/* Transformation Card - Exportable */}
             <div
                 ref={cardRef}
-                className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 border-2 border-purple-200">
+                className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-6 border-2 border-oura/20">
                 {/* Header */}
                 <div className="text-center mb-4">
                     <h2 className="text-2xl font-bold text-text-primary mb-1">
@@ -156,7 +156,7 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                                 className="w-full h-full object-cover"
                             />
                         </div>
-                        <div className="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                        <div className="absolute top-2 left-2 bg-oura text-white px-3 py-1 rounded-full text-xs font-bold">
                             {t('progress.comparison.after')}
                         </div>
                         {afterPhoto.weight && (
@@ -174,7 +174,7 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                         <div className="bg-surface rounded-xl p-3 text-center">
                             <TrendingDown
                                 size={20}
-                                className="text-green-600 mx-auto mb-1"
+                                className="text-success mx-auto mb-1"
                             />
                             <p className="text-lg font-bold text-text-primary">
                                 {Math.abs(stats.weightChange).toFixed(1)} kg
@@ -189,7 +189,7 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                     <div className="bg-surface rounded-xl p-3 text-center">
                         <Calendar
                             size={20}
-                            className="text-purple-600 mx-auto mb-1"
+                            className="text-oura mx-auto mb-1"
                         />
                         <p className="text-lg font-bold text-text-primary">
                             {Math.floor(stats.daysDuration / 7)}
@@ -204,7 +204,7 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                         <div className="bg-surface rounded-xl p-3 text-center">
                             <Ruler
                                 size={20}
-                                className="text-blue-600 mx-auto mb-1"
+                                className="text-primary mx-auto mb-1"
                             />
                             <p className="text-lg font-bold text-text-primary">
                                 {Math.abs(measurements.waistChange).toFixed(1)} cm
@@ -236,7 +236,7 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                 <button
                     onClick={handleExport}
                     disabled={isExporting}
-                    className="flex-1 flex items-center justify-center gap-2 bg-surface border-2 border-purple-200 text-purple-600 py-3 rounded-xl font-bold hover:bg-purple-50 transition-colors disabled:opacity-50">
+                    className="flex-1 flex items-center justify-center gap-2 bg-surface border-2 border-oura/20 text-oura py-3 rounded-xl font-bold hover:bg-oura-soft transition-colors disabled:opacity-50">
                     <Download size={18} />
                     {isExporting
                         ? t('progress.share.exporting')
@@ -244,7 +244,7 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                 </button>
                 <button
                     onClick={onShare || handleWebShare}
-                    className="flex-1 flex items-center justify-center gap-2 bg-purple-600 text-white py-3 rounded-xl font-bold hover:bg-purple-700 transition-colors">
+                    className="flex-1 flex items-center justify-center gap-2 bg-oura text-white py-3 rounded-xl font-bold hover:bg-oura transition-colors">
                     <Share2 size={18} />
                     {t('progress.share.social')}
                 </button>

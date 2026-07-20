@@ -114,8 +114,8 @@ export const PhotoSelectionModal: React.FC<PhotoSelectionModalProps> = ({
                                         onClick={() => handleSelect(photo)}
                                         className={`relative aspect-square rounded-xl overflow-hidden transition-all ${
                                             isSelected
-                                                ? 'ring-4 ring-purple-500 scale-95'
-                                                : 'hover:ring-2 hover:ring-purple-300'
+                                                ? 'ring-4 ring-oura scale-95'
+                                                : 'hover:ring-2 hover:ring-oura/40'
                                         }`}>
                                         <img
                                             src={
@@ -127,8 +127,8 @@ export const PhotoSelectionModal: React.FC<PhotoSelectionModalProps> = ({
 
                                         {/* Selected Indicator */}
                                         {isSelected && (
-                                            <div className="absolute inset-0 bg-purple-500/20 flex items-center justify-center">
-                                                <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                                            <div className="absolute inset-0 bg-oura/20 flex items-center justify-center">
+                                                <div className="w-12 h-12 bg-oura rounded-full flex items-center justify-center shadow-lg">
                                                     <Check
                                                         size={24}
                                                         className="text-white"
@@ -178,7 +178,7 @@ const FilterButton: React.FC<{
         onClick={onClick}
         className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
             isActive
-                ? 'bg-purple-100 text-purple-700 border-2 border-purple-500'
+                ? 'bg-oura-soft text-oura border-2 border-oura'
                 : 'bg-surface text-text-secondary border-2 border-border hover:border-border'
         }`}>
         {label}

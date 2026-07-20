@@ -99,7 +99,7 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
     if (isLoading) {
         return (
             <div className="flex items-center justify-center py-12">
-                <Loader2 size={24} className="animate-spin text-purple-500" />
+                <Loader2 size={24} className="animate-spin text-oura" />
             </div>
         );
     }
@@ -107,8 +107,8 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
     if (measurements.length === 0 || weightData.length === 0) {
         return (
             <div className="bg-surface rounded-2xl p-8 text-center border border-border">
-                <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <BarChart3 size={28} className="text-purple-400" />
+                <div className="w-16 h-16 bg-oura-soft rounded-full flex items-center justify-center mx-auto mb-4">
+                    <BarChart3 size={28} className="text-oura" />
                 </div>
                 <h3 className="font-bold text-text-primary mb-1">
                     {t('progress.analytics.noDataTitle')}
@@ -128,10 +128,10 @@ export const ProgressAnalyticsView: React.FC<ProgressAnalyticsViewProps> = ({
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="bg-gradient-to-br from-purple-50 dark:from-purple-900/30 to-blue-50 dark:to-blue-900/30 rounded-2xl p-6 border border-purple-100 dark:border-purple-800">
+            <div className="bg-gradient-to-br from-purple-50 dark:from-purple-900/30 to-blue-50 dark:to-blue-900/30 rounded-2xl p-6 border border-oura/20">
                 <div className="flex items-start gap-3">
                     <div className="p-2 bg-surface rounded-lg shadow-sm">
-                        <TrendingUp size={24} className="text-purple-600" />
+                        <TrendingUp size={24} className="text-oura" />
                     </div>
                     <div>
                         <h2 className="font-bold text-text-primary mb-1">

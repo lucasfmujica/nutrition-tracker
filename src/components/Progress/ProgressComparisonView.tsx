@@ -66,7 +66,7 @@ export const ProgressComparisonView: React.FC<ProgressComparisonViewProps> = ({
     if (isLoading) {
         return (
             <div className="flex items-center justify-center py-12">
-                <Loader2 size={24} className="animate-spin text-purple-500" />
+                <Loader2 size={24} className="animate-spin text-oura" />
             </div>
         );
     }
@@ -74,7 +74,7 @@ export const ProgressComparisonView: React.FC<ProgressComparisonViewProps> = ({
     // Error state
     if (error) {
         return (
-            <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
+            <div className="bg-danger-soft text-danger px-4 py-3 rounded-xl text-sm flex items-center gap-2">
                 <AlertCircle size={16} />
                 {error}
             </div>
@@ -85,8 +85,8 @@ export const ProgressComparisonView: React.FC<ProgressComparisonViewProps> = ({
     if (photos.length === 0) {
         return (
             <div className="bg-surface rounded-2xl p-8 text-center border border-border">
-                <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <ImageIcon size={28} className="text-purple-400" />
+                <div className="w-16 h-16 bg-oura-soft rounded-full flex items-center justify-center mx-auto mb-4">
+                    <ImageIcon size={28} className="text-oura" />
                 </div>
                 <h3 className="font-bold text-text-primary mb-1">
                     Sin fotos para comparar
@@ -102,8 +102,8 @@ export const ProgressComparisonView: React.FC<ProgressComparisonViewProps> = ({
     if (photos.length < 2) {
         return (
             <div className="bg-surface rounded-2xl p-8 text-center border border-border">
-                <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <ImageIcon size={28} className="text-purple-400" />
+                <div className="w-16 h-16 bg-oura-soft rounded-full flex items-center justify-center mx-auto mb-4">
+                    <ImageIcon size={28} className="text-oura" />
                 </div>
                 <h3 className="font-bold text-text-primary mb-1">
                     Necesitás más fotos

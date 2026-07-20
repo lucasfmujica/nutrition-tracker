@@ -110,23 +110,23 @@ export const OuraTokenSetup: React.FC<OuraTokenSetupProps> = ({
                 <div className="p-4 space-y-4">
                     {/* Current Token Status / Warning */}
                     {hasToken ? (
-                        <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-100 rounded-xl">
-                            <Check className="w-4 h-4 text-green-600" />
-                            <span className="text-sm text-green-700 font-medium">
+                        <div className="flex items-center gap-2 p-3 bg-success-soft border border-success/20 rounded-xl">
+                            <Check className="w-4 h-4 text-success" />
+                            <span className="text-sm text-success font-medium">
                                 {t('oura.setup.configured')}
                             </span>
-                            <span className="text-xs text-green-600 font-mono ml-auto">
+                            <span className="text-xs text-success font-mono ml-auto">
                                 {maskedToken}
                             </span>
                         </div>
                     ) : (
-                        <div className="flex items-start gap-3 p-3 bg-amber-50 border border-amber-100 rounded-xl">
-                            <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5" />
+                        <div className="flex items-start gap-3 p-3 bg-warning-soft border border-warning/20 rounded-xl">
+                            <AlertCircle className="w-4 h-4 text-warning mt-0.5" />
                             <div>
-                                <p className="text-sm text-amber-800 font-bold">
+                                <p className="text-sm text-warning font-bold">
                                     {t('oura.setup.notConfigured')}
                                 </p>
-                                <p className="text-xs text-amber-700/80">
+                                <p className="text-xs text-text-secondary">
                                     {t('oura.setup.notConfiguredDesc')}
                                 </p>
                             </div>

@@ -111,7 +111,7 @@ export const AddFriendModal: React.FC<AddFriendModalProps> = ({
                                 disabled={!userFriendCode}
                                 className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
                                     copied
-                                        ? 'bg-green-500 text-white'
+                                        ? 'bg-success text-white'
                                         : 'bg-surface-lighter hover:bg-surface-lighter text-text-secondary'
                                 }`}>
                                 {copied ? <Check size={20} /> : <Copy size={20} />}
@@ -155,14 +155,14 @@ export const AddFriendModal: React.FC<AddFriendModalProps> = ({
 
                         {/* Error Message */}
                         {error && (
-                            <p className="text-sm text-red-500 mt-2 text-center">
+                            <p className="text-sm text-danger mt-2 text-center">
                                 {error}
                             </p>
                         )}
 
                         {/* Success Message */}
                         {success && (
-                            <p className="text-sm text-green-600 mt-2 text-center">
+                            <p className="text-sm text-success mt-2 text-center">
                                 {t('social.addFriend.sent')}
                             </p>
                         )}

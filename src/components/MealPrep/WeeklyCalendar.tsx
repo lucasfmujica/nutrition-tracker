@@ -180,8 +180,8 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ userId }) => {
 
             {/* Error Message */}
             {error && (
-                <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
-                    <p className="text-sm text-red-600 font-semibold">{error}</p>
+                <div className="p-4 rounded-xl bg-danger/10 border border-danger/20">
+                    <p className="text-sm text-danger font-semibold">{error}</p>
                 </div>
             )}
 
@@ -279,7 +279,7 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ userId }) => {
                                                                 key={meal.id}
                                                                 className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
                                                                     meal.is_completed
-                                                                        ? 'bg-green-500/5 border-green-500/20'
+                                                                        ? 'bg-success/5 border-success/20'
                                                                         : 'bg-background border-border'
                                                                 }`}
                                                             >
@@ -290,7 +290,7 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ userId }) => {
                                                                     }
                                                                     className={`flex-shrink-0 w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${
                                                                         meal.is_completed
-                                                                            ? 'bg-green-500 border-green-500'
+                                                                            ? 'bg-success border-success'
                                                                             : 'border-border hover:border-accent'
                                                                     }`}
                                                                 >
@@ -333,20 +333,20 @@ export const WeeklyCalendar: React.FC<WeeklyCalendarProps> = ({ userId }) => {
                                                                             meal.planned_items,
                                                                         )
                                                                     }
-                                                                    className="flex-shrink-0 p-2 rounded-lg hover:bg-amber-500/10 transition-colors"
+                                                                    className="flex-shrink-0 p-2 rounded-lg hover:bg-warning/10 transition-colors"
                                                                     aria-label="Reject meal"
                                                                     title={t('mealPrep.rejectMeal')}
                                                                 >
-                                                                    <ThumbsDown className="w-4 h-4 text-amber-500" />
+                                                                    <ThumbsDown className="w-4 h-4 text-warning" />
                                                                 </button>
 
                                                                 {/* Delete Button */}
                                                                 <button
                                                                     onClick={() => handleDeleteMeal(meal.id)}
-                                                                    className="flex-shrink-0 p-2 rounded-lg hover:bg-red-500/10 transition-colors"
+                                                                    className="flex-shrink-0 p-2 rounded-lg hover:bg-danger/10 transition-colors"
                                                                     aria-label="Delete meal"
                                                                 >
-                                                                    <Trash2 className="w-4 h-4 text-red-500" />
+                                                                    <Trash2 className="w-4 h-4 text-danger" />
                                                                 </button>
                                                             </div>
                                                         ))}

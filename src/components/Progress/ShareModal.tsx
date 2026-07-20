@@ -94,8 +94,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({
 
                     {/* Info */}
                     {!caption && (
-                        <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                            <p className="text-sm text-blue-700">
+                        <div className="bg-primary-soft rounded-xl p-4 border border-primary/20">
+                            <p className="text-sm text-primary">
                                 <span
                                     dangerouslySetInnerHTML={{
                                         __html: t('progress.share.tip'),

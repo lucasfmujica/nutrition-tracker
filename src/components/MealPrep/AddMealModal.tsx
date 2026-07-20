@@ -93,7 +93,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
                     {onOpenAIChef && (
                         <button
                             onClick={handleAIChef}
-                            className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-bold text-sm hover:from-purple-700 hover:to-indigo-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20">
+                            className="w-full py-3 px-4 bg-oura text-white rounded-control font-bold text-sm hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-float">
                             <Sparkles size={18} />
                             {t('mealPrep.addMeal.useAIChef')}
                         </button>

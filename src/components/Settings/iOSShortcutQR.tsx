@@ -76,7 +76,7 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                         className="p-1.5 hover:bg-surface-lighter rounded-lg transition-colors"
                         title="Copiar ID completo">
                         {copiedId ? (
-                            <Check className="w-4 h-4 text-green-600" />
+                            <Check className="w-4 h-4 text-success" />
                         ) : (
                             <Copy className="w-4 h-4 text-text-tertiary" />
                         )}
@@ -107,7 +107,7 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                             href={weightShortcutUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-100 transition-all active:scale-95 shadow-sm">
+                            className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary-soft text-primary rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary-soft transition-all active:scale-95 shadow-sm">
                             <Smartphone className="w-3 h-3" />
                             {t('settings.iosShortcut.install') || 'Instalar'}
                         </a>
@@ -135,7 +135,7 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                             href={stepsShortcutUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-3 py-2 bg-purple-50 text-purple-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-purple-100 transition-all active:scale-95 shadow-sm">
+                            className="inline-flex items-center gap-1.5 px-3 py-2 bg-oura-soft text-oura rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-oura-soft transition-all active:scale-95 shadow-sm">
                             <Smartphone className="w-3 h-3" />
                             {t('settings.iosShortcut.install') || 'Instalar'}
                         </a>
@@ -143,13 +143,13 @@ export const IOSShortcutQR: React.FC<iOSShortcutQRProps> = ({
                 </div>
 
                 {/* Quick Instructions */}
-                <div className="bg-blue-50 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-800 rounded-xl p-3 text-center sm:text-left space-y-1">
-                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                <div className="bg-primary-soft border border-primary/20 rounded-xl p-3 text-center sm:text-left space-y-1">
+                    <p className="text-sm text-text-secondary">
                         <strong>{t('common.howToUse') || 'Cómo usar'}:</strong>{' '}
                         {t('settings.iosShortcut.instructionsShort') ||
                             'Tocá "Instalar" si estás en tu iPhone, o escaneá el QR desde otro dispositivo.'}
                     </p>
-                    <p className="text-xs text-blue-600 dark:text-blue-300">
+                    <p className="text-xs text-primary">
                         {t('settings.iosShortcut.copyIdHint') ||
                             'Copiá tu ID antes de instalar. El shortcut te lo pedirá al configurarse.'}
                     </p>

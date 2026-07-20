@@ -111,7 +111,7 @@ export const GenerateWeeklyPlanModal: React.FC<GenerateWeeklyPlanModalProps> = (
                     {/* Loading State */}
                     {isGenerating && (
                         <div className="text-center py-8">
-                            <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
+                            <Loader2 className="w-12 h-12 text-oura animate-spin mx-auto mb-4" />
                             <p className="text-text-primary font-bold mb-2">
                                 {t('mealPrep.generating') || 'Generating plan...'}
                             </p>
@@ -123,16 +123,16 @@ export const GenerateWeeklyPlanModal: React.FC<GenerateWeeklyPlanModalProps> = (
 
                     {/* Error State */}
                     {error && !isGenerating && (
-                        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4 mb-4">
+                        <div className="bg-danger-soft border border-danger/20 rounded-2xl p-4 mb-4">
                             <div className="flex items-start gap-3">
-                                <div className="w-10 h-10 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <X className="w-5 h-5 text-red-600 dark:text-red-400" />
+                                <div className="w-10 h-10 bg-danger-soft rounded-full flex items-center justify-center flex-shrink-0">
+                                    <X className="w-5 h-5 text-danger" />
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-sm font-bold text-red-900 dark:text-red-100 mb-1">
+                                    <p className="text-sm font-bold text-danger mb-1">
                                         {t('errors.generatePlan') || 'Error generating plan'}
                                     </p>
-                                    <p className="text-xs text-red-700 dark:text-red-300">
+                                    <p className="text-xs text-danger">
                                         {error}
                                     </p>
                                 </div>
@@ -206,8 +206,8 @@ export const GenerateWeeklyPlanModal: React.FC<GenerateWeeklyPlanModalProps> = (
                             )}
 
                             {/* Info Banner */}
-                            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-4">
-                                <p className="text-xs text-blue-900 dark:text-blue-100 leading-relaxed">
+                            <div className="bg-primary-soft border border-primary/20 rounded-2xl p-4">
+                                <p className="text-xs text-text-secondary leading-relaxed">
                                     <span className="font-bold">
                                         {t('mealPrep.estimatedTime') || 'Estimated time:'}
                                     </span>{' '}

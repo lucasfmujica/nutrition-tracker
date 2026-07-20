@@ -35,18 +35,18 @@ export const NotificationSettings: React.FC = () => {
     };
 
     const toggleClass =
-        "w-12 h-6 appearance-none bg-muted rounded-full relative cursor-pointer transition-colors checked:bg-blue-600 before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-surface before:top-0.5 before:left-0.5 before:transition-transform checked:before:translate-x-6 shrink-0";
+        "w-12 h-6 appearance-none bg-muted rounded-full relative cursor-pointer transition-colors checked:bg-primary before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-surface before:top-0.5 before:left-0.5 before:transition-transform checked:before:translate-x-6 shrink-0";
     const inputClass =
-        'bg-background border border-border rounded-xl px-3 py-2 text-sm font-bold text-text-primary focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all';
+        'bg-background border border-border rounded-xl px-3 py-2 text-sm font-bold text-text-primary focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all';
 
     return (
         <div className="bg-surface rounded-3xl p-6 border border-border shadow-sm relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-50 dark:bg-indigo-900/30 rounded-full -mr-12 -mt-12 opacity-50" />
+            <div className="absolute top-0 right-0 w-24 h-24 bg-oura-soft rounded-full -mr-12 -mt-12 opacity-50" />
 
             <div className="relative z-10">
                 <div className="flex items-center justify-between mb-2">
                     <div>
-                        <h2 className="text-xs font-black text-indigo-500 dark:text-indigo-400 mb-1 uppercase tracking-[0.2em] flex items-center gap-2">
+                        <h2 className="text-xs font-black text-oura dark:text-oura mb-1 uppercase tracking-[0.2em] flex items-center gap-2">
                             🔔 {t('config.notifications.title')}
                         </h2>
                         <p className="text-sm text-text-tertiary max-w-md">
@@ -69,7 +69,7 @@ export const NotificationSettings: React.FC = () => {
 
                 {/* Unsupported browser */}
                 {!isSupported && (
-                    <div className="mt-4 text-xs text-text-secondary bg-amber-50 dark:bg-amber-900/30 p-3 rounded-lg flex items-start gap-2">
+                    <div className="mt-4 text-xs text-text-secondary bg-warning-soft p-3 rounded-lg flex items-start gap-2">
                         <span className="shrink-0">⚠️</span>
                         <span>{t('config.notifications.unsupported')}</span>
                     </div>
@@ -77,7 +77,7 @@ export const NotificationSettings: React.FC = () => {
 
                 {/* Permission denied */}
                 {isSupported && permission === 'denied' && (
-                    <div className="mt-4 text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 p-3 rounded-lg flex items-start gap-2">
+                    <div className="mt-4 text-xs text-danger bg-danger-soft p-3 rounded-lg flex items-start gap-2">
                         <span className="shrink-0">🚫</span>
                         <span>{t('config.notifications.denied')}</span>
                     </div>

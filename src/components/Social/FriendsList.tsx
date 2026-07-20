@@ -25,8 +25,8 @@ export const FriendsList: React.FC<FriendsListProps> = ({
             {/* Header */}
             <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-cyan-50 flex items-center justify-center border border-cyan-100">
-                        <Users size={20} className="text-cyan-500" />
+                    <div className="w-10 h-10 rounded-xl bg-info-soft flex items-center justify-center border border-info/20">
+                        <Users size={20} className="text-info" />
                     </div>
                     <div>
                         <h2 className="font-bold text-text-primary text-lg">

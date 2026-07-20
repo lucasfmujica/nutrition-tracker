@@ -150,10 +150,10 @@ export const BodyMeasurementAnalytics: React.FC<BodyMeasurementAnalyticsProps> =
             </div>
 
             {/* Info Footer */}
-            <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+            <div className="bg-primary-soft rounded-xl p-4 border border-primary/20">
                 <div className="flex items-start gap-2">
-                    <AlertCircle size={16} className="text-blue-600 mt-0.5 flex-shrink-0" />
-                    <div className="text-xs text-blue-700">
+                    <AlertCircle size={16} className="text-primary mt-0.5 flex-shrink-0" />
+                    <div className="text-xs text-primary">
                         <p className="font-bold mb-1">
                             {t('progress.analytics.aboutPredictions')}
                         </p>

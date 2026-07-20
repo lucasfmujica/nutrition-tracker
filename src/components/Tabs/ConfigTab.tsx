@@ -138,7 +138,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
             {/* Profile Card */}
             <div className="bg-surface rounded-3xl p-6 border border-border shadow-sm">
                 <div className="flex items-center gap-4 mb-6">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-blue-500/20">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary to-accent-blue flex items-center justify-center text-white font-bold text-2xl shadow-glow">
                         {profile.avatar && profile.avatar.length <= 4
                             ? profile.avatar
                             : profile.name?.substring(0, 1) || 'L'}
@@ -187,7 +187,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                 }
                                 className={`w-full aspect-square rounded-xl flex items-center justify-center text-2xl transition-all hover:scale-110 ${
                                     profile.avatar === emoji
-                                        ? 'bg-blue-100 dark:bg-blue-900/50 ring-2 ring-blue-500 shadow-lg'
+                                        ? 'bg-primary-soft ring-2 ring-primary shadow-lg'
                                         : 'bg-background hover:bg-surface-lighter'
                                 }`}>
                                 {emoji}
@@ -210,7 +210,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                             onClick={() => updateUnitSystem('metric')}
                             className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${
                                 unitSystem === 'metric'
-                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                    ? 'bg-primary text-white shadow-glow'
                                     : 'bg-background text-text-tertiary hover:bg-surface-lighter'
                             }`}>
                             {t('config.preferences.metric')}
@@ -219,7 +219,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                             onClick={() => updateUnitSystem('imperial')}
                             className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${
                                 unitSystem === 'imperial'
-                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                    ? 'bg-primary text-white shadow-glow'
                                     : 'bg-background text-text-tertiary hover:bg-surface-lighter'
                             }`}>
                             {t('config.preferences.imperial')}
@@ -234,7 +234,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                             onClick={() => i18n.changeLanguage('es')}
                             className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${
                                 i18n.language === 'es'
-                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                    ? 'bg-primary text-white shadow-glow'
                                     : 'bg-background text-text-tertiary hover:bg-surface-lighter'
                             }`}>
                             {t('config.preferences.spanish')}
@@ -243,7 +243,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                             onClick={() => i18n.changeLanguage('en')}
                             className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${
                                 i18n.language === 'en'
-                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                    ? 'bg-primary text-white shadow-glow'
                                     : 'bg-background text-text-tertiary hover:bg-surface-lighter'
                             }`}>
                             {t('config.preferences.english')}
@@ -264,7 +264,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                 onClick={() => setTheme('light')}
                                 className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${
                                     theme === 'light'
-                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                        ? 'bg-primary text-white shadow-glow'
                                         : 'bg-background text-text-tertiary hover:bg-surface-lighter'
                                 }`}>
                                 {t('config.preferences.light')}
@@ -273,7 +273,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                 onClick={() => setTheme('dark')}
                                 className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${
                                     theme === 'dark'
-                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                        ? 'bg-primary text-white shadow-glow'
                                         : 'bg-background text-text-tertiary hover:bg-surface-lighter'
                                 }`}>
                                 {t('config.preferences.dark')}
@@ -282,7 +282,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                 onClick={() => setTheme('system')}
                                 className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${
                                     theme === 'system'
-                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                        ? 'bg-primary text-white shadow-glow'
                                         : 'bg-background text-text-tertiary hover:bg-surface-lighter'
                                 }`}>
                                 {t('config.preferences.system')}
@@ -310,7 +310,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                             )
                         }
                         placeholder={t('config.custom_image_placeholder')}
-                        className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-sm text-text-primary focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                        className="w-full bg-background border border-border rounded-2xl px-4 py-3 text-sm text-text-primary focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                     />
                     <p className="text-[10px] text-text-tertiary mt-2 px-1">
                         {t('config.custom_image_help')}
@@ -334,7 +334,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     customTargets,
                                 )
                             }
-                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-bold text-text-primary focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-bold text-text-primary focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                             placeholder={t('config.name_placeholder')}
                         />
                     </div>
@@ -363,7 +363,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     customTargets,
                                 )
                             }
-                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-bold text-text-primary focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-bold text-text-primary focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                         />
                     </div>
                     <div>
@@ -389,7 +389,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     customTargets,
                                 )
                             }
-                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-bold text-text-primary focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-bold text-text-primary focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                         />
                     </div>
                     <div>
@@ -408,7 +408,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     customTargets,
                                 )
                             }
-                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-bold text-text-primary focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-bold text-text-primary focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                         />
                     </div>
                     <div>
@@ -432,7 +432,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     e.currentTarget.blur();
                                 }
                             }}
-                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-bold text-text-primary focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-bold text-text-primary focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                         />
                     </div>
                     <div>
@@ -451,21 +451,21 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     customTargets,
                                 )
                             }
-                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-bold text-text-primary focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-bold text-text-primary focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                         />
                     </div>
                 </div>
             </div>
 
             {/* Auto-Calculate Section */}
-            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950 dark:to-indigo-950 rounded-3xl p-6 border border-purple-100 dark:border-purple-800 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-purple-200/30 dark:bg-purple-800/30 rounded-full -mr-16 -mt-16" />
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-200/30 dark:bg-indigo-800/30 rounded-full -ml-12 -mb-12" />
+            <div className="bg-oura-soft rounded-card p-6 border border-oura/20 shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-oura/10 rounded-full -mr-16 -mt-16" />
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-oura/10 rounded-full -ml-12 -mb-12" />
 
                 <div className="relative z-10">
                     <div className="flex items-center justify-between mb-6">
                         <div>
-                            <h2 className="text-xs font-black text-purple-600 dark:text-purple-400 mb-1 uppercase tracking-[0.2em] flex items-center gap-2">
+                            <h2 className="text-xs font-black text-oura mb-1 uppercase tracking-[0.2em] flex items-center gap-2">
                                 🧮 {t('config.autoCalculate.title')}
                             </h2>
                             <p className="text-xs text-text-secondary">
@@ -492,7 +492,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                         customTargets,
                                     )
                                 }
-                                className="w-full bg-background border border-purple-200 dark:border-purple-700 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all">
+                                className="w-full bg-background border border-oura/20 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-oura focus:ring-4 focus:ring-oura/10 outline-none transition-all">
                                 <option value="male">
                                     {t('config.options.gender.male')}
                                 </option>
@@ -531,7 +531,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                         customTargets,
                                     )
                                 }
-                                className="w-full bg-background border border-purple-200 dark:border-purple-700 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all"
+                                className="w-full bg-background border border-oura/20 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-oura focus:ring-4 focus:ring-oura/10 outline-none transition-all"
                             />
                         </div>
 
@@ -553,7 +553,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                         customTargets,
                                     )
                                 }
-                                className="w-full bg-background border border-purple-200 dark:border-purple-700 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all">
+                                className="w-full bg-background border border-oura/20 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-oura focus:ring-4 focus:ring-oura/10 outline-none transition-all">
                                 <option value="cut">
                                     {t('config.options.goal.cut')}
                                 </option>
@@ -586,7 +586,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                         customTargets,
                                     )
                                 }
-                                className="w-full bg-background border border-purple-200 dark:border-purple-700 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none transition-all">
+                                className="w-full bg-background border border-oura/20 rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:border-oura focus:ring-4 focus:ring-oura/10 outline-none transition-all">
                                 <option value="sedentary">
                                     {t('config.options.activityLevel.sedentary')}
                                 </option>
@@ -609,7 +609,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                     <button
                         onClick={handleAutoRecalculate}
                         disabled={isRecalculating}
-                        className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white py-4 rounded-xl font-bold text-sm shadow-lg shadow-purple-500/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                        className="w-full bg-oura hover:opacity-90 text-white py-4 rounded-control font-bold text-sm shadow-float active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                         {isRecalculating ? (
                             <>
                                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -620,9 +620,9 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                         )}
                     </button>
 
-                    <div className="mt-4 p-3 bg-surface/60 border border-purple-200 dark:border-purple-800 rounded-xl">
-                        <div className="mt-4 p-3 bg-surface/60 border border-purple-200 dark:border-purple-800 rounded-xl">
-                            <p className="text-xs text-purple-900 dark:text-purple-300 font-medium leading-relaxed">
+                    <div className="mt-4 p-3 bg-surface/60 border border-oura/20 rounded-xl">
+                        <div className="mt-4 p-3 bg-surface/60 border border-oura/20 rounded-xl">
+                            <p className="text-xs text-text-secondary font-medium leading-relaxed">
                                 {t('config.autoCalculate.explanation')}
                             </p>
                         </div>
@@ -649,11 +649,11 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     calories: parseInt(e.target.value) || 0,
                                 })
                             }
-                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-black text-text-primary focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-black text-text-primary focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
                         />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black text-text-tertiary uppercase tracking-widest mb-2 px-1 text-green-600 dark:text-green-400">
+                        <label className="block text-[10px] font-black text-text-tertiary uppercase tracking-widest mb-2 px-1 text-success">
                             {t('config.targets.protein')}
                         </label>
                         <input
@@ -665,11 +665,11 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     protein: parseInt(e.target.value) || 0,
                                 })
                             }
-                            className="w-full bg-green-50/30 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-2xl px-4 py-3.5 text-lg font-black text-text-primary focus:border-green-500 outline-none transition-all"
+                            className="w-full bg-success-soft border border-success/20 rounded-control px-4 py-3.5 text-lg font-black text-text-primary focus:border-success outline-none transition-all"
                         />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black text-text-tertiary uppercase tracking-widest mb-2 px-1 text-yellow-600 dark:text-yellow-400">
+                        <label className="block text-[10px] font-black text-text-tertiary uppercase tracking-widest mb-2 px-1 text-warning dark:text-warning">
                             {t('config.targets.carbs')}
                         </label>
                         <input
@@ -681,11 +681,11 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     carbs: parseInt(e.target.value) || 0,
                                 })
                             }
-                            className="w-full bg-yellow-50/30 dark:bg-yellow-900/20 border border-yellow-100 dark:border-yellow-800 rounded-2xl px-4 py-3.5 text-lg font-black text-text-primary focus:border-yellow-500 outline-none transition-all"
+                            className="w-full bg-warning-soft border border-warning/20 rounded-control px-4 py-3.5 text-lg font-black text-text-primary focus:border-warning outline-none transition-all"
                         />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black text-text-tertiary uppercase tracking-widest mb-2 px-1 text-red-600 dark:text-red-400">
+                        <label className="block text-[10px] font-black text-text-tertiary uppercase tracking-widest mb-2 px-1 text-danger">
                             {t('config.targets.fat')}
                         </label>
                         <input
@@ -697,7 +697,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     fat: parseInt(e.target.value) || 0,
                                 })
                             }
-                            className="w-full bg-red-50/30 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-2xl px-4 py-3.5 text-lg font-black text-text-primary focus:border-red-500 outline-none transition-all"
+                            className="w-full bg-danger-soft border border-danger/20 rounded-control px-4 py-3.5 text-lg font-black text-text-primary focus:border-danger outline-none transition-all"
                         />
                     </div>
                     <div>
@@ -713,7 +713,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     fiber: parseInt(e.target.value) || 0,
                                 })
                             }
-                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-black text-text-primary focus:border-blue-500 outline-none transition-all"
+                            className="w-full bg-background border border-border rounded-2xl px-4 py-3.5 text-lg font-black text-text-primary focus:border-primary outline-none transition-all"
                         />
                     </div>
                 </div>
@@ -721,7 +721,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
 
             {/* Training Day Bonus */}
             <div className="bg-surface rounded-3xl p-6 border border-border shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 dark:bg-amber-900/30 rounded-full -mr-12 -mt-12 opacity-50" />
+                <div className="absolute top-0 right-0 w-24 h-24 bg-warning-soft rounded-full -mr-12 -mt-12 opacity-50" />
                 <h2 className="text-xs font-black text-text-tertiary mb-6 uppercase tracking-[0.2em] flex items-center gap-2">
                     {t('config.trainingBonus.title')}
                 </h2>
@@ -740,7 +740,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                         parseInt(e.target.value) || 0,
                                 })
                             }
-                            className="w-full bg-amber-50/30 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 rounded-2xl px-4 py-3.5 text-lg font-black text-text-primary focus:border-amber-500 outline-none transition-all"
+                            className="w-full bg-warning-soft border border-warning/20 rounded-control px-4 py-3.5 text-lg font-black text-text-primary focus:border-warning outline-none transition-all"
                         />
                     </div>
                     <div>
@@ -756,11 +756,11 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     trainingDayCarbs: parseInt(e.target.value) || 0,
                                 })
                             }
-                            className="w-full bg-amber-50/30 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 rounded-2xl px-4 py-3.5 text-lg font-black text-text-primary focus:border-amber-500 outline-none transition-all"
+                            className="w-full bg-warning-soft border border-warning/20 rounded-control px-4 py-3.5 text-lg font-black text-text-primary focus:border-warning outline-none transition-all"
                         />
                     </div>
                 </div>
-                <p className="text-xs text-amber-600 dark:text-amber-400 mt-4 font-bold bg-amber-50 dark:bg-amber-900/30 inline-block px-3 py-1 rounded-full border border-amber-100 dark:border-amber-800">
+                <p className="text-xs text-warning mt-4 font-bold bg-warning-soft inline-block px-3 py-1 rounded-full border border-warning/20">
                     {t('config.trainingBonus.summary', {
                         calories:
                             customTargets.calories +
@@ -775,10 +775,10 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
 
             {/* Smart Hydration Setting */}
             <div className="bg-surface rounded-3xl p-6 border border-border shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 dark:bg-blue-900/30 rounded-full -mr-12 -mt-12 opacity-50" />
+                <div className="absolute top-0 right-0 w-24 h-24 bg-primary-soft rounded-full -mr-12 -mt-12 opacity-50" />
                 <div className="relative z-10 flex items-center justify-between">
                     <div>
-                        <h2 className="text-xs font-black text-blue-400 mb-1 uppercase tracking-[0.2em] flex items-center gap-2">
+                        <h2 className="text-xs font-black text-primary mb-1 uppercase tracking-[0.2em] flex items-center gap-2">
                             💧 {t('config.smartHydration.title')}
                         </h2>
                         <p className="text-sm text-text-tertiary max-w-md">
@@ -802,7 +802,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                             }
                             className="sr-only peer"
                         />
-                        <div className="w-11 h-6 bg-surface-lighter peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <div className="w-11 h-6 bg-surface-lighter peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
                 </div>
             </div>
@@ -833,7 +833,7 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
             {profile.hasOuraRing && (
                 <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
                     <h2 className="text-sm font-bold mb-2 flex items-center gap-2">
-                        <span className="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                        <span className="w-8 h-8 rounded-lg bg-oura-soft text-oura flex items-center justify-center">
                             👟
                         </span>
                         {t('config.stepsTracking.title')}
@@ -864,19 +864,19 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                                     customTargets,
                                 )
                             }
-                            className="w-12 h-6 appearance-none bg-muted rounded-full relative cursor-pointer transition-colors checked:bg-purple-600 before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-surface before:top-0.5 before:left-0.5 before:transition-transform checked:before:translate-x-6"
+                            className="w-12 h-6 appearance-none bg-muted rounded-full relative cursor-pointer transition-colors checked:bg-oura before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-surface before:top-0.5 before:left-0.5 before:transition-transform checked:before:translate-x-6"
                         />
                     </label>
 
                     {!profile.stepsAutoSync && (
-                        <div className="text-xs text-text-secondary bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg flex items-start gap-2">
-                            <span className="text-blue-600 dark:text-blue-400 shrink-0">ℹ️</span>
+                        <div className="text-xs text-text-secondary bg-primary-soft p-3 rounded-lg flex items-start gap-2">
+                            <span className="text-primary shrink-0">ℹ️</span>
                             <span>{t('config.stepsTracking.manualMode')}</span>
                         </div>
                     )}
 
                     {profile.stepsAutoSync && (
-                        <div className="text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 p-3 rounded-lg flex items-start gap-2">
+                        <div className="text-xs text-success bg-success-soft p-3 rounded-lg flex items-start gap-2">
                             <span className="shrink-0">✅</span>
                             <span>{t('config.stepsTracking.autoMode')}</span>
                         </div>
@@ -901,19 +901,19 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
             {userId && <AppleHealthSetup userId={userId} />}
 
             {/* Sync Status */}
-            <div className="bg-blue-50/50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 border-dashed rounded-2xl p-4 flex items-center justify-between">
-                <p className="text-xs text-blue-600 dark:text-blue-400 font-bold">{t('config.sync')}</p>
+            <div className="bg-primary-soft border border-primary/20 border-dashed rounded-2xl p-4 flex items-center justify-between">
+                <p className="text-xs text-primary font-bold">{t('config.sync')}</p>
                 <div className="flex gap-1">
                     <div
-                        className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce"
+                        className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce"
                         style={{ animationDelay: '0ms' }}
                     />
                     <div
-                        className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce"
+                        className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce"
                         style={{ animationDelay: '150ms' }}
                     />
                     <div
-                        className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce"
+                        className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce"
                         style={{ animationDelay: '300ms' }}
                     />
                 </div>
@@ -930,24 +930,24 @@ export const ConfigTab: React.FC<ConfigTabProps> = ({
                 <div className="grid grid-cols-3 gap-3">
                     <button
                         onClick={exportForClaude}
-                        className="bg-cyan-50 dark:bg-cyan-900/30 hover:bg-cyan-100 dark:hover:bg-cyan-800/40 text-cyan-700 dark:text-cyan-400 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors">
+                        className="bg-info-soft hover:bg-info/20 text-info py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors">
                         🤖 {t('config.export.claude')}
                     </button>
                     <button
                         onClick={exportForNutritionist}
-                        className="bg-pink-50 dark:bg-pink-900/30 hover:bg-pink-100 dark:hover:bg-pink-800/40 text-pink-700 dark:text-pink-400 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors">
+                        className="bg-danger-soft hover:bg-danger/20 text-danger py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors">
                         🩺 {t('config.export.nutritionist')}
                     </button>
                     <button
                         onClick={exportForBiometrics}
-                        className="bg-teal-50 dark:bg-teal-900/30 hover:bg-teal-100 dark:hover:bg-teal-800/40 text-teal-700 dark:text-teal-400 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors">
+                        className="bg-success-soft hover:bg-success/20 text-success py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors">
                         📊 {t('config.export.biometrics')}
                     </button>
                 </div>
                 <div className="grid grid-cols-2 gap-3 mt-3">
                     <button
                         onClick={exportBackup}
-                        className="bg-amber-50 dark:bg-amber-900/30 hover:bg-amber-100 dark:hover:bg-amber-800/40 text-amber-700 dark:text-amber-400 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors">
+                        className="bg-warning-soft hover:bg-warning/20 text-warning py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors">
                         📤 {t('config.export.backup')}
                     </button>
                     <label className="bg-background hover:bg-surface-lighter text-text-secondary py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-colors">

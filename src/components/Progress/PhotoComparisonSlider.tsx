@@ -101,7 +101,7 @@ export const PhotoComparisonSlider: React.FC<PhotoComparisonSliderProps> = ({
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-lg flex items-center gap-2">
-                    <Camera size={20} className="text-purple-500" />
+                    <Camera size={20} className="text-oura" />
                     {t('progress.comparison.transformation')}
                 </h3>
                 {onShare && (
@@ -178,26 +178,26 @@ export const PhotoComparisonSlider: React.FC<PhotoComparisonSliderProps> = ({
 
             {/* Stats Summary */}
             <div className="grid grid-cols-2 gap-3 mt-4">
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-3 border border-green-100">
-                    <p className="text-xs text-green-600 font-medium">
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-3 border border-success/20">
+                    <p className="text-xs text-success font-medium">
                         {t('progress.comparison.weightChange')}
                     </p>
                     {hasWeightData ? (
-                        <p className="text-2xl font-bold text-green-700">
+                        <p className="text-2xl font-bold text-success">
                             {weightDelta > 0 ? '+' : ''}
                             {weightDelta.toFixed(1)} kg
                         </p>
                     ) : (
-                        <p className="text-sm text-green-600">
+                        <p className="text-sm text-success">
                             {t('progress.comparison.noData')}
                         </p>
                     )}
                 </div>
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-3 border border-blue-100">
-                    <p className="text-xs text-blue-600 font-medium">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-3 border border-primary/20">
+                    <p className="text-xs text-primary font-medium">
                         {t('progress.comparison.time')}
                     </p>
-                    <p className="text-2xl font-bold text-blue-700">
+                    <p className="text-2xl font-bold text-primary">
                         {daysDiff} {t('progress.comparison.days')}
                     </p>
                 </div>

@@ -23,49 +23,49 @@ export const BadgeActivity: React.FC<BadgeActivityProps> = ({
                 return {
                     icon: Flame,
                     gradient: 'from-orange-400 to-red-500',
-                    shadow: 'shadow-orange-200',
+                    shadow: 'shadow-float',
                     title: t('social.badges.streakTitle'),
                     subtitle: t('social.badges.streakSubtitle', {
                         count: metadata.days,
                     }),
-                    textColor: 'text-orange-900',
-                    borderColor: 'border-orange-100',
-                    bg: 'bg-orange-50/50',
+                    textColor: 'text-fat',
+                    borderColor: 'border-fat/20',
+                    bg: 'bg-fat-soft',
                 };
             case 'goal_reached':
                 return {
                     icon: Trophy,
                     gradient: 'from-yellow-400 to-amber-500',
-                    shadow: 'shadow-amber-200',
+                    shadow: 'shadow-float',
                     title: t('social.badges.goalTitle'),
                     subtitle: metadata.goalType || t('social.badges.goalSubtitle'),
-                    textColor: 'text-amber-900',
-                    borderColor: 'border-amber-100',
-                    bg: 'bg-amber-50/50',
+                    textColor: 'text-warning',
+                    borderColor: 'border-warning/20',
+                    bg: 'bg-warning-soft',
                 };
             case 'weight_milestone':
                 return {
                     icon: Medal,
                     gradient: 'from-blue-400 to-indigo-500',
-                    shadow: 'shadow-blue-200',
+                    shadow: 'shadow-float',
                     title: t('social.badges.milestoneTitle'),
                     subtitle: t('social.badges.milestoneSubtitle', {
                         weight: metadata.milestone,
                     }),
-                    textColor: 'text-blue-900',
-                    borderColor: 'border-blue-100',
-                    bg: 'bg-blue-50/50',
+                    textColor: 'text-primary',
+                    borderColor: 'border-primary/20',
+                    bg: 'bg-primary-soft',
                 };
             default:
                 return {
                     icon: Star,
                     gradient: 'from-purple-400 to-pink-500',
-                    shadow: 'shadow-purple-200',
+                    shadow: 'shadow-float',
                     title: t('social.badges.achievementTitle'),
                     subtitle: t('social.badges.achievementSubtitle'),
-                    textColor: 'text-purple-900',
-                    borderColor: 'border-purple-100',
-                    bg: 'bg-purple-50/50',
+                    textColor: 'text-oura',
+                    borderColor: 'border-oura/20',
+                    bg: 'bg-oura-soft',
                 };
         }
     };
@@ -131,12 +131,12 @@ export const BadgeActivity: React.FC<BadgeActivityProps> = ({
                         }}
                         className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 shadow-sm border ${
                             hasReacted
-                                ? 'bg-surface text-orange-500 border-orange-100 ring-2 ring-orange-50'
-                                : 'bg-surface/80 hover:bg-surface text-text-tertiary border-white/50 hover:text-orange-500'
+                                ? 'bg-surface text-fat border-fat/20 ring-2 ring-fat/10'
+                                : 'bg-surface/80 hover:bg-surface text-text-tertiary border-white/50 hover:text-fat'
                         }`}>
                         <Flame
                             size={12}
-                            className={hasReacted ? 'fill-orange-500' : ''}
+                            className={hasReacted ? 'fill-fat text-fat' : ''}
                         />
                         {reactionCount > 0 && <span>{reactionCount}</span>}
                     </button>

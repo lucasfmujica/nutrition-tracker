@@ -128,7 +128,7 @@ export const StreaksVisualizer: React.FC<StreaksVisualizerProps> = ({ streakData
             {/* Header */}
             <div className="mb-4">
                 <h3 className="text-lg font-black text-text-primary mb-1 flex items-center gap-2">
-                    <Flame className="w-5 h-5 text-orange-500" />
+                    <Flame className="w-5 h-5 text-fat" />
                     {t('progress.analytics.streaks.title')}
                 </h3>
                 <p className="text-sm text-text-tertiary">
@@ -163,7 +163,7 @@ export const StreaksVisualizer: React.FC<StreaksVisualizerProps> = ({ streakData
             <div className="grid grid-cols-2 gap-4 mb-6">
                 {/* Longest Streak */}
                 <div className="bg-background rounded-xl p-4 text-center">
-                    <Trophy className="w-5 h-5 text-yellow-500 mx-auto mb-2" />
+                    <Trophy className="w-5 h-5 text-warning mx-auto mb-2" />
                     <p className="text-2xl font-black text-text-primary">{longestStreak}</p>
                     <p className="text-xs text-text-tertiary font-semibold mt-1">
                         {t('progress.analytics.streaks.longestStreak')}
@@ -172,7 +172,7 @@ export const StreaksVisualizer: React.FC<StreaksVisualizerProps> = ({ streakData
 
                 {/* Days Tracked */}
                 <div className="bg-background rounded-xl p-4 text-center">
-                    <Calendar className="w-5 h-5 text-blue-500 mx-auto mb-2" />
+                    <Calendar className="w-5 h-5 text-primary mx-auto mb-2" />
                     <p className="text-2xl font-black text-text-primary">{streakDates.length}</p>
                     <p className="text-xs text-text-tertiary font-semibold mt-1">
                         {t('progress.analytics.streaks.daysInStreak')}

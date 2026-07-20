@@ -14,11 +14,11 @@ export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ entry, metric })
 
     const getRankDisplay = (rank: number) => {
         if (rank === 1)
-            return { emoji: '🥇', bg: 'bg-amber-50', text: 'text-amber-600' };
+            return { emoji: '🥇', bg: 'bg-warning-soft', text: 'text-warning' };
         if (rank === 2)
             return { emoji: '🥈', bg: 'bg-surface-lighter', text: 'text-text-tertiary' };
         if (rank === 3)
-            return { emoji: '🥉', bg: 'bg-orange-50', text: 'text-orange-500' };
+            return { emoji: '🥉', bg: 'bg-fat-soft', text: 'text-fat' };
         return { emoji: `${rank}`, bg: 'bg-background', text: 'text-text-tertiary' };
     };
 
@@ -85,15 +85,15 @@ export const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ entry, metric })
                 className={`text-right font-black ${
                     metric === 'weight'
                         ? entry.value < 0
-                            ? 'text-green-600'
+                            ? 'text-success'
                             : entry.value > 0
-                              ? 'text-red-500'
+                              ? 'text-danger'
                               : 'text-text-tertiary'
                         : metric === 'deficit'
                           ? entry.value > 0
-                              ? 'text-green-600' // Déficit positivo (comió menos)
+                              ? 'text-success' // Déficit positivo (comió menos)
                               : entry.value < 0
-                                ? 'text-red-500' // Superávit (comió más)
+                                ? 'text-danger' // Superávit (comió más)
                                 : 'text-text-tertiary'
                           : 'text-text-secondary'
                 }`}>

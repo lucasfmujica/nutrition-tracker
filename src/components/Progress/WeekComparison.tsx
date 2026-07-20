@@ -70,8 +70,8 @@ const MetricRow: React.FC<{
     const changeColor = isNeutral
         ? 'text-text-tertiary'
         : isGood
-        ? 'text-green-600 dark:text-green-400'
-        : 'text-red-600 dark:text-red-400';
+        ? 'text-success'
+        : 'text-danger';
 
     const changeIcon = isNeutral ? (
         <Minus className="w-4 h-4" />
@@ -197,9 +197,9 @@ export const WeekComparison: React.FC<WeekComparisonProps> = ({ comparison }) =>
                             <span
                                 className={`text-sm font-bold ${
                                     current.score > previous.score
-                                        ? 'text-green-600 dark:text-green-400'
+                                        ? 'text-success'
                                         : current.score < previous.score
-                                        ? 'text-red-600 dark:text-red-400'
+                                        ? 'text-danger'
                                         : 'text-text-tertiary'
                                 }`}>
                                 {current.score > previous.score ? '↑' : current.score < previous.score ? '↓' : '→'}

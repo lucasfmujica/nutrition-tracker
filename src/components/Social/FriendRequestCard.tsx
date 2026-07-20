@@ -58,7 +58,7 @@ export const FriendRequestCard: React.FC<FriendRequestCardProps> = ({
             <div className="flex items-center gap-2">
                 <button
                     onClick={() => onReject(request.id)}
-                    className="w-9 h-9 rounded-full bg-surface-lighter hover:bg-red-50 text-text-tertiary hover:text-red-500 flex items-center justify-center transition-all active:scale-95">
+                    className="w-9 h-9 rounded-full bg-surface-lighter hover:bg-danger-soft text-text-tertiary hover:text-danger flex items-center justify-center transition-all active:scale-95">
                     <X size={18} />
                 </button>
                 <button

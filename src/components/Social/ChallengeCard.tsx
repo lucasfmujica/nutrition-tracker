@@ -60,12 +60,12 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
                     </p>
                 </div>
                 {challenge.isFinished ? (
-                    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 flex-shrink-0">
+                    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-warning-soft text-warning flex-shrink-0">
                         <Trophy size={12} />
                         {t('social.challenges.finished')}
                     </span>
                 ) : (
-                    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 flex-shrink-0">
+                    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full bg-success-soft dark:bg-success/15 text-success dark:text-success flex-shrink-0">
                         <Calendar size={12} />
                         {t('social.challenges.daysLeft', {
                             count: challenge.daysRemaining,
@@ -76,8 +76,8 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
 
             {/* Winner banner (finished) */}
             {winner && (
-                <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl px-3 py-2">
-                    <Crown size={16} className="text-amber-500 flex-shrink-0" />
+                <div className="flex items-center gap-2 bg-warning-soft dark:bg-warning/10 border border-warning/20 rounded-xl px-3 py-2">
+                    <Crown size={16} className="text-warning flex-shrink-0" />
                     <span className="text-sm font-bold text-text-primary truncate">
                         {t('social.challenges.winner', { name: winner.name })}
                     </span>

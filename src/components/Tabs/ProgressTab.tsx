@@ -102,7 +102,7 @@ const TabButton: React.FC<{
         disabled={disabled}
         className={`flex-none px-4 flex items-center justify-center gap-2 py-3 rounded-lg font-bold text-sm transition-all whitespace-nowrap ${
             isActive
-                ? 'bg-surface text-purple-600 shadow-sm'
+                ? 'bg-surface text-oura shadow-sm'
                 : disabled
                   ? 'text-text-tertiary cursor-not-allowed'
                   : 'text-text-tertiary hover:text-text-secondary'
@@ -114,8 +114,8 @@ const TabButton: React.FC<{
 
 const ComingSoonView: React.FC<{ feature: string }> = ({ feature }) => (
     <div className="bg-surface rounded-2xl p-12 text-center border border-border">
-        <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <TrendingUp size={28} className="text-purple-400" />
+        <div className="w-16 h-16 bg-oura-soft rounded-full flex items-center justify-center mx-auto mb-4">
+            <TrendingUp size={28} className="text-oura" />
         </div>
         <h3 className="font-bold text-text-primary mb-2">{feature}</h3>
         <p className="text-sm text-text-tertiary">Próximamente disponible</p>

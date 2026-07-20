@@ -84,7 +84,7 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
             {/* Add Button */}
             <button
                 onClick={() => setShowForm(true)}
-                className="w-full py-4 bg-gradient-to-br from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 transition-all active:scale-[0.98]">
+                className="w-full py-4 bg-oura hover:opacity-90 text-white font-bold rounded-card flex items-center justify-center gap-2 shadow-float transition-all active:scale-[0.98]">
                 <Ruler size={20} />
                 {t('progress.measurements.newMeasurement')}
             </button>
@@ -182,7 +182,7 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
                             <button
                                 onClick={handleSave}
                                 disabled={isSaving}
-                                className="w-full py-4 bg-purple-600 hover:bg-purple-700 disabled:bg-surface-lighter text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors">
+                                className="w-full py-4 bg-oura hover:bg-oura disabled:bg-surface-lighter text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors">
                                 {isSaving ? (
                                     <>
                                         <Loader2
@@ -202,7 +202,7 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
 
             {/* Error State */}
             {error && (
-                <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
+                <div className="bg-danger-soft text-danger px-4 py-3 rounded-xl text-sm flex items-center gap-2">
                     <AlertCircle size={16} />
                     {error}
                 </div>
@@ -211,15 +211,15 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
             {/* Loading State */}
             {isLoading && (
                 <div className="flex items-center justify-center py-12">
-                    <Loader2 size={24} className="animate-spin text-purple-500" />
+                    <Loader2 size={24} className="animate-spin text-oura" />
                 </div>
             )}
 
             {/* Empty State */}
             {!isLoading && measurements.length === 0 && (
                 <div className="bg-surface rounded-2xl p-8 text-center border border-border">
-                    <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Ruler size={28} className="text-purple-400" />
+                    <div className="w-16 h-16 bg-oura-soft rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Ruler size={28} className="text-oura" />
                     </div>
                     <h3 className="font-bold text-text-primary mb-1">
                         {t('progress.measurements.noMeasurementsTitle')}
@@ -248,7 +248,7 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
                         </div>
                         <button
                             onClick={() => handleDelete(latestMeasurement.id)}
-                            className="text-text-tertiary hover:text-red-500 p-2">
+                            className="text-text-tertiary hover:text-danger p-2">
                             <Trash2 size={16} />
                         </button>
                     </div>
@@ -338,7 +338,7 @@ export const ProgressMeasurementsView: React.FC<ProgressMeasurementsViewProps> =
                                 </div>
                                 <button
                                     onClick={() => handleDelete(m.id)}
-                                    className="text-text-tertiary hover:text-red-500 p-2">
+                                    className="text-text-tertiary hover:text-danger p-2">
                                     <Trash2 size={14} />
                                 </button>
                             </div>
@@ -377,9 +377,9 @@ const MeasurementRow: React.FC<{
                             <span
                                 className={`flex items-center text-xs ${
                                     change.direction === 'down'
-                                        ? 'text-emerald-600'
+                                        ? 'text-success'
                                         : change.direction === 'up'
-                                          ? 'text-red-500'
+                                          ? 'text-danger'
                                           : 'text-text-tertiary'
                                 }`}>
                                 {change.direction === 'down' && (

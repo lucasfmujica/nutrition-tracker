@@ -80,7 +80,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
             {/* Upload Button */}
             <button
                 onClick={() => setShowUploadForm(true)}
-                className="w-full py-4 bg-gradient-to-br from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 transition-all active:scale-[0.98]">
+                className="w-full py-4 bg-oura hover:opacity-90 text-white font-bold rounded-card flex items-center justify-center gap-2 shadow-float transition-all active:scale-[0.98]">
                 <Camera size={20} />
                 {t('progress.photos.addPhoto')}
             </button>
@@ -130,7 +130,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
                                             onClick={() => setUploadAngle(angle)}
                                             className={`py-2 rounded-xl text-sm font-medium transition-colors ${
                                                 uploadAngle === angle
-                                                    ? 'bg-purple-100 text-purple-700 border-2 border-purple-500'
+                                                    ? 'bg-oura-soft text-oura border-2 border-oura'
                                                     : 'bg-surface-lighter text-text-secondary border-2 border-transparent'
                                             }`}>
                                             {formatAngleLabel(angle)}
@@ -166,7 +166,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
                             <button
                                 onClick={() => fileInputRef.current?.click()}
                                 disabled={isUploading}
-                                className="w-full py-4 bg-purple-600 hover:bg-purple-700 disabled:bg-surface-lighter text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors">
+                                className="w-full py-4 bg-oura hover:bg-oura disabled:bg-surface-lighter text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors">
                                 {isUploading ? (
                                     <>
                                         <Loader2
@@ -189,7 +189,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
 
             {/* Error State */}
             {error && (
-                <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
+                <div className="bg-danger-soft text-danger px-4 py-3 rounded-xl text-sm flex items-center gap-2">
                     <AlertCircle size={16} />
                     {error}
                 </div>
@@ -198,15 +198,15 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
             {/* Loading State */}
             {isLoading && (
                 <div className="flex items-center justify-center py-12">
-                    <Loader2 size={24} className="animate-spin text-purple-500" />
+                    <Loader2 size={24} className="animate-spin text-oura" />
                 </div>
             )}
 
             {/* Empty State */}
             {!isLoading && photos.length === 0 && (
                 <div className="bg-surface rounded-2xl p-8 text-center border border-border">
-                    <div className="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <ImageIcon size={28} className="text-purple-400" />
+                    <div className="w-16 h-16 bg-oura-soft rounded-full flex items-center justify-center mx-auto mb-4">
+                        <ImageIcon size={28} className="text-oura" />
                     </div>
                     <h3 className="font-bold text-text-primary mb-1">
                         {t('progress.photos.noPhotos')}
@@ -286,7 +286,7 @@ export const ProgressPhotosView: React.FC<ProgressPhotosViewProps> = ({
                                 </div>
                                 <button
                                     onClick={() => handleDelete(selectedPhoto)}
-                                    className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-100">
+                                    className="w-10 h-10 flex items-center justify-center rounded-xl bg-danger-soft text-danger hover:bg-danger-soft">
                                     <Trash2 size={18} />
                                 </button>
                             </div>

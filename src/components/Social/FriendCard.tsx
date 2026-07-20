@@ -31,8 +31,8 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
 
     const getWeightDeltaColor = (delta: number | null | undefined): string => {
         if (delta === null || delta === undefined) return 'text-text-tertiary';
-        if (delta < 0) return 'text-green-600';
-        if (delta > 0) return 'text-red-500';
+        if (delta < 0) return 'text-success';
+        if (delta > 0) return 'text-danger';
         return 'text-text-tertiary';
     };
 
@@ -44,8 +44,8 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
 
     const getDeficitColor = (deficit: number | null | undefined): string => {
         if (deficit === null || deficit === undefined) return 'text-text-tertiary';
-        if (deficit > 0) return 'text-green-600'; // Déficit = comió menos (bueno)
-        if (deficit < 0) return 'text-red-500'; // Superávit = comió más (malo)
+        if (deficit > 0) return 'text-success'; // Déficit = comió menos (bueno)
+        if (deficit < 0) return 'text-danger'; // Superávit = comió más (malo)
         return 'text-text-tertiary';
     };
 
@@ -140,7 +140,7 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
                                     size={16}
                                     className="mx-auto mb-1 text-text-tertiary"
                                 />
-                                <p className="font-black text-sm text-orange-500">
+                                <p className="font-black text-sm text-fat">
                                     {friend.weeklyStats.consistencyStreak}
                                 </p>
                                 <p className="text-[10px] text-text-tertiary uppercase">
@@ -177,8 +177,8 @@ export const FriendCard: React.FC<FriendCardProps> = ({ friend, onRemove }) => {
                         }}
                         className={`w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-sm font-medium transition-all ${
                             showConfirm
-                                ? 'bg-red-500 text-white'
-                                : 'bg-surface-lighter text-text-tertiary hover:bg-red-50 hover:text-red-500'
+                                ? 'bg-danger text-white'
+                                : 'bg-surface-lighter text-text-tertiary hover:bg-danger-soft hover:text-danger'
                         }`}>
                         <Trash2 size={16} />
                         {showConfirm

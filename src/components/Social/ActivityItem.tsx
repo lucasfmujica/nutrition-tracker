@@ -35,36 +35,36 @@ export const ActivityItemComponent: React.FC<ActivityItemProps> = ({
             case 'workout_logged':
                 return {
                     icon: Dumbbell,
-                    bg: 'bg-purple-50',
-                    iconColor: 'text-purple-500',
+                    bg: 'bg-oura-soft',
+                    iconColor: 'text-oura',
                     verb: t('social.activity.workout_logged'),
                 };
             case 'weight_milestone':
                 return {
                     icon: Scale,
-                    bg: 'bg-green-50',
-                    iconColor: 'text-green-500',
+                    bg: 'bg-success-soft',
+                    iconColor: 'text-success',
                     verb: t('social.activity.weight_milestone'),
                 };
             case 'streak_achieved':
                 return {
                     icon: Flame,
-                    bg: 'bg-orange-50',
-                    iconColor: 'text-orange-500',
+                    bg: 'bg-fat-soft',
+                    iconColor: 'text-fat',
                     verb: t('social.activity.streak_achieved'),
                 };
             case 'goal_reached':
                 return {
                     icon: Flag,
-                    bg: 'bg-blue-50',
-                    iconColor: 'text-blue-500',
+                    bg: 'bg-primary-soft',
+                    iconColor: 'text-primary',
                     verb: t('social.activity.goal_reached'),
                 };
             case 'friend_added':
                 return {
                     icon: UserPlus,
-                    bg: 'bg-pink-50',
-                    iconColor: 'text-pink-500',
+                    bg: 'bg-danger-soft',
+                    iconColor: 'text-danger',
                     verb: t('social.activity.friend_added'),
                 };
             default:
@@ -166,8 +166,8 @@ export const ActivityItemComponent: React.FC<ActivityItemProps> = ({
                             }}
                             className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold transition-all active:scale-95 ${
                                 hasReacted
-                                    ? 'bg-orange-50 text-orange-600 hover:bg-orange-100'
-                                    : 'bg-background text-text-tertiary hover:bg-surface-lighter hover:text-orange-500'
+                                    ? 'bg-fat-soft text-fat hover:bg-fat-soft'
+                                    : 'bg-background text-text-tertiary hover:bg-surface-lighter hover:text-fat'
                             }`}>
                             <Flame
                                 size={14}
