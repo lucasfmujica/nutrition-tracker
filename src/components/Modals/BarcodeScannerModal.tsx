@@ -180,7 +180,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
 
                         {/* Initializing state */}
                         {isInitializing && (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80 text-white">
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-overlay/80 text-white">
                                 <Loader2 size={32} className="animate-spin mb-2" />
                                 <p className="text-sm">
                                     {t('modals.barcode.initializing')}
@@ -190,7 +190,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
 
                         {/* Looking up state */}
                         {isLookingUp && (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80 text-white">
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-overlay/80 text-white">
                                 <Loader2 size={32} className="animate-spin mb-2" />
                                 <p className="text-sm">
                                     {t('modals.barcode.lookingUp')}
@@ -203,7 +203,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({
 
                         {/* Error state */}
                         {error && (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-white p-6 text-center">
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-overlay/90 text-white p-6 text-center">
                                 <AlertCircle size={40} className="text-danger mb-3" />
                                 <p className="text-sm">{error}</p>
                                 <button

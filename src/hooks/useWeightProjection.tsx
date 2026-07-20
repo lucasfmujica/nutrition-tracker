@@ -493,6 +493,49 @@ export const useWeightProjection = (
         }
     }, [projection.projectedGoalDate, i18n.language, t]);
 
+    /**
+     * Explains why there's no projection date yet, instead of leaving the UI
+     * stuck on a "calculating" label indefinitely. null once a real date exists.
+     */
+    const projectionMessage = useMemo(() => {
+        if (formattedGoalDate || projection.status === 'goal_reached') {
+            return null;
+        }
+
+        if (profile?.goal === 'maintain') {
+            return {
+                title: t('dashboard.predictive.reason.maintainTitle'),
+                subtitle: t('dashboard.predictive.reason.maintainSubtitle'),
+            };
+        }
+
+        if (realistTrend === null) {
+            const today = getArgentinaDateString();
+            const thirtyDaysAgo = addDaysToDate(today, -30);
+            const recentCount = (weightHistory || []).filter(
+                (entry) => entry.date >= thirtyDaysAgo && entry.date <= today,
+            ).length;
+            return {
+                title: t('dashboard.predictive.reason.needDataTitle'),
+                subtitle: t('dashboard.predictive.reason.needDataSubtitle', {
+                    count: recentCount,
+                }),
+            };
+        }
+
+        return {
+            title: t('dashboard.predictive.reason.wrongDirectionTitle'),
+            subtitle: t('dashboard.predictive.reason.wrongDirectionSubtitle'),
+        };
+    }, [
+        formattedGoalDate,
+        projection.status,
+        profile?.goal,
+        realistTrend,
+        weightHistory,
+        t,
+    ]);
+
     return {
         // Core metrics
         realistTrend, // kg/week from actual 14-day data
@@ -506,6 +549,7 @@ export const useWeightProjection = (
         // Projection
         projectedGoalDate: projection.projectedGoalDate,
         formattedGoalDate,
+        projectionMessage,
         weeksToGoal: projection.weeksToGoal as any,
         daysToGoal: projection.daysToGoal,
         projectionStatus: projection.status,

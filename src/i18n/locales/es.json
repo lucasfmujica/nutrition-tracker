@@ -785,9 +785,17 @@
             "reason": "Día de Entreno"
         },
         "predictive": {
-            "calibrating": {
-                "title": "Calibrando Motor",
-                "subtitle": "Analizando flujos de datos para proyectar tu futuro..."
+            "emptyState": {
+                "title": "Registrá tu peso",
+                "subtitle": "El Motor de Analytics necesita al menos 2 registros de peso en los últimos 30 días para proyectar tu meta."
+            },
+            "reason": {
+                "needDataTitle": "Necesitamos más registros",
+                "needDataSubtitle": "Llevás {{count}}/2 registros de peso en los últimos 30 días. Sumá uno más para ver tu proyección.",
+                "wrongDirectionTitle": "Sin tendencia clara",
+                "wrongDirectionSubtitle": "Tu peso todavía no se mueve hacia tu meta. Seguí registrando para refinar la proyección.",
+                "maintainTitle": "Modo Mantenimiento",
+                "maintainSubtitle": "No proyectamos fecha en modo mantenimiento — el objetivo es sostener tu peso estable."
             },
             "goalReached": {
                 "title": "¡OBJETIVO ALCANZADO!",
@@ -1434,8 +1442,8 @@
             "name": "Nombre completo",
             "namePlaceholder": "Escribe tu nombre",
             "physicalData": "Tus datos físicos",
-            "currentWeight": "Peso Actual (kg)",
-            "height": "Altura (cm)",
+            "currentWeight": "Peso Actual",
+            "height": "Altura",
             "age": "Edad",
             "gender": "Género",
             "male": "Masculino",
@@ -1444,6 +1452,8 @@
         "step2": {
             "title": "Objetivos Nutricionales",
             "autoCalculate": "Auto-calcular basado en tus datos",
+            "cardLabel": "Tus Objetivos",
+            "recalculate": "Recalcular",
             "calorieGoal": "Meta de Calorías",
             "proteinGoal": "Meta de Proteína (g)",
             "carbsGoal": "Meta de Carbos (g)",
@@ -1452,6 +1462,7 @@
         },
         "step3": {
             "title": "Entrenamiento y Dispositivos",
+            "subtitle": "Definí tu objetivo, días de entreno y conectá tus dispositivos",
             "trainingDays": "Días de entrenamiento por semana",
             "goal": "Objetivo Principal",
             "goals": {

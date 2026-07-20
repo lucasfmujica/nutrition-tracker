@@ -192,7 +192,7 @@ export const AIChefSuggestionCard: React.FC<SuggestionCardProps> = ({
                     </p>
                 </div>
                 <div className="flex gap-2 mb-3 flex-wrap">
-                    <div className="px-2 py-1 bg-gray-900 dark:bg-gray-800 rounded-lg text-[10px] font-bold text-white">
+                    <div className="px-2 py-1 bg-overlay rounded-lg text-[10px] font-bold text-white">
                         {suggestion.macros.calories} kcal
                     </div>
                     <div className="px-2 py-1 bg-success-soft rounded-lg text-[10px] font-bold text-success dark:text-success">
@@ -276,7 +276,7 @@ export const AIChefRecipeDetail: React.FC<RecipeDetailProps> = ({
             </div>
 
             <div className="flex gap-2 flex-wrap">
-                <div className="px-2 py-1 bg-gray-900 dark:bg-gray-800 rounded-lg text-[10px] font-bold text-white">{suggestion.macros.calories} kcal</div>
+                <div className="px-2 py-1 bg-overlay rounded-lg text-[10px] font-bold text-white">{suggestion.macros.calories} kcal</div>
                 <div className="px-2 py-1 bg-success-soft rounded-lg text-[10px] font-bold text-success dark:text-success">{suggestion.macros.protein}g P</div>
                 <div className="px-2 py-1 bg-warning-soft rounded-lg text-[10px] font-bold text-warning dark:text-warning">{suggestion.macros.carbs}g C</div>
                 <div className="px-2 py-1 bg-fat-soft rounded-lg text-[10px] font-bold text-fat dark:text-fat">{suggestion.macros.fat}g F</div>

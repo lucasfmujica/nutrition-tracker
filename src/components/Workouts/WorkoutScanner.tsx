@@ -98,7 +98,7 @@ export const WorkoutScanner: React.FC<WorkoutScannerProps> = ({
     };
 
     return (
-        <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 bg-overlay/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
             <div className="bg-surface rounded-3xl p-6 w-full max-w-lg border border-border shadow-2xl max-h-[90vh] overflow-y-auto flex flex-col">
                 {/* Header */}
                 <div className="flex justify-between items-start mb-6">

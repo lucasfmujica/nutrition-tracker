@@ -43,6 +43,7 @@ export const Layout: React.FC<LayoutProps> = ({
                             activeTab={activeTab}
                             setActiveTab={setActiveTab}
                             pendingRequestCount={pendingRequestCount}
+                            hasOuraRing={!!profile?.hasOuraRing}
                         />
                     </div>
                 )}

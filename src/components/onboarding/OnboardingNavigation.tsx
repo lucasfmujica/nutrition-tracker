@@ -33,7 +33,7 @@ export const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
                 {step > 1 && (
                     <button
                         onClick={handleBack}
-                        className="flex-1 py-3 rounded-xl font-medium bg-gray-700 hover:bg-gray-600 text-white transition-colors">
+                        className="flex-1 py-3 rounded-xl font-medium bg-background hover:bg-surface-lighter border border-border text-text-primary transition-colors">
                         ← {t('onboarding.navigation.back')}
                     </button>
                 )}
@@ -44,7 +44,7 @@ export const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
                         className={`flex-1 py-3 rounded-xl font-bold transition-all ${
                             canProceed
                                 ? 'bg-primary hover:bg-primary-dark text-white'
-                                : 'bg-gray-700 text-text-tertiary cursor-not-allowed'
+                                : 'bg-background border border-border text-text-tertiary cursor-not-allowed'
                         }`}>
                         {t('onboarding.navigation.next')} →
                     </button>

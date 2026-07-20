@@ -137,7 +137,7 @@ export const TransformationStoryCard: React.FC<TransformationStoryCardProps> = (
                                 className="w-full h-full object-cover"
                             />
                         </div>
-                        <div className="absolute top-2 left-2 bg-slate-900/80 text-white px-3 py-1 rounded-full text-xs font-bold">
+                        <div className="absolute top-2 left-2 bg-overlay/80 text-white px-3 py-1 rounded-full text-xs font-bold">
                             {t('progress.comparison.before')}
                         </div>
                         {beforePhoto.weight && (

@@ -170,6 +170,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                 <div className="md:col-span-2 lg:col-span-8 min-w-0">
                     <PredictiveWeightCard
                         formattedGoalDate={weightProjection.formattedGoalDate}
+                        projectionMessage={weightProjection.projectionMessage}
                         realistTrend={weightProjection.realistTrend}
                         adjustedTrend={weightProjection.adjustedTrend}
                         adherencePercent={weightProjection.adherencePercent}
@@ -190,9 +191,11 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                         safetyNetActive={isSafetyNetActive(dashboardDate)}
                         periodizationState={periodizationIntensity}
                     />
-                    <PerformanceForecastCard />
                     {profile?.hasOuraRing && (
-                        <OuraInsightCard ouraData={ouraAutoAdjustData} />
+                        <>
+                            <PerformanceForecastCard />
+                            <OuraInsightCard ouraData={ouraAutoAdjustData} />
+                        </>
                     )}
                     {plateauData && plateauData.isInPlateau && (
                         <PlateauAlertCard plateauData={plateauData} />

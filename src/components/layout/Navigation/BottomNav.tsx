@@ -32,6 +32,7 @@ interface BottomNavProps {
     activeTab: string;
     setActiveTab: (tab: string) => void;
     pendingRequestCount?: number;
+    hasOuraRing?: boolean;
 }
 
 const MORE_TABS = ['meal-prep', 'pasos', 'oura', 'progreso', 'config'];
@@ -40,6 +41,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
     activeTab,
     setActiveTab,
     pendingRequestCount = 0,
+    hasOuraRing = false,
 }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
@@ -141,14 +143,18 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             color: 'text-info',
             bg: 'bg-info-soft',
         },
-        {
-            icon: <Moon size={22} />,
-            label: 'OURA',
-            sublabel: 'SUEÑO & HRV',
-            onClick: () => setActiveTab('oura'),
-            color: 'text-oura',
-            bg: 'bg-oura-soft',
-        },
+        ...(hasOuraRing
+            ? [
+                  {
+                      icon: <Moon size={22} />,
+                      label: 'OURA',
+                      sublabel: 'SUEÑO & HRV',
+                      onClick: () => setActiveTab('oura'),
+                      color: 'text-oura',
+                      bg: 'bg-oura-soft',
+                  },
+              ]
+            : []),
         {
             icon: <Image size={22} />,
             label: t('navigation.progress').toUpperCase(),

@@ -64,7 +64,7 @@ export const AuthResetPassword: React.FC<AuthResetPasswordProps> = ({
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-4 bg-gradient-to-r from-primary to-accent-blue text-white font-bold rounded-xl hover:shadow-lg hover:shadow-blue-500/25 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                    className="w-full py-4 bg-gradient-to-r from-primary to-accent-blue text-white font-bold rounded-xl hover:shadow-glow active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                     {loading ? (
                         <span className="flex items-center justify-center gap-2">
                             <svg

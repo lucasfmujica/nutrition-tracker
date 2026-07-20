@@ -30,8 +30,8 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                     onClick={() => i18n.changeLanguage('es')}
                     className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                         i18n.language === 'es'
-                            ? 'bg-surface text-text-primary shadow-lg shadow-white/10 scale-105'
-                            : 'bg-gray-800 text-text-tertiary hover:text-white border border-gray-700'
+                            ? 'bg-primary-soft text-primary border border-primary/30'
+                            : 'bg-background text-text-tertiary hover:text-text-primary border border-border'
                     }`}>
                     🇦🇷 ES
                 </button>
@@ -39,8 +39,8 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                     onClick={() => i18n.changeLanguage('en')}
                     className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                         i18n.language === 'en'
-                            ? 'bg-surface text-text-primary shadow-lg shadow-white/10 scale-105'
-                            : 'bg-gray-800 text-text-tertiary hover:text-white border border-gray-700'
+                            ? 'bg-primary-soft text-primary border border-primary/30'
+                            : 'bg-background text-text-tertiary hover:text-text-primary border border-border'
                     }`}>
                     🇺🇸 EN
                 </button>
@@ -51,8 +51,8 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                     onClick={() => updateField('unitSystem', 'metric')}
                     className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                         data.unitSystem === 'metric'
-                            ? 'bg-surface text-text-primary shadow-lg shadow-white/10 scale-105'
-                            : 'bg-gray-800 text-text-tertiary hover:text-white border border-gray-700'
+                            ? 'bg-primary-soft text-primary border border-primary/30'
+                            : 'bg-background text-text-tertiary hover:text-text-primary border border-border'
                     }`}>
                     📏 Metric (kg/cm)
                 </button>
@@ -60,8 +60,8 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                     onClick={() => updateField('unitSystem', 'imperial')}
                     className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                         data.unitSystem === 'imperial'
-                            ? 'bg-surface text-text-primary shadow-lg shadow-white/10 scale-105'
-                            : 'bg-gray-800 text-text-tertiary hover:text-white border border-gray-700'
+                            ? 'bg-primary-soft text-primary border border-primary/30'
+                            : 'bg-background text-text-tertiary hover:text-text-primary border border-border'
                     }`}>
                     ⚖️ Imperial (lbs/ft)
                 </button>
@@ -69,8 +69,8 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
 
             <div className="text-center mb-6">
                 <span className="text-3xl mb-2 block">👋</span>
-                <h2 className="text-xl font-bold text-white">
-                    {t('onboarding.step1.greeting')} {t('onboarding.step1.name')}
+                <h2 className="text-xl font-bold text-text-primary">
+                    {t('onboarding.step1.greeting')}
                 </h2>
                 <p className="text-sm text-text-tertiary mt-1">
                     {t('onboarding.step1.title')}
@@ -86,12 +86,12 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                     value={data.name}
                     onChange={(e) => updateField('name', e.target.value)}
                     placeholder={t('onboarding.step1.namePlaceholder')}
-                    className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white text-lg"
+                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-text-primary text-lg placeholder-text-tertiary"
                 />
             </div>
 
-            <div className="text-center mt-8 mb-4 pt-4 border-t border-gray-700/50">
-                <h2 className="text-lg font-bold text-white">
+            <div className="text-center mt-8 mb-4 pt-4 border-t border-border">
+                <h2 className="text-lg font-bold text-text-primary">
                     {t('onboarding.step1.physicalData')}
                 </h2>
             </div>
@@ -109,7 +109,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                             updateField('currentWeight', e.target.value)
                         }
                         placeholder={data.unitSystem === 'metric' ? '75' : '165'}
-                        className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white text-center text-lg"
+                        className="w-full bg-background border border-border rounded-xl px-4 py-3 text-text-primary text-center text-lg placeholder-text-tertiary"
                     />
                 </div>
                 <div>
@@ -122,7 +122,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                         value={data.height}
                         onChange={(e) => updateField('height', e.target.value)}
                         placeholder={data.unitSystem === 'metric' ? '175' : '69'}
-                        className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white text-center text-lg"
+                        className="w-full bg-background border border-border rounded-xl px-4 py-3 text-text-primary text-center text-lg placeholder-text-tertiary"
                     />
                 </div>
             </div>
@@ -136,7 +136,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                     value={data.age}
                     onChange={(e) => updateField('age', e.target.value)}
                     placeholder="27"
-                    className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white text-center text-lg"
+                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-text-primary text-center text-lg placeholder-text-tertiary"
                 />
             </div>
 
@@ -150,7 +150,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                         className={`py-3 rounded-xl font-medium transition-all ${
                             data.gender === 'male'
                                 ? 'bg-primary text-white'
-                                : 'bg-gray-700/50 text-text-tertiary hover:bg-gray-600/50'
+                                : 'bg-background text-text-tertiary hover:bg-surface-lighter border border-border'
                         }`}>
                         👨 {t('onboarding.step1.male')}
                     </button>
@@ -159,7 +159,7 @@ export const OnboardingStep1: React.FC<OnboardingStep1Props> = ({
                         className={`py-3 rounded-xl font-medium transition-all ${
                             data.gender === 'female'
                                 ? 'bg-danger text-white'
-                                : 'bg-gray-700/50 text-text-tertiary hover:bg-gray-600/50'
+                                : 'bg-background text-text-tertiary hover:bg-surface-lighter border border-border'
                         }`}>
                         👩 {t('onboarding.step1.female')}
                     </button>

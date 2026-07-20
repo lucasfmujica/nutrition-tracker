@@ -45,11 +45,11 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
         <div className="space-y-5">
             <div className="text-center mb-6">
                 <span className="text-3xl mb-2 block">🏋️</span>
-                <h2 className="text-xl font-bold text-white">
+                <h2 className="text-xl font-bold text-text-primary">
                     {t('onboarding.step3.title')}
                 </h2>
                 <p className="text-sm text-text-tertiary mt-1">
-                    {t('onboarding.step3.ouraDesc')}
+                    {t('onboarding.step3.subtitle')}
                 </p>
             </div>
 
@@ -66,7 +66,7 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
                             className={`p-3 rounded-xl text-center transition-all ${
                                 data.primaryGoal === goalValue
                                     ? 'bg-gradient-to-br from-primary to-accent-blue text-white'
-                                    : 'bg-gray-700/50 text-text-tertiary hover:bg-gray-600/50'
+                                    : 'bg-background text-text-tertiary hover:bg-surface-lighter border border-border'
                             }`}>
                             <span className="text-xl block mb-1">
                                 {getGoalEmoji(goalValue)}
@@ -100,7 +100,7 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
                                     : isImperial ? 6.6 : 3;
                             return String(Math.round((w + delta) * 10) / 10);
                         })()}
-                        className="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white text-center text-lg"
+                        className="w-full bg-background border border-border rounded-xl px-4 py-3 text-text-primary text-center text-lg placeholder-text-tertiary"
                     />
                     <p className="text-xs text-text-tertiary mt-1">
                         {t('onboarding.step3.goalWeightHint')}
@@ -120,7 +120,7 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
                             className={`w-10 h-10 rounded-xl font-bold transition-all ${
                                 data.trainingDaysPerWeek === day
                                     ? 'bg-gradient-to-br from-primary to-accent-blue text-white'
-                                    : 'bg-gray-700/50 text-text-tertiary hover:bg-gray-600/50'
+                                    : 'bg-background text-text-tertiary hover:bg-surface-lighter border border-border'
                             }`}>
                             {day}
                         </button>
@@ -130,17 +130,17 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
 
             {/* Oura Ring Toggle */}
             <div className="mt-4">
-                <label className="flex items-center gap-3 p-4 bg-gray-700/30 rounded-xl cursor-pointer hover:bg-gray-700/50 transition-colors">
+                <label className="flex items-center gap-3 p-4 bg-background border border-border rounded-xl cursor-pointer hover:bg-surface-lighter transition-colors">
                     <input
                         type="checkbox"
                         checked={data.hasOuraRing || false}
                         onChange={(e) =>
                             updateField('hasOuraRing', e.target.checked)
                         }
-                        className="w-5 h-5 rounded border-border0 text-primary focus:ring-primary bg-gray-700"
+                        className="w-5 h-5 rounded border-border text-primary focus:ring-primary bg-surface"
                     />
                     <div className="flex-1">
-                        <span className="text-white font-medium">
+                        <span className="text-text-primary font-medium">
                             {t('onboarding.step3.hasOuraRing')}
                         </span>
                         <p className="text-xs text-text-tertiary mt-0.5">
@@ -152,41 +152,41 @@ export const OnboardingStep3: React.FC<OnboardingStep3Props> = ({
             </div>
 
             {/* Summary */}
-            <div className="mt-6 p-4 bg-gray-700/30 rounded-xl">
-                <h3 className="font-semibold text-white mb-3">
+            <div className="mt-6 p-4 bg-background border border-border rounded-xl">
+                <h3 className="font-semibold text-text-primary mb-3">
                     📋 {t('onboarding.step3.summary')}
                 </h3>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="text-text-tertiary">
                         {t('onboarding.step3.summaryLabels.weight')}
                     </div>
-                    <div className="text-white font-medium">
+                    <div className="text-text-primary font-medium">
                         {data.currentWeight || '-'}{' '}
                         {data.unitSystem === 'imperial' ? 'lbs' : 'kg'}
                     </div>
                     <div className="text-text-tertiary">
                         {t('onboarding.step3.summaryLabels.calories')}
                     </div>
-                    <div className="text-white font-medium">
+                    <div className="text-text-primary font-medium">
                         {data.calorieGoal || '-'} kcal
                     </div>
                     <div className="text-text-tertiary">
                         {t('onboarding.step3.summaryLabels.protein')}
                     </div>
-                    <div className="text-white font-medium">
+                    <div className="text-text-primary font-medium">
                         {data.proteinGoal || '-'}g
                     </div>
                     <div className="text-text-tertiary">
                         {t('onboarding.step3.summaryLabels.goal')}
                     </div>
-                    <div className="text-white font-medium">
+                    <div className="text-text-primary font-medium">
                         {getGoalEmoji(data.primaryGoal)}{' '}
                         {getGoalLabel(data.primaryGoal)}
                     </div>
                     <div className="text-text-tertiary">
                         {t('onboarding.step3.summaryLabels.training')}
                     </div>
-                    <div className="text-white font-medium">
+                    <div className="text-text-primary font-medium">
                         {data.trainingDaysPerWeek}{' '}
                         {t('onboarding.step3.summaryLabels.days')}
                     </div>

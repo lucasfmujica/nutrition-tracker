@@ -177,17 +177,11 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 flex items-center justify-center p-4">
-            {/* Font */}
-            <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        * { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
-      `}</style>
-
+        <div className="min-h-screen bg-background flex items-center justify-center p-4">
             <div className="w-full max-w-md">
                 <OnboardingHeader step={step} totalSteps={totalSteps} />
 
-                <div className="bg-gray-800/80 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 shadow-2xl">
+                <div className="bg-surface border border-border rounded-3xl p-6 shadow-card">
                     {step === 1 && (
                         <OnboardingStep1 data={formData} handlers={handlers} />
                     )}

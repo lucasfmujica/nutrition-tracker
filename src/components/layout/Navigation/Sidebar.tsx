@@ -56,7 +56,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             tutorialId: 'social-tab',
         },
         { id: 'pasos', icon: Activity, label: t('navigation.steps') },
-        { id: 'oura', icon: Link, label: 'Oura' },
+        ...(profile?.hasOuraRing
+            ? [{ id: 'oura', icon: Link, label: 'Oura' }]
+            : []),
         { id: 'meal-prep', icon: CalendarDays, label: t('mealPrep.title') },
         {
             id: 'config',

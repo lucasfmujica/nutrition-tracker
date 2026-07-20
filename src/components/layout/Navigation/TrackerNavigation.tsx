@@ -4,14 +4,15 @@ import { useTracker } from '../../../context/TrackerContext';
 
 export const TrackerNavigation: React.FC = () => {
     const { t } = useTranslation();
-    const { activeTab, setActiveTab } = useTracker() as any;
+    const { activeTab, setActiveTab, profile } = useTracker() as any;
+    const tabs = profile?.hasOuraRing ? ['pasos', 'oura'] : ['pasos'];
 
-    if (!['pasos', 'oura'].includes(activeTab)) return null;
+    if (!tabs.includes(activeTab)) return null;
 
     return (
         <nav className="bg-surface border-b border-border px-4 shadow-sm">
             <div className="max-w-6xl mx-auto flex gap-1">
-                {['pasos', 'oura'].map((tab) => (
+                {tabs.map((tab) => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}

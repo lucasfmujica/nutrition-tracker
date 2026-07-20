@@ -783,9 +783,17 @@
             "reason": "Training Day"
         },
         "predictive": {
-            "calibrating": {
-                "title": "Calibrating Engine",
-                "subtitle": "Analyzing data streams to project your future..."
+            "emptyState": {
+                "title": "Log Your Weight",
+                "subtitle": "The Analytics Engine needs at least 2 weight entries in the last 30 days to project your goal."
+            },
+            "reason": {
+                "needDataTitle": "We Need More Entries",
+                "needDataSubtitle": "You have {{count}}/2 weight entries in the last 30 days. Log one more to see your projection.",
+                "wrongDirectionTitle": "No Clear Trend Yet",
+                "wrongDirectionSubtitle": "Your weight isn't trending toward your goal yet. Keep logging to refine the projection.",
+                "maintainTitle": "Maintenance Mode",
+                "maintainSubtitle": "We don't project a date in maintenance mode — the goal is to keep your weight stable."
             },
             "goalReached": {
                 "title": "GOAL REACHED!",
@@ -1432,8 +1440,8 @@
             "name": "Full name",
             "namePlaceholder": "Enter your name",
             "physicalData": "Your physical data",
-            "currentWeight": "Current Weight (kg)",
-            "height": "Height (cm)",
+            "currentWeight": "Current Weight",
+            "height": "Height",
             "age": "Age",
             "gender": "Gender",
             "male": "Male",
@@ -1442,6 +1450,8 @@
         "step2": {
             "title": "Nutrition Goals",
             "autoCalculate": "Auto-calculate based on your data",
+            "cardLabel": "Your Goals",
+            "recalculate": "Recalculate",
             "calorieGoal": "Calorie Goal",
             "proteinGoal": "Protein Goal (g)",
             "carbsGoal": "Carbs Goal (g)",
@@ -1450,6 +1460,7 @@
         },
         "step3": {
             "title": "Training & Devices",
+            "subtitle": "Set your goal, training days, and connect your devices",
             "trainingDays": "Training days per week",
             "goal": "Main Goal",
             "goals": {

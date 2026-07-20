@@ -21,8 +21,14 @@ interface CoachMessage {
     text: string;
 }
 
+interface ProjectionMessage {
+    title: string;
+    subtitle: string;
+}
+
 interface PredictiveWeightCardProps {
     formattedGoalDate: string | null;
+    projectionMessage?: ProjectionMessage | null;
     realistTrend: number | null;
     adjustedTrend: number | null;
     adherencePercent: number;
@@ -37,12 +43,38 @@ interface PredictiveWeightCardProps {
 }
 
 /**
+ * MessageCard - Collapsed state for PredictiveWeightCard.
+ * Used whenever there is no real projection to show yet, instead of
+ * rendering a chart / adherence bar / trend grid full of placeholders.
+ */
+const MessageCard: React.FC<{ title: string; subtitle: string }> = ({
+    title,
+    subtitle,
+}) => (
+    <div className="bg-surface rounded-card p-8 border border-border shadow-card relative overflow-hidden group">
+        <div className="absolute inset-0 bg-noise opacity-[0.02] pointer-events-none" />
+        <div className="flex flex-col items-center text-center relative z-10">
+            <div className="w-16 h-16 bg-background rounded-control flex items-center justify-center mb-6 border border-border">
+                <Activity className="w-8 h-8 text-primary opacity-50" />
+            </div>
+            <h3 className="text-text-primary font-satoshi text-3xl tracking-tight uppercase mb-2">
+                {title}
+            </h3>
+            <p className="text-text-tertiary text-sm font-medium max-w-[220px] leading-relaxed">
+                {subtitle}
+            </p>
+        </div>
+    </div>
+);
+
+/**
  * PredictiveWeightCard - The Predictive Weight Engine UI
  * Revamped for "High-Performance Lab" aesthetic
  */
 export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.memo(
     ({
         formattedGoalDate,
+        projectionMessage,
         realistTrend,
         adjustedTrend,
         adherencePercent,
@@ -64,20 +96,22 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
             (!actualPath?.length && projectionStatus !== 'goal_reached')
         ) {
             return (
-                <div className="bg-surface rounded-card p-8 border border-border shadow-card relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-noise opacity-[0.02] pointer-events-none" />
-                    <div className="flex flex-col items-center text-center relative z-10">
-                        <div className="w-16 h-16 bg-background rounded-control flex items-center justify-center mb-6 animate-pulse border border-border">
-                            <Activity className="w-8 h-8 text-primary opacity-50" />
-                        </div>
-                        <h3 className="text-text-primary font-satoshi text-3xl tracking-tight uppercase mb-2">
-                            {t('dashboard.predictive.calibrating.title')}
-                        </h3>
-                        <p className="text-text-tertiary text-sm font-medium max-w-[220px] leading-relaxed">
-                            {t('dashboard.predictive.calibrating.subtitle')}
-                        </p>
-                    </div>
-                </div>
+                <MessageCard
+                    title={t('dashboard.predictive.emptyState.title')}
+                    subtitle={t('dashboard.predictive.emptyState.subtitle')}
+                />
+            );
+        }
+
+        // No projection to show yet (needs more data / wrong trend / maintain
+        // mode). Collapse to the reason instead of rendering a chart, an
+        // adherence bar and a trend grid full of placeholders.
+        if (projectionMessage) {
+            return (
+                <MessageCard
+                    title={projectionMessage.title}
+                    subtitle={projectionMessage.subtitle}
+                />
             );
         }
 
@@ -248,8 +282,7 @@ export const PredictiveWeightCard: React.FC<PredictiveWeightCardProps> = React.m
                         </div>
                         <div className="flex flex-col gap-2">
                             <p className="text-3xl sm:text-5xl font-satoshi text-text-primary tracking-tight group-hover:text-primary transition-colors duration-500 truncate">
-                                {formattedGoalDate?.toUpperCase() ||
-                                    t('dashboard.predictive.labels.calculating')}
+                                {formattedGoalDate?.toUpperCase()}
                             </p>
                             <div className="flex items-center gap-2 overflow-hidden">
                                 <span className="text-xl sm:text-2xl font-satoshi text-accent leading-none whitespace-nowrap">

@@ -182,12 +182,12 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
     if (loadingTimedOut) {
         return (
             <div className="min-h-screen bg-background flex items-center justify-center p-4">
-                <div className="max-w-md w-full bg-surface/10 backdrop-blur-lg rounded-2xl p-8 text-center">
+                <div className="max-w-md w-full bg-surface border border-border rounded-2xl p-8 text-center shadow-card">
                     <div className="text-6xl mb-4">⚠️</div>
-                    <h1 className="text-2xl font-bold text-white mb-4">
+                    <h1 className="text-2xl font-bold text-text-primary mb-4">
                         {t('common.errorState.loadingTitle')}
                     </h1>
-                    <p className="text-white/80 mb-6">
+                    <p className="text-text-tertiary mb-6">
                         {t('common.errorState.loadingMessage')}
                     </p>
                     <div className="space-y-3">
@@ -206,7 +206,7 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
                             🗑️ {t('common.errorState.clearDataRetry')}
                         </button>
                     </div>
-                    <p className="text-white/60 text-sm mt-4">
+                    <p className="text-text-tertiary text-sm mt-4">
                         {t('common.errorState.persistentIssueAdvice')}
                     </p>
                 </div>

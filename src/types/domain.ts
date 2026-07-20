@@ -199,6 +199,7 @@ export interface WeightProjection {
     adherenceDetails: any;
     projectedGoalDate: string | null;
     formattedGoalDate: string | null;
+    projectionMessage: { title: string; subtitle: string } | null;
     weeksToGoal: string | null;
     daysToGoal: number | null;
     projectionStatus: 'goal_reached' | 'not_losing' | 'on_track';

@@ -56,6 +56,8 @@ export default {
           elevated: 'var(--color-surface-elevated)',
         },
         background: 'var(--color-background)',
+        // Fixed scrim for photo/camera overlays — not theme-aware by design
+        overlay: 'var(--color-overlay)',
         // Text colors for dark mode support
         text: {
           primary: 'var(--color-text-primary)',

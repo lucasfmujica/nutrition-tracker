@@ -9,6 +9,7 @@ export interface WeightProjection {
     adherenceDetails: any;
     projectedGoalDate: string | null;
     formattedGoalDate: string | null;
+    projectionMessage?: { title: string; subtitle: string } | null;
     weeksToGoal: string | number | null;
     daysToGoal: number | null;
     projectionStatus: 'goal_reached' | 'not_losing' | 'on_track' | undefined;
@@ -32,6 +33,24 @@ export const WeightProjectionCard: React.FC<WeightProjectionCardProps> = ({
 }) => {
     const { t } = useTranslation();
     if (!projection) return null;
+
+    // No projection to show yet (needs more data / wrong trend / maintain
+    // mode). Show the reason instead of raw dashes for the rate/ETA stats.
+    if (!projection.formattedGoalDate && projection.projectionMessage) {
+        return (
+            <div className="bg-surface p-8 rounded-card shadow-card border border-border h-full group transition-all duration-300">
+                <h3 className="text-text-primary font-bold text-xl tracking-tight mb-4">
+                    {t('dashboard.projection.title')}
+                </h3>
+                <p className="text-text-primary font-semibold text-sm mb-1">
+                    {projection.projectionMessage.title}
+                </p>
+                <p className="text-text-tertiary text-xs leading-relaxed">
+                    {projection.projectionMessage.subtitle}
+                </p>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-surface p-8 rounded-card shadow-card border border-border h-full group transition-all duration-300">

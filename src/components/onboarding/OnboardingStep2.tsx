@@ -26,7 +26,7 @@ export const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
         <div className="space-y-5">
             <div className="text-center mb-6">
                 <span className="text-3xl mb-2 block">🎯</span>
-                <h2 className="text-xl font-bold text-white">
+                <h2 className="text-xl font-bold text-text-primary">
                     {t('onboarding.step2.title')}
                 </h2>
                 <p className="text-sm text-text-tertiary mt-1">
@@ -34,15 +34,15 @@ export const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
                 </p>
             </div>
 
-            <div className="bg-gradient-to-br from-primary/10 to-info/10 border border-primary/20 rounded-xl p-4">
+            <div className="bg-primary-soft border border-primary/20 rounded-xl p-4">
                 <div className="flex justify-between items-center mb-3">
                     <span className="text-sm text-text-tertiary">
-                        {t('onboarding.step2.title')}
+                        {t('onboarding.step2.cardLabel')}
                     </span>
                     <button
                         onClick={handleAutoCalculate}
                         className="text-xs text-primary hover:opacity-80">
-                        🔄 {t('onboarding.step2.autoCalculate')}
+                        🔄 {t('onboarding.step2.recalculate')}
                     </button>
                 </div>
                 <div className="grid grid-cols-4 gap-2 text-center">
@@ -73,7 +73,7 @@ export const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
                                 type="number"
                                 value={data[field]}
                                 onChange={(e) => updateField(field, e.target.value)}
-                                className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-2 py-2 text-white text-center text-lg font-bold"
+                                className="w-full bg-surface border border-border rounded-lg px-2 py-2 text-text-primary text-center text-lg font-bold"
                             />
                             <span className="text-xs text-text-tertiary">{label}</span>
                         </div>
@@ -81,7 +81,7 @@ export const OnboardingStep2: React.FC<OnboardingStep2Props> = ({
                 </div>
             </div>
 
-            <div className="bg-gray-700/30 rounded-xl p-4 border border-gray-600/50">
+            <div className="bg-background rounded-xl p-4 border border-border">
                 <p className="text-xs text-text-tertiary leading-relaxed">
                     {t('onboarding.step2.tip')}
                 </p>

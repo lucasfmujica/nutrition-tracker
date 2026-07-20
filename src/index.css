@@ -42,6 +42,10 @@
     --color-oura: #7c3aed; /* Violet 600 - Oura brand identity */
     --color-oura-soft: #f5f3ff;
 
+    /* Fixed scrim for legibility over photos/camera feeds — intentionally
+       NOT overridden in dark mode, contrast must hold regardless of theme */
+    --color-overlay: #0f172a;
+
     /* Neutral Colors (Light Mode) */
     --color-background: #f8fafc;
     --color-surface: #ffffff;

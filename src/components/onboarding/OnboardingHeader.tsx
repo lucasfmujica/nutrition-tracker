@@ -23,7 +23,7 @@ export const OnboardingHeader: React.FC<OnboardingHeaderProps> = ({
                 <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary to-accent-blue flex items-center justify-center">
                     <span className="text-2xl">💪</span>
                 </div>
-                <h1 className="text-2xl font-bold text-white mb-2">
+                <h1 className="text-2xl font-bold text-text-primary mb-2">
                     {t('onboarding.welcome')}
                 </h1>
                 <p className="text-text-tertiary">
@@ -39,7 +39,7 @@ export const OnboardingHeader: React.FC<OnboardingHeaderProps> = ({
                         className={`flex-1 h-2 rounded-full transition-all ${
                             s <= step
                                 ? 'bg-gradient-to-r from-primary to-accent-blue'
-                                : 'bg-gray-700'
+                                : 'bg-progress-track'
                         }`}
                     />
                 ))}

@@ -190,7 +190,7 @@ export const AuthUI: React.FC<AuthUIProps> = ({
 
                     <button
                         onClick={handleContinueOffline}
-                        className="w-full py-3.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all shadow-lg">
+                        className="w-full py-3.5 bg-text-primary text-background font-bold rounded-xl hover:opacity-90 transition-all shadow-card">
                         {t('auth.offline.button')}
                     </button>
                 </div>

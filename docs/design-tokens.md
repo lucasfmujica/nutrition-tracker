@@ -26,6 +26,7 @@ Fuente de verdad: CSS vars en `src/index.css` (`:root` light, `:root.dark` dark)
 | `text-slate-900` … `text-slate-400` | `text-text-primary` / `-secondary` / `-tertiary` |
 | `border-slate-200/700` | `border-border` |
 | Decorativos purple/pink sin semántica | elegir token semántico o macro más cercano (caso por caso) |
+| `bg-slate-900/80`, `bg-gray-900` en scrims sobre fotos/cámara | `bg-overlay` (+ `/60`, `/80`, `/90`) — fijo, **no** theme-aware a propósito (contraste sobre imagen debe sostenerse en ambos temas) |
 
 ## Forma y profundidad
 
