@@ -1,5 +1,6 @@
 import { Users } from 'lucide-react';
 import React from 'react';
+import { SkeletonRow } from '../UI/Skeleton';
 import { useTranslation } from 'react-i18next';
 import { Friend } from '../../types/domain';
 import { EmptyState } from './EmptyState';
@@ -43,15 +44,7 @@ export const FriendsList: React.FC<FriendsListProps> = ({
             {loading ? (
                 <div className="space-y-3">
                     {[1, 2].map((i) => (
-                        <div
-                            key={i}
-                            className="flex items-center gap-3 size-full p-2 animate-pulse">
-                            <div className="w-12 h-12 rounded-full bg-surface-lighter" />
-                            <div className="flex-1 space-y-2">
-                                <div className="h-4 bg-surface-lighter rounded w-1/3" />
-                                <div className="h-3 bg-surface-lighter rounded w-1/4" />
-                            </div>
-                        </div>
+                        <SkeletonRow key={i} />
                     ))}
                 </div>
             ) : friends.length === 0 ? (

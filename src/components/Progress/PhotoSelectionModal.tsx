@@ -4,11 +4,12 @@
 
 import { format, parseISO } from 'date-fns';
 import { enUS, es } from 'date-fns/locale';
-import { Check, X } from 'lucide-react';
+import { Check } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { PhotoAngle, ProgressPhoto } from '../../types/domain';
-import { formatAngleLabel, getAngleBadge } from '../../utils/progressUtils';
+import { getAngleBadge } from '../../utils/progressUtils';
+import { ModalShell } from '../UI/ModalShell';
 
 interface PhotoSelectionModalProps {
     photos: ProgressPhoto[];
@@ -47,124 +48,100 @@ export const PhotoSelectionModal: React.FC<PhotoSelectionModalProps> = ({
     };
 
     return (
-        <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={onClose}>
-            <div
-                className="bg-surface rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
-                onClick={(e) => e.stopPropagation()}>
-                {/* Header */}
-                <div className="px-6 py-4 border-b border-border flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-text-primary">
-                        {modalTitle}
-                    </h3>
-                    <button
-                        onClick={onClose}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-surface-lighter text-text-tertiary hover:bg-surface-lighter">
-                        <X size={18} />
-                    </button>
-                </div>
-
-                {/* Angle Filter */}
-                <div className="px-6 py-3 border-b border-border bg-background">
-                    <div className="flex gap-2 overflow-x-auto pb-1">
-                        <FilterButton
-                            label={t('progress.photoSelection.all')}
-                            isActive={filterAngle === 'all'}
-                            onClick={() => setFilterAngle('all')}
-                        />
-                        <FilterButton
-                            label={t('progress.angles.front')}
-                            isActive={filterAngle === 'front'}
-                            onClick={() => setFilterAngle('front')}
-                        />
-                        <FilterButton
-                            label={t('progress.angles.side')}
-                            isActive={filterAngle === 'side'}
-                            onClick={() => setFilterAngle('side')}
-                        />
-                        <FilterButton
-                            label={t('progress.angles.back')}
-                            isActive={filterAngle === 'back'}
-                            onClick={() => setFilterAngle('back')}
-                        />
-                        <FilterButton
-                            label={t('progress.angles.other')}
-                            isActive={filterAngle === 'other'}
-                            onClick={() => setFilterAngle('other')}
-                        />
-                    </div>
-                </div>
-
-                {/* Photo Grid */}
-                <div className="flex-1 overflow-y-auto p-6">
-                    {filteredPhotos.length === 0 ? (
-                        <div className="text-center py-12">
-                            <p className="text-text-tertiary">
-                                {t('progress.photos.noPhotos')}
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-3 gap-3">
-                            {filteredPhotos.map((photo) => {
-                                const isSelected = photo.id === currentPhotoId;
-                                return (
-                                    <button
-                                        key={photo.id}
-                                        onClick={() => handleSelect(photo)}
-                                        className={`relative aspect-square rounded-xl overflow-hidden transition-all ${
-                                            isSelected
-                                                ? 'ring-4 ring-oura scale-95'
-                                                : 'hover:ring-2 hover:ring-oura/40'
-                                        }`}>
-                                        <img
-                                            src={
-                                                photo.thumbnailUrl || photo.photoUrl
-                                            }
-                                            alt={`Foto ${photo.date}`}
-                                            className="w-full h-full object-cover"
-                                        />
-
-                                        {/* Selected Indicator */}
-                                        {isSelected && (
-                                            <div className="absolute inset-0 bg-oura/20 flex items-center justify-center">
-                                                <div className="w-12 h-12 bg-oura rounded-full flex items-center justify-center shadow-lg">
-                                                    <Check
-                                                        size={24}
-                                                        className="text-white"
-                                                    />
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Date Label */}
-                                        <div className="absolute bottom-1 left-1 right-1 bg-black/60 backdrop-blur-sm rounded text-white text-[10px] font-bold text-center py-1">
-                                            {format(parseISO(photo.date), 'd MMM', {
-                                                locale: dateLocale,
-                                            })}
-                                        </div>
-
-                                        {/* Angle Badge */}
-                                        {photo.angle && (
-                                            <div className="absolute top-1 right-1 bg-surface/90 rounded px-1.5 py-0.5 text-[8px] font-bold text-text-secondary">
-                                                {getAngleBadge(photo.angle)}
-                                            </div>
-                                        )}
-
-                                        {/* Weight Badge */}
-                                        {photo.weight && (
-                                            <div className="absolute top-1 left-1 bg-surface/90 rounded px-1.5 py-0.5 text-[8px] font-bold text-text-secondary">
-                                                {photo.weight}kg
-                                            </div>
-                                        )}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    )}
-                </div>
+        <ModalShell open onClose={onClose} title={modalTitle} size="lg">
+            {/* Angle Filter */}
+            <div className="flex gap-2 overflow-x-auto pb-1 mb-4">
+                <FilterButton
+                    label={t('progress.photoSelection.all')}
+                    isActive={filterAngle === 'all'}
+                    onClick={() => setFilterAngle('all')}
+                />
+                <FilterButton
+                    label={t('progress.angles.front')}
+                    isActive={filterAngle === 'front'}
+                    onClick={() => setFilterAngle('front')}
+                />
+                <FilterButton
+                    label={t('progress.angles.side')}
+                    isActive={filterAngle === 'side'}
+                    onClick={() => setFilterAngle('side')}
+                />
+                <FilterButton
+                    label={t('progress.angles.back')}
+                    isActive={filterAngle === 'back'}
+                    onClick={() => setFilterAngle('back')}
+                />
+                <FilterButton
+                    label={t('progress.angles.other')}
+                    isActive={filterAngle === 'other'}
+                    onClick={() => setFilterAngle('other')}
+                />
             </div>
-        </div>
+
+            {/* Photo Grid */}
+            {filteredPhotos.length === 0 ? (
+                <div className="text-center py-12">
+                    <p className="text-text-tertiary">
+                        {t('progress.photos.noPhotos')}
+                    </p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-3 gap-3">
+                    {filteredPhotos.map((photo) => {
+                        const isSelected = photo.id === currentPhotoId;
+                        return (
+                            <button
+                                key={photo.id}
+                                onClick={() => handleSelect(photo)}
+                                className={`relative aspect-square rounded-control overflow-hidden transition-all ${
+                                    isSelected
+                                        ? 'ring-4 ring-oura scale-95'
+                                        : 'hover:ring-2 hover:ring-oura/40'
+                                }`}>
+                                <img
+                                    src={photo.thumbnailUrl || photo.photoUrl}
+                                    alt={`Foto ${photo.date}`}
+                                    className="w-full h-full object-cover"
+                                />
+
+                                {/* Selected Indicator */}
+                                {isSelected && (
+                                    <div className="absolute inset-0 bg-oura/20 flex items-center justify-center">
+                                        <div className="w-12 h-12 bg-oura rounded-full flex items-center justify-center shadow-float">
+                                            <Check
+                                                size={24}
+                                                className="text-white"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Date Label */}
+                                <div className="absolute bottom-1 left-1 right-1 bg-black/60 backdrop-blur-sm rounded text-white text-[10px] font-bold text-center py-1">
+                                    {format(parseISO(photo.date), 'd MMM', {
+                                        locale: dateLocale,
+                                    })}
+                                </div>
+
+                                {/* Angle Badge */}
+                                {photo.angle && (
+                                    <div className="absolute top-1 right-1 bg-surface/90 rounded px-1.5 py-0.5 text-[8px] font-bold text-text-secondary">
+                                        {getAngleBadge(photo.angle)}
+                                    </div>
+                                )}
+
+                                {/* Weight Badge */}
+                                {photo.weight && (
+                                    <div className="absolute top-1 left-1 bg-surface/90 rounded px-1.5 py-0.5 text-[8px] font-bold text-text-secondary">
+                                        {photo.weight}kg
+                                    </div>
+                                )}
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+        </ModalShell>
     );
 };
 
@@ -176,7 +153,7 @@ const FilterButton: React.FC<{
 }> = ({ label, isActive, onClick }) => (
     <button
         onClick={onClick}
-        className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
+        className={`px-3 py-1.5 rounded-control text-xs font-bold whitespace-nowrap transition-colors ${
             isActive
                 ? 'bg-oura-soft text-oura border-2 border-oura'
                 : 'bg-surface text-text-secondary border-2 border-border hover:border-border'

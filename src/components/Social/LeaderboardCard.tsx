@@ -1,5 +1,6 @@
 import { Dumbbell, Flame, Scale, TrendingDown, Trophy } from 'lucide-react';
 import React from 'react';
+import { SkeletonRow } from '../UI/Skeleton';
 import { useTranslation } from 'react-i18next';
 import { LeaderboardEntry, LeaderboardMetric } from '../../types/domain';
 import { EmptyState } from './EmptyState';
@@ -91,16 +92,7 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
             {loading ? (
                 <div className="space-y-3">
                     {[1, 2, 3].map((i) => (
-                        <div
-                            key={i}
-                            className="flex items-center gap-3 p-3 rounded-xl bg-background animate-pulse border border-border/50">
-                            <div className="w-8 h-8 rounded-full bg-surface-lighter" />
-                            <div className="flex-1 space-y-2">
-                                <div className="h-4 bg-surface-lighter rounded w-24" />
-                                <div className="h-3 bg-surface-lighter rounded w-16" />
-                            </div>
-                            <div className="h-6 w-12 bg-surface-lighter rounded-lg" />
-                        </div>
+                        <SkeletonRow key={i} />
                     ))}
                 </div>
             ) : leaderboard.length === 0 ? (

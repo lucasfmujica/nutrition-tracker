@@ -1,5 +1,6 @@
 import { Activity, Sparkles } from 'lucide-react';
 import React from 'react';
+import { SkeletonRow } from '../UI/Skeleton';
 import { useTranslation } from 'react-i18next';
 import { ActivityItem as ActivityItemType } from '../../types/domain';
 import { ActivityItemComponent } from './ActivityItem';
@@ -41,15 +42,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
             {loading ? (
                 <div className="space-y-4">
                     {[1, 2, 3, 4].map((i) => (
-                        <div
-                            key={i}
-                            className="flex items-start gap-3 py-2 animate-pulse">
-                            <div className="w-10 h-10 rounded-xl bg-surface-lighter" />
-                            <div className="flex-1 space-y-2 py-1">
-                                <div className="h-4 bg-surface-lighter rounded w-3/4" />
-                                <div className="h-3 bg-surface-lighter rounded w-1/4" />
-                            </div>
-                        </div>
+                        <SkeletonRow key={i} />
                     ))}
                 </div>
             ) : activities.length === 0 ? (

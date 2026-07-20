@@ -5,11 +5,12 @@ import {
     Target,
     TrendingDown,
     TrendingUp,
-    X,
 } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CustomTargets } from '../../types/domain';
+import { Button } from '../UI/Button';
+import { ModalShell } from '../UI/ModalShell';
 
 interface MondayBriefingModalProps {
     onAccept: () => void;
@@ -74,156 +75,130 @@ export const MondayBriefingModal: React.FC<MondayBriefingModalProps> = ({
     };
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center pointer-events-none">
-            {/* Backdrop */}
-            <div
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto transition-opacity duration-300 ease-in-out"
-                onClick={onDismiss}
-            />
+        <ModalShell
+            open
+            onClose={onDismiss}
+            title={t('modals.mondayBriefing.title')}
+            subtitle={t('modals.mondayBriefing.subtitle')}
+            size="md"
+            footer={
+                <div className="space-y-3">
+                    {actionType !== 'maintain' && (
+                        <Button
+                            fullWidth
+                            onClick={onAccept}
+                            icon={<Target className="w-5 h-5" />}
+                            className="!bg-oura hover:!opacity-90 !shadow-float">
+                            {t('modals.mondayBriefing.accept')}
+                        </Button>
+                    )}
 
-            {/* Modal Card */}
-            <div className="relative w-full max-w-md bg-surface rounded-t-3xl sm:rounded-3xl shadow-2xl pointer-events-auto overflow-hidden flex flex-col max-h-[90vh] animate-slide-up sm:animate-fade-in-up transition-all duration-300">
-                {/* Header */}
-                <div className="bg-gradient-to-r from-oura to-oura p-6 text-white text-center pb-12">
-                    <h2 className="text-2xl font-bold mb-1">
-                        {t('modals.mondayBriefing.title')}
-                    </h2>
-                    <p className="text-white/80 text-sm">
-                        {t('modals.mondayBriefing.subtitle')}
-                    </p>
-                    <button
-                        onClick={onDismiss}
-                        className="absolute top-4 right-4 text-white/70 hover:text-white p-2">
-                        <X className="w-6 h-6" />
-                    </button>
+                    <Button
+                        fullWidth
+                        variant={actionType === 'maintain' ? 'primary' : 'secondary'}
+                        onClick={onDismiss}>
+                        {actionType === 'maintain'
+                            ? t('modals.mondayBriefing.continue')
+                            : t('modals.mondayBriefing.maintain')}
+                    </Button>
                 </div>
+            }>
+            {/* 1. Status Badge */}
+            <div
+                className={`flex flex-col items-center p-4 rounded-card border ${getStatusColor()} bg-surface shadow-card mb-6`}>
+                <div className="mb-2 p-3 bg-surface rounded-full shadow-card">
+                    {getStatusIcon()}
+                </div>
+                <h3 className="font-bold text-lg mb-1">
+                    {status === 'onTrack'
+                        ? t('modals.mondayBriefing.excellent')
+                        : status === 'fast'
+                          ? t('modals.mondayBriefing.warning')
+                          : t('modals.mondayBriefing.adjustment')}
+                </h3>
+                <p className="text-sm text-center opacity-90">{message}</p>
+            </div>
 
-                {/* Content Container - Floats up into header */}
-                <div className="px-6 pb-6 -mt-8 overflow-y-auto">
-                    {/* 1. Status Badge */}
-                    <div
-                        className={`flex flex-col items-center p-4 rounded-2xl border ${getStatusColor()} bg-surface shadow-lg mb-6`}>
-                        <div className="mb-2 p-3 bg-surface rounded-full shadow-sm">
-                            {getStatusIcon()}
-                        </div>
-                        <h3 className="font-bold text-lg mb-1">
-                            {status === 'onTrack'
-                                ? t('modals.mondayBriefing.excellent')
-                                : status === 'fast'
-                                  ? t('modals.mondayBriefing.warning')
-                                  : t('modals.mondayBriefing.adjustment')}
-                        </h3>
-                        <p className="text-sm text-center opacity-90">{message}</p>
+            {/* 2. Stats Grid */}
+            <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="bg-background p-3 rounded-control border border-border text-center">
+                    <span className="text-xs text-text-tertiary block mb-1">
+                        {t('modals.mondayBriefing.currentTempo')}
+                    </span>
+                    <span
+                        className={`text-lg font-bold tabular-nums ${currentTrend < 0 ? 'text-success' : 'text-warning'}`}>
+                        {currentTrend ? `${currentTrend.toFixed(2)}` : '0'}{' '}
+                        <span className="text-xs text-text-tertiary">kg/sem</span>
+                    </span>
+                </div>
+                <div className="bg-background p-3 rounded-control border border-border text-center">
+                    <span className="text-xs text-text-tertiary block mb-1">
+                        {t('modals.mondayBriefing.adherence')}
+                    </span>
+                    <span
+                        className={`text-lg font-bold tabular-nums ${weeklyAdherence > 80 ? 'text-success' : 'text-warning'}`}>
+                        {weeklyAdherence}%
+                    </span>
+                </div>
+            </div>
+
+            {/* 3. Proposed Adjustments */}
+            {actionType !== 'maintain' ? (
+                <div>
+                    <div className="flex items-center justify-between mb-3">
+                        <h4 className="font-bold text-text-primary">
+                            {t('modals.mondayBriefing.proposal')}
+                        </h4>
+                        <span className="text-xs bg-oura-soft text-oura px-2 py-1 rounded-control font-medium">
+                            Auto-Pilot
+                        </span>
                     </div>
 
-                    {/* 2. Stats Grid */}
-                    <div className="grid grid-cols-2 gap-3 mb-6">
-                        <div className="bg-background p-3 rounded-xl border border-border text-center">
-                            <span className="text-xs text-text-tertiary block mb-1">
-                                {t('modals.mondayBriefing.currentTempo')}
-                            </span>
-                            <span
-                                className={`text-lg font-bold ${currentTrend < 0 ? 'text-success' : 'text-warning'}`}>
-                                {currentTrend ? `${currentTrend.toFixed(2)}` : '0'}{' '}
-                                <span className="text-xs text-text-tertiary">kg/sem</span>
-                            </span>
-                        </div>
-                        <div className="bg-background p-3 rounded-xl border border-border text-center">
-                            <span className="text-xs text-text-tertiary block mb-1">
-                                {t('modals.mondayBriefing.adherence')}
-                            </span>
-                            <span
-                                className={`text-lg font-bold ${weeklyAdherence > 80 ? 'text-success' : 'text-warning'}`}>
-                                {weeklyAdherence}%
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* 3. Proposed Adjustments */}
-                    {actionType !== 'maintain' ? (
-                        <div className="mb-6">
-                            <div className="flex items-center justify-between mb-3">
-                                <h4 className="font-bold text-text-primary">
-                                    {t('modals.mondayBriefing.proposal')}
-                                </h4>
-                                <span className="text-xs bg-oura-soft text-oura px-2 py-1 rounded-lg font-medium">
-                                    Auto-Pilot
+                    <div className="bg-oura-soft rounded-control p-4 border border-oura/20 mb-3">
+                        <div className="flex items-center justify-between">
+                            {/* Old */}
+                            <div className="text-center opacity-60">
+                                <span className="block text-xs text-text-tertiary uppercase">
+                                    Actual
+                                </span>
+                                <span className="block text-lg font-bold text-text-secondary tabular-nums">
+                                    {currentTargets.calories}
+                                </span>
+                                <span className="text-xs text-text-tertiary">
+                                    kcal
                                 </span>
                             </div>
 
-                            <div className="bg-oura-soft rounded-xl p-4 border border-oura/20 mb-3">
-                                <div className="flex items-center justify-between">
-                                    {/* Old */}
-                                    <div className="text-center opacity-60">
-                                        <span className="block text-xs text-text-tertiary uppercase">
-                                            Actual
-                                        </span>
-                                        <span className="block text-lg font-bold text-text-secondary">
-                                            {currentTargets.calories}
-                                        </span>
-                                        <span className="text-xs text-text-tertiary">
-                                            kcal
-                                        </span>
-                                    </div>
+                            <ArrowRight className="text-oura" />
 
-                                    <ArrowRight className="text-oura" />
-
-                                    {/* New */}
-                                    <div className="text-center">
-                                        <span className="block text-xs text-oura uppercase font-bold">
-                                            Nuevo
-                                        </span>
-                                        <span className="block text-2xl font-bold text-oura">
-                                            {newCalories}
-                                        </span>
-                                        <span className="text-xs text-oura">
-                                            kcal
-                                        </span>
-                                    </div>
-                                </div>
+                            {/* New */}
+                            <div className="text-center">
+                                <span className="block text-xs text-oura uppercase font-bold">
+                                    Nuevo
+                                </span>
+                                <span className="block text-2xl font-bold text-oura tabular-nums">
+                                    {newCalories}
+                                </span>
+                                <span className="text-xs text-oura">kcal</span>
                             </div>
-
-                            <p className="text-sm text-text-secondary bg-background p-3 rounded-lg border border-border flex gap-2">
-                                <Activity className="w-4 h-4 text-oura mt-0.5 shrink-0" />
-                                {reasoning}
-                            </p>
                         </div>
-                    ) : (
-                        <div className="mb-6 bg-success-soft p-4 rounded-xl border border-success/20 text-center">
-                            <p className="text-success font-medium mb-1">
-                                {t('modals.mondayBriefing.noChanges')}
-                            </p>
-                            <p className="text-sm text-success">
-                                {t('modals.mondayBriefing.noChangesDesc')}
-                            </p>
-                        </div>
-                    )}
-
-                    {/* 4. Action Buttons */}
-                    <div className="space-y-3">
-                        {actionType !== 'maintain' && (
-                            <button
-                                onClick={onAccept}
-                                className="w-full bg-gradient-to-r from-oura to-oura text-white py-3.5 rounded-xl font-bold shadow-lg shadow-purple-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                                <Target className="w-5 h-5" />
-                                {t('modals.mondayBriefing.accept')}
-                            </button>
-                        )}
-
-                        <button
-                            onClick={onDismiss}
-                            className={`w-full py-3.5 rounded-xl font-bold transition-all ${
-                                actionType === 'maintain'
-                                    ? 'bg-gray-900 text-white shadow-lg'
-                                    : 'bg-surface border border-border text-text-secondary hover:bg-background'
-                            }`}>
-                            {actionType === 'maintain'
-                                ? t('modals.mondayBriefing.continue')
-                                : t('modals.mondayBriefing.maintain')}
-                        </button>
                     </div>
+
+                    <p className="text-sm text-text-secondary bg-background p-3 rounded-control border border-border flex gap-2">
+                        <Activity className="w-4 h-4 text-oura mt-0.5 shrink-0" />
+                        {reasoning}
+                    </p>
                 </div>
-            </div>
-        </div>
+            ) : (
+                <div className="bg-success-soft p-4 rounded-control border border-success/20 text-center">
+                    <p className="text-success font-medium mb-1">
+                        {t('modals.mondayBriefing.noChanges')}
+                    </p>
+                    <p className="text-sm text-success">
+                        {t('modals.mondayBriefing.noChangesDesc')}
+                    </p>
+                </div>
+            )}
+        </ModalShell>
     );
 };

@@ -1,5 +1,6 @@
 import { X } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../../utils/cn';
 import { useSheetDrag } from './useSheetDrag';
@@ -73,7 +74,9 @@ export const ModalShell: React.FC<ModalShellProps> = ({
 
     if (!open) return null;
 
-    return (
+    /* Portal a body: evita que ancestros con transform (ej. PullToRefresh)
+       conviertan el fixed en relativo al contenido scrolleado. */
+    return createPortal(
         <div
             className="fixed inset-0 z-[60] flex items-end lg:items-center justify-center"
             onClick={dismissible ? onClose : undefined}>
@@ -143,6 +146,7 @@ export const ModalShell: React.FC<ModalShellProps> = ({
                 {/* Safe area cuando no hay footer */}
                 {!footer && <div className="lg:hidden pb-safe" />}
             </div>
-        </div>
+        </div>,
+        document.body,
     );
 };

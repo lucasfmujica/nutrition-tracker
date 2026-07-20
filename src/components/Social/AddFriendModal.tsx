@@ -1,6 +1,9 @@
-import { Check, Copy, UserPlus, X } from 'lucide-react';
+import { Check, Copy, UserPlus } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '../UI/Button';
+import { Input } from '../UI/FormField';
+import { ModalShell } from '../UI/ModalShell';
 
 interface AddFriendModalProps {
     isOpen: boolean;
@@ -21,8 +24,6 @@ export const AddFriendModal: React.FC<AddFriendModalProps> = ({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
-
-    if (!isOpen) return null;
 
     const handleCopy = async () => {
         if (!userFriendCode) return;
@@ -67,127 +68,88 @@ export const AddFriendModal: React.FC<AddFriendModalProps> = ({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <div
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                onClick={handleClose}
-            />
-
-            {/* Modal */}
-            <div className="relative bg-surface rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
-                {/* Header */}
-                <div className="flex items-center justify-between p-5 border-b border-border">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                            <UserPlus size={20} className="text-primary" />
-                        </div>
-                        <h2 className="font-bold text-lg text-text-primary">
-                            {t('social.addFriend.title')}
-                        </h2>
-                    </div>
-                    <button
-                        onClick={handleClose}
-                        className="w-8 h-8 rounded-full bg-surface-lighter hover:bg-surface-lighter flex items-center justify-center text-text-tertiary transition-colors">
-                        <X size={18} />
-                    </button>
-                </div>
-
-                {/* Content */}
-                <div className="p-5 space-y-5">
-                    {/* Your Friend Code */}
-                    <div>
-                        <label className="block text-sm font-medium text-text-secondary mb-2">
-                            {t('social.addFriend.yourCode')}
-                        </label>
-                        <div className="flex items-center gap-2">
-                            <div className="flex-1 bg-surface-lighter rounded-xl px-4 py-3 text-center">
-                                <span className="font-mono font-black text-xl text-text-primary tracking-wider">
-                                    {userFriendCode || '--------'}
-                                </span>
-                            </div>
-                            <button
-                                onClick={handleCopy}
-                                disabled={!userFriendCode}
-                                className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
-                                    copied
-                                        ? 'bg-success text-white'
-                                        : 'bg-surface-lighter hover:bg-surface-lighter text-text-secondary'
-                                }`}>
-                                {copied ? <Check size={20} /> : <Copy size={20} />}
-                            </button>
-                        </div>
-                        <p className="text-xs text-text-tertiary mt-2 text-center">
-                            {t('social.addFriend.shareTip')}
-                        </p>
-                    </div>
-
-                    {/* Divider */}
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-border"></div>
-                        </div>
-                        <div className="relative flex justify-center">
-                            <span className="px-3 bg-surface text-sm text-text-tertiary">
-                                {t('social.addFriend.childTip')}
+        <ModalShell
+            open={isOpen}
+            onClose={handleClose}
+            title={t('social.addFriend.title')}
+            icon={<UserPlus size={20} />}
+            size="sm"
+            footer={
+                <Button
+                    type="submit"
+                    form="add-friend-form"
+                    fullWidth
+                    loading={loading}
+                    disabled={loading || friendCode.length < 8}>
+                    {loading
+                        ? t('social.addFriend.sending')
+                        : t('social.addFriend.send')}
+                </Button>
+            }>
+            <div className="space-y-5">
+                {/* Your Friend Code */}
+                <div>
+                    <span className="block text-overline uppercase text-text-tertiary mb-1.5">
+                        {t('social.addFriend.yourCode')}
+                    </span>
+                    <div className="flex items-center gap-2">
+                        <div className="flex-1 bg-surface-lighter rounded-control px-4 py-3 text-center">
+                            <span className="font-mono font-black text-xl text-text-primary tracking-wider">
+                                {userFriendCode || '--------'}
                             </span>
                         </div>
-                    </div>
-
-                    {/* Enter Friend Code */}
-                    <form onSubmit={handleSubmit}>
-                        <label className="block text-sm font-medium text-text-secondary mb-2">
-                            {t('social.addFriend.friendCode')}
-                        </label>
-                        <div className="flex gap-2">
-                            <input
-                                type="text"
-                                value={friendCode}
-                                onChange={(e) => {
-                                    setFriendCode(e.target.value.toUpperCase());
-                                    setError(null);
-                                }}
-                                placeholder={t('social.addFriend.placeholder')}
-                                maxLength={8}
-                                className="flex-1 bg-surface-lighter border-2 border-transparent focus:border-primary rounded-xl px-4 py-3 text-center font-mono font-bold text-lg uppercase tracking-wider placeholder-text-tertiary outline-none transition-all"
-                            />
-                        </div>
-
-                        {/* Error Message */}
-                        {error && (
-                            <p className="text-sm text-danger mt-2 text-center">
-                                {error}
-                            </p>
-                        )}
-
-                        {/* Success Message */}
-                        {success && (
-                            <p className="text-sm text-success mt-2 text-center">
-                                {t('social.addFriend.sent')}
-                            </p>
-                        )}
-
-                        {/* Submit Button */}
                         <button
-                            type="submit"
-                            disabled={loading || friendCode.length < 8}
-                            className={`w-full mt-4 py-3 rounded-xl font-bold text-white transition-all ${
-                                loading || friendCode.length < 8
-                                    ? 'bg-muted cursor-not-allowed'
-                                    : 'bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 active:scale-[0.98]'
+                            onClick={handleCopy}
+                            disabled={!userFriendCode}
+                            className={`w-12 h-12 rounded-control flex items-center justify-center transition-all ${
+                                copied
+                                    ? 'bg-success text-white'
+                                    : 'bg-surface-lighter hover:bg-surface-lighter text-text-secondary'
                             }`}>
-                            {loading ? (
-                                <span className="flex items-center justify-center gap-2">
-                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                    {t('social.addFriend.sending')}
-                                </span>
-                            ) : (
-                                t('social.addFriend.send')
-                            )}
+                            {copied ? <Check size={20} /> : <Copy size={20} />}
                         </button>
-                    </form>
+                    </div>
+                    <p className="text-caption text-text-tertiary mt-2 text-center">
+                        {t('social.addFriend.shareTip')}
+                    </p>
                 </div>
+
+                {/* Divider */}
+                <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-border"></div>
+                    </div>
+                    <div className="relative flex justify-center">
+                        <span className="px-3 bg-surface-elevated text-caption text-text-tertiary">
+                            {t('social.addFriend.childTip')}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Enter Friend Code */}
+                <form id="add-friend-form" onSubmit={handleSubmit}>
+                    <Input
+                        type="text"
+                        label={t('social.addFriend.friendCode')}
+                        value={friendCode}
+                        onChange={(e) => {
+                            setFriendCode(e.target.value.toUpperCase());
+                            setError(null);
+                        }}
+                        placeholder={t('social.addFriend.placeholder')}
+                        maxLength={8}
+                        error={error ?? undefined}
+                        className="text-center font-mono font-bold text-lg uppercase tracking-wider"
+                    />
+
+                    {/* Success Message */}
+                    {success && (
+                        <p className="text-caption text-success mt-2 text-center">
+                            {t('social.addFriend.sent')}
+                        </p>
+                    )}
+                </form>
             </div>
-        </div>
+        </ModalShell>
     );
 };

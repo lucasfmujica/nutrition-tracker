@@ -1,11 +1,4 @@
-import {
-    ChefHat,
-    Loader2,
-    RefreshCw,
-    Settings,
-    Sparkles,
-    UtensilsCrossed,
-} from 'lucide-react';
+import { ChefHat, Settings, Sparkles, UtensilsCrossed } from 'lucide-react';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAIMeals } from '../../context/AIMealSuggestionsContext';
@@ -17,13 +10,10 @@ import {
     RecipeDetail,
 } from '../../services/ai/mealService';
 import { AIChefMealTime, FoodEntry } from '../../types/domain';
-import {
-    AIChefContextBanner,
-    AIChefRecipeDetail,
-    AIChefSuggestionCard,
-    getMealCalorieBudget,
-} from './AIChefCards';
+import { ModalShell } from '../UI/ModalShell';
+import { getMealCalorieBudget } from './AIChefCards';
 import { AIChefIngredientInput, AIChefPreferencesPanel } from './AIChefPanels';
+import { AIMealSuggestionContent } from './AIMealSuggestionContent';
 
 // =====================================================
 // MAIN MODAL COMPONENT
@@ -188,155 +178,71 @@ export const AIMealSuggestionModal: React.FC<AIMealSuggestionModalProps> = ({
     ];
 
     return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-surface rounded-3xl w-full max-w-md border border-oura/20 shadow-2xl relative overflow-hidden max-h-[90vh] flex flex-col">
-                {/* Background Decor */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-oura/10 rounded-bl-full -mr-8 -mt-8 pointer-events-none" />
-
-                {/* Header */}
-                <div className="flex justify-between items-center p-6 pb-4 relative">
-                    <div className="flex items-center gap-2">
-                        <div className="p-2 bg-oura rounded-control text-white shadow-float">
-                            <ChefHat size={20} />
-                        </div>
-                        <div>
-                            <h3 className="text-xl font-black text-text-primary tracking-tight">
-                                {t('aiChef.title')}
-                            </h3>
-                            <p className="text-[10px] text-text-tertiary uppercase tracking-wider font-bold">
-                                {t('aiChef.subtitle')}
-                            </p>
-                        </div>
-                    </div>
+        <ModalShell
+            open={isOpen}
+            onClose={onClose}
+            title={t('aiChef.title')}
+            subtitle={t('aiChef.subtitle')}
+            icon={<ChefHat size={20} />}
+            size="md">
+            {/* Tabs */}
+            <div className="flex gap-1 mb-4">
+                {tabs.map((tab) => (
                     <button
-                        onClick={onClose}
-                        aria-label="Close modal"
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-surface-lighter text-text-tertiary hover:text-text-secondary hover:bg-surface-lighter transition-colors">
-                        ×
+                        key={tab.id}
+                        onClick={() => setAIChefTab(tab.id)}
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-control text-xs font-bold transition-all ${
+                            aiChefTab === tab.id
+                                ? 'bg-oura text-white'
+                                : 'bg-background dark:bg-surface-lighter text-text-tertiary hover:text-text-secondary'
+                        }`}>
+                        {tab.icon}
+                        {tab.label}
                     </button>
-                </div>
-
-                {/* Tabs */}
-                <div className="flex gap-1 px-6 mb-4">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab.id}
-                            onClick={() => setAIChefTab(tab.id)}
-                            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                                aiChefTab === tab.id
-                                    ? 'bg-oura text-white'
-                                    : 'bg-background dark:bg-surface-lighter text-text-tertiary hover:text-text-secondary'
-                            }`}>
-                            {tab.icon}
-                            {tab.label}
-                        </button>
-                    ))}
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 overflow-y-auto px-6 pb-6">
-                    {aiChefTab === 'suggestions' && (
-                        <>
-                            <AIChefContextBanner
-                                mealTime={effectiveMealTime}
-                                isTrainingDay={isTrainingDay}
-                                remainingCalories={remaining.calories}
-                                mealBudgetCalories={mealBudget.calories}
-                                onMealTimeChange={setSelectedMealTime}
-                            />
-
-                            {selectedSuggestion ? (
-                                <AIChefRecipeDetail
-                                    suggestion={selectedSuggestion}
-                                    recipe={recipeDetail}
-                                    loading={recipeLoading}
-                                    onAdd={() => handleAddSuggestion(selectedSuggestion)}
-                                    onBack={handleBackFromRecipe}
-                                />
-                            ) : loading ? (
-                                <div className="py-12 flex flex-col items-center justify-center text-center">
-                                    <Loader2
-                                        size={40}
-                                        className="text-oura animate-spin mb-4"
-                                    />
-                                    <p className="text-text-primary font-bold mb-1">
-                                        {t('modals.aiSuggestion.loading')}
-                                    </p>
-                                    <p className="text-xs text-text-tertiary">
-                                        {t('modals.aiSuggestion.loadingSubtitle')}
-                                    </p>
-                                </div>
-                            ) : error ? (
-                                <div className="py-8 text-center">
-                                    <p className="text-danger font-medium mb-2">{error}</p>
-                                    <button
-                                        onClick={handleRegenerate}
-                                        className="text-sm font-bold text-oura hover:text-oura underline">
-                                        {t('aiChef.tryAgain')}
-                                    </button>
-                                </div>
-                            ) : suggestions.length === 0 ? (
-                                <div className="py-12 text-center">
-                                    <ChefHat
-                                        size={48}
-                                        className="text-oura mx-auto mb-4"
-                                    />
-                                    <p className="text-text-secondary font-medium mb-4">
-                                        {t('aiChef.noSuggestions')}
-                                    </p>
-                                    <button
-                                        onClick={handleRegenerate}
-                                        className="px-6 py-3 bg-gradient-to-r from-oura to-oura text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all flex items-center gap-2 mx-auto">
-                                        <Sparkles size={16} />
-                                        {t('aiChef.generateSuggestions')}
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="space-y-3">
-                                    {suggestions.map((suggestion: MealSuggestion, idx: number) => (
-                                        <AIChefSuggestionCard
-                                            key={idx}
-                                            suggestion={suggestion}
-                                            onAdd={() => handleAddSuggestion(suggestion)}
-                                            onReject={() => rejectSuggestion(suggestion.name)}
-                                            onViewRecipe={() => handleViewRecipe(suggestion)}
-                                        />
-                                    ))}
-
-                                    <button
-                                        onClick={handleRegenerate}
-                                        disabled={loading}
-                                        className="w-full py-3 mt-4 bg-background dark:bg-surface-lighter text-text-secondary rounded-xl font-bold text-sm hover:bg-oura-soft transition-all flex items-center justify-center gap-2">
-                                        <RefreshCw size={16} />
-                                        {t('aiChef.regenerate')}
-                                    </button>
-                                </div>
-                            )}
-                        </>
-                    )}
-
-                    {aiChefTab === 'ingredients' && (
-                        <AIChefIngredientInput
-                            value={ingredientInput}
-                            onChange={setIngredientInput}
-                            onAdd={() => addIngredient(ingredientInput)}
-                            ingredients={ingredients}
-                            onRemove={removeIngredient}
-                            onSearch={handleIngredientSearch}
-                            loading={loading}
-                        />
-                    )}
-
-                    {aiChefTab === 'config' && (
-                        <AIChefPreferencesPanel
-                            preferences={preferences}
-                            onUpdate={updatePreferences}
-                            onApplyAndRegenerate={handleApplyAndRegenerate}
-                            loading={loading}
-                        />
-                    )}
-                </div>
+                ))}
             </div>
-        </div>
+
+            {aiChefTab === 'suggestions' && (
+                <AIMealSuggestionContent
+                    suggestions={suggestions}
+                    loading={loading}
+                    error={error}
+                    effectiveMealTime={effectiveMealTime}
+                    isTrainingDay={isTrainingDay}
+                    remainingCalories={remaining.calories}
+                    mealBudgetCalories={mealBudget.calories}
+                    onMealTimeChange={setSelectedMealTime}
+                    selectedSuggestion={selectedSuggestion}
+                    recipeDetail={recipeDetail}
+                    recipeLoading={recipeLoading}
+                    onAdd={handleAddSuggestion}
+                    onReject={rejectSuggestion}
+                    onViewRecipe={handleViewRecipe}
+                    onBack={handleBackFromRecipe}
+                    onRegenerate={handleRegenerate}
+                />
+            )}
+
+            {aiChefTab === 'ingredients' && (
+                <AIChefIngredientInput
+                    value={ingredientInput}
+                    onChange={setIngredientInput}
+                    onAdd={() => addIngredient(ingredientInput)}
+                    ingredients={ingredients}
+                    onRemove={removeIngredient}
+                    onSearch={handleIngredientSearch}
+                    loading={loading}
+                />
+            )}
+
+            {aiChefTab === 'config' && (
+                <AIChefPreferencesPanel
+                    preferences={preferences}
+                    onUpdate={updatePreferences}
+                    onApplyAndRegenerate={handleApplyAndRegenerate}
+                    loading={loading}
+                />
+            )}
+        </ModalShell>
     );
 };

@@ -1,7 +1,6 @@
-import { X } from 'lucide-react';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { FoodCameraInput } from '../Food/FoodCameraInput';
+import { ModalShell } from '../UI/ModalShell';
 
 interface FoodCameraModalProps {
     isOpen: boolean;
@@ -11,26 +10,8 @@ interface FoodCameraModalProps {
 export const FoodCameraModal: React.FC<FoodCameraModalProps> = ({
     isOpen,
     onClose,
-}) => {
-    const { t } = useTranslation();
-    if (!isOpen) return null;
-
-    return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-start sm:items-center justify-center p-4 pt-12 sm:pt-4 overflow-y-auto">
-            <div className="bg-surface rounded-3xl w-full max-w-lg relative mb-24 sm:mb-4">
-                {/* Close Button */}
-                <button
-                    onClick={onClose}
-                    aria-label={t('common.close')}
-                    className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-surface-lighter text-text-secondary hover:bg-surface-lighter transition-colors">
-                    <X size={20} />
-                </button>
-
-                {/* Modal Content - scrollable on mobile */}
-                <div className="p-1 max-h-[80vh] overflow-y-auto">
-                    <FoodCameraInput />
-                </div>
-            </div>
-        </div>
-    );
-};
+}) => (
+    <ModalShell open={isOpen} onClose={onClose} size="md">
+        <FoodCameraInput />
+    </ModalShell>
+);
