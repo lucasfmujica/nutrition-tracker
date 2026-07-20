@@ -49,13 +49,13 @@ export const GoalInsightsCard: React.FC = () => {
     // Edge case: Goal already reached
     if (remainingWeight !== null && remainingWeight <= 0) {
         return (
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 shadow-sm rounded-2xl border border-green-100">
+            <div className="bg-success-soft p-6 shadow-card rounded-card border border-success/20">
                 <div className="text-center py-6">
                     <span className="text-6xl">🎉</span>
-                    <h3 className="text-2xl font-bold text-green-600 mt-4">
+                    <h3 className="text-2xl font-bold text-success mt-4">
                         {t('dashboard.insights.goalReached')}
                     </h3>
-                    <p className="text-sm text-green-700 mt-2">
+                    <p className="text-sm text-success mt-2">
                         {t('dashboard.insights.congrats', { weight: TARGET_WEIGHT })}
                     </p>
                 </div>
@@ -66,7 +66,7 @@ export const GoalInsightsCard: React.FC = () => {
     // Edge case: Insufficient data
     if (!estimatedGoalDate && !currentTrend) {
         return (
-            <div className="bg-surface p-6 shadow-sm rounded-2xl border border-border">
+            <div className="bg-surface p-6 shadow-card rounded-card border border-border">
                 <div className="text-center py-8">
                     <span className="text-5xl mb-4 block">📊</span>
                     <h3 className="text-lg font-semibold text-text-secondary">
@@ -94,13 +94,13 @@ export const GoalInsightsCard: React.FC = () => {
             return {
                 icon: '↓',
                 text: `${Math.abs(currentTrend).toFixed(1)} ${t('dashboard.predictive.units.kgPerWeek')}`,
-                color: 'text-green-600 bg-green-50 border-green-200',
+                color: 'text-success bg-success-soft border-success/30',
             };
         } else if (currentTrend > 0) {
             return {
                 icon: '↑',
                 text: `${currentTrend.toFixed(1)} ${t('dashboard.predictive.units.kgPerWeek')}`,
-                color: 'text-amber-600 bg-amber-50 border-amber-200',
+                color: 'text-warning bg-warning-soft border-warning/30',
             };
         } else {
             return {
@@ -114,11 +114,11 @@ export const GoalInsightsCard: React.FC = () => {
     // Adherence color logic (traffic light system)
     const getAdherenceColor = () => {
         if (weeklyAdherence >= 80) {
-            return 'text-green-600 bg-green-50 border-green-200';
+            return 'text-success bg-success-soft border-success/30';
         } else if (weeklyAdherence >= 50) {
-            return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+            return 'text-warning bg-warning-soft border-warning/30';
         } else {
-            return 'text-red-600 bg-red-50 border-red-200';
+            return 'text-danger bg-danger-soft border-danger/30';
         }
     };
 
@@ -126,9 +126,9 @@ export const GoalInsightsCard: React.FC = () => {
     const adherenceColor = getAdherenceColor();
 
     return (
-        <div className="bg-surface p-6 shadow-sm rounded-2xl border border-border relative overflow-hidden">
+        <div className="bg-surface p-6 shadow-card rounded-card border border-border relative overflow-hidden">
             {/* Background decoration */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 opacity-40 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary-soft rounded-full -mr-16 -mt-16 opacity-40 pointer-events-none"></div>
 
             <div className="relative z-10">
                 {/* Header */}
@@ -152,7 +152,7 @@ export const GoalInsightsCard: React.FC = () => {
                         <span className="text-xs font-semibold text-text-secondary">
                             {STARTING_WEIGHT}kg
                         </span>
-                        <span className="text-xs font-medium text-blue-600">
+                        <span className="text-xs font-medium text-primary">
                             {progressPercentage.toFixed(0)}%
                         </span>
                         <span className="text-xs font-semibold text-text-secondary">
@@ -162,7 +162,7 @@ export const GoalInsightsCard: React.FC = () => {
 
                     <div className="h-3 w-full bg-surface-lighter rounded-full overflow-hidden">
                         <div
-                            className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-700 ease-out"
+                            className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full transition-all duration-700 ease-out"
                             style={{ width: `${progressPercentage}%` }}
                         />
                     </div>
@@ -172,7 +172,7 @@ export const GoalInsightsCard: React.FC = () => {
                 <div className="grid grid-cols-3 gap-3">
                     {/* Trend Badge */}
                     <div
-                        className={`rounded-xl p-3 border ${trendDisplay.color} transition-colors`}>
+                        className={`rounded-control p-3 border ${trendDisplay.color} transition-colors`}>
                         <div className="text-2xl font-bold mb-0.5">
                             {trendDisplay.icon}
                         </div>
@@ -186,7 +186,7 @@ export const GoalInsightsCard: React.FC = () => {
 
                     {/* Adherence Badge */}
                     <div
-                        className={`rounded-xl p-3 border ${adherenceColor} transition-colors`}>
+                        className={`rounded-control p-3 border ${adherenceColor} transition-colors`}>
                         <div className="text-2xl font-bold mb-0.5">
                             {weeklyAdherence}%
                         </div>
@@ -199,7 +199,7 @@ export const GoalInsightsCard: React.FC = () => {
                     </div>
 
                     {/* Remaining Weight Badge */}
-                    <div className="rounded-xl p-3 border bg-blue-50 text-blue-600 border-blue-200 transition-colors">
+                    <div className="rounded-control p-3 border bg-primary-soft text-primary border-primary/20 transition-colors">
                         <div className="text-2xl font-bold mb-0.5">
                             {remainingWeight?.toFixed(1) || '—'}
                         </div>

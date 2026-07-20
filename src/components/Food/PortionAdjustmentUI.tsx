@@ -73,7 +73,7 @@ export const PortionAdjustmentUI: React.FC<PortionAdjustmentUIProps> = ({
     };
 
     return (
-        <div className="space-y-6 p-6 bg-background rounded-2xl border border-border">
+        <div className="space-y-6 p-6 bg-background rounded-card border border-border">
             {/* Header */}
             <div>
                 <h3 className="text-xl font-black text-text-primary mb-1">
@@ -85,7 +85,7 @@ export const PortionAdjustmentUI: React.FC<PortionAdjustmentUIProps> = ({
             </div>
 
             {/* Current Multiplier Display */}
-            <div className="text-center py-4 px-6 rounded-2xl bg-accent/5 border-2 border-accent/20">
+            <div className="text-center py-4 px-6 rounded-card bg-accent/5 border-2 border-accent/20">
                 <p className="text-sm text-text-tertiary font-bold uppercase tracking-wider mb-1">
                     {t('food.portionAdjust.currentPortion')}
                 </p>
@@ -104,10 +104,10 @@ export const PortionAdjustmentUI: React.FC<PortionAdjustmentUIProps> = ({
                         <button
                             key={preset}
                             onClick={() => handlePresetClick(preset)}
-                            className={`py-3 px-4 rounded-xl font-bold text-sm transition-all ${
+                            className={`py-3 px-4 rounded-control font-bold text-sm transition-all ${
                                 multiplier === preset
-                                    ? 'bg-accent text-white shadow-lg scale-105'
-                                    : 'bg-background-secondary text-text-secondary hover:bg-accent/10 hover:text-accent'
+                                    ? 'bg-accent text-white shadow-card scale-105'
+                                    : 'bg-surface-lighter text-text-secondary hover:bg-accent/10 hover:text-accent'
                             }`}
                         >
                             ×{preset}
@@ -132,7 +132,7 @@ export const PortionAdjustmentUI: React.FC<PortionAdjustmentUIProps> = ({
                     <button
                         onClick={handleDecrement}
                         disabled={multiplier <= MIN_MULTIPLIER}
-                        className="w-12 h-12 rounded-xl bg-background-secondary hover:bg-accent/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+                        className="w-12 h-12 rounded-control bg-surface-lighter hover:bg-accent/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
                         aria-label="Decrease portion"
                     >
                         <Minus className="w-5 h-5 text-text-secondary" />
@@ -149,10 +149,10 @@ export const PortionAdjustmentUI: React.FC<PortionAdjustmentUIProps> = ({
                         className="flex-1 h-3 rounded-full appearance-none cursor-pointer"
                         style={{
                             background: `linear-gradient(to right,
-                                hsl(var(--accent)) 0%,
-                                hsl(var(--accent)) ${((multiplier - MIN_MULTIPLIER) / (MAX_MULTIPLIER - MIN_MULTIPLIER)) * 100}%,
-                                hsl(var(--background-secondary)) ${((multiplier - MIN_MULTIPLIER) / (MAX_MULTIPLIER - MIN_MULTIPLIER)) * 100}%,
-                                hsl(var(--background-secondary)) 100%)`,
+                                var(--color-accent) 0%,
+                                var(--color-accent) ${((multiplier - MIN_MULTIPLIER) / (MAX_MULTIPLIER - MIN_MULTIPLIER)) * 100}%,
+                                var(--color-progress-track) ${((multiplier - MIN_MULTIPLIER) / (MAX_MULTIPLIER - MIN_MULTIPLIER)) * 100}%,
+                                var(--color-progress-track) 100%)`,
                         }}
                     />
 
@@ -160,7 +160,7 @@ export const PortionAdjustmentUI: React.FC<PortionAdjustmentUIProps> = ({
                     <button
                         onClick={handleIncrement}
                         disabled={multiplier >= MAX_MULTIPLIER}
-                        className="w-12 h-12 rounded-xl bg-background-secondary hover:bg-accent/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+                        className="w-12 h-12 rounded-control bg-surface-lighter hover:bg-accent/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
                         aria-label="Increase portion"
                     >
                         <Plus className="w-5 h-5 text-text-secondary" />
@@ -169,7 +169,7 @@ export const PortionAdjustmentUI: React.FC<PortionAdjustmentUIProps> = ({
             </div>
 
             {/* Macro Preview */}
-            <div className="p-4 rounded-2xl bg-background-secondary border border-border">
+            <div className="p-4 rounded-card bg-surface-lighter border border-border">
                 <p className="text-xs font-black text-text-tertiary uppercase tracking-wider mb-3">
                     {t('food.portionAdjust.macrosPreview')}
                 </p>
@@ -221,14 +221,14 @@ export const PortionAdjustmentUI: React.FC<PortionAdjustmentUIProps> = ({
                 {onCancel && (
                     <button
                         onClick={onCancel}
-                        className="flex-1 py-4 px-6 rounded-xl bg-background-secondary text-text-secondary font-bold text-sm hover:bg-background/50 transition-colors"
+                        className="flex-1 min-h-[44px] py-4 px-6 rounded-control bg-surface-lighter text-text-secondary font-bold text-sm hover:bg-background/50 transition-colors"
                     >
                         {t('common.cancel')}
                     </button>
                 )}
                 <button
                     onClick={handleConfirm}
-                    className="flex-1 py-4 px-6 rounded-xl bg-accent text-white font-bold text-sm hover:bg-accent/90 transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 min-h-[44px] py-4 px-6 rounded-control bg-accent text-white font-bold text-sm hover:bg-accent/90 transition-colors flex items-center justify-center gap-2"
                 >
                     <Check className="w-5 h-5" />
                     {t('food.portionAdjust.confirmButton')}
@@ -242,7 +242,7 @@ export const PortionAdjustmentUI: React.FC<PortionAdjustmentUIProps> = ({
                     width: 24px;
                     height: 24px;
                     border-radius: 50%;
-                    background: hsl(var(--accent));
+                    background: var(--color-accent);
                     cursor: pointer;
                     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
                 }
@@ -251,7 +251,7 @@ export const PortionAdjustmentUI: React.FC<PortionAdjustmentUIProps> = ({
                     width: 24px;
                     height: 24px;
                     border-radius: 50%;
-                    background: hsl(var(--accent));
+                    background: var(--color-accent);
                     cursor: pointer;
                     border: none;
                     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);

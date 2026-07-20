@@ -222,7 +222,7 @@ export const FoodCameraInput: React.FC = () => {
     // If showing portion adjustment view
     if (hasResult && showPortionAdjust) {
         return (
-            <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border">
+            <div className="bg-surface rounded-card p-6 shadow-card border border-border">
                 <PortionAdjustmentUI
                     baseMacros={baseMacros}
                     onConfirm={handlePortionConfirm}
@@ -235,7 +235,7 @@ export const FoodCameraInput: React.FC = () => {
     // If showing results/edit view
     if (hasResult && !showPortionAdjust) {
         return (
-            <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border space-y-4">
+            <div className="bg-surface rounded-card p-6 shadow-card border border-border space-y-4">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <h3 className="text-lg font-bold text-text-primary">
@@ -243,7 +243,7 @@ export const FoodCameraInput: React.FC = () => {
                     </h3>
                     <button
                         onClick={handleCancel}
-                        className="p-2 hover:bg-surface-lighter rounded-lg transition-colors">
+                        className="p-2 hover:bg-surface-lighter rounded-control transition-colors">
                         <X className="w-5 h-5 text-text-tertiary" />
                     </button>
                 </div>
@@ -257,7 +257,7 @@ export const FoodCameraInput: React.FC = () => {
                         type="text"
                         value={editableMeal}
                         onChange={(e) => setEditableMeal(e.target.value)}
-                        className="w-full px-4 py-3 bg-background text-text-primary border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="w-full px-4 py-3 bg-background text-text-primary border border-border rounded-control focus:ring-2 focus:ring-primary focus:border-transparent"
                         placeholder={t('food.camera.namePlaceholder')}
                     />
                 </div>
@@ -270,7 +270,7 @@ export const FoodCameraInput: React.FC = () => {
                     <select
                         value={selectedMealType}
                         onChange={(e) => setSelectedMealType(e.target.value)}
-                        className="w-full px-4 py-3 bg-background text-text-primary border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        className="w-full px-4 py-3 bg-background text-text-primary border border-border rounded-control focus:ring-2 focus:ring-primary focus:border-transparent">
                         <option value="breakfast">{t('mealTypes.breakfast')}</option>
                         <option value="lunch">{t('mealTypes.lunch')}</option>
                         <option value="snack">{t('mealTypes.snack')}</option>
@@ -294,7 +294,7 @@ export const FoodCameraInput: React.FC = () => {
                                         newItems[index].amount = e.target.value;
                                         setEditableItems(newItems);
                                     }}
-                                    className="w-24 px-3 py-2 bg-background text-text-primary border border-border rounded-lg text-sm"
+                                    className="w-24 px-3 py-2 bg-background text-text-primary border border-border rounded-control text-sm"
                                     placeholder={t(
                                         'food.camera.ingredientsPlaceholderAmount',
                                     )}
@@ -307,7 +307,7 @@ export const FoodCameraInput: React.FC = () => {
                                         newItems[index].name = e.target.value;
                                         setEditableItems(newItems);
                                     }}
-                                    className="flex-1 px-3 py-2 bg-background text-text-primary border border-border rounded-lg text-sm"
+                                    className="flex-1 px-3 py-2 bg-background text-text-primary border border-border rounded-control text-sm"
                                     placeholder={t(
                                         'food.camera.ingredientsPlaceholderName',
                                     )}
@@ -336,7 +336,7 @@ export const FoodCameraInput: React.FC = () => {
                                         calories: parseFloat(e.target.value) || 0,
                                     })
                                 }
-                                className="w-full px-3 py-2 bg-background text-text-primary border border-border rounded-lg text-sm"
+                                className="w-full px-3 py-2 bg-background text-text-primary border border-border rounded-control text-sm"
                             />
                         </div>
                         <div>
@@ -352,7 +352,7 @@ export const FoodCameraInput: React.FC = () => {
                                         protein: parseFloat(e.target.value) || 0,
                                     })
                                 }
-                                className="w-full px-3 py-2 bg-background text-text-primary border border-border rounded-lg text-sm"
+                                className="w-full px-3 py-2 bg-background text-text-primary border border-border rounded-control text-sm"
                             />
                         </div>
                         <div>
@@ -368,7 +368,7 @@ export const FoodCameraInput: React.FC = () => {
                                         carbs: parseFloat(e.target.value) || 0,
                                     })
                                 }
-                                className="w-full px-3 py-2 bg-background text-text-primary border border-border rounded-lg text-sm"
+                                className="w-full px-3 py-2 bg-background text-text-primary border border-border rounded-control text-sm"
                             />
                         </div>
                         <div>
@@ -384,7 +384,7 @@ export const FoodCameraInput: React.FC = () => {
                                         fat: parseFloat(e.target.value) || 0,
                                     })
                                 }
-                                className="w-full px-3 py-2 bg-background text-text-primary border border-border rounded-lg text-sm"
+                                className="w-full px-3 py-2 bg-background text-text-primary border border-border rounded-control text-sm"
                             />
                         </div>
                         <div className="col-span-2">
@@ -400,7 +400,7 @@ export const FoodCameraInput: React.FC = () => {
                                         fiber: parseFloat(e.target.value) || 0,
                                     })
                                 }
-                                className="w-full px-3 py-2 bg-background text-text-primary border border-border rounded-lg text-sm"
+                                className="w-full px-3 py-2 bg-background text-text-primary border border-border rounded-control text-sm"
                             />
                         </div>
                     </div>
@@ -409,7 +409,7 @@ export const FoodCameraInput: React.FC = () => {
                 {/* Adjust Portion Button */}
                 <button
                     onClick={() => setShowPortionAdjust(true)}
-                    className="w-full py-3 bg-background border-2 border-border text-text-secondary rounded-xl font-semibold hover:bg-surface-lighter transition-colors flex items-center justify-center gap-2">
+                    className="w-full min-h-[44px] py-3 bg-background border-2 border-border text-text-secondary rounded-control font-semibold hover:bg-surface-lighter transition-colors flex items-center justify-center gap-2">
                     <SlidersHorizontal className="w-5 h-5" />
                     {t('food.camera.adjustPortion')}
                 </button>
@@ -418,12 +418,13 @@ export const FoodCameraInput: React.FC = () => {
                 <div className="flex gap-3 pt-2">
                     <button
                         onClick={handleCancel}
-                        className="flex-1 py-3 bg-surface-lighter text-text-secondary rounded-xl font-semibold hover:bg-surface-lighter transition-colors">
+                        className="flex-1 min-h-[44px] py-3 bg-surface-lighter text-text-secondary rounded-control font-semibold hover:bg-surface-lighter transition-colors">
                         {t('common.cancel')}
                     </button>
                     <button
                         onClick={handleConfirm}
-                        className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold shadow-lg shadow-purple-200/50 hover:shadow-xl transition-all flex items-center justify-center gap-2">
+                        style={{ background: 'var(--brand-gradient)' }}
+                        className="flex-1 min-h-[44px] py-3 text-white rounded-control font-semibold shadow-glow transition-all flex items-center justify-center gap-2">
                         <Save className="w-5 h-5" />
                         {t('common.save')}
                     </button>
@@ -434,7 +435,7 @@ export const FoodCameraInput: React.FC = () => {
 
     // Default view - Scan button
     return (
-        <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border">
+        <div className="bg-surface rounded-card p-6 shadow-card border border-border">
             <input
                 ref={fileInputRef}
                 type="file"
@@ -453,8 +454,8 @@ export const FoodCameraInput: React.FC = () => {
             />
 
             {error && (
-                <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl">
-                    <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+                <div className="mb-4 p-4 bg-danger-soft border border-danger/30 rounded-control">
+                    <p className="text-sm text-danger">{error}</p>
                 </div>
             )}
 
@@ -462,7 +463,8 @@ export const FoodCameraInput: React.FC = () => {
                 <button
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isLoading}
-                    className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-bold shadow-lg shadow-emerald-200/50 hover:shadow-xl hover:shadow-emerald-200/70 transition-all active:scale-[0.99] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                    style={{ background: 'var(--brand-gradient)' }}
+                    className="w-full min-h-[44px] py-4 text-white rounded-control font-bold shadow-glow transition-all active:scale-[0.99] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
                     {isLoading ? (
                         <>
                             <Loader2 className="w-5 h-5 animate-spin" />
@@ -479,7 +481,7 @@ export const FoodCameraInput: React.FC = () => {
                 <button
                     onClick={() => galleryInputRef.current?.click()}
                     disabled={isLoading}
-                    className="w-full py-4 bg-surface border-2 border-border text-text-secondary rounded-xl font-bold hover:bg-background transition-all active:scale-[0.99] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                    className="w-full min-h-[44px] py-4 bg-surface border-2 border-border text-text-secondary rounded-control font-bold hover:bg-background transition-all active:scale-[0.99] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
                     <ImageIcon className="w-5 h-5" />
                     {t('food.camera.galleryButton')}
                 </button>

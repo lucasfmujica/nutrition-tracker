@@ -55,20 +55,20 @@ export const MealSection: React.FC<MealSectionProps> = ({
     const getIcon = () => {
         switch (title) {
             case 'breakfast':
-                return <Sunrise className="text-orange-500" size={20} />;
+                return <Sunrise className="text-fat" size={20} />;
             case 'lunch':
-                return <Sun className="text-yellow-500" size={20} />;
+                return <Sun className="text-warning" size={20} />;
             case 'snack':
-                return <Coffee className="text-amber-700" size={20} />; // Adjusted brown color
+                return <Coffee className="text-carbs" size={20} />;
             case 'dinner':
-                return <Moon className="text-indigo-500" size={20} />;
+                return <Moon className="text-info" size={20} />;
             default:
-                return <Cookie className="text-pink-500" size={20} />;
+                return <Cookie className="text-danger" size={20} />;
         }
     };
 
     return (
-        <div className="mb-6 bg-surface rounded-2xl shadow-sm border border-border overflow-hidden transition-colors">
+        <div className="mb-6 bg-surface rounded-card shadow-card border border-border overflow-hidden transition-colors">
             {/* Header */}
             <div className="flex justify-between items-center p-4 bg-background/50 border-b border-border">
                 <div className="flex items-center gap-2">
@@ -81,11 +81,11 @@ export const MealSection: React.FC<MealSectionProps> = ({
                     {!isSelectionMode && foods.length > 1 && onCreateCombo && (
                         <button
                             onClick={() => setIsSelectionMode(true)}
-                            className="text-xs font-medium text-purple-600 hover:text-purple-700 transition-colors mr-2">
+                            className="text-xs font-medium text-primary hover:text-primary-dark transition-colors mr-2">
                             Crear Combo
                         </button>
                     )}
-                    <span className="text-sm font-semibold text-text-primary bg-surface px-2 py-0.5 rounded-lg border border-border shadow-sm">
+                    <span className="text-sm font-semibold text-text-primary bg-surface px-2 py-0.5 rounded-control border border-border shadow-card">
                         {totals.calories}{' '}
                         <span className="text-xs font-normal text-text-tertiary">
                             kcal
@@ -104,7 +104,7 @@ export const MealSection: React.FC<MealSectionProps> = ({
                                     type="checkbox"
                                     checked={selectedIds.has(food.id)}
                                     onChange={() => toggleSelection(food.id)}
-                                    className="w-5 h-5 rounded-md border-border text-purple-600 focus:ring-purple-500"
+                                    className="w-5 h-5 rounded-md border-border text-primary focus:ring-primary"
                                 />
                             </div>
                         )}
@@ -133,7 +133,7 @@ export const MealSection: React.FC<MealSectionProps> = ({
                         </p>
                         <button
                             onClick={onAddFood}
-                            className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
+                            className="text-sm font-medium text-primary hover:text-primary-dark transition-colors">
                             +{' '}
                             {t('diary.addMeal', { meal: getMealTypeName(title, t) })}
                         </button>
@@ -143,7 +143,7 @@ export const MealSection: React.FC<MealSectionProps> = ({
 
             {/* Footer */}
             {isSelectionMode ? (
-                <div className="flex divide-x divide-border bg-purple-50 dark:bg-purple-900/20">
+                <div className="flex divide-x divide-border bg-primary-soft">
                     <button
                         onClick={() => {
                             setIsSelectionMode(false);
@@ -158,7 +158,7 @@ export const MealSection: React.FC<MealSectionProps> = ({
                         className={`flex-1 py-3 text-sm font-bold transition-colors ${
                             selectedIds.size < 2
                                 ? 'text-text-tertiary'
-                                : 'text-purple-600 hover:bg-purple-100 dark:hover:bg-purple-900/40'
+                                : 'text-primary hover:bg-primary/10'
                         }`}>
                         Guardar Combo ({selectedIds.size})
                     </button>
@@ -167,7 +167,7 @@ export const MealSection: React.FC<MealSectionProps> = ({
                 foods.length > 0 && (
                     <button
                         onClick={onAddFood}
-                        className="w-full py-3 flex items-center justify-center gap-2 text-sm font-medium text-text-tertiary hover:text-blue-600 hover:bg-background transition-colors border-t border-border">
+                        className="w-full min-h-[44px] py-3 flex items-center justify-center gap-2 text-sm font-medium text-text-tertiary hover:text-primary hover:bg-background transition-colors border-t border-border">
                         <Plus size={16} /> {t('diary.addItem')}
                     </button>
                 )

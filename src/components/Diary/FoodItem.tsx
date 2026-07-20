@@ -42,7 +42,7 @@ export const FoodItem: React.FC<FoodItemProps> = ({
                     e.stopPropagation();
                     onTemplate();
                 }}
-                className={`p-1.5 transition-colors ${isFavorite ? 'text-yellow-400 fill-current' : 'text-text-tertiary hover:text-yellow-400'}`}
+                className={`p-1.5 transition-colors ${isFavorite ? 'text-warning fill-current' : 'text-text-tertiary hover:text-warning'}`}
                 title={
                     isFavorite
                         ? t('diary.foodItem.removeFavorite')
@@ -55,7 +55,7 @@ export const FoodItem: React.FC<FoodItemProps> = ({
             </button>
             <button
                 onClick={onEdit}
-                className="p-1.5 text-text-tertiary hover:text-blue-500 transition-colors"
+                className="p-1.5 text-text-tertiary hover:text-primary transition-colors"
                 title={t('diary.foodItem.edit')}>
                 <svg
                     className="w-4 h-4"
@@ -72,7 +72,7 @@ export const FoodItem: React.FC<FoodItemProps> = ({
             </button>
             <button
                 onClick={onDelete}
-                className="p-1.5 text-text-tertiary hover:text-red-500 transition-colors"
+                className="p-1.5 text-text-tertiary hover:text-danger transition-colors"
                 title={t('diary.foodItem.delete')}>
                 <svg
                     className="w-4 h-4"
@@ -93,7 +93,7 @@ export const FoodItem: React.FC<FoodItemProps> = ({
     return (
         <SwipeableItem onDelete={onDelete} onDuplicate={onDuplicate}>
             <div
-                className={`p-3 bg-surface border-b border-border ${needsReview ? 'bg-amber-50/50' : ''}`}>
+                className={`p-3 bg-surface border-b border-border ${needsReview ? 'bg-warning-soft' : ''}`}>
                 {/* Row 1: Food info + macros (+ actions on desktop) */}
                 <div className="flex justify-between items-center">
                     <div className="flex-1 min-w-0 pr-3">
@@ -102,7 +102,7 @@ export const FoodItem: React.FC<FoodItemProps> = ({
                                 {food.name}
                             </h4>
                             {needsReview && (
-                                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-warning flex-shrink-0"></span>
                             )}
                         </div>
                         {food.description && (
@@ -123,9 +123,9 @@ export const FoodItem: React.FC<FoodItemProps> = ({
                             {food.calories}
                         </span>
                         <div className="flex gap-1 justify-end text-[10px] text-text-tertiary font-medium uppercase">
-                            <span className="text-green-600">{food.protein}p</span>
-                            <span className="text-amber-500">{food.carbs}c</span>
-                            <span className="text-orange-500">{food.fat}f</span>
+                            <span className="text-protein">{food.protein}p</span>
+                            <span className="text-carbs">{food.carbs}c</span>
+                            <span className="text-fat">{food.fat}f</span>
                         </div>
                     </div>
 

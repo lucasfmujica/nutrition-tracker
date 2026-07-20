@@ -20,13 +20,13 @@ export const SafetyNetToggle: React.FC<SafetyNetToggleProps> = ({
         <button
             onClick={onToggle}
             className={`
-        relative flex items-center justify-center lg:justify-start gap-3 px-4 py-3 lg:py-2 rounded-xl
+        relative flex items-center justify-center lg:justify-start gap-3 px-4 py-3 lg:py-2 rounded-control
         transition-all duration-300 ease-out w-full lg:w-auto
         min-h-[44px]
         ${
             isActive
-                ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-200/50'
-                : 'bg-surface text-text-secondary border border-border hover:border-blue-300 shadow-sm'
+                ? 'bg-gradient-to-r from-primary to-accent-blue text-white shadow-glow'
+                : 'bg-surface text-text-secondary border border-border hover:border-primary/40 shadow-sm'
         }
       `}
             title={
@@ -50,7 +50,7 @@ export const SafetyNetToggle: React.FC<SafetyNetToggleProps> = ({
                     {t('dashboard.safetyNet.title')}
                 </span>
                 <span
-                    className={`text-[10px] uppercase tracking-wide font-medium ${isActive ? 'text-blue-100' : 'text-text-tertiary'}`}>
+                    className={`text-[10px] uppercase tracking-wide font-medium ${isActive ? 'text-white/80' : 'text-text-tertiary'}`}>
                     {isActive
                         ? t('dashboard.safetyNet.on')
                         : t('dashboard.safetyNet.off')}
@@ -59,7 +59,7 @@ export const SafetyNetToggle: React.FC<SafetyNetToggleProps> = ({
 
             {/* Active Glow Effect */}
             {isActive && (
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-400 to-indigo-400 opacity-20 blur-md -z-10 animate-pulse" />
+                <div className="absolute inset-0 rounded-control bg-gradient-to-r from-primary to-accent-blue opacity-20 blur-md -z-10 animate-pulse" />
             )}
         </button>
     );

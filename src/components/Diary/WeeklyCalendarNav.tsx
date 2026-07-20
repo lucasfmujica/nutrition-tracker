@@ -124,12 +124,12 @@ export const WeeklyCalendarNav: React.FC<WeeklyCalendarNavProps> = ({
     }, [weekData, dateLocale]);
 
     return (
-        <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
+        <div className="bg-surface rounded-card border border-border shadow-card overflow-hidden">
             {/* Week Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-background">
                 <button
                     onClick={goToPreviousWeek}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-lighter text-text-secondary transition-colors">
+                    className="w-11 h-11 flex items-center justify-center rounded-control hover:bg-surface-lighter text-text-secondary transition-colors">
                     <ChevronLeft size={20} />
                 </button>
 
@@ -140,7 +140,7 @@ export const WeeklyCalendarNav: React.FC<WeeklyCalendarNavProps> = ({
                     {selectedDate !== today && (
                         <button
                             onClick={goToToday}
-                            className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium mt-0.5">
+                            className="text-xs text-primary hover:text-primary-dark font-medium mt-0.5">
                             {t('diary.calendar.goToToday')}
                         </button>
                     )}
@@ -148,7 +148,7 @@ export const WeeklyCalendarNav: React.FC<WeeklyCalendarNavProps> = ({
 
                 <button
                     onClick={goToNextWeek}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-lighter text-text-secondary transition-colors">
+                    className="w-11 h-11 flex items-center justify-center rounded-control hover:bg-surface-lighter text-text-secondary transition-colors">
                     <ChevronRight size={20} />
                 </button>
             </div>
@@ -204,14 +204,14 @@ const DayCell: React.FC<DayCellProps> = ({ day, onSelect }) => {
     const getStatusColor = () => {
         if (isFuture) return 'bg-surface-lighter';
         if (!hasFood) return 'bg-background';
-        if (isOnTrack) return 'bg-emerald-50 dark:bg-emerald-900/30';
-        if (calories > targetCalories * 1.1) return 'bg-red-50 dark:bg-red-900/30';
-        return 'bg-amber-50 dark:bg-amber-900/30';
+        if (isOnTrack) return 'bg-success-soft';
+        if (calories > targetCalories * 1.1) return 'bg-danger-soft';
+        return 'bg-warning-soft';
     };
 
     const getBorderColor = () => {
-        if (isSelected) return 'border-blue-500 ring-2 ring-blue-500/20';
-        if (isToday) return 'border-blue-300';
+        if (isSelected) return 'border-primary ring-2 ring-primary/20';
+        if (isToday) return 'border-primary/40';
         return 'border-transparent';
     };
 
@@ -220,20 +220,20 @@ const DayCell: React.FC<DayCellProps> = ({ day, onSelect }) => {
             onClick={onSelect}
             disabled={isFuture}
             className={`
-                relative flex flex-col items-center py-2 px-1 rounded-xl border-2 transition-all
+                relative flex flex-col items-center py-2 px-1 rounded-control border-2 transition-all
                 ${getStatusColor()}
                 ${getBorderColor()}
                 ${isFuture ? 'opacity-50 cursor-not-allowed' : 'hover:bg-surface-lighter active:scale-95'}
             `}>
             {/* Day name */}
             <span
-                className={`text-[10px] font-bold uppercase ${isToday ? 'text-blue-600 dark:text-blue-400' : 'text-text-tertiary'}`}>
+                className={`text-[10px] font-bold uppercase ${isToday ? 'text-primary' : 'text-text-tertiary'}`}>
                 {dayName}
             </span>
 
             {/* Day number */}
             <span
-                className={`text-lg font-bold ${isSelected ? 'text-blue-600 dark:text-blue-400' : 'text-text-primary'}`}>
+                className={`text-lg font-bold ${isSelected ? 'text-primary' : 'text-text-primary'}`}>
                 {dayNum}
             </span>
 
@@ -242,14 +242,14 @@ const DayCell: React.FC<DayCellProps> = ({ day, onSelect }) => {
                 <div className="mt-1">
                     {hasFood ? (
                         isOnTrack ? (
-                            <CheckCircle2 size={14} className="text-emerald-500" />
+                            <CheckCircle2 size={14} className="text-success" />
                         ) : (
                             <div className="flex items-center gap-0.5">
                                 <Utensils size={10} className="text-text-tertiary" />
                                 <span
                                     className={`text-[9px] font-bold ${
                                         calories > targetCalories
-                                            ? 'text-red-500'
+                                            ? 'text-danger'
                                             : 'text-text-tertiary'
                                     }`}>
                                     {calories > 0
@@ -270,10 +270,10 @@ const DayCell: React.FC<DayCellProps> = ({ day, onSelect }) => {
                     <div
                         className={`h-full transition-all ${
                             isOnTrack
-                                ? 'bg-emerald-500'
+                                ? 'bg-success'
                                 : calories > targetCalories
-                                  ? 'bg-red-500'
-                                  : 'bg-amber-500'
+                                  ? 'bg-danger'
+                                  : 'bg-warning'
                         }`}
                         style={{ width: `${progress}%` }}
                     />

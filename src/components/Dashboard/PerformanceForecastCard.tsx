@@ -46,13 +46,13 @@ export const PerformanceForecastCard: React.FC = () => {
     const getIcon = () => {
         switch (icon) {
             case 'sun':
-                return <Sun className="w-8 h-8 text-amber-500" />;
+                return <Sun className="w-8 h-8 text-warning" />;
             case 'cloud':
                 return <Cloud className="w-8 h-8 text-text-tertiary" />;
             case 'cloud-rain':
-                return <CloudRain className="w-8 h-8 text-indigo-400" />;
+                return <CloudRain className="w-8 h-8 text-info" />;
             case 'battery-charging':
-                return <BatteryCharging className="w-8 h-8 text-purple-500" />;
+                return <BatteryCharging className="w-8 h-8 text-oura" />;
             case 'loading':
                 return <Loader className="w-8 h-8 text-text-tertiary animate-spin" />;
             default:
@@ -60,17 +60,17 @@ export const PerformanceForecastCard: React.FC = () => {
         }
     };
 
-    const gradientClass = ui?.gradient || 'from-gray-50 to-slate-50 dark:from-gray-900/40 dark:to-slate-900/40';
+    const gradientClass = ui?.gradient || 'from-background to-surface-lighter';
     const textClass = ui?.textColor || 'text-text-secondary';
 
     return (
         <div
-            className={`card bg-gradient-to-br ${gradientClass} p-5 shadow-sm rounded-2xl border border-white/60 dark:border-white/10 relative overflow-hidden`}>
+            className={`card bg-gradient-to-br ${gradientClass} p-5 shadow-card rounded-card border border-white/60 dark:border-white/10 relative overflow-hidden`}>
             {/* Decorative background circle */}
             <div className="absolute -top-4 -right-4 w-24 h-24 bg-surface/40 rounded-full blur-2xl pointer-events-none"></div>
 
             <div className="flex items-start gap-4 relative z-10">
-                <div className="p-3 bg-surface/80 backdrop-blur-sm rounded-xl shadow-sm ring-1 ring-black/5 dark:ring-white/10">
+                <div className="p-3 bg-surface/80 backdrop-blur-sm rounded-control shadow-sm ring-1 ring-black/5 dark:ring-white/10">
                     {getIcon()}
                 </div>
 
@@ -89,13 +89,13 @@ export const PerformanceForecastCard: React.FC = () => {
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setShowExplanation(!showExplanation)}
-                                className={`p-1.5 rounded-lg transition-all ${showExplanation ? 'bg-surface shadow-sm text-blue-600' : 'text-text-tertiary hover:text-text-secondary'}`}
+                                className={`p-1.5 rounded-control transition-all ${showExplanation ? 'bg-surface shadow-sm text-primary' : 'text-text-tertiary hover:text-text-secondary'}`}
                                 title={t('dashboard.forecast.howCalculated')}>
                                 <Info size={18} />
                             </button>
                             {/* Status Badge */}
                             {forecastCode === 'peak' && (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-warning-soft text-warning">
                                     {t('dashboard.forecast.prime')}
                                 </span>
                             )}
@@ -116,9 +116,9 @@ export const PerformanceForecastCard: React.FC = () => {
             {/* Logic Explanation */}
             {showExplanation && metrics && (
                 <div className="mt-4 pt-4 border-t border-white/40 dark:border-white/10 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <div className="bg-surface/60 backdrop-blur-md rounded-xl p-4 space-y-3 ring-1 ring-black/5 dark:ring-white/10 shadow-inner">
+                    <div className="bg-surface/60 backdrop-blur-md rounded-control p-4 space-y-3 ring-1 ring-black/5 dark:ring-white/10 shadow-inner">
                         <h4 className="text-xs font-black text-text-primary uppercase tracking-widest flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></span>
+                            <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></span>
                             {t('dashboard.forecast.algorithm')}
                         </h4>
 
@@ -133,7 +133,7 @@ export const PerformanceForecastCard: React.FC = () => {
                                 </span>
                                 <div className="flex items-center gap-2">
                                     <span
-                                        className={`text-sm font-black ${(parseFloat(metrics.readinessTrend ?? '0') || 0) >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                                        className={`text-sm font-black ${(parseFloat(metrics.readinessTrend ?? '0') || 0) >= 0 ? 'text-success' : 'text-danger'}`}>
                                         {(parseFloat(
                                             metrics.readinessTrend ?? '0',
                                         ) || 0) > 0
@@ -153,7 +153,7 @@ export const PerformanceForecastCard: React.FC = () => {
                                 </span>
                                 <div className="flex items-center gap-2">
                                     <span
-                                        className={`text-sm font-black ${(parseFloat(metrics.sleepTrend ?? '0') || 0) >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                                        className={`text-sm font-black ${(parseFloat(metrics.sleepTrend ?? '0') || 0) >= 0 ? 'text-success' : 'text-danger'}`}>
                                         {(parseFloat(metrics.sleepTrend ?? '0') ||
                                             0) > 0
                                             ? '+'
@@ -178,7 +178,7 @@ export const PerformanceForecastCard: React.FC = () => {
                                         </span>
                                     </span>
                                     <span
-                                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${(metrics.volume48h ?? 0) > 10000 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'}`}>
+                                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${(metrics.volume48h ?? 0) > 10000 ? 'bg-warning-soft text-warning' : 'bg-success-soft text-success'}`}>
                                         {(metrics.volume48h ?? 0) > 10000
                                             ? t('dashboard.forecast.highLoad')
                                             : t('dashboard.forecast.optimal')}
@@ -187,10 +187,10 @@ export const PerformanceForecastCard: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-blue-50/50 dark:bg-blue-950/30 p-2.5 rounded-lg">
+                        <div className="bg-primary-soft/50 p-2.5 rounded-control">
                             <div
-                                className={`p-4 rounded-xl border border-blue-200 dark:border-blue-800 bg-surface/50`}>
-                                <p className="text-[10px] text-blue-700 dark:text-blue-300 italic leading-snug">
+                                className={`p-4 rounded-control border border-primary/20 bg-surface/50`}>
+                                <p className="text-[10px] text-primary italic leading-snug">
                                     <strong>
                                         {t('dashboard.forecast.whyStatement')}
                                     </strong>{' '}

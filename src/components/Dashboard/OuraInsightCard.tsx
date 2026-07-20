@@ -37,21 +37,21 @@ export const OuraInsightCard: React.FC<OuraInsightCardProps> = ({ ouraData }) =>
     }
 
     // Determine color scheme based on readiness
-    let bgColor = 'bg-blue-500/10'; // Normal (70-85)
-    let textColor = 'text-blue-600';
-    let borderColor = 'border-blue-500/20';
-    let iconBg = 'bg-blue-500/20';
+    let bgColor = 'bg-oura/10'; // Normal (70-85)
+    let textColor = 'text-oura';
+    let borderColor = 'border-oura/20';
+    let iconBg = 'bg-oura/20';
 
     if (readinessScore < 70) {
-        bgColor = 'bg-red-500/10';
-        textColor = 'text-red-600';
-        borderColor = 'border-red-500/20';
-        iconBg = 'bg-red-500/20';
+        bgColor = 'bg-danger/10';
+        textColor = 'text-danger';
+        borderColor = 'border-danger/20';
+        iconBg = 'bg-danger/20';
     } else if (readinessScore > 85) {
-        bgColor = 'bg-green-500/10';
-        textColor = 'text-green-600';
-        borderColor = 'border-green-500/20';
-        iconBg = 'bg-green-500/20';
+        bgColor = 'bg-success/10';
+        textColor = 'text-success';
+        borderColor = 'border-success/20';
+        iconBg = 'bg-success/20';
     }
 
     // Calculate hydration increase percentage
@@ -59,12 +59,12 @@ export const OuraInsightCard: React.FC<OuraInsightCardProps> = ({ ouraData }) =>
 
     return (
         <div
-            className={`${bgColor} ${borderColor} border-2 rounded-2xl p-4 space-y-3 shadow-sm`}
+            className={`${bgColor} ${borderColor} border-2 rounded-card p-4 space-y-3 shadow-card`}
         >
             {/* Header with icon and readiness */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className={`${iconBg} rounded-xl p-2.5`}>
+                    <div className={`${iconBg} rounded-control p-2.5`}>
                         <Activity className={`w-5 h-5 ${textColor}`} />
                     </div>
                     <div>
@@ -80,7 +80,7 @@ export const OuraInsightCard: React.FC<OuraInsightCardProps> = ({ ouraData }) =>
                 {/* Calorie Adjustment Badge */}
                 {ouraCalorieBoost !== 0 && (
                     <div
-                        className={`${textColor} font-black text-lg px-3 py-1 rounded-xl ${iconBg}`}
+                        className={`${textColor} font-black text-lg px-3 py-1 rounded-control ${iconBg}`}
                     >
                         {ouraCalorieBoost > 0 ? '+' : ''}
                         {ouraCalorieBoost}
@@ -90,7 +90,7 @@ export const OuraInsightCard: React.FC<OuraInsightCardProps> = ({ ouraData }) =>
 
             {/* Alert Message (if any) */}
             {ouraAlert && (
-                <div className="flex items-start gap-2 p-3 bg-background/50 rounded-xl">
+                <div className="flex items-start gap-2 p-3 bg-background/50 rounded-control">
                     <AlertCircle className={`w-4 h-4 ${textColor} flex-shrink-0 mt-0.5`} />
                     <p className="text-sm font-semibold text-text-primary leading-tight">
                         {ouraAlert}

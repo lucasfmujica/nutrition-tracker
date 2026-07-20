@@ -32,7 +32,7 @@ export const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         Math.max(...data.map((d) => (d[dataKey] as number) || 0), target) * 1.1 ||
         target * 1.1;
     return (
-        <div className="bg-surface rounded-2xl p-4 border border-border shadow-sm">
+        <div className="bg-surface rounded-card p-4 border border-border shadow-card">
             <div className="flex justify-between items-center mb-4">
                 <span className="text-xs font-bold text-text-primary uppercase tracking-wider">
                     {label}
@@ -56,7 +56,7 @@ export const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                                     style={{
                                         height: `${Math.min((value / maxVal) * 100, 100)}%`,
                                     }}>
-                                    <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] py-1 px-2 rounded-lg pointer-events-none transition-opacity font-bold z-10 whitespace-nowrap">
+                                    <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-elevated text-text-primary border border-border shadow-float text-[10px] py-1 px-2 rounded-control pointer-events-none transition-opacity font-bold z-10 whitespace-nowrap">
                                         {value.toLocaleString()}
                                     </div>
                                 </div>
@@ -65,7 +65,7 @@ export const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                                     style={{ bottom: `${(target / maxVal) * 100}%` }}
                                 />
                                 {d.completed && (
-                                    <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 text-[10px] bg-surface rounded-full shadow-sm w-4 h-4 flex items-center justify-center">
+                                    <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 text-[10px] bg-surface rounded-full shadow-card w-4 h-4 flex items-center justify-center">
                                         ✓
                                     </div>
                                 )}

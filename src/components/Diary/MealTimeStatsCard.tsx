@@ -32,7 +32,7 @@ export const MealTimeStatsCard: React.FC<MealTimeStatsCardProps> = ({ stats }) =
 
     if (!stats.hasData) {
         return (
-            <div className="bg-surface rounded-2xl border border-border p-4 shadow-sm">
+            <div className="bg-surface rounded-card border border-border p-4 shadow-card">
                 <div className="flex items-center gap-2 text-text-tertiary">
                     <Clock size={14} />
                     <span className="text-xs">{t('diary.mealTimeStats.noData')}</span>
@@ -48,7 +48,7 @@ export const MealTimeStatsCard: React.FC<MealTimeStatsCardProps> = ({ stats }) =
     const summaryStr = summaryParts.join(' | ');
 
     return (
-        <div className="bg-surface rounded-2xl border border-border p-4 shadow-sm">
+        <div className="bg-surface rounded-card border border-border p-4 shadow-card">
             {/* Header (always visible, clickable) */}
             <button
                 onClick={() => setExpanded(!expanded)}
@@ -88,7 +88,7 @@ export const MealTimeStatsCard: React.FC<MealTimeStatsCardProps> = ({ stats }) =
                             return (
                                 <div
                                     key={key}
-                                    className="flex items-center gap-2 bg-background rounded-xl p-3"
+                                    className="flex items-center gap-2 bg-background rounded-control p-3"
                                 >
                                     <span className="text-lg">{MEAL_ICONS[key]}</span>
                                     <div className="flex-1 min-w-0">

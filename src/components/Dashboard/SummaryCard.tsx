@@ -19,56 +19,53 @@ export const SummaryCard: React.FC<SummaryCardProps> = React.memo(
         const progress = Math.min((totals.calories / targets.calories) * 100, 100);
 
         // Color based on remaining calories
-        let statusColor = 'text-green-500';
+        let statusColor = 'text-success';
         if (safetyNetActive) {
-            // Safety Net mode: Blue color scheme (trust, calm)
-            statusColor = 'text-blue-500';
+            // Safety Net mode: primary color scheme (trust, calm)
+            statusColor = 'text-primary';
         } else if (caloriesRemaining < 0) {
-            statusColor = 'text-red-500';
+            statusColor = 'text-danger';
         } else if (caloriesRemaining < 200) {
-            statusColor = 'text-amber-500';
+            statusColor = 'text-warning';
         }
 
         return (
             <div
-                className="bg-surface p-8 shadow-xl rounded-[2.5rem] border border-border relative overflow-hidden group transition-all duration-300 hover:border-blue-200"
+                className="bg-surface p-8 shadow-card rounded-card border border-border relative overflow-hidden group transition-all duration-300 hover:border-primary/30"
                 data-tutorial="calorie-ring">
                 {/* Background decoration */}
-                <div
-                    className={`absolute top-0 right-0 w-32 h-32 rounded-full -mr-10 -mt-10 opacity-30 pointer-events-none ${
-                        safetyNetActive ? 'bg-blue-100' : 'bg-blue-50'
-                    }`}></div>
+                <div className="absolute top-0 right-0 w-32 h-32 rounded-full -mr-10 -mt-10 opacity-40 pointer-events-none bg-primary-soft"></div>
 
                 <div className="relative z-10">
                     {/* Header with Shield badge if active */}
                     <div className="flex items-center gap-2 mb-1">
-                        <h2 className="text-text-tertiary text-sm font-medium uppercase tracking-wide">
+                        <h2 className="text-overline uppercase text-text-tertiary tracking-wide font-medium">
                             {t('dashboard.summary.caloriesRemaining')}
                         </h2>
                         {safetyNetActive ? (
-                            <div className="flex items-center gap-1 bg-blue-100 px-2 py-0.5 rounded-full">
+                            <div className="flex items-center gap-1 bg-primary-soft px-2 py-0.5 rounded-full">
                                 <Shield
-                                    className="w-3 h-3 text-blue-600"
+                                    className="w-3 h-3 text-primary"
                                     fill="currentColor"
                                 />
-                                <span className="text-[10px] font-semibold text-blue-600">
+                                <span className="text-[10px] font-semibold text-primary">
                                     {t('dashboard.summary.shield')}
                                 </span>
                             </div>
                         ) : (
                             <>
                                 {periodizationState === 'high' && (
-                                    <div className="flex items-center gap-1 bg-orange-100 px-2 py-0.5 rounded-full">
-                                        <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
-                                        <span className="text-[10px] font-bold text-orange-600 tracking-wide">
+                                    <div className="flex items-center gap-1 bg-fat-soft px-2 py-0.5 rounded-full">
+                                        <div className="w-2 h-2 rounded-full bg-fat animate-pulse"></div>
+                                        <span className="text-[10px] font-bold text-fat tracking-wide">
                                             {t('dashboard.summary.training')}
                                         </span>
                                     </div>
                                 )}
                                 {periodizationState === 'recovery' && (
-                                    <div className="flex items-center gap-1 bg-green-100 px-2 py-0.5 rounded-full">
-                                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                                        <span className="text-[10px] font-bold text-green-600 tracking-wide">
+                                    <div className="flex items-center gap-1 bg-success-soft px-2 py-0.5 rounded-full">
+                                        <div className="w-2 h-2 rounded-full bg-success"></div>
+                                        <span className="text-[10px] font-bold text-success tracking-wide">
                                             {t('dashboard.summary.recovery')}
                                         </span>
                                     </div>
@@ -88,14 +85,14 @@ export const SummaryCard: React.FC<SummaryCardProps> = React.memo(
 
                     {/* Status subtitle */}
                     {safetyNetActive && (
-                        <p className="text-xs text-blue-600 mb-2">
+                        <p className="text-xs text-primary mb-2">
                             {t('dashboard.summary.maintenance_mode')}
                         </p>
                     )}
 
                     <div className="flex items-end gap-2 mb-4">
                         <span
-                            className={`text-3xl sm:text-4xl font-bold tracking-tight ${statusColor}`}>
+                            className={`text-4xl sm:text-5xl font-black tracking-tighter tabular-nums ${statusColor}`}>
                             {caloriesRemaining}
                         </span>
                         <span className="text-text-tertiary text-sm mb-1.5 font-medium">
@@ -106,7 +103,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = React.memo(
                     {/* Equation */}
                     <div className="flex justify-between items-center text-sm text-text-secondary mb-4 px-1">
                         <div className="flex flex-col">
-                            <span className="font-semibold text-text-primary">
+                            <span className="font-semibold text-text-primary tabular-nums">
                                 {targets.calories}
                             </span>
                             <span className="text-xs text-text-tertiary">
@@ -117,7 +114,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = React.memo(
                         </div>
                         <span className="text-text-tertiary">-</span>
                         <div className="flex flex-col text-right">
-                            <span className="font-semibold text-text-primary">
+                            <span className="font-semibold text-text-primary tabular-nums">
                                 {totals.calories}
                             </span>
                             <span className="text-xs text-text-tertiary">
@@ -126,7 +123,8 @@ export const SummaryCard: React.FC<SummaryCardProps> = React.memo(
                         </div>
                         <span className="text-text-tertiary">=</span>
                         <div className="flex flex-col text-right">
-                            <span className={`font-bold ${statusColor}`}>
+                            <span
+                                className={`font-bold tabular-nums ${statusColor}`}>
                                 {caloriesRemaining}
                             </span>
                             <span className="text-xs text-text-tertiary">
@@ -136,14 +134,14 @@ export const SummaryCard: React.FC<SummaryCardProps> = React.memo(
                     </div>
 
                     {/* Progress Bar */}
-                    <div className="h-2 w-full bg-surface-lighter rounded-full overflow-hidden">
+                    <div className="h-2 w-full bg-progress-track rounded-full overflow-hidden">
                         <div
                             className={`h-full rounded-full transition-all duration-500 ease-out ${
                                 safetyNetActive
-                                    ? 'bg-blue-500'
+                                    ? 'bg-primary'
                                     : caloriesRemaining < 0
-                                      ? 'bg-red-500'
-                                      : 'bg-blue-500'
+                                      ? 'bg-danger'
+                                      : 'bg-primary'
                             }`}
                             style={{ width: `${progress}%` }}
                         />

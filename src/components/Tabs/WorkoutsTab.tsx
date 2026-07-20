@@ -34,11 +34,11 @@ interface WorkoutsTabProps {
 
 /** Color bar + badge styles per workout type */
 const typeStyles: Record<string, { bar: string; badge: string }> = {
-    gym: { bar: 'bg-amber-500', badge: 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300' },
-    sport: { bar: 'bg-green-500', badge: 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-300' },
-    tennis: { bar: 'bg-green-500', badge: 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-300' },
-    cardio: { bar: 'bg-blue-500', badge: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300' },
-    other: { bar: 'bg-gray-400', badge: 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300' },
+    gym: { bar: 'bg-carbs', badge: 'bg-carbs-soft text-carbs' },
+    sport: { bar: 'bg-success', badge: 'bg-success-soft text-success' },
+    tennis: { bar: 'bg-success', badge: 'bg-success-soft text-success' },
+    cardio: { bar: 'bg-primary', badge: 'bg-primary-soft text-primary' },
+    other: { bar: 'bg-muted', badge: 'bg-surface-lighter text-text-secondary' },
 };
 
 const getTypeStyle = (type: string) => typeStyles[type] || typeStyles.other;
@@ -101,15 +101,15 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                 <div className="flex flex-col-reverse md:flex-row gap-3 w-full md:w-auto">
                     <button
                         onClick={() => setShowWorkoutForm && setShowWorkoutForm(true)}
-                        className="group relative flex items-center justify-center gap-2 px-5 py-3 md:py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-600/20 active:scale-95 transition-all w-full md:w-auto overflow-hidden">
+                        className="group relative flex items-center justify-center gap-2 px-5 py-3 md:py-2 bg-primary text-white rounded-control text-sm font-bold shadow-glow min-h-[44px] active:scale-95 transition-all w-full md:w-auto overflow-hidden">
                         <Plus size={18} />
                         <span>{t('workouts.addQuickWorkout')}</span>
                     </button>
                     <button
                         onClick={() => setShowImportWorkoutModal(true)}
-                        className="group relative flex items-center justify-center gap-2 px-5 py-3 md:py-2 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl text-sm font-bold shadow-lg shadow-slate-900/20 active:scale-95 transition-all w-full md:w-auto overflow-hidden">
+                        className="group relative flex items-center justify-center gap-2 px-5 py-3 md:py-2 bg-text-primary text-background rounded-control text-sm font-bold shadow-float min-h-[44px] active:scale-95 transition-all w-full md:w-auto overflow-hidden">
                         <div className="absolute inset-0 bg-surface/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                        <Camera size={18} className="text-amber-400" />
+                        <Camera size={18} className="text-warning" />
                         <span>{t('workouts.importGravl')}</span>
                     </button>
                     <div className="w-full md:w-auto md:min-w-[200px]">
@@ -138,20 +138,20 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
 
             {/* Personal Records Banner */}
             {personalRecords.length > 0 && (
-                <div className="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/30 rounded-2xl p-4 border border-amber-200 dark:border-amber-700 shadow-sm">
+                <div className="bg-warning-soft rounded-card p-4 border border-warning/30 shadow-card">
                     <div className="flex items-center gap-2 mb-2">
-                        <Trophy className="w-5 h-5 text-amber-500" />
-                        <h3 className="text-amber-900 dark:text-amber-200 font-bold text-sm">
+                        <Trophy className="w-5 h-5 text-warning" />
+                        <h3 className="text-text-primary font-bold text-sm">
                             {t('workouts.personalRecords')}
                         </h3>
                     </div>
                     <div className="space-y-1">
                         {personalRecords.map((pr) => (
                             <div key={pr.exerciseName} className="flex items-center justify-between">
-                                <span className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                                <span className="text-sm font-medium text-text-secondary">
                                     {pr.exerciseName}
                                 </span>
-                                <span className="text-xs font-bold text-amber-600 dark:text-amber-300 bg-amber-100 dark:bg-amber-800/50 px-2 py-0.5 rounded-full">
+                                <span className="text-xs font-bold text-warning bg-surface px-2 py-0.5 rounded-full border border-warning/30">
                                     {t('workouts.newPR')} · {t('workouts.prProgression', { previous: pr.previousBest, current: pr.newWeight })}
                                 </span>
                             </div>
@@ -170,7 +170,7 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
             {/* Workout list or empty state */}
             {workoutsForSelectedDate.length === 0 ? (
                 !isLoading && (
-                    <div className="bg-surface dark:bg-surface-dark rounded-2xl border border-border dark:border-border-dark shadow-sm">
+                    <div className="bg-surface rounded-card border border-border shadow-card">
                         <EmptyState
                             icon={Dumbbell}
                             title={t('workouts.noWorkouts')}
@@ -192,7 +192,7 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                                 onDelete={() =>
                                     confirmDelete('workout', workout.id, workout.name)
                                 }>
-                                <div className="bg-surface dark:bg-surface-dark rounded-2xl p-4 border border-border dark:border-border-dark shadow-sm relative overflow-hidden">
+                                <div className="bg-surface rounded-card p-4 border border-border shadow-card relative overflow-hidden">
                                     <div className={`absolute top-0 left-0 bottom-0 w-1.5 ${style.bar}`} />
 
                                     <div className="flex justify-between items-start mb-2 pl-2">
@@ -209,7 +209,7 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                                         <div className="flex gap-2 items-center flex-shrink-0">
                                             <button
                                                 onClick={() => handleEditWorkout(workout)}
-                                                className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-800/40 text-blue-600 dark:text-blue-400 flex items-center justify-center transition-colors active:scale-90"
+                                                className="w-10 h-10 rounded-full bg-primary-soft hover:bg-primary/20 text-primary flex items-center justify-center transition-colors active:scale-90"
                                                 title={t('workouts.edit')}
                                                 aria-label={t('workouts.edit')}>
                                                 <Pencil className="w-3.5 h-3.5" />
@@ -220,26 +220,26 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                                     <div className="flex flex-wrap gap-4 text-sm text-text-tertiary mb-3 pl-2">
                                         {workout.duration && (
                                             <span className="flex items-center gap-1.5 font-medium">
-                                                <span className="text-blue-500">⏱️</span>{' '}
+                                                <span className="text-primary">⏱️</span>{' '}
                                                 {workout.duration} min
                                             </span>
                                         )}
                                         {workout.volume && (
                                             <span className="flex items-center gap-1.5 font-medium">
-                                                <span className="text-amber-500">📊</span>{' '}
+                                                <span className="text-carbs">📊</span>{' '}
                                                 {workout.volume.toLocaleString()} kg
                                             </span>
                                         )}
                                         {workout.calories && (
                                             <span className="flex items-center gap-1.5 font-medium">
-                                                <span className="text-red-500">🔥</span>{' '}
+                                                <span className="text-danger">🔥</span>{' '}
                                                 {workout.calories} kcal
                                             </span>
                                         )}
                                     </div>
 
                                     {workout.exercises && workout.exercises.length > 0 && (
-                                        <div className="space-y-2 border-t border-border dark:border-border-dark pt-3 pl-2">
+                                        <div className="space-y-2 border-t border-border pt-3 pl-2">
                                             {workout.exercises.map((ex, idx) => (
                                                 <div
                                                     key={idx}
@@ -247,7 +247,7 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                                                     <span className="text-text-secondary font-medium truncate flex-1">
                                                         {ex.name}
                                                     </span>
-                                                    <span className="text-text-tertiary font-mono text-xs tabular-nums ml-4 bg-background dark:bg-background-dark px-2 py-0.5 rounded-lg border border-border dark:border-border-dark">
+                                                    <span className="text-text-tertiary font-mono text-xs tabular-nums ml-4 bg-background px-2 py-0.5 rounded-md border border-border">
                                                         {ex.sets}x{ex.reps} · {ex.weight}kg
                                                     </span>
                                                 </div>
@@ -256,8 +256,8 @@ export const WorkoutsTab: React.FC<WorkoutsTabProps> = ({
                                     )}
 
                                     {workout.notes && (
-                                        <div className="mt-3 pl-2 pt-2 border-t border-border dark:border-border-dark">
-                                            <p className="text-sm text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/20 p-2 rounded-xl italic">
+                                        <div className="mt-3 pl-2 pt-2 border-t border-border">
+                                            <p className="text-sm text-primary bg-primary-soft p-2 rounded-control italic">
                                                 "{workout.notes}"
                                             </p>
                                         </div>

@@ -20,7 +20,7 @@ const ActivityCard: React.FC<ActivityCardProps> = React.memo(
         const percentage = Math.min((value / target) * 100, 100);
 
         return (
-            <div className="bg-surface p-5 rounded-3xl shadow-sm border border-border relative overflow-hidden flex-1 group hover:border-primary/20 transition-colors">
+            <div className="bg-surface p-5 rounded-card shadow-card border border-border relative overflow-hidden flex-1 group hover:border-primary/20 transition-colors">
                 <div className="flex items-start justify-between mb-2">
                     <div className={`p-2 rounded-full ${color}`}>
                         <Icon size={20} className="text-white" />
@@ -38,7 +38,7 @@ const ActivityCard: React.FC<ActivityCardProps> = React.memo(
                             <button
                                 onClick={onAdd}
                                 aria-label={`${t('a11y.increase')} ${title}`}
-                                className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-primary-soft text-primary hover:bg-primary/20 transition-colors">
                                 <Plus size={18} />
                             </button>
                         )}
@@ -94,7 +94,7 @@ export const ActivityCards: React.FC<ActivityCardsProps> = React.memo(
                         target={stepsTarget}
                         unit={t('dashboard.activity.steps')}
                         icon={Footprints}
-                        color="bg-orange-500"
+                        color="bg-warning"
                         subtext={`${t('dashboard.activity.stepsGoal')}: ${stepsTarget}`}
                     />
                 </div>
@@ -106,7 +106,7 @@ export const ActivityCards: React.FC<ActivityCardsProps> = React.memo(
                     target={waterTarget}
                     unit={t('dashboard.activity.waterGlasses')}
                     icon={Droplets}
-                    color="bg-blue-400"
+                    color="bg-info"
                     onAdd={onAddWater}
                     onDecrease={onRemoveWater}
                     subtext={`${water}/${waterTarget}`}

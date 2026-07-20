@@ -18,13 +18,13 @@ interface AdherenceCardProps {
 export const AdherenceCard: React.FC<AdherenceCardProps> = ({ data, label }) => {
     const { t } = useTranslation();
     const getScoreColor = (score: number) => {
-        if (score >= 8) return 'text-blue-400';
-        if (score >= 6) return 'text-amber-400';
-        return 'text-red-400';
+        if (score >= 8) return 'text-primary';
+        if (score >= 6) return 'text-warning';
+        return 'text-danger';
     };
 
     return (
-        <div className="bg-surface rounded-lg p-3 border border-border">
+        <div className="bg-surface rounded-control p-3 border border-border">
             <div className="flex justify-between items-center mb-2">
                 <h4 className="text-xs font-bold text-text-tertiary">{label}</h4>
                 <span className={`text-lg font-bold ${getScoreColor(data.score)}`}>
@@ -33,7 +33,7 @@ export const AdherenceCard: React.FC<AdherenceCardProps> = ({ data, label }) => 
             </div>
             <div className="grid grid-cols-3 gap-2 text-center text-xs">
                 <div>
-                    <div className="text-blue-400 font-bold">
+                    <div className="text-primary font-bold">
                         {data.calOkDays}/{data.daysTracked}
                     </div>
                     <div className="text-text-tertiary">
@@ -41,7 +41,7 @@ export const AdherenceCard: React.FC<AdherenceCardProps> = ({ data, label }) => 
                     </div>
                 </div>
                 <div>
-                    <div className="text-blue-400 font-bold">
+                    <div className="text-protein font-bold">
                         {data.protOkDays}/{data.daysTracked}
                     </div>
                     <div className="text-text-tertiary">
@@ -49,7 +49,7 @@ export const AdherenceCard: React.FC<AdherenceCardProps> = ({ data, label }) => 
                     </div>
                 </div>
                 <div>
-                    <div className="text-cyan-400 font-bold">
+                    <div className="text-info font-bold">
                         {data.stepsOkDays}/{data.daysTracked}
                     </div>
                     <div className="text-text-tertiary">

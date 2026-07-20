@@ -92,9 +92,9 @@ export const WeightTab: React.FC<WeightTabProps> = ({
             </div>
 
             {/* Entry Form */}
-            <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
+            <div className="bg-surface rounded-card p-6 border border-border shadow-card">
                 <h2 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <span className="w-8 h-8 rounded-control bg-primary-soft text-primary flex items-center justify-center">
                         ⚖️
                     </span>
                     {t('weight.newEntry')}
@@ -118,7 +118,7 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                                 placeholder={
                                     unitSystem === 'imperial' ? '186.0' : '84.5'
                                 }
-                                className="flex-1 bg-surface border border-border rounded-xl px-4 py-3 text-lg min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                                className="flex-1 bg-surface border border-border rounded-control px-4 py-3 text-lg min-w-0 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                             />
                             <span className="flex items-center text-text-tertiary text-sm font-medium">
                                 {unitLabel}
@@ -130,26 +130,26 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                             type="time"
                             value={time}
                             onChange={(e) => setTime(e.target.value)}
-                            className="flex-1 bg-surface border border-border rounded-xl px-4 py-3 text-sm min-w-0 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                            className="flex-1 bg-surface border border-border rounded-control px-4 py-3 text-sm min-w-0 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                         />
                         <button
                             onClick={handleSubmit}
                             disabled={!weight}
-                            className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 px-6 py-3 rounded-xl font-bold text-white shadow-lg shadow-blue-500/30 transition-all">
+                            className="bg-primary hover:bg-primary-dark active:bg-primary-dark disabled:opacity-50 px-6 py-3 rounded-control font-bold text-white shadow-glow transition-all min-h-[44px]">
                             {t('weight.save')}
                         </button>
                     </div>
                 </div>
-                {error && <p className="text-red-500 text-sm mt-2 px-1">{error}</p>}
+                {error && <p className="text-danger text-sm mt-2 px-1">{error}</p>}
             </div>
 
             {/* Progress Summary */}
-            <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm">
+            <div className="bg-surface rounded-card p-5 border border-border shadow-card">
                 <h2 className="text-sm font-bold text-text-primary mb-4">
                     {t('weight.progress')}
                 </h2>
                 <div className="grid grid-cols-3 gap-4 text-center">
-                    <div className="p-3 bg-background rounded-xl">
+                    <div className="p-3 bg-background rounded-control">
                         <div className="text-xl font-bold text-text-primary">
                             {displayCurrentWeight}
                         </div>
@@ -157,16 +157,16 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                             {t('weight.current')} ({unitLabel})
                         </div>
                     </div>
-                    <div className="p-3 bg-background rounded-xl">
-                        <div className="text-xl font-bold text-blue-600">
+                    <div className="p-3 bg-background rounded-control">
+                        <div className="text-xl font-bold text-primary">
                             {displayTargetWeight}
                         </div>
                         <div className="text-xs text-text-tertiary font-medium mt-1">
                             {t('weight.target')}
                         </div>
                     </div>
-                    <div className="p-3 bg-background rounded-xl">
-                        <div className="text-xl font-bold text-amber-500">
+                    <div className="p-3 bg-background rounded-control">
+                        <div className="text-xl font-bold text-warning">
                             {displayRemaining}
                         </div>
                         <div className="text-xs text-text-tertiary font-medium mt-1">
@@ -185,12 +185,12 @@ export const WeightTab: React.FC<WeightTabProps> = ({
 
             {/* Projection */}
             {weightProjection && (
-                <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm">
+                <div className="bg-surface rounded-card p-5 border border-border shadow-card">
                     <h2 className="text-sm font-bold text-text-primary mb-4">
                         {t('weight.projection')}
                     </h2>
                     <div className="grid grid-cols-2 gap-4 mb-4">
-                        <div className="text-center p-3 bg-background rounded-xl">
+                        <div className="text-center p-3 bg-background rounded-control">
                             <div className="text-xl font-bold text-text-primary">
                                 {weightProjection.adjustedTrend !== null &&
                                 weightProjection.adjustedTrend !== undefined &&
@@ -215,8 +215,8 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                                 {t('weight.perWeek')}
                             </div>
                         </div>
-                        <div className="text-center p-3 bg-background rounded-xl">
-                            <div className="text-xl font-bold text-blue-600">
+                        <div className="text-center p-3 bg-background rounded-control">
+                            <div className="text-xl font-bold text-primary">
                                 {weightProjection.weeksToGoal
                                     ? `${weightProjection.weeksToGoal} ${t('units.weeks', { defaultValue: 'sem' })}`
                                     : '-'}
@@ -228,19 +228,19 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                     </div>
 
                     {weightProjection.formattedGoalDate && (
-                        <div className="text-center p-2 bg-blue-900/20 rounded mb-3">
+                        <div className="text-center p-2 bg-primary-soft rounded-control mb-3">
                             <span className="text-sm text-text-tertiary">
                                 {t('weight.estimatedDate')}:{' '}
                             </span>
-                            <span className="text-sm font-bold text-blue-400">
+                            <span className="text-sm font-bold text-primary">
                                 {weightProjection.formattedGoalDate}
                             </span>
                         </div>
                     )}
 
                     {weightProjection.coachMessage && (
-                        <div className="p-3 rounded bg-blue-50 border border-blue-100">
-                            <p className="text-sm text-blue-800 flex items-center justify-center gap-2">
+                        <div className="p-3 rounded-control bg-primary-soft border border-primary/20">
+                            <p className="text-sm text-primary flex items-center justify-center gap-2">
                                 <span className="text-lg">
                                     {(weightProjection.coachMessage as any).emoji}
                                 </span>
@@ -257,7 +257,7 @@ export const WeightTab: React.FC<WeightTabProps> = ({
 
             {/* Empty state when no weight entries exist */}
             {!isLoading && weightHistory.length === 0 && (
-                <div className="bg-surface rounded-2xl border border-border shadow-sm">
+                <div className="bg-surface rounded-card border border-border shadow-card">
                     <EmptyState
                         icon={Scale}
                         title={t('weight.empty.title')}
@@ -276,7 +276,7 @@ export const WeightTab: React.FC<WeightTabProps> = ({
 
             {/* Weight History */}
             {weightHistory.length > 0 && (
-                <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
+                <div className="bg-surface rounded-card p-6 border border-border shadow-card">
                     <h2 className="text-sm font-bold text-text-primary mb-4 uppercase tracking-widest">
                         {t('weight.history')}
                     </h2>
@@ -308,11 +308,11 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                                                         e.target.value,
                                                     )
                                                 }
-                                                className="w-24 bg-background border border-border rounded-xl px-3 py-2 text-lg font-bold focus:border-blue-500 outline-none transition-all"
+                                                className="w-24 bg-background border border-border rounded-control px-3 py-2 text-lg font-bold focus:border-primary outline-none transition-all"
                                             />
                                             <button
                                                 onClick={saveEditWeight}
-                                                className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center">
+                                                className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">
                                                 ✓
                                             </button>
                                             <button
@@ -335,7 +335,7 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                                                 </span>
                                                 {idx < weightHistory.length - 1 && (
                                                     <span
-                                                        className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${entry.weight < weightHistory[idx + 1].weight ? 'bg-blue-50 text-blue-600' : entry.weight > weightHistory[idx + 1].weight ? 'bg-red-50 text-red-600' : 'bg-background text-text-tertiary'}`}>
+                                                        className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${entry.weight < weightHistory[idx + 1].weight ? 'bg-primary-soft text-primary' : entry.weight > weightHistory[idx + 1].weight ? 'bg-danger-soft text-danger' : 'bg-background text-text-tertiary'}`}>
                                                         {entry.weight <
                                                         weightHistory[idx + 1].weight
                                                             ? '↓'
@@ -358,12 +358,12 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                                                 )}
                                             </div>
 
-                                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                                                 <button
                                                     onClick={() =>
                                                         startEditWeight(entry.id)
                                                     }
-                                                    className="p-2 text-text-tertiary hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                                                    className="w-10 h-10 flex items-center justify-center text-text-tertiary hover:text-primary hover:bg-primary-soft rounded-control transition-all">
                                                     <svg
                                                         className="w-4 h-4"
                                                         fill="none"
@@ -385,7 +385,7 @@ export const WeightTab: React.FC<WeightTabProps> = ({
                                                             `${convertWeightForDisplay(entry.weight, unitSystem).toFixed(1)} ${unitLabel} (${entry.date})`,
                                                         )
                                                     }
-                                                    className="p-2 text-text-tertiary hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                                                    className="w-10 h-10 flex items-center justify-center text-text-tertiary hover:text-danger hover:bg-danger-soft rounded-control transition-all">
                                                     <svg
                                                         className="w-4 h-4"
                                                         fill="none"

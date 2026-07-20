@@ -59,18 +59,18 @@ export const PlateauAlertCard: React.FC<PlateauAlertCardProps> = ({
     };
 
     return (
-        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-[2rem] border border-amber-200/50 p-6 shadow-xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-amber-200/20 blur-2xl rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="bg-warning-soft rounded-card border border-warning/30 p-6 shadow-card relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-warning/20 blur-2xl rounded-full -translate-y-1/2 translate-x-1/2" />
             {/* Header */}
             <div className="flex items-start gap-3 mb-4">
-                <div className="flex items-center justify-center w-10 h-10 bg-amber-100 rounded-xl flex-shrink-0">
-                    <AlertTriangle className="w-5 h-5 text-amber-600" />
+                <div className="flex items-center justify-center w-10 h-10 bg-warning/20 rounded-control flex-shrink-0">
+                    <AlertTriangle className="w-5 h-5 text-warning" />
                 </div>
                 <div>
-                    <h3 className="text-sm font-bold text-amber-900">
+                    <h3 className="text-sm font-bold text-text-primary">
                         {t('dashboard.plateau.detected')}
                     </h3>
-                    <p className="text-xs text-amber-700 mt-0.5">
+                    <p className="text-xs text-warning mt-0.5">
                         {suggestion.message || t('dashboard.plateau.suggestion')}
                     </p>
                 </div>
@@ -83,25 +83,25 @@ export const PlateauAlertCard: React.FC<PlateauAlertCardProps> = ({
                         key={option.id}
                         onClick={() => handleApply(option)}
                         disabled={selectedOption !== null}
-                        className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${
+                        className={`w-full flex items-center gap-3 p-3 rounded-control border transition-all text-left ${
                             selectedOption === option.id
-                                ? 'bg-amber-500 border-amber-500 text-white'
+                                ? 'bg-warning border-warning text-white'
                                 : selectedOption !== null
                                   ? 'bg-background border-border text-text-tertiary cursor-not-allowed'
-                                  : 'bg-surface border-amber-200 hover:border-amber-400 hover:shadow-sm'
+                                  : 'bg-surface border-warning/30 hover:border-warning/60 hover:shadow-sm'
                         }`}>
                         <div
-                            className={`flex items-center justify-center w-8 h-8 rounded-lg ${
+                            className={`flex items-center justify-center w-8 h-8 rounded-control ${
                                 selectedOption === option.id
-                                    ? 'bg-amber-400'
-                                    : 'bg-amber-100'
+                                    ? 'bg-white/20'
+                                    : 'bg-warning-soft'
                             }`}>
                             {option.id === 'refeed' ? (
                                 <RefreshCw
                                     className={`w-4 h-4 ${
                                         selectedOption === option.id
                                             ? 'text-white'
-                                            : 'text-amber-600'
+                                            : 'text-warning'
                                     }`}
                                 />
                             ) : (
@@ -109,7 +109,7 @@ export const PlateauAlertCard: React.FC<PlateauAlertCardProps> = ({
                                     className={`w-4 h-4 ${
                                         selectedOption === option.id
                                             ? 'text-white'
-                                            : 'text-amber-600'
+                                            : 'text-warning'
                                     }`}
                                 />
                             )}
@@ -119,21 +119,21 @@ export const PlateauAlertCard: React.FC<PlateauAlertCardProps> = ({
                                 className={`block text-sm font-semibold ${
                                     selectedOption === option.id
                                         ? 'text-white'
-                                        : 'text-amber-900'
+                                        : 'text-text-primary'
                                 }`}>
                                 {option.label}
                             </span>
                             <span
                                 className={`block text-xs truncate ${
                                     selectedOption === option.id
-                                        ? 'text-amber-100'
-                                        : 'text-amber-600'
+                                        ? 'text-white/80'
+                                        : 'text-warning'
                                 }`}>
                                 {option.description}
                             </span>
                         </div>
                         {selectedOption === option.id && (
-                            <span className="text-xs font-bold text-amber-100 ml-auto flex-shrink-0 whitespace-nowrap">
+                            <span className="text-xs font-bold text-white/80 ml-auto flex-shrink-0 whitespace-nowrap">
                                 {t('dashboard.plateau.applied')} ✓
                             </span>
                         )}
@@ -142,7 +142,7 @@ export const PlateauAlertCard: React.FC<PlateauAlertCardProps> = ({
             </div>
 
             {/* Info */}
-            <p className="text-[10px] text-amber-600/70 mt-3 text-center">
+            <p className="text-[10px] text-warning/70 mt-3 text-center">
                 {t('dashboard.plateau.basedOn')}
             </p>
         </div>

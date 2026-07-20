@@ -15,9 +15,9 @@ export const IdealDayCard: React.FC<IdealDayCardProps> = ({ pilot }) => {
 
     if (!pilot.hasData) {
         return (
-            <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border">
+            <div className="bg-surface rounded-card p-6 shadow-card border border-border">
                 <div className="flex items-center gap-2 mb-4">
-                    <Zap className="text-secondary" size={20} />
+                    <Zap className="text-text-secondary" size={20} />
                     <h3 className="text-text-primary font-bold text-lg">
                         {t('dashboard.idealDay.title')}
                     </h3>
@@ -55,27 +55,27 @@ export const IdealDayCard: React.FC<IdealDayCardProps> = ({ pilot }) => {
         switch (type) {
             case 'sleep':
                 return {
-                    bg: 'bg-indigo-50',
-                    text: 'text-indigo-600',
-                    icon: 'text-indigo-500',
+                    bg: 'bg-primary-soft',
+                    text: 'text-primary',
+                    icon: 'text-primary',
                 };
             case 'nutrition':
                 return {
-                    bg: 'bg-emerald-50',
-                    text: 'text-emerald-600',
-                    icon: 'text-emerald-500',
+                    bg: 'bg-success-soft',
+                    text: 'text-success',
+                    icon: 'text-success',
                 };
             case 'training':
                 return {
-                    bg: 'bg-orange-50',
-                    text: 'text-orange-600',
-                    icon: 'text-orange-500',
+                    bg: 'bg-warning-soft',
+                    text: 'text-warning',
+                    icon: 'text-warning',
                 };
             case 'habit':
                 return {
-                    bg: 'bg-blue-50',
-                    text: 'text-blue-600',
-                    icon: 'text-blue-500',
+                    bg: 'bg-info-soft',
+                    text: 'text-info',
+                    icon: 'text-info',
                 };
             default:
                 return {
@@ -87,20 +87,20 @@ export const IdealDayCard: React.FC<IdealDayCardProps> = ({ pilot }) => {
     };
 
     return (
-        <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border overflow-hidden relative">
+        <div className="bg-surface rounded-card p-6 shadow-card border border-border overflow-hidden relative">
             {/* Background Accent */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50/50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-warning-soft/50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
 
             <div className="flex items-center justify-between mb-6 relative">
                 <div className="flex items-center gap-2">
-                    <div className="p-2 bg-amber-100 rounded-lg">
-                        <Zap className="text-amber-600" size={20} />
+                    <div className="p-2 bg-warning-soft rounded-control">
+                        <Zap className="text-warning" size={20} />
                     </div>
                     <div>
                         <h3 className="text-text-primary font-bold text-lg">
                             {t('dashboard.idealDay.title')}
                         </h3>
-                        <p className="text-[10px] text-amber-600 font-bold tracking-widest uppercase">
+                        <p className="text-[10px] text-warning font-bold tracking-widest uppercase">
                             {t('dashboard.idealDay.beta')}
                         </p>
                     </div>
@@ -109,7 +109,7 @@ export const IdealDayCard: React.FC<IdealDayCardProps> = ({ pilot }) => {
 
             {/* Optimal Window Summary */}
             <div className="grid grid-cols-2 gap-3 mb-6">
-                <div className="p-3 bg-background rounded-xl border border-border min-w-0">
+                <div className="p-3 bg-background rounded-control border border-border min-w-0">
                     <p className="text-[10px] text-text-tertiary font-bold uppercase mb-1 truncate">
                         {t('dashboard.idealDay.optimalSleep')}
                     </p>
@@ -119,7 +119,7 @@ export const IdealDayCard: React.FC<IdealDayCardProps> = ({ pilot }) => {
                         {optimalWindow.wakeTime}
                     </p>
                 </div>
-                <div className="p-3 bg-background rounded-xl border border-border min-w-0">
+                <div className="p-3 bg-background rounded-control border border-border min-w-0">
                     <p className="text-[10px] text-text-tertiary font-bold uppercase mb-1 truncate">
                         {t('dashboard.idealDay.metabolicWindow')}
                     </p>
@@ -138,9 +138,9 @@ export const IdealDayCard: React.FC<IdealDayCardProps> = ({ pilot }) => {
                     return (
                         <div
                             key={item.id}
-                            className={`flex gap-3 p-3 rounded-xl border border-transparent hover:border-border transition-colors`}>
+                            className={`flex gap-3 p-3 rounded-control border border-transparent hover:border-border transition-colors`}>
                             <div
-                                className={`mt-1 p-2 h-fit rounded-lg ${colors.bg}`}>
+                                className={`mt-1 p-2 h-fit rounded-control ${colors.bg}`}>
                                 {getIcon(item.icon, colors.icon)}
                             </div>
                             <div className="flex-1">

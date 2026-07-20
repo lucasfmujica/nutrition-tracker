@@ -27,11 +27,11 @@ export const MealInconsistencyCard: React.FC<MealInconsistencyCardProps> = ({
     if (inconsistencies.length === 0) return null;
 
     return (
-        <div className="bg-amber-50 dark:bg-amber-900/20 rounded-2xl border border-amber-200 dark:border-amber-800 p-4">
+        <div className="bg-warning-soft rounded-card border border-warning/30 p-4">
             {/* Header */}
             <div className="flex items-center gap-2 mb-3">
-                <AlertTriangle size={14} className="text-amber-600 dark:text-amber-400" />
-                <span className="text-xs font-bold text-amber-700 dark:text-amber-300">
+                <AlertTriangle size={14} className="text-warning" />
+                <span className="text-xs font-bold text-warning">
                     {t('diary.inconsistency.title')}
                 </span>
             </div>
@@ -41,12 +41,12 @@ export const MealInconsistencyCard: React.FC<MealInconsistencyCardProps> = ({
                 {inconsistencies.map((item) => (
                     <div
                         key={item.foodId}
-                        className="flex items-center gap-2 min-h-[44px] bg-amber-100/50 dark:bg-amber-900/30 rounded-xl px-3 py-2"
+                        className="flex items-center gap-2 min-h-[44px] bg-warning/10 rounded-control px-3 py-2"
                     >
                         <span className="text-base flex-shrink-0">
                             {MEAL_ICONS[item.meal] || '🍽️'}
                         </span>
-                        <p className="text-xs text-amber-800 dark:text-amber-200 flex-1">
+                        <p className="text-xs text-text-secondary flex-1">
                             {t('diary.inconsistency.label', {
                                 meal: t(`mealTypes.${item.meal}`),
                                 food: item.foodName,

@@ -50,26 +50,26 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
         switch (intensity) {
             case 'high':
                 return {
-                    bg: 'bg-orange-100 dark:bg-orange-900/40',
-                    text: 'text-orange-700 dark:text-orange-400',
-                    border: 'border-orange-200 dark:border-orange-800',
+                    bg: 'bg-warning-soft',
+                    text: 'text-warning',
+                    border: 'border-warning/30',
                     icon: Zap,
                     label: t('dashboard.weeklyPlan.intensity.high'),
                 };
             case 'moderate':
                 return {
-                    bg: 'bg-blue-100 dark:bg-blue-900/40',
-                    text: 'text-blue-700 dark:text-blue-400',
-                    border: 'border-blue-200 dark:border-blue-800',
+                    bg: 'bg-primary-soft',
+                    text: 'text-primary',
+                    border: 'border-primary/30',
                     icon: Flame,
                     label: t('dashboard.weeklyPlan.intensity.moderate'),
                 };
             case 'recovery':
             default:
                 return {
-                    bg: 'bg-green-100 dark:bg-green-900/40',
-                    text: 'text-green-700 dark:text-green-400',
-                    border: 'border-green-200 dark:border-green-800',
+                    bg: 'bg-success-soft',
+                    text: 'text-success',
+                    border: 'border-success/30',
                     icon: Leaf,
                     label: t('dashboard.weeklyPlan.intensity.recovery'),
                 };
@@ -82,12 +82,12 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
     const displayTarget = (targetWeight * weightMultiplier).toFixed(1);
 
     return (
-        <div className="bg-surface rounded-[2.5rem] border border-border p-8 shadow-xl h-full group transition-all duration-300 hover:border-indigo-100 dark:hover:border-indigo-800">
+        <div className="bg-surface rounded-card border border-border p-8 shadow-card h-full group transition-all duration-300 hover:border-primary/20">
             {/* Header */}
             <div className="flex items-center justify-between mb-4 gap-2">
                 <div className="flex items-center gap-2 min-w-0">
-                    <div className="flex items-center justify-center w-8 h-8 bg-indigo-50 dark:bg-indigo-900/40 rounded-lg flex-shrink-0">
-                        <Calendar className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                    <div className="flex items-center justify-center w-8 h-8 bg-primary-soft rounded-control flex-shrink-0">
+                        <Calendar className="w-4 h-4 text-primary" />
                     </div>
                     <div className="min-w-0">
                         <h3 className="text-sm font-bold text-text-primary truncate">
@@ -102,16 +102,16 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
                 {/* Weekly Average Badge */}
                 <div
                     className={`flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full flex-shrink-0 ${
-                        isOnTrack ? 'bg-green-50 dark:bg-green-900/40' : 'bg-amber-50 dark:bg-amber-900/40'
+                        isOnTrack ? 'bg-success-soft' : 'bg-warning-soft'
                     }`}>
                     <TrendingDown
                         className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${
-                            isOnTrack ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'
+                            isOnTrack ? 'text-success' : 'text-warning'
                         }`}
                     />
                     <span
                         className={`text-[10px] sm:text-xs font-bold ${
-                            isOnTrack ? 'text-green-700 dark:text-green-400' : 'text-amber-700 dark:text-amber-400'
+                            isOnTrack ? 'text-success' : 'text-warning'
                         }`}>
                         Ø {weeklyAverage}
                     </span>
@@ -128,7 +128,7 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
                         return (
                             <div
                                 key={day.date}
-                                className={`flex flex-col items-center p-1 sm:p-2 rounded-xl transition-all w-full ${
+                                className={`flex flex-col items-center p-1 sm:p-2 rounded-control transition-all w-full ${
                                     day.isToday
                                         ? `${styles.bg} ring-1 sm:ring-2 ring-offset-1 ${styles.border.replace('border', 'ring')}`
                                         : day.isPast
@@ -181,21 +181,21 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
             {/* Legend - Stacked on mobile, inline on larger screens */}
             <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-3 pt-3 border-t border-border">
                 <div className="flex items-center gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-orange-400" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-warning" />
                     <span className="text-[10px] text-text-tertiary">
                         {t('dashboard.weeklyPlan.intensity.high')} (
                         {dayDistribution.high})
                     </span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-blue-400" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-primary" />
                     <span className="text-[10px] text-text-tertiary">
                         {t('dashboard.weeklyPlan.intensity.moderate')} (
                         {dayDistribution.moderate})
                     </span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-success" />
                     <span className="text-[10px] text-text-tertiary">
                         {t('dashboard.weeklyPlan.intensity.recovery')} (
                         {dayDistribution.recovery})
@@ -205,12 +205,12 @@ export const WeeklyPlanningCard: React.FC<WeeklyPlanningCardProps> = ({
 
             {/* Track Status */}
             <div
-                className={`mt-4 p-3 rounded-2xl text-center ${
-                    isOnTrack ? 'bg-emerald-50 dark:bg-emerald-900/40' : 'bg-amber-50 dark:bg-amber-900/40'
+                className={`mt-4 p-3 rounded-control text-center ${
+                    isOnTrack ? 'bg-success-soft' : 'bg-warning-soft'
                 }`}>
                 <span
                     className={`text-xs font-bold ${
-                        isOnTrack ? 'text-emerald-700 dark:text-emerald-400' : 'text-amber-700 dark:text-amber-400'
+                        isOnTrack ? 'text-success' : 'text-warning'
                     }`}>
                     {isOnTrack
                         ? t('dashboard.weeklyPlan.status.onTrack', {

@@ -35,7 +35,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     const { t } = useTranslation();
     if (active && payload && payload.length) {
         return (
-            <div className="bg-surface p-4 rounded-xl shadow-xl border border-border">
+            <div className="bg-surface p-4 rounded-control shadow-float border border-border">
                 <p className="text-text-tertiary text-xs font-semibold mb-2">{label}</p>
                 {payload.map((entry: any, index: number) => (
                     <div
@@ -70,7 +70,7 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
     const maxWeight = Math.max(...weights, targetWeight) + 1;
 
     return (
-        <div className="bg-surface rounded-2xl p-4 sm:p-6 border border-border shadow-sm w-full">
+        <div className="bg-surface rounded-card p-4 sm:p-6 border border-border shadow-card w-full">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-2 sm:gap-4">
                 <div>
                     <h3 className="text-lg font-bold text-text-primary">
@@ -84,25 +84,25 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                 {/* Legend */}
                 <div className="flex flex-wrap gap-x-3 gap-y-1 sm:gap-4 text-[10px] sm:text-xs">
                     <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                        <span className="w-2 h-2 rounded-full bg-primary"></span>
                         <span className="text-text-secondary font-medium">
                             {t('navigation.weight')}
                         </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+                        <span className="w-2 h-2 rounded-full bg-warning"></span>
                         <span className="text-text-secondary font-medium">
                             {t('charts.weight.average')}
                         </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-pink-500"></span>
+                        <span className="w-2 h-2 rounded-full bg-oura"></span>
                         <span className="text-text-secondary font-medium">
                             {t('charts.weight.average30d')}
                         </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-0.5 border-t border-dashed border-emerald-400"></span>
+                        <span className="w-2 h-0.5 border-t border-dashed border-success"></span>
                         <span className="text-text-secondary font-medium">
                             {t('charts.weight.goal')} ({targetWeight})
                         </span>
@@ -129,12 +129,12 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                                 y2="1">
                                 <stop
                                     offset="5%"
-                                    stopColor="#6366f1"
+                                    stopColor="var(--color-primary)"
                                     stopOpacity={0.2}
                                 />
                                 <stop
                                     offset="95%"
-                                    stopColor="#6366f1"
+                                    stopColor="var(--color-primary)"
                                     stopOpacity={0}
                                 />
                             </linearGradient>
@@ -143,14 +143,14 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                         <CartesianGrid
                             strokeDasharray="3 3"
                             vertical={false}
-                            stroke="#f3f4f6"
+                            stroke="var(--color-border)"
                         />
 
                         <XAxis
                             dataKey="dayLabel"
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#9ca3af', fontSize: isMobile ? 9 : 11 }}
+                            tick={{ fill: 'var(--color-text-tertiary)', fontSize: isMobile ? 9 : 11 }}
                             dy={10}
                             interval="preserveStartEnd"
                             minTickGap={isMobile ? 24 : 12}
@@ -161,7 +161,7 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                             hide={false}
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#9ca3af', fontSize: isMobile ? 9 : 11 }}
+                            tick={{ fill: 'var(--color-text-tertiary)', fontSize: isMobile ? 9 : 11 }}
                             tickCount={isMobile ? 4 : 5}
                             width={isMobile ? 32 : 40}
                         />
@@ -173,7 +173,7 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
 
                         <ReferenceLine
                             y={targetWeight}
-                            stroke="#10b981"
+                            stroke="var(--color-success)"
                             strokeDasharray="4 4"
                             strokeOpacity={0.6}
                         />
@@ -182,18 +182,22 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                             type="monotone"
                             dataKey="weight"
                             name={t('navigation.weight')}
-                            stroke="#6366f1"
+                            stroke="var(--color-primary)"
                             strokeWidth={2.5}
                             fillOpacity={1}
                             fill="url(#colorWeight)"
-                            activeDot={{ r: 6, strokeWidth: 0, fill: '#6366f1' }}
+                            activeDot={{
+                                r: 6,
+                                strokeWidth: 0,
+                                fill: 'var(--color-primary)',
+                            }}
                         />
 
                         <Line
                             type="monotone"
                             dataKey="avg7d"
                             name={t('charts.weight.average')}
-                            stroke="#fbbf24"
+                            stroke="var(--color-warning)"
                             strokeWidth={2}
                             dot={false}
                             activeDot={false}
@@ -204,7 +208,7 @@ export const WeightLineChart: React.FC<WeightLineChartProps> = ({
                             type="monotone"
                             dataKey="avg30d"
                             name={t('charts.weight.average30d')}
-                            stroke="#ec4899"
+                            stroke="var(--color-oura)"
                             strokeWidth={2}
                             dot={false}
                             activeDot={false}

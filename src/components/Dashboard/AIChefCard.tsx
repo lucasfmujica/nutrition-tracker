@@ -41,17 +41,19 @@ export const AIChefCard: React.FC<AIChefCardProps> = ({ onOpen }) => {
     };
 
     return (
-        <div className="relative overflow-hidden bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 dark:from-purple-900 dark:via-purple-800 dark:to-indigo-900 rounded-2xl p-4 shadow-lg shadow-purple-500/20 dark:shadow-purple-900/30">
+        <div
+            className="relative overflow-hidden rounded-card p-4 shadow-glow"
+            style={{ background: 'var(--brand-gradient)' }}>
             {/* Decorative elements */}
             <div className="absolute -top-6 -right-6 w-24 h-24 bg-white/10 rounded-full blur-xl" />
-            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-indigo-500/20 rounded-full blur-lg" />
+            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-accent-blue/20 rounded-full blur-lg" />
 
             {/* Content */}
             <div className="relative">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
-                        <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                        <div className="p-2 bg-white/20 rounded-control backdrop-blur-sm">
                             <ChefHat size={20} className="text-white" />
                         </div>
                         <div>
@@ -68,17 +70,17 @@ export const AIChefCard: React.FC<AIChefCardProps> = ({ onOpen }) => {
 
                 {/* Context chips */}
                 <div className="flex flex-wrap gap-2 mb-4">
-                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-white/15 rounded-lg text-[10px] font-bold text-white/90">
+                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-white/15 rounded-control text-[10px] font-bold text-white/90">
                         <Clock size={10} />
                         {mealTimeLabels[currentMealTime as AIChefMealTime] || t('mealTypes.lunch')}
                     </span>
                     {isTrainingDay && (
-                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-amber-500/30 rounded-lg text-[10px] font-bold text-amber-100">
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-warning/30 rounded-control text-[10px] font-bold text-white/90">
                             <Dumbbell size={10} />
                             {t('aiChef.trainingDay')}
                         </span>
                     )}
-                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-white/15 rounded-lg text-[10px] font-bold text-white/90">
+                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-white/15 rounded-control text-[10px] font-bold text-white/90">
                         {Math.round(remainingCalories)} kcal
                     </span>
                 </div>
@@ -86,7 +88,7 @@ export const AIChefCard: React.FC<AIChefCardProps> = ({ onOpen }) => {
                 {/* CTA Button */}
                 <button
                     onClick={onOpen}
-                    className="w-full py-3 bg-white text-purple-700 rounded-xl font-bold text-sm hover:bg-white/90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-900/20">
+                    className="w-full py-3 bg-white text-primary rounded-control font-bold text-sm hover:bg-white/90 transition-all flex items-center justify-center gap-2 shadow-float">
                     <Sparkles size={16} />
                     {t('aiChef.openButton')}
                 </button>

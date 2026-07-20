@@ -34,13 +34,13 @@ export const WeightProjectionCard: React.FC<WeightProjectionCardProps> = ({
     if (!projection) return null;
 
     return (
-        <div className="bg-surface p-8 rounded-[2.5rem] shadow-xl border border-border h-full group transition-all duration-300">
+        <div className="bg-surface p-8 rounded-card shadow-card border border-border h-full group transition-all duration-300">
             <h3 className="text-text-primary font-bold text-xl tracking-tight mb-6">
                 {t('dashboard.projection.title')}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                 {/* Adjusted Trend */}
-                <div className="flex flex-row sm:flex-col justify-between sm:justify-center items-center p-3 bg-background rounded-xl">
+                <div className="flex flex-row sm:flex-col justify-between sm:justify-center items-center p-3 bg-background rounded-control">
                     <div className="text-sm sm:text-xs text-text-tertiary font-medium">
                         {t('dashboard.projection.currentRate')}
                     </div>
@@ -63,15 +63,15 @@ export const WeightProjectionCard: React.FC<WeightProjectionCardProps> = ({
                 </div>
 
                 {/* Weeks to Goal */}
-                <div className="flex flex-row sm:flex-col justify-between sm:justify-center items-center p-3 bg-background rounded-xl">
+                <div className="flex flex-row sm:flex-col justify-between sm:justify-center items-center p-3 bg-background rounded-control">
                     <div className="text-sm sm:text-xs text-text-tertiary font-medium">
                         {t('dashboard.projection.toGoal')}
                     </div>
                     <div className="flex items-baseline gap-1">
-                        <span className="text-xl font-bold text-blue-600">
+                        <span className="text-xl font-bold text-primary">
                             {projection.weeksToGoal || '-'}
                         </span>
-                        <span className="text-xs text-blue-400">
+                        <span className="text-xs text-primary/70">
                             {t('units.weeks', { defaultValue: 'sem' })}
                         </span>
                     </div>

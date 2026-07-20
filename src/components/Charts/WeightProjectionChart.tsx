@@ -56,7 +56,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload || payload.length === 0) return null;
 
     return (
-        <div className="bg-surface px-3 py-2 rounded-xl shadow-lg border border-border text-xs">
+        <div className="bg-surface px-3 py-2 rounded-control shadow-float border border-border text-xs">
             <p className="text-text-tertiary font-medium mb-1">{label}</p>
             {payload.map(
                 (entry: any, index: number) =>
@@ -176,10 +176,10 @@ export const WeightProjectionChart: React.FC<WeightProjectionChartProps> = ({
                         <linearGradient id="colorActual" x1="0" y1="0" x2="0" y2="1">
                             <stop
                                 offset="5%"
-                                stopColor="#6366f1"
+                                stopColor="var(--color-primary)"
                                 stopOpacity={0.15}
                             />
-                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                            <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0} />
                         </linearGradient>
                         {/* Gradient for projected path */}
                         <linearGradient
@@ -190,24 +190,24 @@ export const WeightProjectionChart: React.FC<WeightProjectionChartProps> = ({
                             y2="1">
                             <stop
                                 offset="5%"
-                                stopColor="#14b8a6"
+                                stopColor="var(--color-info)"
                                 stopOpacity={0.1}
                             />
-                            <stop offset="95%" stopColor="#14b8a6" stopOpacity={0} />
+                            <stop offset="95%" stopColor="var(--color-info)" stopOpacity={0} />
                         </linearGradient>
                     </defs>
 
                     <CartesianGrid
                         strokeDasharray="3 3"
                         vertical={false}
-                        stroke="#f3f4f6"
+                        stroke="var(--color-border)"
                     />
 
                     <XAxis
                         dataKey="dayLabel"
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: '#9ca3af', fontSize: 10 }}
+                        tick={{ fill: 'var(--color-text-tertiary)', fontSize: 10 }}
                         interval="preserveStartEnd"
                         minTickGap={30}
                         dy={5}
@@ -220,7 +220,7 @@ export const WeightProjectionChart: React.FC<WeightProjectionChartProps> = ({
                     {/* Goal reference line */}
                     <ReferenceLine
                         y={targetWeight}
-                        stroke="#10b981"
+                        stroke="var(--color-success)"
                         strokeDasharray="4 4"
                         strokeOpacity={0.7}
                         strokeWidth={1.5}
@@ -231,13 +231,21 @@ export const WeightProjectionChart: React.FC<WeightProjectionChartProps> = ({
                         type="monotone"
                         dataKey="actual"
                         name={t('navigation.weight')}
-                        stroke="#6366f1"
+                        stroke="var(--color-primary)"
                         strokeWidth={2}
                         fillOpacity={1}
                         fill="url(#colorActual)"
                         connectNulls={false}
-                        dot={{ r: 3, strokeWidth: 0, fill: '#6366f1' }}
-                        activeDot={{ r: 5, strokeWidth: 0, fill: '#6366f1' }}
+                        dot={{
+                            r: 3,
+                            strokeWidth: 0,
+                            fill: 'var(--color-primary)',
+                        }}
+                        activeDot={{
+                            r: 5,
+                            strokeWidth: 0,
+                            fill: 'var(--color-primary)',
+                        }}
                     />
 
                     {/* Projected path (dashed teal) */}
@@ -245,11 +253,15 @@ export const WeightProjectionChart: React.FC<WeightProjectionChartProps> = ({
                         type="monotone"
                         dataKey="projected"
                         name={t('charts.projection.title')}
-                        stroke="#14b8a6"
+                        stroke="var(--color-info)"
                         strokeWidth={2}
                         strokeDasharray="6 4"
                         dot={false}
-                        activeDot={{ r: 4, strokeWidth: 0, fill: '#14b8a6' }}
+                        activeDot={{
+                            r: 4,
+                            strokeWidth: 0,
+                            fill: 'var(--color-info)',
+                        }}
                         connectNulls={true}
                     />
                 </AreaChart>

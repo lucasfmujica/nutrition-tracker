@@ -32,35 +32,35 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
     const [showMetrics, setShowMetrics] = useState(false);
 
     // Determine color based on status
-    let statusColor = 'text-green-600';
-    let barColor = 'bg-green-500';
+    let statusColor = 'text-success';
+    let barColor = 'bg-success';
 
     // Using new lowercase keys from hook
     switch (status) {
         case 'overreaching':
         case 'Deload Needed':
-            statusColor = 'text-orange-600';
-            barColor = 'bg-orange-500';
+            statusColor = 'text-warning';
+            barColor = 'bg-warning';
             break;
         case 'recovering':
-            statusColor = 'text-blue-600';
-            barColor = 'bg-blue-500';
+            statusColor = 'text-info';
+            barColor = 'bg-info';
             break;
         case 'prime':
-            statusColor = 'text-purple-600';
-            barColor = 'bg-purple-500';
+            statusColor = 'text-oura';
+            barColor = 'bg-oura';
             break;
         case 'done':
-            statusColor = 'text-green-700';
-            barColor = 'bg-green-600';
+            statusColor = 'text-success';
+            barColor = 'bg-success';
             break;
         case 'caution':
-            statusColor = 'text-orange-700';
-            barColor = 'bg-orange-600';
+            statusColor = 'text-warning';
+            barColor = 'bg-warning';
             break;
         default:
-            statusColor = 'text-green-600';
-            barColor = 'bg-green-500';
+            statusColor = 'text-success';
+            barColor = 'bg-success';
     }
 
     // Calculate pointer position (clamped 0-100%)
@@ -75,7 +75,7 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
     const isOuraStale = metrics?.ouraDate && metrics.ouraDate !== targetDate;
 
     return (
-        <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm">
+        <div className="bg-surface rounded-card p-5 border border-border shadow-card">
             <div className="flex justify-between items-center mb-4">
                 <h3 className="font-bold text-text-primary flex items-center gap-2">
                     <svg
@@ -116,18 +116,18 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
             </div>
 
             {isFutureDate && (
-                <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-xl flex gap-2 items-start">
+                <div className="mb-4 p-3 bg-warning-soft border border-warning/30 rounded-control flex gap-2 items-start">
                     <span className="text-lg">⚠️</span>
-                    <p className="text-xs text-yellow-800 leading-snug">
+                    <p className="text-xs text-warning leading-snug">
                         {t('workouts.effort.warnings.future')}
                     </p>
                 </div>
             )}
 
             {isOuraStale && !isFutureDate && (
-                <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-xl flex gap-2 items-start">
+                <div className="mb-4 p-3 bg-oura-soft border border-oura/30 rounded-control flex gap-2 items-start">
                     <span className="text-lg">💍</span>
-                    <p className="text-xs text-orange-800 leading-snug">
+                    <p className="text-xs text-oura leading-snug">
                         <strong className="font-bold">
                             {t('workouts.effort.warnings.stale', {
                                 date: metrics.ouraDate,
@@ -138,8 +138,8 @@ export const EffortRadar: React.FC<EffortRadarProps> = ({
             )}
 
             {showMetrics && metrics && (
-                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-xl space-y-2">
-                    <p className="text-xs font-bold text-blue-900 mb-2">
+                <div className="mb-4 p-3 bg-info-soft border border-info/30 rounded-control space-y-2">
+                    <p className="text-xs font-bold text-info mb-2">
                         📊 {t('workouts.effort.factors')}
                     </p>
                     <div className="grid grid-cols-2 gap-2">

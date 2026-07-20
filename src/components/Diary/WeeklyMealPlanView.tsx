@@ -156,17 +156,17 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
     }, [weekData, dateLocale]);
 
     return (
-        <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
+        <div className="bg-surface rounded-card border border-border shadow-card overflow-hidden">
             {/* Week Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-primary-soft">
                 <button
                     onClick={goToPreviousWeek}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface/70 text-text-secondary transition-colors">
+                    className="w-11 h-11 flex items-center justify-center rounded-control hover:bg-surface/70 text-text-secondary transition-colors">
                     <ChevronLeft size={20} />
                 </button>
 
                 <div className="text-center flex items-center gap-2">
-                    <Calendar size={16} className="text-blue-500" />
+                    <Calendar size={16} className="text-primary" />
                     <div>
                         <p className="text-sm font-bold text-text-primary capitalize">
                             {weekRange}
@@ -174,7 +174,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                         {selectedDate !== today && (
                             <button
                                 onClick={goToToday}
-                                className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                                className="text-xs text-primary hover:text-primary-dark font-medium">
                                 {t('diary.calendar.goToToday')}
                             </button>
                         )}
@@ -190,7 +190,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
 
                 <button
                     onClick={goToNextWeek}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface/70 text-text-secondary transition-colors">
+                    className="w-11 h-11 flex items-center justify-center rounded-control hover:bg-surface/70 text-text-secondary transition-colors">
                     <ChevronRight size={20} />
                 </button>
             </div>
@@ -213,21 +213,21 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                     data-today={day.isToday}
                                     className={`py-2 px-2 text-center cursor-pointer transition-colors ${
                                         day.isSelected
-                                            ? 'bg-blue-100 dark:bg-blue-900/50'
+                                            ? 'bg-primary/20'
                                             : day.isToday
-                                              ? 'bg-blue-50 dark:bg-blue-950'
+                                              ? 'bg-primary-soft'
                                               : day.isFuture
                                                 ? 'bg-surface-lighter cursor-not-allowed'
                                                 : 'hover:bg-surface-lighter'
                                     }`}>
                                     <div
-                                        className={`text-xs font-bold ${day.isToday ? 'text-blue-600 dark:text-blue-400' : 'text-text-tertiary'}`}>
+                                        className={`text-xs font-bold ${day.isToday ? 'text-primary' : 'text-text-tertiary'}`}>
                                         {day.dayNameFull}
                                     </div>
                                     <div
                                         className={`text-lg font-bold ${
                                             day.isSelected
-                                                ? 'text-blue-600 dark:text-blue-400'
+                                                ? 'text-primary'
                                                 : 'text-text-primary'
                                         }`}>
                                         {day.dayNum}
@@ -237,9 +237,9 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                             className={`text-[10px] font-medium ${
                                                 day.totalCalories >
                                                 day.targetCalories * 1.1
-                                                    ? 'text-red-500 dark:text-red-400'
+                                                    ? 'text-danger'
                                                     : day.totalCalories > 0
-                                                      ? 'text-emerald-600 dark:text-emerald-400'
+                                                      ? 'text-success'
                                                       : 'text-text-tertiary'
                                             }`}>
                                             {day.totalCalories > 0
@@ -284,7 +284,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                             }
                                             className={`py-1.5 px-1.5 align-top transition-colors ${
                                                 day.isSelected
-                                                    ? 'bg-blue-50/50 dark:bg-blue-950/50'
+                                                    ? 'bg-primary-soft'
                                                     : day.isFuture
                                                       ? 'bg-background cursor-not-allowed'
                                                       : 'hover:bg-background cursor-pointer'
@@ -334,7 +334,7 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                                             mealType.id,
                                                         );
                                                     }}
-                                                    className="w-full flex items-center justify-center py-2 text-text-tertiary hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 rounded transition-colors group">
+                                                    className="w-full flex items-center justify-center py-2 text-text-tertiary hover:text-primary hover:bg-primary-soft rounded transition-colors group">
                                                     <Plus
                                                         size={14}
                                                         className="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -377,26 +377,26 @@ export const WeeklyMealPlanView: React.FC<WeeklyMealPlanViewProps> = ({
                                     <td
                                         key={`total-${day.date}`}
                                         className={`py-2 px-2 text-center ${
-                                            day.isSelected ? 'bg-blue-100/50 dark:bg-blue-900/30' : ''
+                                            day.isSelected ? 'bg-primary/10' : ''
                                         }`}>
                                         {!day.isFuture && day.totalCalories > 0 ? (
                                             <div>
                                                 <div
                                                     className={`text-sm font-bold ${
                                                         isOver
-                                                            ? 'text-red-600 dark:text-red-400'
+                                                            ? 'text-danger'
                                                             : isUnder
-                                                              ? 'text-amber-600 dark:text-amber-400'
-                                                              : 'text-emerald-600 dark:text-emerald-400'
+                                                              ? 'text-warning'
+                                                              : 'text-success'
                                                     }`}>
                                                     {day.totalCalories}
                                                 </div>
                                                 <div
                                                     className={`text-[10px] ${
                                                         isOver
-                                                            ? 'text-red-500 dark:text-red-400'
+                                                            ? 'text-danger'
                                                             : isUnder
-                                                              ? 'text-amber-500 dark:text-amber-400'
+                                                              ? 'text-warning'
                                                               : 'text-text-tertiary'
                                                     }`}>
                                                     {percentOfTarget}%

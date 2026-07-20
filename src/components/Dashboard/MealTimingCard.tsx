@@ -50,7 +50,7 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
 
     if (!insights.hasData) {
         return (
-            <div className="bg-surface rounded-2xl p-6 shadow-sm border border-border">
+            <div className="bg-surface rounded-card p-6 shadow-card border border-border">
                 <div className="flex items-center gap-2 mb-4">
                     <Clock className="text-primary" size={20} />
                     <h3 className="text-text-primary font-bold text-lg">
@@ -68,23 +68,23 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
     }
 
     const getSleepImpactColor = () => {
-        if (insights.sleepImpact.avgMealBedtimeGap >= 2.5) return 'text-green-500';
-        if (insights.sleepImpact.avgMealBedtimeGap >= 1.5) return 'text-yellow-500';
-        return 'text-red-500';
+        if (insights.sleepImpact.avgMealBedtimeGap >= 2.5) return 'text-success';
+        if (insights.sleepImpact.avgMealBedtimeGap >= 1.5) return 'text-warning';
+        return 'text-danger';
     };
 
     const getConsistencyRating = (variance: number) => {
         if (variance < 30)
-            return { label: 'MUY CONSISTENTE', color: 'text-green-500' };
-        if (variance < 60) return { label: 'MODERADO', color: 'text-yellow-500' };
-        return { label: 'VARIABLE', color: 'text-red-500' };
+            return { label: 'MUY CONSISTENTE', color: 'text-success' };
+        if (variance < 60) return { label: 'MODERADO', color: 'text-warning' };
+        return { label: 'VARIABLE', color: 'text-danger' };
     };
 
     return (
-        <div className="bg-surface rounded-[2.5rem] p-8 shadow-xl border border-border group hover:border-indigo-200 dark:hover:border-indigo-800 transition-all duration-300">
+        <div className="bg-surface rounded-card p-8 shadow-card border border-border group hover:border-primary/30 transition-all duration-300">
             <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-indigo-50 dark:bg-indigo-900/50 rounded-xl group-hover:scale-110 transition-transform">
-                    <Clock className="text-indigo-600 dark:text-indigo-400" size={20} />
+                <div className="p-2 bg-primary-soft rounded-control group-hover:scale-110 transition-transform">
+                    <Clock className="text-primary" size={20} />
                 </div>
                 <h3 className="text-text-primary font-bold text-xl tracking-tight">
                     {t('dashboard.mealTiming.title')}
@@ -93,25 +93,25 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
 
             {/* Eating Window */}
             <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
-                    <div className="text-xs text-blue-600 dark:text-blue-400 font-bold mb-1">
+                <div className="p-3 bg-primary-soft rounded-control">
+                    <div className="text-xs text-primary font-bold mb-1">
                         {t('dashboard.mealTiming.firstMeal')}
                     </div>
-                    <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+                    <div className="text-2xl font-bold text-primary">
                         {insights.avgFirstMealTime}
                     </div>
                 </div>
-                <div className="p-3 bg-purple-50 dark:bg-purple-900/30 rounded-xl">
-                    <div className="text-xs text-purple-600 dark:text-purple-400 font-bold mb-1">
+                <div className="p-3 bg-info-soft rounded-control">
+                    <div className="text-xs text-info font-bold mb-1">
                         {t('dashboard.mealTiming.lastMeal')}
                     </div>
-                    <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">
+                    <div className="text-2xl font-bold text-info">
                         {insights.avgLastMealTime}
                     </div>
                 </div>
             </div>
 
-            <div className="p-3 bg-background rounded-xl mb-4">
+            <div className="p-3 bg-background rounded-control mb-4">
                 <div className="flex justify-between items-center">
                     <span className="text-xs text-text-secondary font-bold">
                         {t('dashboard.mealTiming.eatingWindow')}
@@ -131,7 +131,7 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
             {/* Sleep Impact */}
             <div className="border-t border-border pt-4 mb-4">
                 <div className="flex items-center gap-2 mb-2">
-                    <Moon size={16} className="text-indigo-500" />
+                    <Moon size={16} className="text-primary" />
                     <h4 className="text-sm font-bold text-text-secondary">
                         {t('dashboard.mealTiming.sleepImpact.title')}
                     </h4>
@@ -147,12 +147,12 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
                         </span>
                     </div>
                     {insights.sleepImpact.avgMealBedtimeGap < 2 && (
-                        <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 p-2 rounded">
+                        <p className="text-xs text-warning bg-warning-soft p-2 rounded">
                             {t('dashboard.mealTiming.sleepImpact.warning')}
                         </p>
                     )}
                     {insights.sleepImpact.lateEatingDays > 7 && (
-                        <p className="text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 p-2 rounded">
+                        <p className="text-xs text-danger bg-danger-soft p-2 rounded">
                             {t('dashboard.mealTiming.sleepImpact.bad', {
                                 count: insights.sleepImpact.lateEatingDays,
                             })}
@@ -160,7 +160,7 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
                     )}
                     {insights.sleepImpact.avgMealBedtimeGap >= 2.5 &&
                         insights.sleepImpact.lateEatingDays <= 5 && (
-                            <p className="text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 p-2 rounded">
+                            <p className="text-xs text-success bg-success-soft p-2 rounded">
                                 {t('dashboard.mealTiming.sleepImpact.good')}
                             </p>
                         )}
@@ -176,7 +176,7 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
                         </div>
                     )}
                     {Math.abs(insights.sleepImpact.sleepScoreCorrelation) > 0.2 && (
-                        <p className="text-[10px] text-indigo-600 dark:text-indigo-400 mt-1 italic">
+                        <p className="text-[10px] text-primary mt-1 italic">
                             {insights.sleepImpact.sleepScoreCorrelation > 0
                                 ? t('dashboard.mealTiming.sleepImpact.positiveCorrelation')
                                 : t('dashboard.mealTiming.sleepImpact.negativeCorrelation')}
@@ -189,30 +189,30 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
             {insights.workoutNutrition.workoutDaysWithData > 0 && (
                 <div className="border-t border-border pt-4 mb-4">
                     <div className="flex items-center gap-2 mb-2">
-                        <Zap size={16} className="text-orange-500" />
+                        <Zap size={16} className="text-warning" />
                         <h4 className="text-sm font-bold text-text-secondary">
                             {t('dashboard.mealTiming.workoutNutrition.title')}
                         </h4>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
-                        <div className="p-2 bg-orange-50 dark:bg-orange-900/30 rounded">
-                            <div className="text-[10px] text-orange-600 dark:text-orange-400 font-bold">
+                        <div className="p-2 bg-carbs-soft rounded">
+                            <div className="text-[10px] text-carbs font-bold">
                                 {t('dashboard.mealTiming.workoutNutrition.avgCarbs')}
                             </div>
-                            <div className="text-lg font-bold text-orange-700 dark:text-orange-300">
+                            <div className="text-lg font-bold text-carbs">
                                 {insights.workoutNutrition.avgPreWorkoutCarbs.toFixed(
                                     0,
                                 )}
                                 g
                             </div>
                         </div>
-                        <div className="p-2 bg-green-50 dark:bg-green-900/30 rounded">
-                            <div className="text-[10px] text-green-600 dark:text-green-400 font-bold">
+                        <div className="p-2 bg-protein-soft rounded">
+                            <div className="text-[10px] text-protein font-bold">
                                 {t(
                                     'dashboard.mealTiming.workoutNutrition.avgProtein',
                                 )}
                             </div>
-                            <div className="text-lg font-bold text-green-700 dark:text-green-300">
+                            <div className="text-lg font-bold text-protein">
                                 {insights.workoutNutrition.avgPostWorkoutProtein.toFixed(
                                     0,
                                 )}
@@ -231,7 +231,7 @@ export const MealTimingCard: React.FC<MealTimingCardProps> = ({ insights }) => {
             {/* Consistency */}
             <div className="border-t border-border pt-4">
                 <div className="flex items-center gap-2 mb-2">
-                    <Utensils size={16} className="text-cyan-500" />
+                    <Utensils size={16} className="text-info" />
                     <h4 className="text-sm font-bold text-text-secondary">
                         {t('dashboard.mealTiming.consistency.title')}
                     </h4>

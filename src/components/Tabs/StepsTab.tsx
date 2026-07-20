@@ -43,9 +43,9 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                 <p className="text-sm text-text-tertiary">{t('steps.subtitle')}</p>
             </div>
 
-            <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
+            <div className="bg-surface rounded-card p-6 border border-border shadow-card">
                 <h2 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
+                    <span className="w-8 h-8 rounded-control bg-info-soft text-info flex items-center justify-center">
                         👟
                     </span>
                     {t('steps.addSteps')}
@@ -63,11 +63,11 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                         value={newSteps}
                         onChange={(e) => setNewSteps(e.target.value)}
                         placeholder={t('steps.stepsPlaceholder')}
-                        className="flex-1 bg-background border border-border rounded-xl px-4 py-3 text-lg font-black focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all placeholder-text-tertiary"
+                        className="flex-1 bg-background border border-border rounded-control px-4 py-3 text-lg font-black focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder-text-tertiary"
                     />
                     <button
                         onClick={addStepsEntry}
-                        className="bg-orange-600 hover:bg-orange-700 active:bg-orange-800 px-8 py-3 rounded-xl font-bold text-white shadow-lg shadow-orange-500/20 transition-all">
+                        className="bg-primary hover:bg-primary-dark active:bg-primary-dark px-8 py-3 rounded-control font-bold text-white shadow-glow transition-all min-h-[44px]">
                         {t('steps.save')}
                     </button>
                 </div>
@@ -77,12 +77,12 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                 data={weeklyData}
                 dataKey="steps"
                 target={stepGoal}
-                color="bg-cyan-500"
+                color="bg-info"
                 label={t('steps.chartLabel')}
             />
 
             {!isLoading && stepsLog.length === 0 && (
-                <div className="bg-surface rounded-2xl border border-border shadow-sm">
+                <div className="bg-surface rounded-card border border-border shadow-card">
                     <EmptyState
                         icon={Footprints}
                         title={t('steps.empty.title')}
@@ -92,9 +92,9 @@ export const StepsTab: React.FC<StepsTabProps> = ({
             )}
 
             {stepsLog.length > 0 && (
-                <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
+                <div className="bg-surface rounded-card p-6 border border-border shadow-card">
                     <h2 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
-                        <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
+                        <span className="w-8 h-8 rounded-control bg-primary-soft text-primary flex items-center justify-center text-xs">
                             📊
                         </span>
                         {t('steps.history')}
@@ -109,18 +109,18 @@ export const StepsTab: React.FC<StepsTabProps> = ({
                                         {entry.date}
                                     </span>
                                     {entry.source === 'oura' && (
-                                        <span className="px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 text-[9px] font-bold">
+                                        <span className="px-1.5 py-0.5 rounded bg-oura-soft text-oura text-[9px] font-bold">
                                             OURA
                                         </span>
                                     )}
                                     {entry.source === 'ios-health' && (
-                                        <span className="px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 text-[9px] font-bold">
+                                        <span className="px-1.5 py-0.5 rounded bg-primary-soft text-primary text-[9px] font-bold">
                                             iOS
                                         </span>
                                     )}
                                 </div>
                                 <span
-                                    className={`font-black text-base ${entry.steps >= stepGoal ? 'text-cyan-600' : 'text-text-tertiary'}`}>
+                                    className={`font-black text-base ${entry.steps >= stepGoal ? 'text-info' : 'text-text-tertiary'}`}>
                                     {entry.steps.toLocaleString()}
                                     <span className="text-[10px] font-bold ml-1 text-text-tertiary uppercase">
                                         {t('steps.unit')}

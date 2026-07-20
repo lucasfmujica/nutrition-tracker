@@ -32,30 +32,30 @@ export const ProteinTimeline: React.FC<ProteinTimelineProps> = ({
         switch (status) {
             case 'complete':
                 return {
-                    bg: 'bg-green-500',
-                    border: 'border-green-400',
-                    text: 'text-green-700',
+                    bg: 'bg-success',
+                    border: 'border-success',
+                    text: 'text-success',
                     ring: '',
                 };
             case 'active':
                 return {
-                    bg: 'bg-blue-500',
-                    border: 'border-blue-400',
-                    text: 'text-blue-700',
-                    ring: 'ring-2 ring-blue-300 ring-offset-2',
+                    bg: 'bg-primary',
+                    border: 'border-primary',
+                    text: 'text-primary',
+                    ring: 'ring-2 ring-primary/40 ring-offset-2',
                 };
             case 'partial':
                 return {
-                    bg: 'bg-amber-400',
-                    border: 'border-amber-300',
-                    text: 'text-amber-700',
+                    bg: 'bg-warning',
+                    border: 'border-warning',
+                    text: 'text-warning',
                     ring: '',
                 };
             case 'missed':
                 return {
-                    bg: 'bg-red-400',
-                    border: 'border-red-300',
-                    text: 'text-red-600',
+                    bg: 'bg-danger',
+                    border: 'border-danger',
+                    text: 'text-danger',
                     ring: 'animate-pulse',
                 };
             default:
@@ -69,12 +69,12 @@ export const ProteinTimeline: React.FC<ProteinTimelineProps> = ({
     };
 
     return (
-        <div className="bg-surface rounded-2xl border border-border p-4 shadow-sm">
+        <div className="bg-surface rounded-card border border-border p-4 shadow-card">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                    <div className="flex items-center justify-center w-8 h-8 bg-purple-50 rounded-lg">
-                        <Clock className="w-4 h-4 text-purple-600" />
+                    <div className="flex items-center justify-center w-8 h-8 bg-protein-soft rounded-control">
+                        <Clock className="w-4 h-4 text-protein" />
                     </div>
                     <div>
                         <h3 className="text-sm font-bold text-text-primary">
@@ -87,9 +87,9 @@ export const ProteinTimeline: React.FC<ProteinTimelineProps> = ({
                 </div>
 
                 {/* Remaining Counter */}
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 rounded-full">
-                    <Target className="w-3.5 h-3.5 text-purple-600" />
-                    <span className="text-xs font-bold text-purple-700">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-protein-soft rounded-full">
+                    <Target className="w-3.5 h-3.5 text-protein" />
+                    <span className="text-xs font-bold text-protein">
                         {t('proteinPacing.remaining', { amount: remaining })}
                     </span>
                 </div>
@@ -142,19 +142,19 @@ export const ProteinTimeline: React.FC<ProteinTimelineProps> = ({
             {/* Legend */}
             <div className="flex items-center justify-center gap-4 mt-4 pt-3 border-t border-border">
                 <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-green-500" />
+                    <div className="w-2 h-2 rounded-full bg-success" />
                     <span className="text-[9px] text-text-tertiary">
                         {t('proteinPacing.complete')}
                     </span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-blue-500" />
+                    <div className="w-2 h-2 rounded-full bg-primary" />
                     <span className="text-[9px] text-text-tertiary">
                         {t('proteinPacing.active')}
                     </span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
+                    <div className="w-2 h-2 rounded-full bg-danger animate-pulse" />
                     <span className="text-[9px] text-text-tertiary">
                         {t('proteinPacing.missed')}
                     </span>

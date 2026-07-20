@@ -21,7 +21,7 @@ interface WeightChartCardProps {
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-surface p-3 rounded-xl shadow-xl border border-border">
+            <div className="bg-surface p-3 rounded-control shadow-float border border-border">
                 <p className="text-text-tertiary text-xs font-semibold mb-1">{label}</p>
                 {payload.map((entry: any, index: number) => (
                     <div key={index} className="flex items-center gap-2">
@@ -136,7 +136,7 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
     const displayCurrentWeight = (currentWeight * weightMultiplier).toFixed(1);
 
     return (
-        <div className="bg-surface p-5 sm:p-8 rounded-[2.5rem] shadow-xl border border-border mb-6 group transition-all duration-300">
+        <div className="bg-surface p-5 sm:p-8 rounded-card shadow-card border border-border mb-6 group transition-all duration-300">
             <div className="flex justify-between items-start mb-6 sm:mb-8 gap-4 w-full">
                 <div className="min-w-0 flex-1">
                     <h3 className="text-text-primary font-bold text-lg truncate w-full">
@@ -155,7 +155,7 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                         </span>
                     </span>
                     <span
-                        className={`text-xs font-bold px-2 py-0.5 rounded-full ${isLoss ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'}`}>
+                        className={`text-xs font-bold px-2 py-0.5 rounded-full ${isLoss ? 'bg-success-soft text-success' : 'bg-danger-soft text-danger'}`}>
                         {displayTrend && displayTrend > 0 ? '+' : ''}
                         {displayTrend !== null ? absTrend : '0.0'} {unitLabel}/sem
                     </span>
@@ -177,12 +177,12 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                                     y2="1">
                                     <stop
                                         offset="5%"
-                                        stopColor="#0066EE"
+                                        stopColor="var(--color-primary)"
                                         stopOpacity={0.2}
                                     />
                                     <stop
                                         offset="95%"
-                                        stopColor="#0066EE"
+                                        stopColor="var(--color-primary)"
                                         stopOpacity={0}
                                     />
                                 </linearGradient>
@@ -193,7 +193,7 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                                 tickLine={false}
                                 tick={{
                                     fontSize: isMobile ? 9 : 10,
-                                    fill: '#9CA3AF',
+                                    fill: 'var(--color-text-tertiary)',
                                 }}
                                 dy={10}
                                 interval="preserveStartEnd"
@@ -207,7 +207,7 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                                 content={<CustomTooltip />}
                                 trigger={isMobile ? 'click' : 'hover'}
                                 cursor={{
-                                    stroke: '#0066EE',
+                                    stroke: 'var(--color-primary)',
                                     strokeWidth: 1,
                                     strokeDasharray: '4 4',
                                 }}
@@ -216,7 +216,7 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                                 type="monotone"
                                 dataKey="weight"
                                 name={unitLabel}
-                                stroke="#0066EE"
+                                stroke="var(--color-primary)"
                                 strokeWidth={3}
                                 strokeLinecap="round"
                                 fillOpacity={1}
@@ -227,7 +227,7 @@ export const WeightChartCard: React.FC<WeightChartCardProps> = ({
                     </ResponsiveContainer>
                 </div>
             ) : (
-                <div className="h-48 w-full flex items-center justify-center text-text-tertiary text-sm bg-background rounded-xl border border-dashed border-border">
+                <div className="h-48 w-full flex items-center justify-center text-text-tertiary text-sm bg-background rounded-control border border-dashed border-border">
                     <p>{t('dashboard.weightChart.noData')}</p>
                 </div>
             )}

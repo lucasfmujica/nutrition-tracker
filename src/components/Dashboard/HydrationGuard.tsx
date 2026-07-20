@@ -62,15 +62,15 @@ const WeatherBadge: React.FC<{
     return (
         <div className="flex items-center gap-2 text-sm">
             {isHot ? (
-                <Sun size={16} className="text-orange-500" />
+                <Sun size={16} className="text-warning" />
             ) : (
-                <Cloud size={16} className="text-blue-500" />
+                <Cloud size={16} className="text-info" />
             )}
             <span className="font-medium text-text-secondary">
                 {temperature}°{unit} - {location}
             </span>
             <span className="text-text-tertiary">•</span>
-            <Droplets size={14} className="text-blue-400" />
+            <Droplets size={14} className="text-info" />
             <span className="text-text-secondary">{humidity}%</span>
         </div>
     );
@@ -141,13 +141,13 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
     const coachTip = getCoachTip();
 
     return (
-        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 p-5 rounded-2xl border border-blue-100 dark:border-blue-800 shadow-sm relative overflow-hidden">
+        <div className="bg-gradient-to-br from-primary-soft to-info-soft p-5 rounded-card border border-info/20 shadow-card relative overflow-hidden">
             {/* Background Decoration */}
-            <div className="absolute right-0 top-0 w-32 h-32 bg-blue-100 dark:bg-blue-900 rounded-full blur-3xl opacity-20 -mr-10 -mt-10" />
+            <div className="absolute right-0 top-0 w-32 h-32 bg-info/30 rounded-full blur-3xl opacity-20 -mr-10 -mt-10" />
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 relative z-10">
                 <div className="flex items-center gap-2">
-                    <div className="p-2 bg-blue-500 rounded-xl shadow-lg shadow-blue-500/20">
+                    <div className="p-2 bg-info rounded-control shadow-glow">
                         <Droplets size={18} className="text-white" />
                     </div>
                     <h3 className="font-bold text-text-primary">
@@ -176,11 +176,11 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
 
                         {/* Controls */}
                         {(onAddWater || onRemoveWater) && (
-                            <div className="flex items-center gap-1 bg-surface rounded-lg p-1 shadow-sm border border-blue-100 dark:border-blue-800">
+                            <div className="flex items-center gap-1 bg-surface rounded-control p-1 shadow-sm border border-info/20">
                                 {onRemoveWater && (
                                     <button
                                         onClick={onRemoveWater}
-                                        className="w-8 h-8 flex items-center justify-center rounded-md text-blue-400 hover:bg-blue-50 hover:text-blue-600 active:bg-blue-100 transition-colors">
+                                        className="w-8 h-8 flex items-center justify-center rounded-md text-info/70 hover:bg-info-soft hover:text-info active:bg-info/20 transition-colors">
                                         -
                                     </button>
                                 )}
@@ -188,7 +188,7 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
                                 {onAddWater && (
                                     <button
                                         onClick={onAddWater}
-                                        className="w-8 h-8 flex items-center justify-center rounded-md text-blue-600 hover:bg-blue-50 active:bg-blue-100 transition-colors">
+                                        className="w-8 h-8 flex items-center justify-center rounded-md text-info hover:bg-info-soft active:bg-info/20 transition-colors">
                                         +
                                     </button>
                                 )}
@@ -199,7 +199,7 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
                         <span className="text-xs font-bold text-text-tertiary uppercase tracking-wider block mb-0.5">
                             {t('dashboard.activity.goal')}
                         </span>
-                        <span className="text-lg font-bold text-blue-600">
+                        <span className="text-lg font-bold text-info">
                             {displayTarget}
                             {displayUnit}
                         </span>
@@ -210,8 +210,8 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
                     <div
                         className={`h-full rounded-full transition-all duration-500 ${
                             isOnTrack
-                                ? 'bg-gradient-to-r from-blue-500 to-cyan-500'
-                                : 'bg-blue-300'
+                                ? 'bg-gradient-to-r from-primary to-info'
+                                : 'bg-info/50'
                         }`}
                         style={{ width: `${progress}%` }}
                     />
@@ -223,7 +223,7 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
                         {activityBonus > 0 && (
                             <>
                                 <span className="text-text-tertiary">•</span>
-                                <span className="text-orange-600 flex items-center gap-1">
+                                <span className="text-warning flex items-center gap-1">
                                     <Zap size={12} />+{activityBonus}ml
                                 </span>
                             </>
@@ -231,7 +231,7 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
                         {heatBonus > 0 && (
                             <>
                                 <span className="text-text-tertiary">•</span>
-                                <span className="text-red-600 flex items-center gap-1">
+                                <span className="text-danger flex items-center gap-1">
                                     <Flame size={12} />+{heatBonus}ml
                                 </span>
                             </>
@@ -241,7 +241,7 @@ export const HydrationGuard: React.FC<HydrationGuardProps> = ({
             </div>
 
             <div
-                className={`p-3 rounded-xl ${needsElectrolytes ? 'bg-orange-100 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800' : 'bg-surface border border-border'}`}>
+                className={`p-3 rounded-control ${needsElectrolytes ? 'bg-warning-soft border border-warning/30' : 'bg-surface border border-border'}`}>
                 <p className="text-sm text-text-secondary leading-relaxed">{coachTip}</p>
             </div>
         </div>

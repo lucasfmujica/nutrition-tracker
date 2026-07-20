@@ -86,7 +86,7 @@ export const FoodVoiceInput: React.FC<FoodVoiceInputProps> = ({
     // Processing state (AI parsing)
     if (isProcessing) {
         return (
-            <div className="w-full py-4 bg-surface border-2 border-border text-text-secondary rounded-xl font-bold flex items-center justify-center gap-3">
+            <div className="w-full py-4 bg-surface border-2 border-border text-text-secondary rounded-control font-bold flex items-center justify-center gap-3">
                 <Loader2 className="w-5 h-5 animate-spin" />
                 {t('food.voice.processing')}
             </div>
@@ -100,9 +100,9 @@ export const FoodVoiceInput: React.FC<FoodVoiceInputProps> = ({
                 <button
                     onClick={handleMicClick}
                     disabled={disabled}
-                    className={`w-full py-4 rounded-xl font-bold transition-all active:scale-[0.99] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full min-h-[44px] py-4 rounded-control font-bold transition-all active:scale-[0.99] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed ${
                         status === 'listening'
-                            ? 'bg-gradient-to-r from-rose-500 to-red-500 text-white shadow-lg shadow-rose-200/50 dark:shadow-rose-900/30'
+                            ? 'bg-danger text-white shadow-float'
                             : 'bg-surface border-2 border-border text-text-secondary hover:bg-background'
                     }`}>
                     {status === 'listening' ? (
@@ -165,13 +165,14 @@ export const FoodVoiceInput: React.FC<FoodVoiceInputProps> = ({
                                 if (e.key === 'Enter') processText(textInput);
                             }}
                             placeholder={t('food.voice.textPlaceholder')}
-                            className="flex-1 px-4 py-3 bg-background text-text-primary border border-border rounded-xl text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="flex-1 px-4 py-3 bg-background text-text-primary border border-border rounded-control text-sm focus:ring-2 focus:ring-primary focus:border-transparent"
                         />
                         <button
                             onClick={() => processText(textInput)}
                             disabled={disabled || !textInput.trim()}
                             aria-label={t('food.voice.parseButton')}
-                            className="px-4 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                            style={{ background: 'var(--brand-gradient)' }}
+                            className="px-4 py-3 min-h-[44px] text-white rounded-control font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all">
                             <Send className="w-5 h-5" />
                         </button>
                     </div>
@@ -180,14 +181,14 @@ export const FoodVoiceInput: React.FC<FoodVoiceInputProps> = ({
 
             {/* Errors + retry */}
             {(voiceErrorMessage || parseError) && (
-                <div className="p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl space-y-2">
-                    <p className="text-sm text-red-700 dark:text-red-400">
+                <div className="p-3 bg-danger-soft border border-danger/30 rounded-control space-y-2">
+                    <p className="text-sm text-danger">
                         {parseError || voiceErrorMessage}
                     </p>
                     {parseError && lastText && (
                         <button
                             onClick={() => processText(lastText)}
-                            className="text-sm font-semibold text-red-700 dark:text-red-400 flex items-center gap-1.5 hover:underline">
+                            className="text-sm font-semibold text-danger flex items-center gap-1.5 hover:underline">
                             <RefreshCw className="w-4 h-4" />
                             {t('food.voice.retry')}
                         </button>

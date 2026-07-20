@@ -1,16 +1,6 @@
-import { FileImage } from 'lucide-react';
-import React, { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useState } from 'react';
 import { useAIMeals } from '../../context/AIMealSuggestionsContext';
 import { useTracker } from '../../context/TrackerContext';
-import { useCorrelationAnalytics } from '../../hooks/useCorrelationAnalytics';
-import { useIdealDayPilot } from '../../hooks/useIdealDayPilot';
-import { useMealTimingAnalytics } from '../../hooks/useMealTimingAnalytics';
-import { useOuraAutoAdjust } from '../../hooks/useOuraAutoAdjust';
-import { usePatternRecognition } from '../../hooks/usePatternRecognition';
-import { usePlateauDetector } from '../../hooks/usePlateauDetector';
-import { useWeeklyPeriodization } from '../../hooks/useWeeklyPeriodization';
-import { useWeeklyPlan } from '../../hooks/useWeeklyPlan';
 import { useWeeklyReport } from '../../hooks/useWeeklyReport';
 import {
     CustomTargets,
@@ -22,25 +12,24 @@ import {
 } from '../../types/domain';
 import { ActivityCards } from '../Dashboard/ActivityCards';
 import { AIChefCard } from '../Dashboard/AIChefCard';
-import CoachInsight from '../Dashboard/CoachInsight';
 import { CorrelationSection } from '../Dashboard/CorrelationSection';
 import { IdealDayCard } from '../Dashboard/IdealDayCard';
 import { MacroCards } from '../Dashboard/MacroCards';
-import { OuraInsightCard } from '../Dashboard/OuraInsightCard';
-
 import { MealTimingCard } from '../Dashboard/MealTimingCard';
+import { OuraInsightCard } from '../Dashboard/OuraInsightCard';
 import { PerformanceForecastCard } from '../Dashboard/PerformanceForecastCard';
 import { PlateauAlertCard } from '../Dashboard/PlateauAlertCard';
 import { PredictiveWeightCard } from '../Dashboard/PredictiveWeightCard';
-import { SafetyNetToggle } from '../Dashboard/SafetyNetToggle';
+import { DashboardHeader } from '../Dashboard/DashboardHeader';
 import { SummaryCard } from '../Dashboard/SummaryCard';
 import { TrainingWidget } from '../Dashboard/TrainingWidget';
+import { useDashboardEngines } from '../Dashboard/useDashboardEngines';
 import { WeeklyPlanningCard } from '../Dashboard/WeeklyPlanningCard';
+import { WeeklyReportCTA } from '../Dashboard/WeeklyReportCTA';
 import { WeightChartCard } from '../Dashboard/WeightChartCard';
 import { WeightProjectionCard } from '../Dashboard/WeightProjectionCard';
 import { FoodCameraInput } from '../Food/FoodCameraInput';
 import { WeeklyReportModal } from '../Modals/WeeklyReportModal';
-import { LukenFitDatePicker } from '../UI/LukenFitDatePicker';
 
 interface DashboardTabProps {
     // Date state
@@ -96,7 +85,6 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
     getTotalsForDate,
     getTargetsForDate,
 }) => {
-    const { t } = useTranslation();
     const waterData = getWaterForDate(dashboardDate);
     const {
         foodLog,
@@ -108,76 +96,39 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         isSafetyNetActive,
         toggleSafetyNet,
         getStatusMessage,
-        mealTemplates,
         weeklyPlan,
         performanceForecast,
     } = useTracker() as any;
-    const { setShowSuggestionModal, getContextualSuggestions } = useAIMeals();
+    const { getContextualSuggestions } = useAIMeals();
 
-    // Pattern Recognition Engine
-    const baseInsight = usePatternRecognition(
-        ouraLog,
-        getTotalsForDate,
-        getTargetsForDate,
-    );
-
-    // Coach Insight Logic (Safety Net Override)
-    const insight = isSafetyNetActive(dashboardDate)
-        ? {
-              icon: 'Shield',
-              message: 'Modo Escudo activado. Prioriza tu bienestar hoy.',
-              description:
-                  'Tu meta cambia a Mantenimiento. Enfócate en la proteína y descansa.',
-          }
-        : baseInsight;
-
-    // Correlation Engine
-    const correlationAnalytics = useCorrelationAnalytics(
-        foodLog,
-        workoutLog,
+    const {
+        correlationAnalytics,
+        plateauData,
+        weeklyPeriodization,
+        mealTimingInsights,
+        idealDayPilot,
+        ouraAutoAdjustData,
+        periodizedTargets,
+        periodizationIntensity,
+    } = useDashboardEngines({
+        dashboardDate,
+        dashboardTargets,
         ouraLog,
         weightHistory,
+        profile,
+        getTotalsForDate,
+        getTargetsForDate,
+        getStepsForDate,
+        getMostRecentWeight,
+        foodLog,
+        workoutLog,
         stepsLog,
         waterLog,
-    );
-
-    // Plateau Detection Engine
-    const plateauData = usePlateauDetector(weightHistory, customTargets);
-
-    // Weekly Periodization Engine
-    const weeklyPeriodization = useWeeklyPeriodization(
-        workoutLog,
-        profile,
         customTargets,
-        getMostRecentWeight(weightHistory)?.weight || profile?.currentWeight,
-        profile?.targetWeight || 75,
-        foodLog,
         weeklyPlan,
-    );
-
-    // Meal Timing Analytics Engine
-    const mealTimingInsights = useMealTimingAnalytics(
-        foodLog,
-        ouraLog,
-        workoutLog,
-        dashboardDate,
-    );
-
-    // Ideal Day Pilot Engine
-    const idealDayPilot = useIdealDayPilot(
-        ouraLog,
-        mealTimingInsights,
         performanceForecast,
-        profile,
-        workoutLog,
-    );
-
-    // Oura Auto-Adjust Engine
-    const ouraAutoAdjustData = useOuraAutoAdjust(
-        ouraLog,
-        dashboardDate,
-        getStepsForDate(dashboardDate),
-    );
+        isSafetyNetActive,
+    });
 
     // Weekly Report Modal State
     const [showWeeklyReport, setShowWeeklyReport] = useState(false);
@@ -202,84 +153,19 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         getContextualSuggestions?.(remaining, isTraining);
     };
 
-    // Memoized periodization and targets for the current date
-    const { periodizedTargets, periodizationIntensity } = useMemo(() => {
-        const periodizedDay = weeklyPeriodization?.weekDays?.find(
-            (d: any) => d.date === dashboardDate,
-        );
-
-        const intensity = periodizedDay?.intensity;
-
-        let calculatedTargets = dashboardTargets;
-        if (isSafetyNetActive(dashboardDate)) {
-            calculatedTargets = {
-                ...dashboardTargets,
-                calories: profile?.tdee || dashboardTargets.calories + 500,
-            };
-        } else if (periodizedDay) {
-            calculatedTargets = {
-                ...dashboardTargets,
-                calories: periodizedDay.calories,
-            };
-        }
-        calculatedTargets = {
-            ...calculatedTargets,
-            calories: Math.max(
-                1200,
-                calculatedTargets.calories + ouraAutoAdjustData.ouraCalorieBoost,
-            ),
-        };
-
-        return {
-            periodizedTargets: calculatedTargets,
-            periodizationIntensity: intensity,
-        };
-    }, [
-        dashboardDate,
-        weeklyPeriodization,
-        dashboardTargets,
-        isSafetyNetActive,
-        profile?.tdee,
-        ouraAutoAdjustData.ouraCalorieBoost,
-    ]);
-
     return (
         <div className="space-y-6 pb-8 lg:pb-8">
             {/* Dashboard Header - Unified Lab Style */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-1 mb-8">
-                <div className="space-y-1">
-                    <h1 className="text-3xl sm:text-4xl font-black text-text-primary tracking-tight uppercase font-satoshi">
-                        {t('dashboard.title')}
-                    </h1>
-                    <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-                        <p className="text-xs font-bold text-text-tertiary uppercase tracking-[0.2em]">
-                            {t('dashboard.subtitle')}
-                        </p>
-                    </div>
-                </div>
-
-                {/* Controls: Safety Net & Date Picker */}
-                <div className="flex flex-col-reverse md:flex-row md:items-center gap-3 self-stretch md:self-auto">
-                    <div className="flex-1 md:flex-none">
-                        <SafetyNetToggle
-                            isActive={isSafetyNetActive(dashboardDate)}
-                            onToggle={() => toggleSafetyNet(dashboardDate)}
-                            statusMessage={getStatusMessage(dashboardDate)}
-                        />
-                    </div>
-                    <div className="flex-1 md:min-w-[220px]">
-                        <LukenFitDatePicker
-                            selectedDate={dashboardDate}
-                            onChange={setDashboardDate}
-                            label={t('weight.date')}
-                        />
-                    </div>
-                </div>
-            </div>
+            <DashboardHeader
+                dashboardDate={dashboardDate}
+                setDashboardDate={setDashboardDate}
+                safetyNetActive={isSafetyNetActive(dashboardDate)}
+                onToggleSafetyNet={() => toggleSafetyNet(dashboardDate)}
+                statusMessage={getStatusMessage(dashboardDate)}
+            />
 
             {/* Dashboard Content - Premium Bento Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 w-full max-w-full  items-stretch">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-6 w-full max-w-full items-stretch">
                 {/* ROW 1: CORE METRICS */}
                 <div className="md:col-span-2 lg:col-span-8 min-w-0">
                     <PredictiveWeightCard
@@ -297,7 +183,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                     />
                 </div>
 
-                <div className="md:col-span-2 lg:col-span-4 flex flex-col gap-6">
+                <div className="md:col-span-2 lg:col-span-4 flex flex-col gap-4 md:gap-6">
                     <SummaryCard
                         totals={dashboardTotals}
                         targets={periodizedTargets}
@@ -350,7 +236,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                     />
                 </div>
 
-                <div className="md:col-span-2 lg:col-span-6 flex flex-col gap-6">
+                <div className="md:col-span-2 lg:col-span-6 flex flex-col gap-4 md:gap-6">
                     <MacroCards
                         totals={dashboardTotals}
                         targets={dashboardTargets}
@@ -372,16 +258,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
 
                 {/* 6. WEEKLY REPORT CTA */}
                 <div className="md:col-span-2 lg:col-span-12">
-                    <button
-                        onClick={handleOpenWeeklyReport}
-                        className="w-full py-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 text-white rounded-[2.5rem] font-bold shadow-2xl hover:shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-4 group border border-slate-700/50 dark:border-slate-600/50">
-                        <div className="w-10 h-10 rounded-2xl bg-surface/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <FileImage className="w-5 h-5 text-primary" />
-                        </div>
-                        <span className="text-xl tracking-tight uppercase font-satoshi">
-                            {t('dashboard.generateWeeklyReport')}
-                        </span>
-                    </button>
+                    <WeeklyReportCTA onClick={handleOpenWeeklyReport} />
                 </div>
 
                 {/* 7. HISTORY & TRENDS */}

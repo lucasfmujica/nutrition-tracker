@@ -104,17 +104,17 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
         if (absR > 0.7)
             return {
                 label: t('dashboard.correlation.strength.strong'),
-                color: 'text-emerald-600',
+                color: 'text-success',
             };
         if (absR > 0.4)
             return {
                 label: t('dashboard.correlation.strength.moderate'),
-                color: 'text-blue-600',
+                color: 'text-primary',
             };
         if (absR > 0.2)
             return {
                 label: t('dashboard.correlation.strength.weak'),
-                color: 'text-amber-600',
+                color: 'text-warning',
             };
         return {
             label: t('dashboard.correlation.strength.noise'),
@@ -148,7 +148,7 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
     const interpretation = getInterpretation();
 
     return (
-        <div className="bg-surface/80 backdrop-blur-md rounded-3xl p-4 sm:p-6 border border-border shadow-sm min-w-0 w-full lg:min-w-[340px] flex-1 group transition-all hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1">
+        <div className="bg-surface/80 backdrop-blur-md rounded-card p-4 sm:p-6 border border-border shadow-card min-w-0 w-full lg:min-w-[340px] flex-1 group transition-all hover:shadow-float hover:-translate-y-1">
             <div className="mb-6 flex justify-between items-start">
                 <div>
                     <div className="flex items-center gap-2 mb-1">
@@ -191,7 +191,7 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                             <CartesianGrid
                                 strokeDasharray="4 4"
                                 vertical={false}
-                                stroke="#f8fafc"
+                                stroke="var(--color-border)"
                             />
                             <XAxis
                                 type="number"
@@ -199,7 +199,7 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                                 name={xLabel}
                                 tick={{
                                     fontSize: 9,
-                                    fill: '#94a3b8',
+                                    fill: 'var(--color-text-tertiary)',
                                     fontWeight: 600,
                                 }}
                                 tickLine={false}
@@ -213,7 +213,7 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                                 name={yLabel}
                                 tick={{
                                     fontSize: 9,
-                                    fill: '#94a3b8',
+                                    fill: 'var(--color-text-tertiary)',
                                     fontWeight: 600,
                                 }}
                                 tickLine={false}
@@ -226,18 +226,18 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                                 trigger={isMobile ? 'click' : 'hover'}
                                 cursor={{
                                     strokeDasharray: '3 3',
-                                    stroke: '#cbd5e1',
+                                    stroke: 'var(--color-border)',
                                     strokeWidth: 1,
                                 }}
                                 content={({ active, payload }) => {
                                     if (active && payload && payload.length) {
                                         return (
-                                            <div className="bg-slate-900/95 backdrop-blur-md border border-slate-800 p-3 rounded-2xl shadow-2xl text-[10px] text-white animate-in fade-in zoom-in duration-200">
-                                                <p className="font-black text-text-tertiary mb-2 border-b border-slate-800 pb-2 flex justify-between items-center gap-4">
+                                            <div className="bg-surface-elevated/95 backdrop-blur-md border border-border p-3 rounded-control shadow-float text-[10px] text-text-primary animate-in fade-in zoom-in duration-200">
+                                                <p className="font-black text-text-tertiary mb-2 border-b border-border pb-2 flex justify-between items-center gap-4">
                                                     <span>
                                                         {payload[0].payload.date}
                                                     </span>
-                                                    <span className="px-1.5 py-0.5 rounded bg-slate-800 text-text-tertiary">
+                                                    <span className="px-1.5 py-0.5 rounded bg-surface-lighter text-text-tertiary">
                                                         Log
                                                     </span>
                                                 </p>
@@ -246,7 +246,7 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                                                         <span className="text-text-tertiary font-medium">
                                                             {xLabel}
                                                         </span>
-                                                        <span className="font-black text-white">
+                                                        <span className="font-black text-text-primary">
                                                             {payload[0].value}
                                                         </span>
                                                     </div>
@@ -254,7 +254,7 @@ const ScatterCard: React.FC<ScatterCardProps> = ({
                                                         <span className="text-text-tertiary font-medium">
                                                             {yLabel}
                                                         </span>
-                                                        <span className="font-black text-white">
+                                                        <span className="font-black text-text-primary">
                                                             {payload[1].value}
                                                         </span>
                                                     </div>
@@ -353,32 +353,32 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
         <div className="space-y-4">
             <div className="flex items-center justify-between px-1">
                 <div className="flex items-center gap-2">
-                    <div className="p-1.5 bg-blue-50 rounded-lg">
-                        <Microscope size={18} className="text-blue-600" />
+                    <div className="p-1.5 bg-primary-soft rounded-control">
+                        <Microscope size={18} className="text-primary" />
                     </div>
                     <h2 className="text-lg font-black text-text-primary tracking-tight">
                         {t('dashboard.correlation.labsTitle')}
-                        <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-700 uppercase tracking-wider">
+                        <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-warning-soft text-warning uppercase tracking-wider">
                             {t('common.beta', { defaultValue: 'Beta' })}
                         </span>
                     </h2>
                 </div>
                 <button
                     onClick={() => setShowLabsInfo(!showLabsInfo)}
-                    className="p-2 text-text-tertiary hover:text-blue-600 transition-colors rounded-xl hover:bg-blue-50">
+                    className="p-2 text-text-tertiary hover:text-primary transition-colors rounded-control hover:bg-primary-soft">
                     <Info size={20} />
                 </button>
             </div>
 
             {showLabsInfo && (
-                <div className="bg-blue-600 text-white rounded-2xl p-5 mb-6 animate-in slide-in-from-top-4 duration-300 relative overflow-hidden group">
+                <div className="bg-primary text-white rounded-card p-5 mb-6 animate-in slide-in-from-top-4 duration-300 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
                         <Microscope size={80} />
                     </div>
                     <h3 className="text-lg font-bold mb-2 relative z-10">
                         {t('dashboard.correlation.whatIs')}
                     </h3>
-                    <p className="text-xs text-blue-50 opacity-90 leading-relaxed mb-4 relative z-10 max-w-md">
+                    <p className="text-xs text-white/90 leading-relaxed mb-4 relative z-10 max-w-md">
                         {t('dashboard.correlation.explanation')}
                     </p>
                     <ul className="text-[10px] space-y-2 relative z-10">
@@ -408,7 +408,7 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                         data={fuelData}
                         xLabel={t('dashboard.correlation.charts.xCarbs')}
                         yLabel={t('dashboard.correlation.charts.yDuration')}
-                        color="#EF4444" // Red for Fuel/Fire
+                        color="var(--color-danger)" // Red for Fuel/Fire
                         chartId="fuelVsPerf"
                     />
                 )}
@@ -420,7 +420,7 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                         data={recoveryData}
                         xLabel={t('dashboard.correlation.charts.yDuration')} // Swapped x/y intent in original?
                         yLabel={t('dashboard.correlation.charts.yDeepSleep')}
-                        color="#8B5CF6" // Purple for Sleep
+                        color="var(--color-oura)" // Violet for Sleep (Oura data)
                         chartId="recoveryCost"
                     />
                 )}
@@ -434,7 +434,7 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                         data={disciplineData}
                         xLabel={t('dashboard.correlation.charts.xReadiness')}
                         yLabel={t('dashboard.correlation.charts.yCalories')}
-                        color="#10B981" // Green for Health
+                        color="var(--color-success)" // Green for Health
                         chartId="willpower"
                     />
                 )}
@@ -448,7 +448,7 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                         data={metabolicData}
                         xLabel={t('dashboard.correlation.charts.xAvgCalories')}
                         yLabel={t('dashboard.correlation.charts.yWeightDelta')}
-                        color="#F59E0B" // Amber for Metabolism
+                        color="var(--color-warning)" // Amber for Metabolism
                         chartId="metabolic"
                     />
                 )}
@@ -462,7 +462,7 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                         data={activitySleepData}
                         xLabel={t('dashboard.correlation.charts.xSteps')}
                         yLabel={t('dashboard.correlation.charts.ySleepScore')}
-                        color="#06B6D4" // Cyan for Energy/Sleep
+                        color="var(--color-info)" // Cyan for Energy/Sleep
                         chartId="activitySleep"
                     />
                 )}
@@ -476,13 +476,13 @@ export const CorrelationSection: React.FC<CorrelationSectionProps> = ({
                         data={hydrationCardioData}
                         xLabel={t('dashboard.correlation.charts.xWater')}
                         yLabel={t('dashboard.correlation.charts.yHRV')}
-                        color="#3B82F6" // Blue for Water
+                        color="var(--color-primary)" // Blue for Water
                         chartId="hydrationCardio"
                     />
                 )}
             </div>
             {fuelData.length <= 10 && (
-                <div className="flex items-center gap-2 text-[10px] bg-background text-text-tertiary p-3 rounded-xl border border-border italic">
+                <div className="flex items-center gap-2 text-[10px] bg-background text-text-tertiary p-3 rounded-control border border-border italic">
                     <Info size={12} />
                     {t('dashboard.correlation.footer')}
                 </div>

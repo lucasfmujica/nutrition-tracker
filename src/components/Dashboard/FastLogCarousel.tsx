@@ -63,7 +63,7 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
     return (
         <div className="mb-8 pl-1">
             <div className="flex items-center gap-2 mb-4 px-1">
-                <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                <div className="w-8 h-8 rounded-full bg-primary-soft flex items-center justify-center text-primary">
                     <Zap className="w-4 h-4 fill-current" />
                 </div>
                 <h2 className="text-lg font-bold text-text-primary">
@@ -79,12 +79,12 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
                         onClick={() => handleLog(combo, true)}
                         disabled={loggingId === combo.id}
                         className={`
-              relative w-full aspect-[4/3] rounded-2xl p-3 flex flex-col justify-between
+              relative w-full aspect-[4/3] rounded-control p-3 flex flex-col justify-between
               transition-all duration-300 transform
               ${
                   successId === combo.id
-                      ? 'bg-emerald-500 scale-95 ring-4 ring-emerald-200 shadow-none'
-                      : 'bg-gradient-to-br from-indigo-600 to-violet-700 shadow-md shadow-indigo-200 hover:scale-[1.02] active:scale-95'
+                      ? 'bg-success scale-95 ring-4 ring-success/30 shadow-none'
+                      : 'bg-gradient-to-br from-primary to-accent-blue shadow-glow hover:scale-[1.02] active:scale-95'
               }
             `}>
                         <div className="flex justify-between items-start">
@@ -94,7 +94,7 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
                             <div
                                 className={`
                 w-6 h-6 rounded-full flex items-center justify-center backdrop-blur-md
-                ${successId === combo.id ? 'bg-surface/30 text-white' : 'bg-surface/20 text-indigo-100'}
+                ${successId === combo.id ? 'bg-surface/30 text-white' : 'bg-surface/20 text-white/80'}
               `}>
                                 {successId === combo.id ? (
                                     <Check size={14} strokeWidth={3} />
@@ -120,7 +120,7 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
                         </div>
 
                         {loggingId === combo.id && (
-                            <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10">
+                            <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-control flex items-center justify-center z-10">
                                 <div className="w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin" />
                             </div>
                         )}
@@ -134,19 +134,19 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
                         onClick={() => handleLog(food, false)}
                         disabled={loggingId === food.name}
                         className={`
-              relative w-full aspect-[4/3] rounded-2xl p-3 flex flex-col justify-between border
+              relative w-full aspect-[4/3] rounded-control p-3 flex flex-col justify-between border
               transition-all duration-300 transform
               ${
                   successId === food.name
-                      ? 'bg-emerald-50 border-emerald-200 scale-95 ring-2 ring-emerald-100'
-                      : 'bg-surface border-border shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-95 hover:border-indigo-100'
+                      ? 'bg-success-soft border-success/30 scale-95 ring-2 ring-success/20'
+                      : 'bg-surface border-border shadow-card hover:scale-[1.02] active:scale-95 hover:border-primary/20'
               }
             `}>
                         <div className="flex justify-between items-start">
                             <div
                                 className={`
                 w-6 h-6 rounded-full flex items-center justify-center transition-colors
-                ${successId === food.name ? 'bg-emerald-100 text-emerald-600' : 'bg-background text-text-tertiary group-hover:bg-indigo-50 group-hover:text-indigo-500'}
+                ${successId === food.name ? 'bg-success-soft text-success' : 'bg-background text-text-tertiary group-hover:bg-primary-soft group-hover:text-primary'}
               `}>
                                 {successId === food.name ? (
                                     <Check size={14} strokeWidth={3} />
@@ -158,19 +158,19 @@ export const FastLogCarousel: React.FC<FastLogCarouselProps> = ({
 
                         <div className="text-left min-w-0">
                             <h3
-                                className={`font-bold text-sm leading-tight truncate mb-0.5 ${successId === food.name ? 'text-emerald-800' : 'text-text-primary'}`}>
+                                className={`font-bold text-sm leading-tight truncate mb-0.5 ${successId === food.name ? 'text-success' : 'text-text-primary'}`}>
                                 {food.name}
                             </h3>
                             <span
-                                className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${successId === food.name ? 'bg-emerald-100 text-emerald-700' : 'bg-surface-lighter text-text-secondary'}`}>
+                                className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${successId === food.name ? 'bg-success-soft text-success' : 'bg-surface-lighter text-text-secondary'}`}>
                                 {food.calories}{' '}
                                 {t('units.kcal', { defaultValue: 'kcal' })}
                             </span>
                         </div>
 
                         {loggingId === food.name && (
-                            <div className="absolute inset-0 bg-surface/60 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10">
-                                <div className="w-5 h-5 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+                            <div className="absolute inset-0 bg-surface/60 backdrop-blur-sm rounded-control flex items-center justify-center z-10">
+                                <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
                             </div>
                         )}
                     </button>

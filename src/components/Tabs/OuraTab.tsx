@@ -127,14 +127,14 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
                 <div className="px-1 text-center md:text-left">
                     <h1 className="text-2xl font-bold text-text-primary flex items-center gap-2 justify-center md:justify-start">
                         {t('oura.title')}
-                        <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-[10px] font-bold uppercase tracking-wider">
+                        <span className="px-2 py-0.5 rounded-full bg-oura-soft text-oura text-[10px] font-bold uppercase tracking-wider">
                             Sync V2
                         </span>
                     </h1>
                     <p className="text-sm text-text-tertiary">{t('oura.subtitle')}</p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 bg-surface p-1.5 rounded-xl border border-border shadow-sm mx-auto md:mx-0">
+                <div className="flex flex-wrap items-center gap-3 bg-surface p-1.5 rounded-control border border-border shadow-card mx-auto md:mx-0">
                     <div className="w-full md:w-[260px]">
                         <LukenFitDatePicker
                             selectedDate={selectedDate}
@@ -157,12 +157,12 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
                         <button
                             onClick={() => syncOuraData(true)}
                             disabled={isSyncing || !hasToken}
-                            className={`p-2 rounded-lg transition-all ${
+                            className={`p-2 rounded-control transition-all ${
                                 isSyncing
-                                    ? 'bg-purple-50 text-purple-500'
+                                    ? 'bg-oura-soft text-oura'
                                     : !hasToken
                                       ? 'bg-background text-text-tertiary cursor-not-allowed'
-                                      : 'bg-background text-text-tertiary hover:bg-purple-50 hover:text-purple-600'
+                                      : 'bg-background text-text-tertiary hover:bg-oura-soft hover:text-oura'
                             }`}
                             title={
                                 !hasToken
@@ -178,21 +178,21 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
             </div>
 
             {!hasToken && (
-                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center space-y-4">
-                    <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto">
-                        <AlertCircle className="w-6 h-6 text-amber-600" />
+                <div className="bg-warning-soft border border-warning/20 rounded-card p-6 text-center space-y-4">
+                    <div className="w-12 h-12 bg-warning/15 rounded-full flex items-center justify-center mx-auto">
+                        <AlertCircle className="w-6 h-6 text-warning" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-amber-900">
+                        <h3 className="text-lg font-bold text-text-primary">
                             {t('oura.setup.notConfigured')}
                         </h3>
-                        <p className="text-sm text-amber-700 max-w-md mx-auto mt-1">
+                        <p className="text-sm text-text-secondary max-w-md mx-auto mt-1">
                             {t('oura.setup.notConfiguredDesc')}
                         </p>
                     </div>
                     <button
                         onClick={() => setActiveTab('config')}
-                        className="px-6 py-2.5 bg-amber-600 text-white rounded-xl font-bold text-sm hover:bg-amber-700 transition-colors shadow-sm active:scale-95">
+                        className="px-6 py-2.5 bg-warning text-white rounded-control font-bold text-sm hover:bg-warning/90 transition-colors shadow-card active:scale-95">
                         {t('oura.setup.title')}
                     </button>
                 </div>
@@ -201,7 +201,7 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
             {hasToken && (
                 <>
                     {sleepSchedule && (
-                        <div className="bg-surface rounded-2xl p-5 border border-purple-100 dark:border-purple-800 shadow-sm flex flex-col md:flex-row gap-4 md:items-center justify-between">
+                        <div className="bg-surface rounded-card p-5 border border-oura/20 shadow-card flex flex-col md:flex-row gap-4 md:items-center justify-between">
                             <div>
                                 <h3 className="text-text-primary font-bold flex items-center gap-2">
                                     <span className="text-xl">💤</span>{' '}
@@ -216,7 +216,7 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
                                     <p className="text-[10px] uppercase font-bold text-text-tertiary tracking-wider mb-1">
                                         {t('oura.schedule.bedtime')}
                                     </p>
-                                    <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">
+                                    <p className="text-2xl font-black text-oura">
                                         {sleepSchedule.avgBedtime}
                                     </p>
                                 </div>
@@ -225,7 +225,7 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
                                     <p className="text-[10px] uppercase font-bold text-text-tertiary tracking-wider mb-1">
                                         {t('oura.schedule.wakeTime')}
                                     </p>
-                                    <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">
+                                    <p className="text-2xl font-black text-oura">
                                         {sleepSchedule.avgWakeTime}
                                     </p>
                                 </div>
@@ -245,7 +245,7 @@ export const OuraTab: React.FC<OuraTabProps> = ({ ouraLog = [] }) => {
             )}
 
             {isSyncing && (
-                <div className="text-center text-xs text-purple-500 font-medium animate-pulse">
+                <div className="text-center text-xs text-oura font-medium animate-pulse">
                     {t('oura.setup.syncing')}
                 </div>
             )}

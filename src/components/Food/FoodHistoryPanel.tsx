@@ -67,15 +67,15 @@ export const FoodHistoryPanel: React.FC<FoodHistoryPanelProps> = ({
 
     return (
         <div
-            className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-12 sm:pt-20 overflow-y-auto"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-12 sm:pt-20 overflow-y-auto"
             onClick={onClose}>
             <div
-                className="bg-surface rounded-3xl w-full max-w-md shadow-2xl border border-border mb-24"
+                className="bg-surface rounded-card w-full max-w-md shadow-float border border-border mb-24"
                 onClick={(e) => e.stopPropagation()}>
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-border">
                     <div className="flex items-center gap-2">
-                        <Clock className="text-indigo-600 dark:text-indigo-400" size={20} />
+                        <Clock className="text-primary" size={20} />
                         <h2 className="text-lg font-bold text-text-primary">
                             {t('food.history.title')}
                         </h2>
@@ -83,7 +83,7 @@ export const FoodHistoryPanel: React.FC<FoodHistoryPanelProps> = ({
                     <button
                         onClick={onClose}
                     aria-label={t('common.close')}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-surface-lighter text-text-tertiary hover:bg-surface-lighter transition-colors">
+                        className="w-11 h-11 flex items-center justify-center rounded-full bg-surface-lighter text-text-tertiary hover:bg-surface-lighter transition-colors">
                         <X size={18} />
                     </button>
                 </div>
@@ -101,7 +101,7 @@ export const FoodHistoryPanel: React.FC<FoodHistoryPanelProps> = ({
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder={t('food.history.searchPlaceholder')}
-                            className="w-full pl-11 pr-4 py-3 bg-background border border-border rounded-2xl text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                            className="w-full pl-11 pr-4 py-3 bg-background border border-border rounded-control text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                         />
                         {searchQuery && (
                             <button
@@ -180,10 +180,10 @@ const FoodHistoryItem: React.FC<{
 }> = ({ food, onSelect, lastSeen }) => (
     <button
         onClick={onSelect}
-        className="w-full text-left p-3 bg-background hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-2xl transition-colors group border border-transparent hover:border-indigo-100 dark:hover:border-indigo-800">
+        className="w-full text-left p-3 bg-background hover:bg-primary-soft rounded-control transition-colors group border border-transparent hover:border-primary/20">
         <div className="flex justify-between items-start mb-1">
             <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-text-primary truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                <h3 className="font-bold text-text-primary truncate group-hover:text-primary transition-colors">
                     {food.name}
                 </h3>
                 {food.description && (
@@ -195,10 +195,10 @@ const FoodHistoryItem: React.FC<{
         </div>
         <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 text-xs">
-                <span className="font-bold text-orange-600 dark:text-orange-400">
+                <span className="font-bold text-warning">
                     {food.calories} kcal
                 </span>
-                <span className="text-green-600 dark:text-green-400">P: {food.protein}g</span>
+                <span className="text-protein">P: {food.protein}g</span>
             </div>
             <span className="text-[10px] text-text-tertiary">{lastSeen}</span>
         </div>
