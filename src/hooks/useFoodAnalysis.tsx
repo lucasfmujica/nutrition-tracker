@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from '../context/ToastContext';
 import { analyzeFoodImage } from '../services/ai/geminiVision';
 import { parseLLMJson } from '../services/ai/parseLLMJson';
+import { compressImageForUpload } from '../utils/imageCompression';
 import { validateImageQuality } from '../utils/imageValidation';
 import { retryWithBackoff } from '../utils/retryWithBackoff';
 import { useScanHistory } from './useScanHistory';
@@ -95,11 +96,13 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
 
             console.log(`[FoodAnalysis ${timestamp}] ✓ Validation passed`);
 
-            // Convert file to base64
-            const base64Image = await fileToBase64(file);
+            // Resize + re-encode as JPEG so the upload stays under Vercel's
+            // ~4.5MB serverless function body limit regardless of the
+            // original camera photo's size/format.
+            const compressedDataUrl = await compressImageForUpload(file);
 
-            // Remove the data:image/...;base64, prefix and validate.
-            const base64Data = (base64Image as string).split(',')[1];
+            // Remove the data:image/jpeg;base64, prefix and validate.
+            const base64Data = compressedDataUrl.split(',')[1];
             if (!base64Data) {
                 throw new Error('Imagen inválida');
             }
@@ -108,7 +111,7 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
             const imagePart = {
                 inlineData: {
                     data: base64Data,
-                    mimeType: file.type,
+                    mimeType: 'image/jpeg',
                 },
             };
 
@@ -255,38 +258,3 @@ const toNumber = (v: unknown): number => {
     return Number.isFinite(n) && n >= 0 ? n : 0;
 };
 
-/**
- * Helper: Convert File to Base64 string
- * @param {File} file - File to convert
- * @returns {Promise<string | ArrayBuffer | null>} Base64 encoded string
- */
-const FILE_READ_TIMEOUT_MS = 8000;
-
-const fileToBase64 = (file: File): Promise<string | ArrayBuffer | null> => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        let settled = false;
-
-        const timeoutId = setTimeout(() => {
-            if (settled) return;
-            settled = true;
-            reader.abort();
-            console.error('[FoodAnalysis] Timed out reading image file');
-            reject(new Error('Tiempo de espera agotado al leer la imagen'));
-        }, FILE_READ_TIMEOUT_MS);
-
-        reader.onload = () => {
-            if (settled) return;
-            settled = true;
-            clearTimeout(timeoutId);
-            resolve(reader.result);
-        };
-        reader.onerror = () => {
-            if (settled) return;
-            settled = true;
-            clearTimeout(timeoutId);
-            reject(reader.error ?? new Error('Failed to read file'));
-        };
-        reader.readAsDataURL(file);
-    });
-};
