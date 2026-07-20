@@ -44,7 +44,9 @@ export async function generateGeminiContent(
 
     const res = await fetch(`${baseUrl}/api/gemini-proxy`, {
         method: 'POST',
-        signal: AbortSignal.timeout(10000),
+        // Vision + detailed JSON generation can take well over 10s; keep this
+        // in step with the proxy's `maxDuration` in vercel.json.
+        signal: AbortSignal.timeout(25000),
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,

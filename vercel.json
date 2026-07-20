@@ -4,6 +4,11 @@
   "installCommand": "npm install --include=dev",
   "cleanUrls": true,
   "trailingSlash": false,
+  "functions": {
+    "api/gemini-proxy.ts": {
+      "maxDuration": 30
+    }
+  },
   "rewrites": [
     {
       "source": "/((?!robots\\.txt|sitemap\\.xml|llms\\.txt|og-image\\.jpg|manifest\\.json|sw\\.js|favicon\\.|icons/).*)",
