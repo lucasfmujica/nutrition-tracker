@@ -23,6 +23,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const MIN_WIDTH = 200;
 const MIN_HEIGHT = 200;
 const MIN_BRIGHTNESS = 30; // 0-100 scale
+const IMAGE_LOAD_TIMEOUT_MS = 8000; // guards against onload/onerror never firing (e.g. some HEIC/Android WebView cases)
 
 /**
  * Validate image file before AI scan
@@ -126,8 +127,21 @@ async function loadImageData(file: File): Promise<{ width: number; height: numbe
     return new Promise((resolve, reject) => {
         const img = new Image();
         const url = URL.createObjectURL(file);
+        let settled = false;
+
+        const timeoutId = setTimeout(() => {
+            if (settled) return;
+            settled = true;
+            URL.revokeObjectURL(url);
+            console.error('[ImageValidation] Timed out loading image for validation');
+            reject(new Error('Tiempo de espera agotado al cargar la imagen'));
+        }, IMAGE_LOAD_TIMEOUT_MS);
 
         img.onload = () => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timeoutId);
+
             const canvas = document.createElement('canvas');
             canvas.width = img.width;
             canvas.height = img.height;
@@ -150,6 +164,9 @@ async function loadImageData(file: File): Promise<{ width: number; height: numbe
         };
 
         img.onerror = () => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timeoutId);
             URL.revokeObjectURL(url);
             reject(new Error('Failed to load image'));
         };
@@ -209,8 +226,21 @@ export async function createThumbnail(file: File, maxSize: number = 100): Promis
     return new Promise((resolve, reject) => {
         const img = new Image();
         const url = URL.createObjectURL(file);
+        let settled = false;
+
+        const timeoutId = setTimeout(() => {
+            if (settled) return;
+            settled = true;
+            URL.revokeObjectURL(url);
+            console.error('[ImageValidation] Timed out creating thumbnail');
+            reject(new Error('Tiempo de espera agotado al generar la miniatura'));
+        }, IMAGE_LOAD_TIMEOUT_MS);
 
         img.onload = () => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timeoutId);
+
             const canvas = document.createElement('canvas');
             let width = img.width;
             let height = img.height;
@@ -246,6 +276,9 @@ export async function createThumbnail(file: File, maxSize: number = 100): Promis
         };
 
         img.onerror = () => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timeoutId);
             URL.revokeObjectURL(url);
             reject(new Error('Failed to create thumbnail'));
         };

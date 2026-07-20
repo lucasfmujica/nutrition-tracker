@@ -260,11 +260,33 @@ const toNumber = (v: unknown): number => {
  * @param {File} file - File to convert
  * @returns {Promise<string | ArrayBuffer | null>} Base64 encoded string
  */
+const FILE_READ_TIMEOUT_MS = 8000;
+
 const fileToBase64 = (file: File): Promise<string | ArrayBuffer | null> => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
+        let settled = false;
+
+        const timeoutId = setTimeout(() => {
+            if (settled) return;
+            settled = true;
+            reader.abort();
+            console.error('[FoodAnalysis] Timed out reading image file');
+            reject(new Error('Tiempo de espera agotado al leer la imagen'));
+        }, FILE_READ_TIMEOUT_MS);
+
+        reader.onload = () => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timeoutId);
+            resolve(reader.result);
+        };
+        reader.onerror = () => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timeoutId);
+            reject(reader.error ?? new Error('Failed to read file'));
+        };
         reader.readAsDataURL(file);
     });
 };
