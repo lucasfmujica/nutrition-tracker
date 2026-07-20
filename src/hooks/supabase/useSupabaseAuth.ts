@@ -1,6 +1,7 @@
 import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { useEffect, useRef, useState } from 'react';
 import { isSupabaseConfigured, supabase } from '../../lib/supabase';
+import { devLog } from '../../utils/devLog';
 import { useSupabaseOperation } from './useSupabaseOperation';
 
 export interface AuthResult {
@@ -64,7 +65,7 @@ export function useSupabaseAuth(): SupabaseAuthReturn {
 
         const handleVisibilityChange = async () => {
             if (document.visibilityState === 'visible' && !loading && supabase) {
-                console.log('[Auth] App became visible, checking session...');
+                devLog('[Auth] App became visible, checking session...');
                 try {
                     const { data: { session }, error } = await supabase.auth.getSession();
                     if (error) {
@@ -77,7 +78,7 @@ export function useSupabaseAuth(): SupabaseAuthReturn {
 
                     // Only update if user actually changed (login/logout while backgrounded)
                     if (currentUserId !== newUserId) {
-                        console.log('[Auth] Session changed while backgrounded, updating state');
+                        devLog('[Auth] Session changed while backgrounded, updating state');
                         currentUserIdRef.current = newUserId;
                         setUser(session?.user ?? null);
                     }
@@ -132,7 +133,7 @@ export function useSupabaseAuth(): SupabaseAuthReturn {
     // Initialize auth state
     useEffect(() => {
         if (!supabase) {
-            console.log('[Auth] Supabase not configured, running offline');
+            devLog('[Auth] Supabase not configured, running offline');
             setLoading(false);
             return;
         }
@@ -145,7 +146,7 @@ export function useSupabaseAuth(): SupabaseAuthReturn {
             if (authResolved) return;
             authResolved = true;
             if (timeoutId) clearTimeout(timeoutId);
-            console.log(`[Auth] Auth resolved via: ${source}`);
+            devLog(`[Auth] Auth resolved via: ${source}`);
             setLoading(false);
         };
 
@@ -167,7 +168,7 @@ export function useSupabaseAuth(): SupabaseAuthReturn {
                         console.error('[Auth] Session retrieval error:', error);
                         setUser(null);
                     } else {
-                        console.log(
+                        devLog(
                             '[Auth] Session check complete, user:',
                             session?.user?.email,
                         );
@@ -196,7 +197,7 @@ export function useSupabaseAuth(): SupabaseAuthReturn {
 
                 // Only update state if user actually changed
                 if (currentUserIdRef.current !== newUserId) {
-                    console.log(
+                    devLog(
                         '[Auth] Auth state changed:',
                         _event,
                         newUser?.email,
@@ -353,7 +354,7 @@ export function useSupabaseAuth(): SupabaseAuthReturn {
     };
 
     const signOut = async () => {
-        console.log('[Auth] signOut called');
+        devLog('[Auth] signOut called');
         setUser(null);
         setAuthError(null);
 

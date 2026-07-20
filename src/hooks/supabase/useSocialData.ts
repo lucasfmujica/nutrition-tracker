@@ -21,6 +21,7 @@ import {
     WeeklySummary,
 } from '../../types/domain';
 import { getArgentinaDateString, getMondayOfWeek } from '../../utils/dateUtils';
+import { devLog } from '../../utils/devLog';
 import { useSupabaseOperation } from './useSupabaseOperation';
 
 export interface UseSocialDataReturn {
@@ -669,7 +670,7 @@ export function useSocialData(
                 return null;
             }
 
-            console.log(
+            devLog(
                 '[useSocialData] fetchUserFriendCode success:',
                 data.friend_code,
             );

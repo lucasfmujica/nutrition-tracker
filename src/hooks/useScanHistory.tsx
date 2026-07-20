@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import Dexie, { Table } from 'dexie';
+import { devLog } from '../utils/devLog';
 import { createThumbnail } from '../utils/imageValidation';
 
 export interface ScanHistoryEntry {
@@ -53,7 +54,7 @@ export const useScanHistory = () => {
     const loadHistory = useCallback(async () => {
         try {
             const timestamp = new Date().toISOString();
-            console.log(`[ScanHistory ${timestamp}] Loading history...`);
+            devLog(`[ScanHistory ${timestamp}] Loading history...`);
 
             const entries = await db.scanHistory
                 .orderBy('timestamp')
@@ -61,7 +62,7 @@ export const useScanHistory = () => {
                 .limit(MAX_HISTORY_SIZE)
                 .toArray();
 
-            console.log(`[ScanHistory ${timestamp}] ✓ Loaded ${entries.length} entries`);
+            devLog(`[ScanHistory ${timestamp}] ✓ Loaded ${entries.length} entries`);
             setHistory(entries);
         } catch (err) {
             console.error(`[ScanHistory ${new Date().toISOString()}] ✗ Error loading history:`, err);
@@ -93,7 +94,7 @@ export const useScanHistory = () => {
                 const timestamp = Date.now();
                 const timestampISO = new Date().toISOString();
 
-                console.log(`[ScanHistory ${timestampISO}] Saving scan: ${scanResult.foodName}`);
+                devLog(`[ScanHistory ${timestampISO}] Saving scan: ${scanResult.foodName}`);
 
                 // Create thumbnail
                 const thumbnail = await createThumbnail(imageFile, 100);
@@ -120,7 +121,7 @@ export const useScanHistory = () => {
                     const entriesToDelete = allEntries.slice(MAX_HISTORY_SIZE);
                     const idsToDelete = entriesToDelete.map((e) => e.id!);
                     await db.scanHistory.bulkDelete(idsToDelete);
-                    console.log(
+                    devLog(
                         `[ScanHistory ${timestampISO}] 🗑️ Cleaned up ${idsToDelete.length} old entries`
                     );
                 }
@@ -128,7 +129,7 @@ export const useScanHistory = () => {
                 // Reload history
                 await loadHistory();
 
-                console.log(`[ScanHistory ${timestampISO}] ✓ Scan saved successfully`);
+                devLog(`[ScanHistory ${timestampISO}] ✓ Scan saved successfully`);
             } catch (err) {
                 console.error(
                     `[ScanHistory ${new Date().toISOString()}] ✗ Error saving scan:`,
@@ -146,12 +147,12 @@ export const useScanHistory = () => {
     const clearHistory = useCallback(async () => {
         try {
             const timestamp = new Date().toISOString();
-            console.log(`[ScanHistory ${timestamp}] Clearing all history...`);
+            devLog(`[ScanHistory ${timestamp}] Clearing all history...`);
 
             await db.scanHistory.clear();
             setHistory([]);
 
-            console.log(`[ScanHistory ${timestamp}] ✓ History cleared`);
+            devLog(`[ScanHistory ${timestamp}] ✓ History cleared`);
             return true;
         } catch (err) {
             console.error(`[ScanHistory ${new Date().toISOString()}] ✗ Error clearing history:`, err);

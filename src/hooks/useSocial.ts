@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from '../context/ToastContext';
+import { devLog } from '../utils/devLog';
 import i18n from '../i18n/config';
 import { triggerFriendAddedActivity } from '../services/activityTriggerService';
 import {
@@ -60,6 +61,11 @@ export interface UseSocialReturn {
     pendingRequestCount: number;
 }
 
+// Real Supabase round-trips regularly take longer than 2s on cold compute or
+// slower connections; too short a timeout here just produces routine "query
+// failed" noise instead of catching genuine hangs.
+const SOCIAL_QUERY_TIMEOUT_MS = 5000;
+
 export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialReturn {
     // State
     const [friends, setFriends] = useState<Friend[]>([]);
@@ -104,25 +110,29 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
             // Use Promise.allSettled instead of Promise.all
             // This ensures one failing/hanging query doesn't block others
             const results = await Promise.allSettled([
-                withTimeout(socialData.fetchFriends(), 2000, 'fetchFriends'),
+                withTimeout(
+                    socialData.fetchFriends(),
+                    SOCIAL_QUERY_TIMEOUT_MS,
+                    'fetchFriends',
+                ),
                 withTimeout(
                     socialData.fetchFriendRequests(),
-                    2000,
+                    SOCIAL_QUERY_TIMEOUT_MS,
                     'fetchFriendRequests',
                 ),
                 withTimeout(
                     socialData.fetchActivityFeed(),
-                    2000,
+                    SOCIAL_QUERY_TIMEOUT_MS,
                     'fetchActivityFeed',
                 ),
                 withTimeout(
                     socialData.fetchLeaderboard(leaderboardMetric),
-                    2000,
+                    SOCIAL_QUERY_TIMEOUT_MS,
                     'fetchLeaderboard',
                 ),
                 withTimeout(
                     socialData.fetchUserFriendCode(),
-                    2000,
+                    SOCIAL_QUERY_TIMEOUT_MS,
                     'fetchUserFriendCode',
                 ),
             ]);
@@ -162,7 +172,7 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
                 }
             });
 
-            console.log('[useSocial] refreshSocial complete:', {
+            devLog('[useSocial] refreshSocial complete:', {
                 friendsCount: fetchedFriends.length,
                 requestsCount: fetchedRequests.length,
                 feedCount: fetchedFeed.length,
@@ -254,10 +264,14 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
             // Refresh both friends list AND friend requests to ensure consistency
             // Use Promise.allSettled with timeout protection
             const results = await Promise.allSettled([
-                withTimeout(socialData.fetchFriends(), 2000, 'fetchFriends'),
+                withTimeout(
+                    socialData.fetchFriends(),
+                    SOCIAL_QUERY_TIMEOUT_MS,
+                    'fetchFriends',
+                ),
                 withTimeout(
                     socialData.fetchFriendRequests(),
-                    2000,
+                    SOCIAL_QUERY_TIMEOUT_MS,
                     'fetchFriendRequests',
                 ),
             ]);
@@ -384,7 +398,7 @@ export function useSocial({ supabase, useCloud }: UseSocialProps): UseSocialRetu
         // Delay social fetch by 3 seconds to ensure main app loads first
         // This prevents social query timeouts from blocking the entire app
         const timer = setTimeout(() => {
-            console.log('[useSocial] Background social data load starting...');
+            devLog('[useSocial] Background social data load starting...');
             refreshSocial();
         }, 3000);
 

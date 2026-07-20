@@ -8,6 +8,66 @@ import { generateGeminiContent } from './geminiClient';
 
 export const VISION_MODEL = 'gemini-3.5-flash';
 
+// Without a responseSchema, `responseMimeType: 'application/json'` only asks
+// Gemini to format its output as JSON — it doesn't grammar-constrain token
+// generation, so the model can occasionally emit a syntax slip (missing
+// comma, stray quote). Passing a schema switches to constrained decoding,
+// guaranteeing syntactically valid JSON matching this shape every time.
+const FOOD_ANALYSIS_SCHEMA = {
+    type: 'object',
+    properties: {
+        meal_detected: { type: 'boolean' },
+        meal_name: { type: 'string' },
+        description: { type: 'string' },
+        items: {
+            type: 'array',
+            items: {
+                type: 'object',
+                properties: {
+                    id: { type: 'string' },
+                    name: { type: 'string' },
+                    amount: { type: 'string' },
+                    calories: { type: 'number' },
+                    protein: { type: 'number' },
+                    carbs: { type: 'number' },
+                    fat: { type: 'number' },
+                    fiber: { type: 'number' },
+                },
+                required: [
+                    'id',
+                    'name',
+                    'amount',
+                    'calories',
+                    'protein',
+                    'carbs',
+                    'fat',
+                    'fiber',
+                ],
+            },
+        },
+        total_macros: {
+            type: 'object',
+            properties: {
+                calories: { type: 'number' },
+                protein: { type: 'number' },
+                carbs: { type: 'number' },
+                fat: { type: 'number' },
+                fiber: { type: 'number' },
+            },
+            required: ['calories', 'protein', 'carbs', 'fat', 'fiber'],
+        },
+        confidence: { type: 'number' },
+    },
+    required: [
+        'meal_detected',
+        'meal_name',
+        'description',
+        'items',
+        'total_macros',
+        'confidence',
+    ],
+};
+
 /**
  * Analyze a food image via the server-side Gemini proxy.
  * @param request - Passed verbatim to generateContent (string, parts, or { contents }).
@@ -21,7 +81,11 @@ export const analyzeFoodImage = (
     return generateGeminiContent({
         model: VISION_MODEL,
         systemInstruction: getSystemPrompt(language),
-        generationConfig: { responseMimeType: 'application/json' },
+        generationConfig: {
+            responseMimeType: 'application/json',
+            responseSchema: FOOD_ANALYSIS_SCHEMA,
+            maxOutputTokens: 4096,
+        },
         request,
     });
 };

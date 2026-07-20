@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from '../context/ToastContext';
 import { analyzeFoodImage } from '../services/ai/geminiVision';
 import { parseLLMJson } from '../services/ai/parseLLMJson';
+import { devLog } from '../utils/devLog';
 import { compressImageForUpload } from '../utils/imageCompression';
 import { validateImageQuality } from '../utils/imageValidation';
 import { retryWithBackoff } from '../utils/retryWithBackoff';
@@ -77,7 +78,7 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
         try {
             // Pre-scan validation
             const timestamp = new Date().toISOString();
-            console.log(`[FoodAnalysis ${timestamp}] Starting image validation...`);
+            devLog(`[FoodAnalysis ${timestamp}] Starting image validation...`);
 
             const validationResult = await validateImageQuality(file);
 
@@ -94,7 +95,7 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
                 throw new Error(errorMsg);
             }
 
-            console.log(`[FoodAnalysis ${timestamp}] ✓ Validation passed`);
+            devLog(`[FoodAnalysis ${timestamp}] ✓ Validation passed`);
 
             // Resize + re-encode as JPEG so the upload stays under Vercel's
             // ~4.5MB serverless function body limit regardless of the
@@ -117,7 +118,7 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
 
             // Generate content with retry logic (exponential backoff)
             // Routed through the server-side proxy so the Gemini key stays private.
-            console.log(`[FoodAnalysis ${timestamp}] Sending request to Gemini API...`);
+            devLog(`[FoodAnalysis ${timestamp}] Sending request to Gemini API...`);
 
             const responseText = await retryWithBackoff(async () => {
                 return analyzeFoodImage(
@@ -140,7 +141,7 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
                 );
             }, 1, 1500);
 
-            console.log(`[FoodAnalysis ${timestamp}] ✓ API response received`);
+            devLog(`[FoodAnalysis ${timestamp}] ✓ API response received`);
 
             // Parse JSON response
             const parsedResult = parseLLMJson<FoodAnalysisResult>(responseText);
@@ -192,7 +193,7 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
                     confidence: parsedResult.confidence,
                     ingredients: parsedResult.items?.map((item) => item.name),
                 });
-                console.log(`[FoodAnalysis ${timestamp}] ✓ Scan saved to history`);
+                devLog(`[FoodAnalysis ${timestamp}] ✓ Scan saved to history`);
             } catch (historyErr) {
                 // Non-critical error - don't block the main flow
                 console.error(`[FoodAnalysis ${timestamp}] ⚠ Failed to save to history:`, historyErr);

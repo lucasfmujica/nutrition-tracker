@@ -7,6 +7,8 @@
  * - Brightness estimation (warn if < 30%)
  */
 
+import { devLog } from './devLog';
+
 export interface ImageQualityResult {
     isValid: boolean;
     errors: string[];
@@ -35,7 +37,7 @@ export async function validateImageQuality(file: File): Promise<ImageQualityResu
     const warnings: string[] = [];
     const timestamp = new Date().toISOString();
 
-    console.log(`[ImageValidation ${timestamp}] Starting validation for: ${file.name}`);
+    devLog(`[ImageValidation ${timestamp}] Starting validation for: ${file.name}`);
 
     // 1. Check file size
     if (file.size > MAX_FILE_SIZE) {
@@ -68,7 +70,7 @@ export async function validateImageQuality(file: File): Promise<ImageQualityResu
         const imageData = await loadImageData(file);
         const { width, height, canvas } = imageData;
 
-        console.log(`[ImageValidation ${timestamp}] Image loaded: ${width}x${height}px`);
+        devLog(`[ImageValidation ${timestamp}] Image loaded: ${width}x${height}px`);
 
         // Check resolution
         if (width < MIN_WIDTH || height < MIN_HEIGHT) {
@@ -78,7 +80,7 @@ export async function validateImageQuality(file: File): Promise<ImageQualityResu
 
         // Estimate brightness
         const brightness = estimateBrightness(canvas, width, height);
-        console.log(`[ImageValidation ${timestamp}] Estimated brightness: ${brightness}%`);
+        devLog(`[ImageValidation ${timestamp}] Estimated brightness: ${brightness}%`);
 
         if (brightness < MIN_BRIGHTNESS) {
             warnings.push(`⚠️ Imagen muy oscura (${brightness}%). Para mejores resultados, usa mejor iluminación.`);
@@ -88,7 +90,7 @@ export async function validateImageQuality(file: File): Promise<ImageQualityResu
         const isValid = errors.length === 0;
 
         if (isValid) {
-            console.log(`[ImageValidation ${timestamp}] ✓ Validation passed`);
+            devLog(`[ImageValidation ${timestamp}] ✓ Validation passed`);
         } else {
             console.error(`[ImageValidation ${timestamp}] ✗ Validation failed:`, errors);
         }

@@ -19,6 +19,7 @@ import {
     refreshOuraTokens,
     saveOuraOAuthTokens,
 } from '../utils/ouraOAuth';
+import { devLog } from '../utils/devLog';
 import { getCacheKeys } from '../utils/storageUtils';
 import { useSupabase } from './useSupabase';
 
@@ -86,7 +87,7 @@ export const useOuraSync = ({
         if (oauthTokens) {
             if (isOuraAccessTokenExpired(oauthTokens)) {
                 try {
-                    console.log(
+                    devLog(
                         '[OuraSync] Access token expired, refreshing...',
                     );
                     const refreshed = await refreshOuraTokens(
@@ -139,7 +140,7 @@ export const useOuraSync = ({
             }
 
             try {
-                console.log(`[OuraSync] Using proxy: ${endpoint}`);
+                devLog(`[OuraSync] Using proxy: ${endpoint}`);
                 const response = await fetch(proxyUrl, {
                     method: 'GET',
                     headers: {
@@ -212,14 +213,14 @@ export const useOuraSync = ({
             const now = Date.now();
 
             if (!force && lastSync && now - lastSync < SYNC_COOLDOWN_MS) {
-                console.log('[OuraSync] Skipping sync: Cooldown active');
+                devLog('[OuraSync] Skipping sync: Cooldown active');
                 return { status: 'skipped', reason: 'cooldown' };
             }
 
             // No token configured: nothing to sync (not an error)
             const token = await getOuraToken();
             if (!token) {
-                console.log('[OuraSync] Skipping sync: no Oura token configured');
+                devLog('[OuraSync] Skipping sync: no Oura token configured');
                 return { status: 'skipped', reason: 'no_token' };
             }
 
@@ -230,7 +231,7 @@ export const useOuraSync = ({
                 const today = getArgentinaDateString();
                 const sevenDaysAgo = addDaysToDate(today, -6); // Last 7 days including today
 
-                console.log(
+                devLog(
                     `[OuraSync] Fetching data from ${sevenDaysAgo} to ${today} (7 days including today)...`,
                 );
 
@@ -256,7 +257,7 @@ export const useOuraSync = ({
                     sdMapped,
                 );
 
-                console.log(
+                devLog(
                     `[OuraSync] Processing ${ouraLogEntries.length} biometrics and ${stepsLogEntries.length} activity entries`,
                 );
 
@@ -268,13 +269,13 @@ export const useOuraSync = ({
                 // 2. Activity (Steps Log) - Smart Merge with user-controlled auto-sync
                 // Check if user has enabled Oura steps sync
                 if (!profile?.stepsAutoSync) {
-                    console.log(
+                    devLog(
                         '[OuraSync] Steps auto-sync disabled by user preference',
                     );
                 } else {
-                    console.log(
-                        `[OuraSync] Steps auto-sync enabled - processing ${stepsLogEntries.length} entries`,
-                    );
+                    let saved = 0;
+                    let updated = 0;
+                    let preserved = 0;
 
                     // User has enabled Oura - sync steps with smart merge
                     for (const ouraEntry of stepsLogEntries) {
@@ -288,9 +289,7 @@ export const useOuraSync = ({
                                 ...ouraEntry,
                                 source: 'oura',
                             });
-                            console.log(
-                                `[OuraSync] Saved Oura steps for ${ouraEntry.date}: ${ouraEntry.steps}`,
-                            );
+                            saved++;
                         } else {
                             // Entry exists - check source
                             if (
@@ -298,9 +297,7 @@ export const useOuraSync = ({
                                 existing.source === 'ios-health'
                             ) {
                                 // User manually logged - respect their data
-                                console.log(
-                                    `[OuraSync] Preserving ${existing.source} entry for ${ouraEntry.date} (${existing.steps} steps)`,
-                                );
+                                preserved++;
                                 // Don't overwrite manual/iOS entries even if Oura auto-sync is ON
                             } else if (existing.source === 'oura') {
                                 // Update existing Oura entry with fresh data
@@ -308,12 +305,14 @@ export const useOuraSync = ({
                                     ...ouraEntry,
                                     source: 'oura',
                                 });
-                                console.log(
-                                    `[OuraSync] Updated Oura steps for ${ouraEntry.date}: ${ouraEntry.steps}`,
-                                );
+                                updated++;
                             }
                         }
                     }
+
+                    devLog(
+                        `[OuraSync] Steps sync: ${saved} saved, ${updated} updated, ${preserved} preserved (of ${stepsLogEntries.length})`,
+                    );
                 }
 
                 // Success
@@ -355,7 +354,7 @@ export const useOuraSync = ({
 
         (async () => {
             try {
-                console.log('[OuraSync] Exchanging OAuth code for tokens...');
+                devLog('[OuraSync] Exchanging OAuth code for tokens...');
                 const tokens = await exchangeOuraCode(pending.code);
                 await persistOAuthTokens(tokens);
                 toast.success(i18n.t('oura.oauth.connected'));
@@ -398,7 +397,7 @@ export const useOuraSync = ({
                 currentTimestamp >= syncTimeToday.getTime() &&
                 lastSync < syncTimeToday.getTime()
             ) {
-                console.log(
+                devLog(
                     `[OuraSync] Auto-triggering sync (Schedule: 11 AM | User: ${userId.substring(0, 8)})`,
                 );
                 await syncOuraData();

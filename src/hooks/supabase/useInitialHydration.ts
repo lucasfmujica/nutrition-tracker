@@ -17,6 +17,7 @@ import {
     migrateUserStorage,
     updateFreshCacheMetadata,
 } from '../../utils/storageUtils';
+import { devLog } from '../../utils/devLog';
 
 export interface UseInitialHydrationParams {
     supabase: any; // Complex object from useSupabase composed hook
@@ -72,7 +73,7 @@ export const useInitialHydration = ({
         const previousAuthState = previousAuthStateRef.current;
 
         if (currentAuthState !== previousAuthState) {
-            console.log(
+            devLog(
                 `[Data] Auth state changed: ${previousAuthState} → ${currentAuthState}, resetting hasInitialized`,
             );
             hasInitialized.current = false;
@@ -82,7 +83,7 @@ export const useInitialHydration = ({
 
     // Load data effect
     useEffect(() => {
-        console.log('[Data] Hydration effect triggered:', {
+        devLog('[Data] Hydration effect triggered:', {
             supabaseLoading: supabase.loading,
             showAuth,
             offlineMode,
@@ -93,13 +94,13 @@ export const useInitialHydration = ({
 
         // Basic guards
         if (supabase.loading || showAuth === null) {
-            console.log(
+            devLog(
                 '[Data] Guard: supabase.loading or showAuth is null, skipping',
             );
             return;
         }
         if (showAuth && !offlineMode) {
-            console.log(
+            devLog(
                 '[Data] Guard: showAuth is true and not in offline mode, skipping',
             );
             return;
@@ -107,7 +108,7 @@ export const useInitialHydration = ({
 
         // 🔒 CRITICAL AUTH GUARD: Prevent race condition on page refresh (F5)
         if (!supabase.isAuthenticated || !supabase.user) {
-            console.log(
+            devLog(
                 '[Data] Auth not ready, waiting for session confirmation before loading data',
                 {
                     isAuthenticated: supabase.isAuthenticated,
@@ -118,13 +119,13 @@ export const useInitialHydration = ({
         }
 
         if (hasInitialized.current) {
-            console.log('[Data] Already initialized, skipping data load');
+            devLog('[Data] Already initialized, skipping data load');
             return;
         }
 
         // ✅ Mark as initialized ONLY after auth is confirmed
         hasInitialized.current = true;
-        console.log(
+        devLog(
             '[Data] ✅ Starting data load with authenticated user:',
             supabase.user?.email,
         );
@@ -154,7 +155,7 @@ export const useInitialHydration = ({
                     clearTimeout(fallbackTimerRef.current);
                     fallbackTimerRef.current = null;
                 }
-                console.log(`[Data] Loading resolved via: ${source}`);
+                devLog(`[Data] Loading resolved via: ${source}`);
                 setIsLoading(false);
 
                 // 🔒 Mark auth/data load as completed for SW reload safety

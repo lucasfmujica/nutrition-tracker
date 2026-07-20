@@ -11,6 +11,7 @@ import {
 } from '../types/domain';
 import { toast } from '../context/ToastContext';
 import i18n from '../i18n/config';
+import { devLog } from '../utils/devLog';
 import { retryWithBackoff } from '../utils/retryWithBackoff';
 import {
     cacheData,
@@ -174,7 +175,7 @@ export const useTrackerSync = ({
 
     // Handle auth state changes
     useEffect(() => {
-        console.log(`[TrackerSync ${new Date().toISOString()}] Auth state check:`, {
+        devLog(`[TrackerSync ${new Date().toISOString()}] Auth state check:`, {
             loading: supabase.loading,
             isAuthenticated: supabase.isAuthenticated,
             isOnline: supabase.isOnline,
@@ -182,17 +183,17 @@ export const useTrackerSync = ({
         });
 
         if (supabase.loading) {
-            console.log(`[TrackerSync ${new Date().toISOString()}] Supabase still loading, waiting...`);
+            devLog(`[TrackerSync ${new Date().toISOString()}] Supabase still loading, waiting...`);
             return;
         }
 
         if (supabase.isAuthenticated) {
-            console.log(`[TrackerSync ${new Date().toISOString()}] User authenticated, hiding auth screen`);
+            devLog(`[TrackerSync ${new Date().toISOString()}] User authenticated, hiding auth screen`);
             setShowAuth(false);
             // 🔒 Mark auth as completed for SW reload safety
             sessionStorage.setItem('auth-completed', 'true');
         } else {
-            console.log(`[TrackerSync ${new Date().toISOString()}] User not authenticated, showing auth screen`);
+            devLog(`[TrackerSync ${new Date().toISOString()}] User not authenticated, showing auth screen`);
             setShowAuth(true);
             setIsLoading(false); // Stop loading so AuthUI can be shown
             hasInitialized.current = false;
@@ -243,13 +244,13 @@ export const useTrackerSync = ({
                             ? '⚠ Actualización parcial'
                             : '✓ Actualizado',
                     );
-                    console.log(`[handleRefresh ${new Date().toISOString()}] Data updated successfully`);
+                    devLog(`[handleRefresh ${new Date().toISOString()}] Data updated successfully`);
                 } else {
                     setSaveStatus('Error al actualizar');
                     toast.error(i18n.t('toast.refreshError'));
                 }
             } else {
-                console.log(`[handleRefresh ${new Date().toISOString()}] useCloud is false, skipping fetch`);
+                devLog(`[handleRefresh ${new Date().toISOString()}] useCloud is false, skipping fetch`);
             }
         } catch (err) {
             console.error(`[TrackerSync ${new Date().toISOString()}] Refresh error:`, err);
