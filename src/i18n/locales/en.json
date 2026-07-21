@@ -1897,6 +1897,7 @@
         "syncExhausted": "Some changes could not be synced. Check your connection.",
         "vaultOverflow": "The pending changes queue is full. Some older unsynced changes were dropped. Reconnect to sync.",
         "queuedOffline": "Offline: it will be saved automatically when you are back online.",
+        "cacheSaveFailed": "Could not save the local copy on this device. Your data is still safe in the cloud.",
         "deleteError": "Could not delete. Try again.",
         "barcodeLookupError": "Product not found for the scanned barcode.",
         "foodSearchError": "Error searching foods. Try again."

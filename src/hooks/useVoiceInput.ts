@@ -8,6 +8,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { devLog } from '../utils/devLog';
 
 export type VoiceInputStatus = 'idle' | 'listening' | 'error';
 export type VoiceInputError =
@@ -79,8 +80,8 @@ export const useVoiceInput = (): UseVoiceInputReturn => {
                 try {
                     recognitionRef.current.onend = null;
                     recognitionRef.current.abort();
-                } catch {
-                    // ignore: stale instance
+                } catch (err) {
+                    devLog('[useVoiceInput] Ignored abort error on stale instance:', err);
                 }
             }
 
@@ -160,8 +161,8 @@ export const useVoiceInput = (): UseVoiceInputReturn => {
             try {
                 recognitionRef.current.onend = null;
                 recognitionRef.current.abort();
-            } catch {
-                // ignore
+            } catch (err) {
+                devLog('[useVoiceInput] Ignored abort error on stale instance:', err);
             }
             recognitionRef.current = null;
         }

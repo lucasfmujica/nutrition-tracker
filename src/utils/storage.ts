@@ -27,7 +27,8 @@ export const storage = {
             }
             const val = localStorage.getItem(key);
             return val ? { value: val } : null;
-        } catch {
+        } catch (err) {
+            console.warn('[storage] window.storage get failed, falling back to localStorage:', err);
             const val = localStorage.getItem(key);
             return val ? { value: val } : null;
         }
@@ -42,7 +43,8 @@ export const storage = {
             }
             localStorage.setItem(key, value);
             return { key, value };
-        } catch {
+        } catch (err) {
+            console.warn('[storage] window.storage set failed, falling back to localStorage:', err);
             localStorage.setItem(key, value);
             return { key, value };
         }
@@ -57,7 +59,8 @@ export const storage = {
                 return;
             }
             localStorage.removeItem(key);
-        } catch {
+        } catch (err) {
+            console.warn('[storage] window.storage remove failed, falling back to localStorage:', err);
             localStorage.removeItem(key);
         }
     },

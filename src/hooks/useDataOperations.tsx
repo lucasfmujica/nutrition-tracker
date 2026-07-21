@@ -175,9 +175,10 @@ export const useDataOperations = ({
         saveFoodLog(newLog);
         // Persist the reviewed flag to Supabase (was only updated locally before)
         if (updated) {
-            saveFoodEntry({ ...updated, reviewed: true }).catch((err) =>
-                console.error('[Sync] Failed to persist confirmFood:', err),
-            );
+            saveFoodEntry({ ...updated, reviewed: true }).catch((err) => {
+                console.error('[Sync] Failed to persist confirmFood:', err);
+                toast.info(i18n.t('toast.queuedOffline'));
+            });
         }
     };
 
@@ -189,9 +190,10 @@ export const useDataOperations = ({
         saveWorkoutLog(newLog);
         // Persist the reviewed flag to Supabase (was only updated locally before)
         if (updated) {
-            saveWorkoutEntry({ ...updated, reviewed: true }).catch((err) =>
-                console.error('[Sync] Failed to persist confirmWorkout:', err),
-            );
+            saveWorkoutEntry({ ...updated, reviewed: true }).catch((err) => {
+                console.error('[Sync] Failed to persist confirmWorkout:', err);
+                toast.info(i18n.t('toast.queuedOffline'));
+            });
         }
     };
 

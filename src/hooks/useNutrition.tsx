@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from '../context/ToastContext';
+import i18n from '../i18n/config';
 import { CustomTargets, FoodEntry, WaterEntry, Workout } from '../types/domain';
 import { getSmartTargets } from '../utils/caloriePeriodization';
 import { getArgentinaDateString } from '../utils/dateUtils';
@@ -8,6 +10,15 @@ import { isRetryableError } from './supabase/useSupabaseOperation';
 import { useSupabase } from './useSupabase';
 
 type SupabaseClient = ReturnType<typeof useSupabase>;
+
+// Cache-local failures don't lose data (la nube es la SSOT), pero el usuario
+// debe enterarse: un solo toast por sesión para no spamear en cada render.
+let cacheFailureToastShown = false;
+const notifyCacheFailureOnce = () => {
+    if (cacheFailureToastShown) return;
+    cacheFailureToastShown = true;
+    toast.error(i18n.t('toast.cacheSaveFailed'));
+};
 
 export const useNutrition = (
     supabase: SupabaseClient,
@@ -138,7 +149,10 @@ export const useNutrition = (
 
         storage
             .set(storageKey, JSON.stringify(foodLog))
-            .catch((err) => console.error('Error auto-saving food log:', err));
+            .catch((err) => {
+                console.error('Error auto-saving food log:', err);
+                notifyCacheFailureOnce();
+            });
     }, [foodLog, supabase.user?.id]);
 
     // Actions
@@ -242,6 +256,7 @@ export const useNutrition = (
                         entryToSave,
                         supabase.user?.id || '',
                     );
+                    toast.info(i18n.t('toast.queuedOffline'));
 
                     // Return original entry for optimistic UI
                     return entryToSave;
@@ -311,6 +326,7 @@ export const useNutrition = (
                 }
             } catch (err) {
                 console.error('Error saving water log:', err);
+                notifyCacheFailureOnce();
             }
         },
         [supabase.user?.id],
@@ -352,6 +368,7 @@ export const useNutrition = (
                         entry,
                         supabase.user?.id || '',
                     );
+                    toast.info(i18n.t('toast.queuedOffline'));
                 }
             }
         },
