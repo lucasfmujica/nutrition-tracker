@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { FoodEntry, WaterEntry } from '../../types/domain';
 import { addPendingWrite } from '../../utils/storageUtils';
 import { useSupabaseOperation } from './useSupabaseOperation';
+import { devLog } from '../../utils/devLog';
 
 export interface UseNutritionDataReturn {
     fetchFoodLog: () => Promise<FoodEntry[]>;
@@ -92,7 +93,7 @@ export function useNutritionData(
                     },
                 );
                 await addPendingWrite('food_log', entry, user.id);
-                console.log(
+                devLog(
                     '[useNutritionData] Food entry queued for sync when connection recovers',
                 );
             }
@@ -195,7 +196,7 @@ export function useNutritionData(
                     },
                 );
                 await addPendingWrite('water_log', entry, user.id);
-                console.log(
+                devLog(
                     '[useNutritionData] Water entry queued for sync when connection recovers',
                 );
             }

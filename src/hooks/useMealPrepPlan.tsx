@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import type { Json } from '../types/supabase';
 import { getArgentinaDateString, getMondayOfWeek } from '../utils/dateUtils';
 import { addDays, format } from 'date-fns';
+import { devLog } from '../utils/devLog';
 
 /**
  * Monday of the current week in Argentina TZ, as a noon-anchored Date.
@@ -279,7 +280,7 @@ export const useMealPrepPlan = (userId?: string) => {
 
             if (insertError) throw insertError;
 
-            console.log(`[useMealPrepPlan ${new Date().toISOString()}] ✓ Repeated ${allMeals.length} meals to next week`);
+            devLog(`[useMealPrepPlan ${new Date().toISOString()}] ✓ Repeated ${allMeals.length} meals to next week`);
             return true;
         } catch (err: any) {
             console.error(`[useMealPrepPlan ${new Date().toISOString()}] Error repeating week:`, err);

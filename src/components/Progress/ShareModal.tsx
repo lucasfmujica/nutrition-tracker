@@ -42,7 +42,6 @@ export const ShareModal: React.FC<ShareModalProps> = ({
     const handleShare = () => {
         // This will trigger the Web Share API in TransformationStoryCard
         // Or could integrate with activity feed here
-        console.log('Sharing transformation:', { caption, hashtags });
     };
 
     return (

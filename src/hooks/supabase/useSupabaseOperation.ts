@@ -1,4 +1,5 @@
 import React, { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { devLog } from '../../utils/devLog';
 
 /**
  * Classifies errors to determine if retry is appropriate
@@ -179,7 +180,7 @@ export function useSupabaseOperation(): UseSupabaseOperationReturn {
                     setTimeout(() => setSyncStatus('idle'), 1500);
 
                     if (attempt > 1) {
-                        console.log(
+                        devLog(
                             `[useSupabaseOperation] Success after ${attempt} attempts`,
                         );
                     }

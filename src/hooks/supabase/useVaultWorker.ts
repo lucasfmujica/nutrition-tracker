@@ -10,6 +10,7 @@ import {
     removePendingWritesBatch,
     updateFreshCacheMetadata,
 } from '../../utils/storageUtils';
+import { devLog } from '../../utils/devLog';
 
 export interface UseVaultWorkerParams {
     supabase: any; // Using any for the composite hook return to avoid circular type dependency hell for now
@@ -243,7 +244,7 @@ export const useVaultWorker = ({
         }
 
         const message = `[Vault] Queue processed: ${synced} synced, ${failed} failed`;
-        console.log(message);
+        devLog(message);
 
         // Vault retries are silent by design (auto-retry every 30s); only alert
         // the user when items have exhausted ALL retries and will be discarded.

@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { WeightEntry } from '../../types/domain';
 import { addPendingWrite } from '../../utils/storageUtils';
 import { useSupabaseOperation } from './useSupabaseOperation';
+import { devLog } from '../../utils/devLog';
 
 export interface UseWeightDataReturn {
     fetchWeightHistory: () => Promise<WeightEntry[]>;
@@ -86,7 +87,7 @@ export function useWeightData(
                     },
                 );
                 await addPendingWrite('weight_history', entry, user.id);
-                console.log(
+                devLog(
                     '[useWeightData] Weight entry queued for sync when connection recovers',
                 );
             }

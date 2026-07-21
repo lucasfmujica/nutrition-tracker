@@ -12,6 +12,7 @@ import type {
     OFFSearchResponse,
     OFFProductResponse,
 } from './types';
+import { devLog } from '../../utils/devLog';
 
 const OFF_BASE_URL = 'https://world.openfoodfacts.org';
 const OFF_SEARCH_URL = `${OFF_BASE_URL}/cgi/search.pl`;
@@ -203,7 +204,7 @@ export const getProductByBarcode = async (
         const data: OFFProductResponse = await response.json();
 
         if (data.status !== 1 || !data.product) {
-            console.log('[OpenFoodFacts] Product not found for barcode:', cleanBarcode);
+            devLog('[OpenFoodFacts] Product not found for barcode:', cleanBarcode);
             return null;
         }
 

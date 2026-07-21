@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { FoodEntry, MealTemplate } from '../types/domain';
 import { ARGENTINA_TZ, getCurrentTimeString } from '../utils/dateUtils';
+import { devLog } from '../utils/devLog';
 
 interface UseMealTemplatesParams {
     mealTemplates: MealTemplate[];
@@ -47,7 +48,7 @@ export const useMealTemplates = ({
                     setMealTemplates(JSON.parse(stored.value));
                 }
             } catch (err) {
-                console.log('Using default templates');
+                devLog('Using default templates');
             }
         };
         if (storage && !useCloud) {

@@ -4,6 +4,7 @@
  */
 
 import html2canvas from 'html2canvas';
+import { devLog } from './devLog';
 
 /**
  * Export a chart or component as PNG
@@ -16,7 +17,7 @@ export async function exportChartAsPNG(
     filename: string
 ): Promise<void> {
     const timestamp = new Date().toISOString();
-    console.log(`[ChartExport ${timestamp}] Starting export: ${filename}`);
+    devLog(`[ChartExport ${timestamp}] Starting export: ${filename}`);
 
     try {
         // Capture element as canvas
@@ -28,7 +29,7 @@ export async function exportChartAsPNG(
             allowTaint: false,
         });
 
-        console.log(
+        devLog(
             `[ChartExport ${timestamp}] ✓ Canvas created: ${canvas.width}x${canvas.height}px`
         );
 
@@ -52,7 +53,7 @@ export async function exportChartAsPNG(
             // Cleanup
             URL.revokeObjectURL(url);
 
-            console.log(`[ChartExport ${timestamp}] ✓ Export successful: ${filename}.png`);
+            devLog(`[ChartExport ${timestamp}] ✓ Export successful: ${filename}.png`);
         }, 'image/png');
     } catch (err) {
         console.error(`[ChartExport ${timestamp}] ✗ Export failed:`, err);
@@ -71,7 +72,7 @@ export async function exportMultipleChartsAsPNG(
     filename: string
 ): Promise<void> {
     const timestamp = new Date().toISOString();
-    console.log(
+    devLog(
         `[ChartExport ${timestamp}] Starting multi-export: ${filename} (${elementRefs.length} charts)`
     );
 
@@ -95,7 +96,7 @@ export async function exportMultipleChartsAsPNG(
         const spacing = 40; // 40px spacing between charts
         const finalHeight = totalHeight + spacing * (canvases.length - 1);
 
-        console.log(
+        devLog(
             `[ChartExport ${timestamp}] Combined size: ${totalWidth}x${finalHeight}px`
         );
 
@@ -137,7 +138,7 @@ export async function exportMultipleChartsAsPNG(
 
             URL.revokeObjectURL(url);
 
-            console.log(`[ChartExport ${timestamp}] ✓ Multi-export successful`);
+            devLog(`[ChartExport ${timestamp}] ✓ Multi-export successful`);
         }, 'image/png');
     } catch (err) {
         console.error(`[ChartExport ${timestamp}] ✗ Multi-export failed:`, err);

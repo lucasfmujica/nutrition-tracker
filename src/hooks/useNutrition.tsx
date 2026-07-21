@@ -8,6 +8,7 @@ import { storage } from '../utils/storage';
 import { addPendingDelete, addPendingWrite, getCacheKeys } from '../utils/storageUtils';
 import { isRetryableError } from './supabase/useSupabaseOperation';
 import { useSupabase } from './useSupabase';
+import { devLog } from '../utils/devLog';
 
 type SupabaseClient = ReturnType<typeof useSupabase>;
 
@@ -225,7 +226,7 @@ export const useNutrition = (
                         );
                     }
 
-                    console.log(
+                    devLog(
                         '[Nutrition] saveFoodEntry successful:',
                         entryToSave.date,
                         entryToSave.name,
@@ -348,7 +349,7 @@ export const useNutrition = (
                         throw new Error(result.error.message);
                     }
 
-                    console.log(
+                    devLog(
                         '[Nutrition] saveWaterEntry successful:',
                         entry.date,
                         entry.glasses,

@@ -4,6 +4,7 @@ import { mappers } from '../../lib/mappers';
 import { supabase } from '../../lib/supabase';
 import { CustomTargets, Profile } from '../../types/domain';
 import { useSupabaseOperation } from './useSupabaseOperation';
+import { devLog } from '../../utils/devLog';
 
 export interface OnboardingData {
     current_weight: number;
@@ -103,7 +104,7 @@ export function useProfileData(
             try {
                 const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
                 if (browserTz && profile.timezone !== browserTz) {
-                    console.log(
+                    devLog(
                         `[ProfileData ${new Date().toISOString()}] Timezone changed: ${profile.timezone} → ${browserTz}`,
                     );
                     void supabase!

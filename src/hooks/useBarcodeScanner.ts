@@ -11,6 +11,7 @@ import { getProductByBarcode, calculateMacros } from '../services/foodApi';
 import { toast } from '../context/ToastContext';
 import i18n from '../i18n/config';
 import type { FoodSearchResult, CalculatedMacros } from '../services/foodApi/types';
+import { devLog } from '../utils/devLog';
 
 export interface UseBarcodeScaannerReturn {
     // Scanner state
@@ -127,7 +128,7 @@ export const useBarcodeScanner = (): UseBarcodeScaannerReturn => {
         // Avoid duplicate scans
         if (scannedBarcode === decodedText) return;
 
-        console.log('[useBarcodeScanner] Barcode detected:', decodedText);
+        devLog('[useBarcodeScanner] Barcode detected:', decodedText);
         setScannedBarcode(decodedText);
 
         // Stop scanning after successful read

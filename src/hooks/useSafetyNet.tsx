@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { getSafetyNetTargets, isSafetyNetDay } from '../services/tdeeCalculator';
 import { CustomTargets, Profile } from '../types/domain';
 import { getArgentinaDateString } from '../utils/dateUtils';
+import { devLog } from '../utils/devLog';
 
 /**
  * useSafetyNet - Modo Escudo (Safety Net) state management
@@ -47,7 +48,7 @@ export const useSafetyNet = (
 
         await saveProfile(updatedProfile);
 
-        console.log(
+        devLog(
             `[SafetyNet] ${!isActive ? 'ACTIVATED' : 'DEACTIVATED'} for ${date} - Modo Escudo ${!isActive ? 'ON' : 'OFF'}`,
         );
     }, [profile, safetyNetDays, saveProfile]);

@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { retryWithBackoff } from '../utils/retryWithBackoff';
+import { devLog } from '../utils/devLog';
 
 /**
  * Weekly Stats Response Type
@@ -62,7 +63,7 @@ export const useWeeklyReport = () => {
             }
 
             const timestamp = new Date().toISOString();
-            console.log(`[useWeeklyReport ${timestamp}] Fetching stats for user: ${user.id}`);
+            devLog(`[useWeeklyReport ${timestamp}] Fetching stats for authenticated user`);
 
             // Determine API URL based on environment
             const baseUrl = import.meta.env.PROD ? '' : 'http://localhost:3000';

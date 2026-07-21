@@ -6,6 +6,7 @@ import {
     getMondayOfWeek,
     toArgentinaDateString,
 } from '../utils/dateUtils';
+import { devLog } from '../utils/devLog';
 
 /**
  * Weekly Snapshot Service
@@ -223,7 +224,7 @@ export async function generateWeeklySnapshot(
         if (error) {
             console.error('[WeeklySnapshot] Failed to generate snapshot:', error);
         } else {
-            console.log('[WeeklySnapshot] Generated snapshot for week:', weekStart);
+            devLog('[WeeklySnapshot] Generated snapshot for week:', weekStart);
         }
     } catch (err) {
         console.error('[WeeklySnapshot] Error generating snapshot:', err);

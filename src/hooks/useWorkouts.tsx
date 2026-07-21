@@ -4,6 +4,7 @@ import { Workout } from '../types/domain';
 import { storage } from '../utils/storage';
 import { addPendingWrite, getCacheKeys } from '../utils/storageUtils';
 import { useSupabase } from './useSupabase';
+import { devLog } from '../utils/devLog';
 
 type SupabaseClient = ReturnType<typeof useSupabase>;
 
@@ -53,7 +54,7 @@ export const useWorkouts = (supabase: SupabaseClient, useCloud: boolean) => {
                     throw new Error(result.error.message);
                 }
 
-                console.log(
+                devLog(
                     '[Workouts] saveWorkoutEntry successful:',
                     entry.date,
                     entry.name,

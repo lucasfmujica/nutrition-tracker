@@ -1,12 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '../types/supabase';
+import { devLog } from '../utils/devLog';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Debug: log configuration status
-console.log('[Supabase] URL configured:', !!supabaseUrl);
-console.log('[Supabase] Key configured:', !!supabaseAnonKey);
+devLog('[Supabase] URL configured:', !!supabaseUrl);
+devLog('[Supabase] Key configured:', !!supabaseAnonKey);
 
 if (!supabaseUrl || !supabaseAnonKey) {
     console.warn(

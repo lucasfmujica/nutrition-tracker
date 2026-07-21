@@ -10,7 +10,8 @@
         "test": "vitest run --pool=threads",
         "test:watch": "vitest",
         "typecheck": "tsc --noEmit",
-        "check": "npm run typecheck && npm test"
+        "lint:console": "bash scripts/check-no-console.sh",
+        "check": "npm run typecheck && npm run lint:console && npm test"
     },
     "dependencies": {
         "@google/generative-ai": "^0.24.1",

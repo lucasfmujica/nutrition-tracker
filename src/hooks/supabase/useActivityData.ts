@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { OuraEntry, StepsEntry, Workout } from '../../types/domain';
 import { addPendingWrite } from '../../utils/storageUtils';
 import { useSupabaseOperation } from './useSupabaseOperation';
+import { devLog } from '../../utils/devLog';
 
 export interface UseActivityDataReturn {
     fetchWorkouts: () => Promise<Workout[]>;
@@ -111,7 +112,7 @@ export function useActivityData(
                     },
                 );
                 await addPendingWrite('workouts', entry, user.id);
-                console.log(
+                devLog(
                     '[useActivityData] Workout entry queued for sync when connection recovers',
                 );
             }
@@ -208,7 +209,7 @@ export function useActivityData(
                     },
                 );
                 await addPendingWrite('steps_log', entry, user.id);
-                console.log(
+                devLog(
                     '[useActivityData] Steps entry queued for sync when connection recovers',
                 );
             }
@@ -283,7 +284,7 @@ export function useActivityData(
                     },
                 );
                 await addPendingWrite('oura_log', entry, user.id);
-                console.log(
+                devLog(
                     '[useActivityData] Oura entry queued for sync when connection recovers',
                 );
             }

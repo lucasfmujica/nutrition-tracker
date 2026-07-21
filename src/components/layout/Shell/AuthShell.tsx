@@ -4,6 +4,7 @@ import { useTracker } from '../../../context/TrackerContext';
 import { AuthUI } from '../../auth/AuthUI';
 import { OnboardingWizard } from '../../onboarding/OnboardingWizard';
 import { LoadingScreen } from './LoadingScreen';
+import { devLog } from '../../../utils/devLog';
 
 interface AuthShellProps {
     children: React.ReactNode;
@@ -33,7 +34,7 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
     // If isLoading is true for more than 30 seconds, force exit and show error
     useEffect(() => {
         if (isLoading && showAuth === false && !supabase.loading) {
-            console.log(
+            devLog(
                 '[AuthShell] Loading started, setting 30s emergency timeout',
             );
 
@@ -47,7 +48,7 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
         } else {
             // Clear timeout if loading finished normally
             if (loadingTimeoutRef.current) {
-                console.log(
+                devLog(
                     '[AuthShell] Loading finished, clearing emergency timeout',
                 );
                 clearTimeout(loadingTimeoutRef.current);
@@ -68,17 +69,15 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
     }, [isLoading, showAuth, supabase.loading, setIsLoading]);
 
     const handleRetry = () => {
-        console.log('[AuthShell] User requested retry, reloading page');
+        devLog('[AuthShell] User requested retry, reloading page');
         window.location.reload();
     };
 
     const handleSignIn = async (email: string, password: string) => {
         try {
-            console.log('[NutritionTracker] handleSignIn called');
+            // Nunca loguear el resultado de signIn: contiene la sesión/usuario.
             const result = await supabase.signIn(email, password);
-            console.log('[NutritionTracker] signIn result:', result);
             if (result && !result.error) {
-                console.log('[NutritionTracker] Setting showAuth to false');
                 setShowAuth(false);
             }
             return result || { error: { message: 'No response from server' } };

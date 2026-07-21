@@ -10,6 +10,7 @@ import {
     Workout,
 } from '../types/domain';
 import { storage } from './storage';
+import { devLog } from './devLog';
 
 // ============================================================================
 // MULTI-USER STORAGE KEY SYSTEM
@@ -75,18 +76,18 @@ export const migrateUserStorage = async (userId: string): Promise<boolean> => {
         // Check if legacy data exists
         const legacyProfile = await storage.get(LEGACY_CACHE_KEYS.PROFILE).catch(() => null);
         if (!legacyProfile?.value) {
-            console.log('[Migration] No legacy data found, skipping migration');
+            devLog('[Migration] No legacy data found, skipping migration');
             return false;
         }
 
         // Check if user already has migrated data (prevent double migration)
         const existingUserData = await storage.get(userKeys.PROFILE).catch(() => null);
         if (existingUserData?.value) {
-            console.log('[Migration] User already has data, skipping migration');
+            devLog('[Migration] User already has data, skipping migration');
             return false;
         }
 
-        console.log('[Migration] Starting legacy data migration for user:', userId.substring(0, 8));
+        devLog('[Migration] Starting legacy data migration for user:', userId.substring(0, 8));
 
         // Migrate all data types
         const migrationPairs = [
@@ -107,7 +108,7 @@ export const migrateUserStorage = async (userId: string): Promise<boolean> => {
             const legacyData = await storage.get(pair.legacy).catch(() => null);
             if (legacyData?.value) {
                 await storage.set(pair.user, legacyData.value);
-                console.log(`[Migration] Migrated ${pair.legacy} → ${pair.user}`);
+                devLog(`[Migration] Migrated ${pair.legacy} → ${pair.user}`);
             }
         }
 
@@ -115,7 +116,7 @@ export const migrateUserStorage = async (userId: string): Promise<boolean> => {
         for (const key of Object.values(LEGACY_CACHE_KEYS)) {
             await storage.remove(key).catch(() => {});
         }
-        console.log('[Migration] Legacy keys cleared');
+        devLog('[Migration] Legacy keys cleared');
 
         return true;
     } catch (err) {

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { WeeklyReportCard } from '../Dashboard/WeeklyReportCard';
 import { Button } from '../UI/Button';
 import { ModalShell } from '../UI/ModalShell';
+import { devLog } from '../../utils/devLog';
 
 interface WeeklyReportModalProps {
     isOpen: boolean;
@@ -48,7 +49,7 @@ export const WeeklyReportModal: React.FC<WeeklyReportModalProps> = ({
             link.href = canvas.toDataURL('image/png');
             link.click();
 
-            console.log('[WeeklyReportModal] Image downloaded successfully');
+            devLog('[WeeklyReportModal] Image downloaded successfully');
         } catch (err) {
             console.error('[WeeklyReportModal] Download error:', err);
         } finally {

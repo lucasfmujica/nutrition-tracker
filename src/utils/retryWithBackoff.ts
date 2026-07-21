@@ -1,3 +1,5 @@
+import { devLog } from './devLog';
+
 /**
  * Retry a function with exponential backoff
  *
@@ -58,12 +60,12 @@ export async function retryWithBackoff<T>(
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
             const timestamp = new Date().toISOString();
-            console.log(`[RetryWithBackoff ${timestamp}] Attempt ${attempt + 1}/${maxRetries + 1}`);
+            devLog(`[RetryWithBackoff ${timestamp}] Attempt ${attempt + 1}/${maxRetries + 1}`);
 
             const result = await fn();
 
             if (attempt > 0) {
-                console.log(`[RetryWithBackoff ${timestamp}] ✓ Success after ${attempt} retries`);
+                devLog(`[RetryWithBackoff ${timestamp}] ✓ Success after ${attempt} retries`);
             }
 
             return result;

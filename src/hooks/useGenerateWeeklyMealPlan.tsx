@@ -13,6 +13,7 @@ import {
     getMealsToAvoid,
     loadDietaryPreferences,
 } from '../utils/dietaryPreferences';
+import { devLog } from '../utils/devLog';
 
 export interface GenerateWeeklyPlanOptions {
     regenerateDays?: number[]; // [0-6] for specific days (0=Monday, 6=Sunday)
@@ -74,7 +75,7 @@ export const useGenerateWeeklyMealPlan = (userId: string, weekStartDate: string)
                 .slice(0, 10)
                 .map(([name]) => name);
 
-            console.log(`[useGenerateWeeklyMealPlan ${new Date().toISOString()}] Found ${sorted.length} favorite foods`);
+            devLog(`[useGenerateWeeklyMealPlan ${new Date().toISOString()}] Found ${sorted.length} favorite foods`);
             return sorted;
         } catch (err: any) {
             console.error(`[useGenerateWeeklyMealPlan ${new Date().toISOString()}] Error extracting favorites:`, err);
@@ -248,7 +249,7 @@ export const useGenerateWeeklyMealPlan = (userId: string, weekStartDate: string)
                     }
                 }
 
-                console.log(`[useGenerateWeeklyMealPlan ${new Date().toISOString()}] ✓ Saved ${savedCount} meals`);
+                devLog(`[useGenerateWeeklyMealPlan ${new Date().toISOString()}] ✓ Saved ${savedCount} meals`);
 
                 setGeneratedPlan(plan);
                 setProgress('');

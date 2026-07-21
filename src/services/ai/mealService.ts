@@ -490,6 +490,7 @@ REGLAS:
 // =====================================================
 
 import type { WeeklyMealPlanRequest, WeeklyMealPlanResponse } from '../../types/domain';
+import { devLog } from '../../utils/devLog';
 
 const buildWeeklyPlanPromptES = (request: WeeklyMealPlanRequest): string => {
     const { dailyTargets, goal, activityLevel, weeklyWorkouts, preferences, favoriteFoods } = request;
@@ -704,7 +705,7 @@ export const generateWeeklyMealPlan = async (
 ): Promise<WeeklyMealPlanResponse> => {
     try {
         const timestamp = new Date().toISOString();
-        console.log(`[mealService ${timestamp}] Generating weekly meal plan for user: ${request.userId}`);
+        devLog(`[mealService ${timestamp}] Generating weekly meal plan`);
 
         const systemPrompt = language === 'es'
             ? buildWeeklyPlanPromptES(request)
@@ -723,7 +724,7 @@ export const generateWeeklyMealPlan = async (
 
         const parsed = parseLLMJson<WeeklyMealPlanResponse>(text);
 
-        console.log(`[mealService ${timestamp}] ✓ Weekly meal plan generated successfully`);
+        devLog(`[mealService ${timestamp}] ✓ Weekly meal plan generated successfully`);
 
         return {
             ...parsed,
