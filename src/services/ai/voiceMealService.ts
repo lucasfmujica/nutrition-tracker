@@ -9,6 +9,7 @@ import {
     GEMINI_FALLBACK_MODELS,
     generateGeminiContent,
 } from './geminiClient';
+import { parseLLMJson } from './parseLLMJson';
 
 const MODEL_NAME = 'gemini-3.5-flash';
 
@@ -37,6 +38,41 @@ export interface ParsedMealResult {
 }
 
 const VALID_MEAL_TYPES: ParsedMealType[] = ['breakfast', 'lunch', 'snack', 'dinner'];
+
+// Decodificación restringida (igual que geminiVision): garantiza JSON
+// sintácticamente válido en cualquier modelo de la cadena de fallback.
+const PARSED_MEAL_SCHEMA = {
+    type: 'object',
+    properties: {
+        mealName: { type: 'string' },
+        mealType: { type: 'string' },
+        items: {
+            type: 'array',
+            items: {
+                type: 'object',
+                properties: {
+                    name: { type: 'string' },
+                    quantity: { type: 'string' },
+                    calories: { type: 'number' },
+                    protein: { type: 'number' },
+                    carbs: { type: 'number' },
+                    fat: { type: 'number' },
+                    mealType: { type: 'string' },
+                },
+                required: [
+                    'name',
+                    'quantity',
+                    'calories',
+                    'protein',
+                    'carbs',
+                    'fat',
+                    'mealType',
+                ],
+            },
+        },
+    },
+    required: ['mealName', 'mealType', 'items'],
+};
 
 const buildSystemPrompt = (language: string, localHour: number): string => {
     const isEnglish = language.startsWith('en');
@@ -129,7 +165,10 @@ export const parseMealFromText = async (
             generateGeminiContent({
                 model: MODEL_NAME,
                 systemInstruction: buildSystemPrompt(language, localHour),
-                generationConfig: { responseMimeType: 'application/json' },
+                generationConfig: {
+                    responseMimeType: 'application/json',
+                    responseSchema: PARSED_MEAL_SCHEMA,
+                },
                 request: trimmed,
                 timeoutMs: 20000,
                 fallbackModels: GEMINI_FALLBACK_MODELS,
@@ -140,7 +179,10 @@ export const parseMealFromText = async (
 
     let parsed: any;
     try {
-        parsed = JSON.parse(responseText);
+        // parseLLMJson tolera fences ```json y prosa alrededor — algunos
+        // modelos de la cadena de fallback envuelven la salida aunque se pida
+        // JSON estricto.
+        parsed = parseLLMJson(responseText);
     } catch (err) {
         console.error('[voiceMealService] Invalid JSON from AI:', err, responseText);
         throw new Error('PARSE_ERROR');
