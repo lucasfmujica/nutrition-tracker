@@ -6,7 +6,7 @@
   "trailingSlash": false,
   "functions": {
     "api/gemini-proxy.ts": {
-      "maxDuration": 30
+      "maxDuration": 60
     }
   },
   "rewrites": [

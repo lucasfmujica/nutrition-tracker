@@ -4,6 +4,7 @@
  * into structured food items with estimated macros, using Gemini via the
  * server-side proxy (geminiClient).
  */
+import { retryWithBackoff } from '../../utils/retryWithBackoff';
 import { generateGeminiContent } from './geminiClient';
 
 const MODEL_NAME = 'gemini-3.5-flash';
@@ -118,12 +119,20 @@ export const parseMealFromText = async (
     const localHour = new Date().getHours();
     const fallbackMealType = defaultMealTypeForHour(localHour);
 
-    const responseText = await generateGeminiContent({
-        model: MODEL_NAME,
-        systemInstruction: buildSystemPrompt(language, localHour),
-        generationConfig: { responseMimeType: 'application/json' },
-        request: trimmed,
-    });
+    // Retry ante 429/503/timeouts (los picos de demanda de Gemini son
+    // transitorios); los 4xx permanentes no se reintentan.
+    const responseText = await retryWithBackoff(
+        () =>
+            generateGeminiContent({
+                model: MODEL_NAME,
+                systemInstruction: buildSystemPrompt(language, localHour),
+                generationConfig: { responseMimeType: 'application/json' },
+                request: trimmed,
+                timeoutMs: 30000,
+            }),
+        2,
+        1500,
+    );
 
     let parsed: any;
     try {

@@ -140,8 +140,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         return res.status(200).json({ text });
     } catch (error: any) {
-        console.error('[GeminiProxy] Error:', error?.message || error);
-        // Don't leak provider internals to the client.
+        const message = String(error?.message || error);
+        console.error('[GeminiProxy] Error:', message);
+        // Preserve upstream overload/rate-limit signals so the client can retry
+        // with backoff and show an accurate message; everything else stays 502.
+        if (message.includes('[503') || message.includes('high demand')) {
+            return res.status(503).json({ error: 'AI service overloaded' });
+        }
+        if (message.includes('[429')) {
+            return res.status(429).json({ error: 'AI rate limit reached' });
+        }
         return res.status(502).json({ error: 'AI service error' });
     }
 }

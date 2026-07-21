@@ -7,8 +7,11 @@
  * upload small regardless of the original file size/format.
  */
 
-const MAX_UPLOAD_DIMENSION = 1600;
-const UPLOAD_JPEG_QUALITY = 0.82;
+// 1024px alcanza de sobra para estimar macros y reduce mucho la latencia:
+// menos bytes que subir desde el celular y menos tokens de imagen que
+// procesar en Gemini (los timeouts de visión a >30s venían de fotos 1600px).
+const MAX_UPLOAD_DIMENSION = 1024;
+const UPLOAD_JPEG_QUALITY = 0.8;
 const IMAGE_LOAD_TIMEOUT_MS = 8000; // guards against onload/onerror never firing
 
 /**

@@ -139,7 +139,7 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
                     },
                     i18n.language,
                 );
-            }, 1, 1500);
+            }, 2, 1500);
 
             devLog(`[FoodAnalysis ${timestamp}] ✓ API response received`);
 
@@ -209,7 +209,16 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
                 ? 'Error analyzing image. Please try again.'
                 : 'Error al analizar la imagen. Por favor, intenta nuevamente.';
 
-            if (err.message?.includes('API key')) {
+            const status = (err as { status?: number })?.status;
+            if (status === 504 || err.message?.includes('tardó demasiado')) {
+                errorMessage = i18n.language.startsWith('en')
+                    ? 'The AI took too long to respond. Check your connection and try again.'
+                    : 'La IA tardó demasiado en responder. Revisá tu conexión e intentá de nuevo.';
+            } else if (status === 503 || err.message?.includes('overloaded')) {
+                errorMessage = i18n.language.startsWith('en')
+                    ? 'The AI service is overloaded right now. Try again in a minute.'
+                    : 'El servicio de IA está saturado en este momento. Probá de nuevo en un minuto.';
+            } else if (err.message?.includes('API key')) {
                 errorMessage = i18n.language.startsWith('en')
                     ? 'API configuration error. Check Gemini key.'
                     : 'Error de configuración de API. Verifica la clave de Gemini.';

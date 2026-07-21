@@ -19,6 +19,11 @@ export interface GeminiContentConfig {
      * an array of parts, or a full { contents: [...] } request object.
      */
     request: unknown;
+    /**
+     * Client-side timeout for the proxy fetch. Vision requests need more than
+     * the 25s default; keep below the proxy's maxDuration in vercel.json (60s).
+     */
+    timeoutMs?: number;
 }
 
 const baseUrl = import.meta.env.PROD ? '' : 'http://localhost:3000';
@@ -51,17 +56,30 @@ export async function generateGeminiContent(
         throw new Error('No hay sesión activa para usar la IA.');
     }
 
-    const res = await fetch(`${baseUrl}/api/gemini-proxy`, {
-        method: 'POST',
-        // Vision + detailed JSON generation can take well over 10s; keep this
-        // in step with the proxy's `maxDuration` in vercel.json.
-        signal: AbortSignal.timeout(25000),
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(config),
-    });
+    const { timeoutMs = 25000, ...proxyConfig } = config;
+    let res: Response;
+    try {
+        res = await fetch(`${baseUrl}/api/gemini-proxy`, {
+            method: 'POST',
+            signal: AbortSignal.timeout(timeoutMs),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(proxyConfig),
+        });
+    } catch (err: any) {
+        // AbortSignal.timeout lanza TimeoutError/AbortError: convertirlo en un
+        // error retryable (status 504) con mensaje claro para el usuario.
+        if (err?.name === 'TimeoutError' || err?.name === 'AbortError') {
+            const timeoutError = new Error(
+                'La IA tardó demasiado en responder. Probá de nuevo.',
+            ) as Error & { status?: number };
+            timeoutError.status = 504;
+            throw timeoutError;
+        }
+        throw err;
+    }
 
     if (!res.ok) {
         let message = 'Error en el servicio de IA';
