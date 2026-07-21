@@ -139,7 +139,7 @@ export const useFoodAnalysis = (): UseFoodAnalysisReturn => {
                     },
                     i18n.language,
                 );
-            }, 2, 1500);
+            }, 1, 1500);
 
             devLog(`[FoodAnalysis ${timestamp}] ✓ API response received`);
 

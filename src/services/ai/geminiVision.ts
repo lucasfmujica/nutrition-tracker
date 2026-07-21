@@ -4,7 +4,10 @@
  * Configured for Argentine cuisine specialization (ES) and US cuisine (EN)
  */
 
-import { generateGeminiContent } from './geminiClient';
+import {
+    GEMINI_FALLBACK_MODELS,
+    generateGeminiContent,
+} from './geminiClient';
 
 export const VISION_MODEL = 'gemini-3.5-flash';
 
@@ -87,11 +90,11 @@ export const analyzeFoodImage = (
             maxOutputTokens: 4096,
         },
         request,
-        // La visión con razonamiento puede superar los 25s por defecto (los
-        // logs de Vercel mostraban timeouts a 30s); dejar margen bajo el
-        // maxDuration de 60s del proxy sin que el peor caso con reintentos
-        // se vuelva eterno.
-        timeoutMs: 45000,
+        // Timeout POR MODELO: si gemini-3.5-flash está saturado (503 o cuelga,
+        // visto en logs de Vercel), a los 30s se pasa al siguiente modelo de la
+        // cadena en vez de esperar 45s+ para fallar.
+        timeoutMs: 30000,
+        fallbackModels: GEMINI_FALLBACK_MODELS,
     });
 };
 

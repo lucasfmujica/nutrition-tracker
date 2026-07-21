@@ -86,12 +86,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (!model || typeof model !== 'string') {
             return res.status(400).json({ error: 'Bad Request: Missing model' });
         }
-        const allowedModels = new Set(
-            (process.env.ALLOWED_GEMINI_MODELS || 'gemini-3.5-flash')
+        // La cadena de fallback del cliente (geminiClient.GEMINI_FALLBACK_MODELS)
+        // debe estar SIEMPRE permitida, aunque ALLOWED_GEMINI_MODELS en Vercel
+        // haya quedado desactualizada — por eso se une al env en vez de
+        // reemplazarse.
+        const DEFAULT_MODELS = [
+            'gemini-3.5-flash',
+            'gemini-3-flash-preview',
+            'gemini-2.5-flash',
+        ];
+        const allowedModels = new Set([
+            ...DEFAULT_MODELS,
+            ...(process.env.ALLOWED_GEMINI_MODELS || '')
                 .split(',')
                 .map((value) => value.trim())
                 .filter(Boolean),
-        );
+        ]);
         if (!allowedModels.has(model)) {
             return res.status(400).json({ error: 'Bad Request: Unsupported model' });
         }

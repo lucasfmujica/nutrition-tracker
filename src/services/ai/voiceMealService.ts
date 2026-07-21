@@ -5,7 +5,10 @@
  * server-side proxy (geminiClient).
  */
 import { retryWithBackoff } from '../../utils/retryWithBackoff';
-import { generateGeminiContent } from './geminiClient';
+import {
+    GEMINI_FALLBACK_MODELS,
+    generateGeminiContent,
+} from './geminiClient';
 
 const MODEL_NAME = 'gemini-3.5-flash';
 
@@ -119,8 +122,8 @@ export const parseMealFromText = async (
     const localHour = new Date().getHours();
     const fallbackMealType = defaultMealTypeForHour(localHour);
 
-    // Retry ante 429/503/timeouts (los picos de demanda de Gemini son
-    // transitorios); los 4xx permanentes no se reintentan.
+    // La cadena de fallback ya prueba varios modelos ante saturación; el retry
+    // externo cubre errores transitorios de red (1 reintento alcanza).
     const responseText = await retryWithBackoff(
         () =>
             generateGeminiContent({
@@ -128,9 +131,10 @@ export const parseMealFromText = async (
                 systemInstruction: buildSystemPrompt(language, localHour),
                 generationConfig: { responseMimeType: 'application/json' },
                 request: trimmed,
-                timeoutMs: 30000,
+                timeoutMs: 20000,
+                fallbackModels: GEMINI_FALLBACK_MODELS,
             }),
-        2,
+        1,
         1500,
     );
 

@@ -5,7 +5,18 @@
  * so the Gemini API key never ships in the public bundle. Attaches the user's
  * Supabase JWT for authentication.
  */
+import { devLog } from '../../utils/devLog';
 import { supabase } from '../../lib/supabase';
+
+/**
+ * Cadena de fallback ante saturación del modelo principal (503 "high demand",
+ * timeouts): se prueba cada modelo en orden. Un modelo retirado falla rápido y
+ * se pasa al siguiente. Debe coincidir con el allowlist del proxy.
+ */
+export const GEMINI_FALLBACK_MODELS = [
+    'gemini-3-flash-preview',
+    'gemini-2.5-flash',
+];
 
 export interface GeminiContentConfig {
     /** Gemini model id, e.g. 'gemini-3.5-flash'. */
@@ -20,17 +31,76 @@ export interface GeminiContentConfig {
      */
     request: unknown;
     /**
-     * Client-side timeout for the proxy fetch. Vision requests need more than
-     * the 25s default; keep below the proxy's maxDuration in vercel.json (60s).
+     * Client-side timeout PER ATTEMPT for the proxy fetch. Keep below the
+     * proxy's maxDuration in vercel.json (60s).
      */
     timeoutMs?: number;
+    /**
+     * Modelos alternativos a probar (en orden) si el principal falla con un
+     * error transitorio del proveedor (502/503/504).
+     */
+    fallbackModels?: string[];
 }
 
 const baseUrl = import.meta.env.PROD ? '' : 'http://localhost:3000';
 
+/** Errores del proveedor/infra donde vale la pena probar otro modelo. */
+const isModelFallbackEligible = (status?: number): boolean =>
+    status === 502 || status === 503 || status === 504;
+
+async function callProxy(
+    token: string,
+    body: Record<string, unknown>,
+    timeoutMs: number,
+): Promise<string> {
+    let res: Response;
+    try {
+        res = await fetch(`${baseUrl}/api/gemini-proxy`, {
+            method: 'POST',
+            signal: AbortSignal.timeout(timeoutMs),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(body),
+        });
+    } catch (err: any) {
+        // AbortSignal.timeout lanza TimeoutError/AbortError: convertirlo en un
+        // error retryable (status 504) con mensaje claro para el usuario.
+        if (err?.name === 'TimeoutError' || err?.name === 'AbortError') {
+            const timeoutError = new Error(
+                'La IA tardó demasiado en responder. Probá de nuevo.',
+            ) as Error & { status?: number };
+            timeoutError.status = 504;
+            throw timeoutError;
+        }
+        throw err;
+    }
+
+    if (!res.ok) {
+        let message = 'Error en el servicio de IA';
+        try {
+            const resBody = await res.json();
+            if (resBody?.error) message = resBody.error;
+        } catch {
+            // ignore parse errors, use default message
+        }
+        // Attach the HTTP status so callers (e.g. retryWithBackoff) can decide
+        // whether the error is retryable (429/5xx) or not (other 4xx).
+        const error = new Error(message) as Error & { status?: number };
+        error.status = res.status;
+        throw error;
+    }
+
+    const { text } = await res.json();
+    return text as string;
+}
+
 /**
  * Generate content via the Gemini proxy and return the raw response text.
- * @throws Error if there is no session or the request fails.
+ * Prueba el modelo principal y, ante errores transitorios del proveedor,
+ * cada modelo de `fallbackModels` en orden.
+ * @throws Error if there is no session or every model fails.
  */
 export async function generateGeminiContent(
     config: GeminiContentConfig,
@@ -56,46 +126,26 @@ export async function generateGeminiContent(
         throw new Error('No hay sesión activa para usar la IA.');
     }
 
-    const { timeoutMs = 25000, ...proxyConfig } = config;
-    let res: Response;
-    try {
-        res = await fetch(`${baseUrl}/api/gemini-proxy`, {
-            method: 'POST',
-            signal: AbortSignal.timeout(timeoutMs),
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(proxyConfig),
-        });
-    } catch (err: any) {
-        // AbortSignal.timeout lanza TimeoutError/AbortError: convertirlo en un
-        // error retryable (status 504) con mensaje claro para el usuario.
-        if (err?.name === 'TimeoutError' || err?.name === 'AbortError') {
-            const timeoutError = new Error(
-                'La IA tardó demasiado en responder. Probá de nuevo.',
-            ) as Error & { status?: number };
-            timeoutError.status = 504;
-            throw timeoutError;
-        }
-        throw err;
-    }
+    const { timeoutMs = 25000, fallbackModels = [], model, ...rest } = config;
+    const modelChain = [model, ...fallbackModels];
 
-    if (!res.ok) {
-        let message = 'Error en el servicio de IA';
+    let lastError: unknown;
+    for (const candidate of modelChain) {
         try {
-            const body = await res.json();
-            if (body?.error) message = body.error;
-        } catch {
-            // ignore parse errors, use default message
+            return await callProxy(token, { ...rest, model: candidate }, timeoutMs);
+        } catch (err) {
+            lastError = err;
+            const status = (err as { status?: number })?.status;
+            const isLast = candidate === modelChain[modelChain.length - 1];
+            if (isLast || !isModelFallbackEligible(status)) {
+                throw err;
+            }
+            console.warn(
+                `[geminiClient] Model ${candidate} failed (status ${status}), trying fallback...`,
+            );
+            devLog('[geminiClient] Fallback cause:', err);
         }
-        // Attach the HTTP status so callers (e.g. retryWithBackoff) can decide
-        // whether the error is retryable (429/5xx) or not (other 4xx).
-        const error = new Error(message) as Error & { status?: number };
-        error.status = res.status;
-        throw error;
     }
-
-    const { text } = await res.json();
-    return text as string;
+    // Unreachable (the loop always returns or throws), but keeps TS honest.
+    throw lastError;
 }
