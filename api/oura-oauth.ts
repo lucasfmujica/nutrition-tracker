@@ -35,6 +35,24 @@ import { checkRateLimit } from './rateLimit.js';
 const OURA_TOKEN_URL = 'https://api.ouraring.com/oauth/token';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+    // CORS — restrict to the app's own origin(s) (same pattern as gemini-proxy).
+    const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+        .split(',')
+        .map((o) => o.trim())
+        .filter(Boolean);
+    const origin = req.headers.origin as string | undefined;
+    if (origin && allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Vary', 'Origin');
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+    res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'Authorization, Content-Type',
+    );
+
+    if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
@@ -127,10 +145,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const data = await response.json().catch(() => null);
 
         if (!response.ok) {
-            // Log provider details server-side only; don't leak them to the client.
+            // Log only the status: the provider error body can echo submitted
+            // params/codes and must never land in server logs.
             console.error(
                 `[Oura OAuth] Token endpoint error (${grant_type}): ${response.status}`,
-                data,
             );
             return res.status(response.status).json({
                 error: `Oura token endpoint error: ${response.status}`,

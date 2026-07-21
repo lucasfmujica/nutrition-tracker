@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { createHealthSyncToken } from './health-sync-token.js';
+import { checkRateLimit } from './rateLimit.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader('Cache-Control', 'no-store');
@@ -30,6 +31,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     } = await supabase.auth.getUser(accessToken);
     if (error || !user?.id) {
         return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // Rate limit token minting (esp. rotate, which writes to profiles).
+    const rl = await checkRateLimit(`sync-health-token:${user.id}`, 10, 60);
+    if (!rl.allowed) {
+        res.setHeader('Retry-After', String(rl.retryAfter));
+        return res.status(429).json({ error: 'Too many requests' });
     }
 
     // Token version (tv) is embedded in every v2 token. Rotating it invalidates

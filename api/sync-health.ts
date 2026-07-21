@@ -140,7 +140,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     .json({ error: 'Unauthorized: Legacy token revoked. Re-provision your Shortcut.' });
             }
             console.warn(
-                `[SyncHealth] Accepting legacy v1 token for ${userId} (ALLOW_LEGACY_V1_TOKENS=true).`,
+                `[SyncHealth] Accepting legacy v1 token for ${userId.slice(0, 8)}… (ALLOW_LEGACY_V1_TOKENS=true).`,
             );
         } else {
             // v2: enforce token-version revocation. The user's current
@@ -169,7 +169,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
             if (currentVersion !== null && tokenPayload.tv !== currentVersion) {
                 console.warn(
-                    `[SyncHealth] Rejected revoked token for ${userId}: tv=${tokenPayload.tv} != current=${currentVersion}.`,
+                    `[SyncHealth] Rejected revoked token for ${userId.slice(0, 8)}…: tv=${tokenPayload.tv} != current=${currentVersion}.`,
                 );
                 return res
                     .status(401)
@@ -241,7 +241,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         console.log(
-            `[SyncHealth] Processing for ${userId} @ ${argentinaDate}:`,
+            `[SyncHealth] Processing for ${userId.slice(0, 8)}… @ ${argentinaDate}:`,
             Object.keys(m),
         );
 
@@ -500,7 +500,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         const anyError = results.some((r) => r.status === 'error');
         const anySynced = results.some((r) => r.status === 'synced');
-        console.log('[SyncHealth] Results:', JSON.stringify(results));
+        // Status summary only — metric payload values must not land in logs.
+        console.log(
+            '[SyncHealth] Results:',
+            results.map((r) => `${r.metric}:${r.status}`).join(', '),
+        );
 
         return res.status(anyError && !anySynced ? 500 : 200).json({
             success: !anyError,

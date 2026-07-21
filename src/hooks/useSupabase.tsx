@@ -122,6 +122,7 @@ export function useSupabase() {
             'workouts',
             'steps_log',
             'oura_log',
+            'water_log',
             'meal_templates',
         ];
 
