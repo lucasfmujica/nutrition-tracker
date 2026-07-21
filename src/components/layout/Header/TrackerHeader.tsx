@@ -2,6 +2,7 @@ import { Moon, Sun } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTracker } from '../../../context/TrackerContext';
+import { useVaultCount } from '../../../hooks/useVaultCount';
 import { SyncStatusIndicator } from '../SyncStatusIndicator';
 
 export const TrackerHeader: React.FC = () => {
@@ -21,6 +22,7 @@ export const TrackerHeader: React.FC = () => {
         cacheStale,
     } = useTracker() as any;
     const { t, i18n } = useTranslation();
+    const vaultCount = useVaultCount(supabase.user?.id);
 
     return (
         <header className="bg-surface/90 backdrop-blur-md border-b border-border px-4 lg:px-8 pt-[calc(env(safe-area-inset-top)+1rem)] pb-4 lg:pt-5 lg:pb-5 sticky top-0 z-30 shadow-sm">
@@ -142,6 +144,7 @@ export const TrackerHeader: React.FC = () => {
                                     syncError={supabase.syncError}
                                     lastSyncTime={supabase.lastSyncTime}
                                     cacheStale={cacheStale}
+                                    pendingCount={vaultCount}
                                 />
                             ) : (
                                 <span className="text-xs font-bold bg-warning-soft text-warning px-3 py-1.5 rounded-full border border-warning/20">

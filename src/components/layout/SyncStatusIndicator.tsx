@@ -7,6 +7,8 @@ interface SyncStatusIndicatorProps {
     syncError?: string | null;
     lastSyncTime: Date | null | string;
     cacheStale?: boolean;
+    /** Escrituras encoladas en The Vault; > 0 muestra el badge ámbar. */
+    pendingCount?: number;
 }
 
 /**
@@ -17,6 +19,7 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
     syncError,
     lastSyncTime,
     cacheStale = false,
+    pendingCount = 0,
 }) => {
     const [relativeTime, setRelativeTime] = useState('');
 
@@ -54,6 +57,17 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
             case 'success':
             case 'idle':
             default:
+                // The Vault con items encolados: badge persistente hasta drenar
+                if (pendingCount > 0) {
+                    return {
+                        Icon: CloudOff,
+                        color: 'text-warning',
+                        bgColor: 'bg-warning-soft',
+                        label: `${pendingCount} ${pendingCount === 1 ? 'pendiente' : 'pendientes'}`,
+                        animate: false,
+                        visible: true,
+                    };
+                }
                 return {
                     Icon: Cloud,
                     color: 'text-success',

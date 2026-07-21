@@ -7,7 +7,7 @@ import {
     FriendChallenge,
     FriendChallengeParticipant,
 } from '../types/domain';
-import { getArgentinaDateString } from '../utils/dateUtils';
+import { addDaysToDate, getArgentinaDateString } from '../utils/dateUtils';
 import { computeOwnChallengeProgress } from '../utils/challengeMetrics';
 
 export interface UseChallengesReturn {
@@ -204,9 +204,7 @@ export function useChallenges(): UseChallengesReturn {
             }
             try {
                 const startDate = getArgentinaDateString();
-                const end = new Date(startDate);
-                end.setDate(end.getDate() + params.durationDays - 1);
-                const endDate = end.toISOString().split('T')[0];
+                const endDate = addDaysToDate(startDate, params.durationDays - 1);
 
                 const { data: challenge, error } = await supabase
                     .from('challenges')
