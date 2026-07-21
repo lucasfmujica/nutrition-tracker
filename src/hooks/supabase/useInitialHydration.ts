@@ -61,8 +61,6 @@ export const useInitialHydration = ({
     setShowOnboarding,
     setCacheStale, // SWR: Setter to clear stale state immediately
 }: UseInitialHydrationParams) => {
-    // Ref to track fallback timer for cleanup
-    const fallbackTimerRef = useRef<NodeJS.Timeout | null>(null);
     // Track previous auth state to detect changes
     const previousAuthStateRef = useRef<boolean>(supabase.isAuthenticated);
 
@@ -151,10 +149,6 @@ export const useInitialHydration = ({
             const resolveLoading = (source: string) => {
                 if (loadingResolved) return;
                 loadingResolved = true;
-                if (fallbackTimerRef.current) {
-                    clearTimeout(fallbackTimerRef.current);
-                    fallbackTimerRef.current = null;
-                }
                 devLog(`[Data] Loading resolved via: ${source}`);
                 setIsLoading(false);
 
@@ -387,8 +381,7 @@ export const useInitialHydration = ({
                                 '[Data] Failed to load from Supabase after 3 attempts. No cached data available.',
                             );
                         } else if (timeoutOccurred && hasCachedData) {
-                            // Don't resolve loading here - let fallback timer handle it
-                            // or it may have already been resolved by fallback
+                            // Puede haberse resuelto ya por la rama de cache
                             if (!loadingResolved) {
                                 resolveLoading('supabase-timeout-with-cache');
                             }
@@ -435,14 +428,6 @@ export const useInitialHydration = ({
         };
 
         loadData();
-
-        // Cleanup: Clear fallback timer if effect re-runs or component unmounts
-        return () => {
-            if (fallbackTimerRef.current) {
-                clearTimeout(fallbackTimerRef.current);
-                fallbackTimerRef.current = null;
-            }
-        };
     }, [
         supabase.loading,
         showAuth,

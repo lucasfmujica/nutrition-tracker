@@ -1,9 +1,12 @@
 import { User } from '@supabase/supabase-js';
 import { useCallback } from 'react';
+import { toast } from '../../context/ToastContext';
+import i18n from '../../i18n/config';
 import { mappers } from '../../lib/mappers';
 import { supabase } from '../../lib/supabase';
 import { MealTemplate } from '../../types/domain';
-import { useSupabaseOperation } from './useSupabaseOperation';
+import { addPendingDelete, addPendingWrite } from '../../utils/storageUtils';
+import { isRetryableError, useSupabaseOperation } from './useSupabaseOperation';
 
 export interface UseTemplateDataReturn {
     fetchTemplates: () => Promise<MealTemplate[]>;
@@ -48,7 +51,7 @@ export function useTemplateData(
         async (
             template: Partial<MealTemplate>,
         ): Promise<{ data: MealTemplate | null; error: any }> => {
-            return withSync(
+            const result = await withSync(
                 async () => {
                     if (!user || !supabase)
                         throw new Error('No user or supabase not configured');
@@ -84,6 +87,18 @@ export function useTemplateData(
                 },
                 { canUseSupabase, errorMessage: 'Error guardando plantilla' },
             );
+
+            // The Vault: una plantilla que no pudo guardarse se encola para que
+            // el worker la reintente (soporta meal_templates), nunca se pierde.
+            if (result.error && user?.id) {
+                console.error(
+                    '[useTemplateData] saveTemplate failed, queuing in Vault:',
+                    { templateId: template.id, error: result.error?.message },
+                );
+                await addPendingWrite('meal_templates', template, user.id);
+                toast.info(i18n.t('toast.queuedOffline'));
+            }
+            return result;
         },
         [canUseSupabase, user, withSync],
     );
@@ -92,7 +107,7 @@ export function useTemplateData(
         async (id: string): Promise<{ error: any }> => {
             if (id.startsWith('tpl-')) return { error: null }; // Only delete from DB if it has a DB ID
 
-            return withSync(
+            const result = await withSync(
                 async () => {
                     if (!user || !supabase)
                         throw new Error('No user or supabase not configured');
@@ -107,6 +122,18 @@ export function useTemplateData(
                 },
                 { canUseSupabase, errorMessage: 'Error eliminando plantilla' },
             );
+
+            // Solo errores transitorios van al Vault (igual que deleteFoodEntry);
+            // un error permanente no se arregla reintentando.
+            if (result.error && user?.id && isRetryableError(result.error)) {
+                console.error(
+                    '[useTemplateData] deleteTemplate failed, queuing in Vault:',
+                    { templateId: id, error: result.error?.message },
+                );
+                await addPendingDelete('meal_templates', id, user.id);
+                toast.info(i18n.t('toast.queuedOffline'));
+            }
+            return result;
         },
         [canUseSupabase, user, withSync],
     );

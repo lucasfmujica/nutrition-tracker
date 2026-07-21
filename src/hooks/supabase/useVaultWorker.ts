@@ -94,6 +94,9 @@ export const useVaultWorker = ({
                     case 'weight_history':
                         result = await supabase.deleteWeight(deleteId);
                         break;
+                    case 'meal_templates':
+                        result = await supabase.deleteTemplateDb(deleteId);
+                        break;
                     default:
                         console.warn(
                             `[Vault] Unsupported delete table: ${item.table}`,
@@ -281,8 +284,12 @@ export const useVaultWorker = ({
                 const userId = sb?.user?.id;
                 const data = await sb.fetchAllData();
                 if (data) {
-                    if (data.profile) setProfile(data.profile);
-                    if (data.targets) setCustomTargets(data.targets);
+                    // Mismo guard que useInitialHydration/useTrackerSync: un perfil
+                    // con onboarding incompleto (defaults de DB) no debe pisar el local.
+                    if (data.profile && data.profile.onboardingCompleted)
+                        setProfile(data.profile);
+                    if (data.targets && data.profile?.onboardingCompleted)
+                        setCustomTargets(data.targets);
                     if (data.weightHistory !== undefined)
                         setWeightHistory(data.weightHistory);
                     if (data.foodLog !== undefined) setFoodLog(data.foodLog);
