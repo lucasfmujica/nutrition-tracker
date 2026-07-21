@@ -22,8 +22,8 @@ interface FoodFormSearchProps {
     searchUnit: 'g' | 'serving';
     setSearchUnit: (value: 'g' | 'serving') => void;
     previewMacros: CalculatedMacros | null;
-    resultsRef: React.RefObject<HTMLDivElement | null>;
-    searchInputRef: React.RefObject<HTMLInputElement | null>;
+    resultsRef: React.RefObject<HTMLDivElement>;
+    searchInputRef: React.RefObject<HTMLInputElement>;
     onSelectResult: (result: FoodSearchResult) => void;
     onApply: () => void;
 }
