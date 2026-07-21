@@ -186,10 +186,15 @@ export function useSupabaseAuth(): SupabaseAuthReturn {
             });
 
         // Listen for auth changes
+        // ⚠️ DEADLOCK: este callback corre mientras auth-js retiene el navigator
+        // lock exclusivo de auth (y espera a que el callback termine). Cualquier
+        // query de Supabase acá adentro necesita ese mismo lock para adjuntar el
+        // token → deadlock total (app colgada al refrescar token en cold start).
+        // Por eso el callback es sync y todo trabajo con Supabase se difiere.
         const {
             data: { subscription },
         } = supabase!.auth.onAuthStateChange(
-            async (_event: AuthChangeEvent, session: Session | null) => {
+            (_event: AuthChangeEvent, session: Session | null) => {
                 if (!mounted) return;
 
                 const newUser = session?.user ?? null;
@@ -220,7 +225,9 @@ export function useSupabaseAuth(): SupabaseAuthReturn {
                         newUser &&
                         ['SIGNED_IN', 'TOKEN_REFRESHED'].includes(_event)
                     ) {
-                        await ensureProfileExists(newUser.id);
+                        setTimeout(() => {
+                            void ensureProfileExists(newUser.id);
+                        }, 0);
                     }
                 } else if (_event === 'TOKEN_REFRESHED') {
                     // Silent token refresh - don't log or update state

@@ -34,10 +34,19 @@ export async function generateGeminiContent(
         throw new Error('Supabase no está configurado.');
     }
 
-    const {
-        data: { session },
-    } = await supabase.auth.getSession();
-    const token = session?.access_token;
+    // getSession puede quedar bloqueado en el navigator lock de auth (p.ej. si
+    // otro tab/refresh lo retiene); con un tope de 8s el caller muestra error
+    // en vez de un spinner infinito.
+    const sessionResult = await Promise.race([
+        supabase.auth.getSession(),
+        new Promise<never>((_, reject) =>
+            setTimeout(
+                () => reject(new Error('Timeout obteniendo la sesión para la IA.')),
+                8000,
+            ),
+        ),
+    ]);
+    const token = sessionResult.data.session?.access_token;
     if (!token) {
         throw new Error('No hay sesión activa para usar la IA.');
     }
